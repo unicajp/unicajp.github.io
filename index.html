@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>うにか</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+      background: #fff8ef;
+      color: #4a352b;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    body.opened .intro {
+      pointer-events: none;
+    }
+
+    .bg {
+      min-height: 100vh;
+      padding: 56px 20px 44px;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(247, 197, 188, .45), transparent 32%),
+        radial-gradient(circle at 85% 90%, rgba(239, 190, 178, .42), transparent 35%),
+        linear-gradient(180deg, #fff8ef 0%, #fff3eb 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .intro {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(247, 197, 188, .45), transparent 34%),
+        radial-gradient(circle at 85% 85%, rgba(239, 190, 178, .42), transparent 38%),
+        #fff8ef;
+      transition: opacity 1.2s ease, visibility 1.2s ease;
+    }
+
+    .intro.hide {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .intro-content {
+      z-index: 24;
+      padding: 32px;
+      animation: fadeUp 1.5s ease both;
+    }
+
+    .intro h1,
+    .main-title {
+      font-size: 2.45rem;
+      font-weight: 400;
+      letter-spacing: .14em;
+      margin: 0 0 24px;
+    }
+
+    .copy {
+      font-size: 1rem;
+      line-height: 2.05;
+      color: #6a5146;
+      margin: 0 0 36px;
+    }
+
+    .enter {
+      min-width: 170px;
+      padding: 14px 34px;
+      border: 1px solid #d7b8aa;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .58);
+      color: #4a352b;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.05rem;
+      letter-spacing: .08em;
+      cursor: pointer;
+      box-shadow: 0 10px 26px rgba(109, 73, 58, .08);
+    }
+
+    .panel {
+      position: fixed;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      z-index: 22;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.12), rgba(218,173,153,.18)),
+        linear-gradient(180deg, #f7dfd2, #fff4ec);
+      transition: transform 1.45s cubic-bezier(.7,0,.2,1);
+      box-shadow: inset 0 0 0 1px rgba(172,132,116,.18);
+    }
+
+    .panel::after {
+      content: "";
+      position: absolute;
+      top: 18%;
+      bottom: 18%;
+      width: 68%;
+      border: 1px solid rgba(172,132,116,.22);
+      border-radius: 8px;
+      background: rgba(255,255,255,.13);
+    }
+
+    .panel.left { left: 0; }
+    .panel.right { right: 0; }
+
+    .panel.left::after { right: 10%; }
+    .panel.right::after { left: 10%; }
+
+    body.opened .panel.left { transform: translateX(-105%); }
+    body.opened .panel.right { transform: translateX(105%); }
+
+    .door-handle {
+      position: fixed;
+      top: 51%;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #b78f78;
+      z-index: 23;
+      box-shadow: 0 0 0 3px rgba(255,255,255,.28);
+      transition: transform 1.45s cubic-bezier(.7,0,.2,1), opacity 1s ease;
+    }
+
+    .handle-left { left: calc(50% - 28px); }
+    .handle-right { right: calc(50% - 28px); }
+
+    body.opened .handle-left {
+      transform: translateX(-50vw);
+      opacity: 0;
+    }
+
+    body.opened .handle-right {
+      transform: translateX(50vw);
+      opacity: 0;
+    }
+
+    .petal {
+      position: absolute;
+      width: 12px;
+      height: 8px;
+      border-radius: 80% 20% 70% 30%;
+      background: rgba(238, 154, 142, .45);
+      animation: float 12s linear infinite;
+      z-index: 1;
+    }
+
+    .p1 { left: 12%; top: 12%; animation-delay: 0s; }
+    .p2 { left: 76%; top: 18%; animation-delay: -3s; }
+    .p3 { left: 28%; top: 72%; animation-delay: -6s; }
+    .p4 { left: 86%; top: 62%; animation-delay: -8s; }
+    .p5 { left: 58%; top: 38%; animation-delay: -10s; }
+
+    .spark {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255,255,255,.8);
+      border-radius: 50%;
+      animation: twinkle 4s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    .s1 { left: 18%; top: 22%; }
+    .s2 { left: 72%; top: 31%; animation-delay: -1.5s; }
+    .s3 { left: 84%; top: 80%; animation-delay: -2.5s; }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      max-width: 420px;
+      margin: 0 auto;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: showMain 1.2s ease 1.1s forwards;
+    }
+
+    .icon {
+      width: 178px;
+      height: 178px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 12px 32px rgba(80,50,40,.16);
+      margin-bottom: 32px;
+    }
+
+    .main-title {
+      margin-bottom: 22px;
+    }
+
+    .links {
+      display: grid;
+      gap: 16px;
+      margin-top: 44px;
+    }
+
+    .links a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 15px 24px;
+      border: 1px solid #d8bdb0;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #4a352b;
+      background: rgba(255,255,255,.62);
+      backdrop-filter: blur(4px);
+      box-shadow: 0 8px 22px rgba(109,73,58,.05);
+      transition: transform .2s ease, background .2s ease;
+      font-size: 1.05rem;
+    }
+
+    .links a:active {
+      transform: scale(.98);
+    }
+
+    .name {
+      flex: 1;
+      text-align: center;
+    }
+
+    .mark {
+      width: 28px;
+      text-align: center;
+      opacity: .85;
+    }
+
+    .arrow {
+      width: 28px;
+      text-align: right;
+      opacity: .7;
+    }
+
+    .footer {
+      margin-top: 50px;
+      font-size: .82rem;
+      color: #9b8175;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes showMain {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: .2; transform: scale(.8); }
+      50% { opacity: 1; transform: scale(1.4); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      15% { opacity: 1; }
+      100% { transform: translateY(120px) translateX(-40px) rotate(180deg); opacity: 0; }
+    }
+  </style>
+</head>
+
+<body>
+  <section class="intro" id="intro">
+    <div class="panel left"></div>
+    <div class="panel right"></div>
+    <div class="door-handle handle-left"></div>
+    <div class="door-handle handle-right"></div>
+
+    <div class="petal p1"></div>
+    <div class="petal p2"></div>
+    <div class="spark s1"></div>
+    <div class="spark s2"></div>
+
+    <div class="intro-content">
+      <h1>うにか</h1>
+      <p class="copy">
+        日々の中で生まれた音楽を、<br />
+        少しずつ。
+      </p>
+      <button class="enter" onclick="openDoor()">ENTER →</button>
+    </div>
+  </section>
+
+  <main class="bg">
+    <div class="petal p1"></div>
+    <div class="petal p2"></div>
+    <div class="petal p3"></div>
+    <div class="petal p4"></div>
+    <div class="petal p5"></div>
+    <div class="spark s1"></div>
+    <div class="spark s2"></div>
+    <div class="spark s3"></div>
+
+    <section class="content">
+      <img class="icon" src="icon.png" alt="うにか アイコン" />
+
+      <h1 class="main-title">うにか</h1>
+
+      <p class="copy">
+        日々の中で生まれた音楽を、<br />
+        少しずつ。
+      </p>
+
+      <div class="links">
+        <a href="https://www.youtube.com/@unica_jpn" target="_blank">
+          <span class="mark">▶</span><span class="name">YouTube</span><span class="arrow">→</span>
+        </a>
+        <a href="https://x.com/unica_jpn" target="_blank">
+          <span class="mark">𝕏</span><span class="name">X</span><span class="arrow">→</span>
+        </a>
+        <a href="https://instagram.com/unica_jpn" target="_blank">
+          <span class="mark">◎</span><span class="name">Instagram</span><span class="arrow">→</span>
+        </a>
+        <a href="https://tiktok.com/@unica_jpn" target="_blank">
+          <span class="mark">♪</span><span class="name">TikTok</span><span class="arrow">→</span>
+        </a>
+      </div>
+
+      <div class="footer">© うにか</div>
+    </section>
+  </main>
+
+  <script>
+    function openDoor() {
+      document.body.classList.add("opened");
+      setTimeout(() => {
+        document.getElementById("intro").classList.add("hide");
+      }, 1450);
+    }
+  </script>
+</body>
+</html>
