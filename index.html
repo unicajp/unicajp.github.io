@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>うにか</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+      background: #fff8ef;
+      color: #4a352b;
+      text-align: center;
+    }
+
+    .wrap {
+      min-height: 100vh;
+      padding: 48px 20px;
+      background:
+        radial-gradient(circle at top left, rgba(244, 190, 180, 0.35), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(235, 180, 165, 0.35), transparent 35%);
+    }
+
+    .icon {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 8px 24px rgba(80, 50, 40, 0.15);
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 400;
+      margin: 0 0 12px;
+      letter-spacing: 0.08em;
+    }
+
+    .copy {
+      font-size: 1rem;
+      line-height: 2;
+      margin-bottom: 36px;
+      color: #6a5146;
+    }
+
+    .links {
+      max-width: 360px;
+      margin: 0 auto;
+      display: grid;
+      gap: 14px;
+    }
+
+    .links a {
+      display: block;
+      padding: 15px;
+      border: 1px solid #d8bdb0;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #4a352b;
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(4px);
+      transition: 0.2s;
+    }
+
+    .links a:hover {
+      background: #f5dfd6;
+    }
+
+    .footer {
+      margin-top: 48px;
+      font-size: 0.8rem;
+      color: #9b8175;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <img class="icon" src="icon.png" alt="うにか アイコン" />
+
+    <h1>うにか</h1>
+
+    <p class="copy">
+      日々の中で生まれた音楽を、<br />
+      少しずつ。
+    </p>
+
+    <div class="links">
+      <a href="https://www.youtube.com/@unica_jpn" target="_blank">YouTube</a>
+      <a href="https://x.com/unica_jpn" target="_blank">X</a>
+      <a href="https://instagram.com/unica_jpn" target="_blank">Instagram</a>
+      <a href="https://tiktok.com/@unica_jpn" target="_blank">TikTok</a>
+    </div>
+
+    <div class="footer">
+      © うにか
+    </div>
+  </main>
+</body>
+</html>
