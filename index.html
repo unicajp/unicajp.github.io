@@ -28,7 +28,6 @@ body {
   overflow: hidden;
 }
 
-/* opening */
 .intro {
   position: fixed;
   inset: 0;
@@ -36,10 +35,7 @@ body {
   overflow: hidden;
   cursor: pointer;
   background:
-    radial-gradient(circle at center,
-      rgba(255,255,255,.94) 0%,
-      rgba(255,255,255,.50) 34%,
-      transparent 60%),
+    radial-gradient(circle at center, rgba(255,255,255,.94) 0%, rgba(255,255,255,.50) 34%, transparent 60%),
     linear-gradient(180deg, #fff8ef 0%, #f8ded3 100%);
   transition: opacity 1.2s ease, visibility 1.2s ease;
 }
@@ -70,28 +66,6 @@ body {
   background:
     radial-gradient(circle at 4% 50%, rgba(255,255,255,.88), transparent 34%),
     linear-gradient(270deg, rgba(255,238,230,.94), rgba(255,248,239,.70));
-}
-
-.light-panel::before {
-  content: "";
-  position: absolute;
-  top: 10%;
-  bottom: 10%;
-  width: 1px;
-  background: rgba(184,132,102,.10);
-  box-shadow: 0 0 34px rgba(255,255,255,.98);
-}
-
-.light-panel.left::before { right: 12%; }
-.light-panel.right::before { left: 12%; }
-
-.light-panel::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(120deg, transparent 0%, rgba(255,255,255,.32) 45%, transparent 70%);
-  opacity: .48;
 }
 
 .center-glow {
@@ -158,7 +132,6 @@ body.opened .open-label {
   transition: opacity 1s ease;
 }
 
-/* main */
 .content {
   position: relative;
   z-index: 2;
@@ -231,36 +204,6 @@ h1 {
   color: #9b8175;
 }
 
-.petal {
-  position: absolute;
-  width: 12px;
-  height: 8px;
-  border-radius: 80% 20% 70% 30%;
-  background: rgba(238,154,142,.30);
-  animation: float 14s linear infinite;
-  z-index: 1;
-}
-
-.p1 { left: 12%; top: 12%; }
-.p2 { left: 76%; top: 18%; animation-delay: -3s; }
-.p3 { left: 28%; top: 72%; animation-delay: -6s; }
-.p4 { left: 86%; top: 62%; animation-delay: -8s; }
-.p5 { left: 58%; top: 38%; animation-delay: -10s; }
-
-.spark {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: rgba(255,255,255,.78);
-  border-radius: 50%;
-  animation: twinkle 4.5s ease-in-out infinite;
-  z-index: 1;
-}
-
-.s1 { left: 18%; top: 22%; }
-.s2 { left: 72%; top: 31%; animation-delay: -1.5s; }
-.s3 { left: 84%; top: 80%; animation-delay: -2.5s; }
-
 @keyframes showMain {
   to { opacity: 1; transform: translateY(0); }
 }
@@ -274,21 +217,13 @@ h1 {
   0%,100% { opacity: .28; }
   50% { opacity: .68; }
 }
-
-@keyframes twinkle {
-  0%,100% { opacity: .18; transform: scale(.8); }
-  50% { opacity: .9; transform: scale(1.35); }
-}
-
-@keyframes float {
-  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-  15% { opacity: 1; }
-  100% { transform: translateY(120px) translateX(-40px) rotate(180deg); opacity: 0; }
-}
 </style>
 </head>
 
 <body>
+
+<audio id="tapSound" src="tap.mp3" preload="auto"></audio>
+<audio id="bgm" src="bgm.mp3" preload="auto" loop></audio>
 
 <section class="intro" id="intro" onclick="openDoor()">
   <div class="light-panel left"></div>
@@ -299,15 +234,6 @@ h1 {
 </section>
 
 <main class="bg">
-  <div class="petal p1"></div>
-  <div class="petal p2"></div>
-  <div class="petal p3"></div>
-  <div class="petal p4"></div>
-  <div class="petal p5"></div>
-  <div class="spark s1"></div>
-  <div class="spark s2"></div>
-  <div class="spark s3"></div>
-
   <section class="content">
     <img class="icon" src="icon.png" alt="うにか アイコン">
 
@@ -319,16 +245,16 @@ h1 {
     </p>
 
     <div class="links">
-      <a href="https://www.youtube.com/@unica_jpn" target="_blank">
+      <a href="https://www.youtube.com/@unica_jpn" target="_blank" onclick="playTap()">
         <span class="mark">▶</span><span class="name">YouTube</span><span class="arrow">→</span>
       </a>
-      <a href="https://x.com/unica_jpn" target="_blank">
+      <a href="https://x.com/unica_jpn" target="_blank" onclick="playTap()">
         <span class="mark">𝕏</span><span class="name">X</span><span class="arrow">→</span>
       </a>
-      <a href="https://instagram.com/unica_jpn" target="_blank">
+      <a href="https://instagram.com/unica_jpn" target="_blank" onclick="playTap()">
         <span class="mark">◎</span><span class="name">Instagram</span><span class="arrow">→</span>
       </a>
-      <a href="https://tiktok.com/@unica_jpn" target="_blank">
+      <a href="https://tiktok.com/@unica_jpn" target="_blank" onclick="playTap()">
         <span class="mark">♪</span><span class="name">TikTok</span><span class="arrow">→</span>
       </a>
     </div>
@@ -338,8 +264,40 @@ h1 {
 </main>
 
 <script>
+let opened = false;
+
+function playTap() {
+  const tap = document.getElementById("tapSound");
+  tap.currentTime = 0;
+  tap.volume = 0.45;
+  tap.play().catch(() => {});
+}
+
+function fadeInBgm() {
+  const bgm = document.getElementById("bgm");
+  bgm.volume = 0;
+  bgm.play().catch(() => {});
+
+  let volume = 0;
+  const target = 0.22;
+  const fade = setInterval(() => {
+    volume += 0.01;
+    bgm.volume = Math.min(volume, target);
+    if (volume >= target) clearInterval(fade);
+  }, 120);
+}
+
 function openDoor() {
+  if (opened) return;
+  opened = true;
+
+  playTap();
   document.body.classList.add("opened");
+
+  setTimeout(() => {
+    fadeInBgm();
+  }, 600);
+
   setTimeout(() => {
     document.getElementById("intro").classList.add("hide");
   }, 2100);
