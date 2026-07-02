@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<meta property="og:title" content="うにか">
+
+<meta property="og:description"
+content="日々の中で生まれた音楽を、少しずつ。">
+
+<meta property="og:image"
+content="https://unicajp.github.io/ogp.jpg">
+
+<meta property="og:type"
+content="website">
+
+<meta property="og:url"
+content="https://unicajp.github.io/">
+<meta name="twitter:card"
+content="summary_large_image">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>うにか</title>
@@ -19,7 +34,7 @@ body {
 
 .bg {
   min-height: 100vh;
-  padding: 56px 20px 44px;
+  padding: 56px 20px 120px;
   background:
     radial-gradient(circle at 15% 10%, rgba(247,197,188,.38), transparent 32%),
     radial-gradient(circle at 85% 90%, rgba(239,190,178,.40), transparent 35%),
@@ -28,6 +43,7 @@ body {
   overflow: hidden;
 }
 
+/* opening */
 .intro {
   position: fixed;
   inset: 0;
@@ -132,6 +148,7 @@ body.opened .open-label {
   transition: opacity 1s ease;
 }
 
+/* main */
 .content {
   position: relative;
   z-index: 2;
@@ -204,8 +221,76 @@ h1 {
   color: #9b8175;
 }
 
+/* small music player */
+.music-player {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: min(92vw, 380px);
+  padding: 10px 12px;
+  border: 1px solid rgba(216,189,176,.8);
+  border-radius: 18px;
+  background: rgba(255,255,255,.68);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 26px rgba(109,73,58,.08);
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.opened .music-player {
+  animation: showPlayer 1.2s ease 2s forwards;
+  pointer-events: auto;
+}
+
+.track-title {
+  font-size: 12px;
+  color: #6a5146;
+  margin-bottom: 8px;
+  letter-spacing: .04em;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-btn {
+  border: 1px solid #d8bdb0;
+  background: rgba(255,255,255,.65);
+  color: #4a352b;
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.track-select {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #d8bdb0;
+  background: rgba(255,255,255,.65);
+  color: #4a352b;
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.volume {
+  width: 70px;
+  accent-color: #b98d7a;
+}
+
+/* animation */
 @keyframes showMain {
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes showPlayer {
+  to { opacity: 1; }
 }
 
 @keyframes breathe {
@@ -263,28 +348,95 @@ h1 {
   </section>
 </main>
 
+<div class="music-player">
+  <div class="track-title" id="trackTitle">♪ Milk no Nioi - instrumental</div>
+
+  <div class="player-row">
+    <button class="player-btn" id="playBtn" onclick="toggleBgm()">STOP</button>
+
+    <select class="track-select" id="trackSelect" onchange="changeTrack()">
+      <option value="bgm.mp3" data-title="♪ Milk no Nioi - instrumental">♪ Milk no Nioi - instrumental</option>
+      <option value="bgm2.mp3" data-title="♪ Milk no Nioi - ambient">♪ Milk no Nioi - ambient</option>
+    </select>
+
+    <input class="volume" id="volume" type="range" min="0" max="1" step="0.01" value="0.22" oninput="changeVolume()">
+  </div>
+</div>
+
 <script>
 let opened = false;
+let bgmPlaying = false;
 
 function playTap() {
   const tap = document.getElementById("tapSound");
   tap.currentTime = 0;
-  tap.volume = 0.45;
+  tap.volume = 0.42;
   tap.play().catch(() => {});
 }
 
 function fadeInBgm() {
   const bgm = document.getElementById("bgm");
+  const volumeSlider = document.getElementById("volume");
+  const target = Number(volumeSlider.value);
+
   bgm.volume = 0;
-  bgm.play().catch(() => {});
+  bgm.play().then(() => {
+    bgmPlaying = true;
+    document.getElementById("playBtn").textContent = "STOP";
+  }).catch(() => {});
 
   let volume = 0;
-  const target = 0.22;
   const fade = setInterval(() => {
     volume += 0.01;
     bgm.volume = Math.min(volume, target);
     if (volume >= target) clearInterval(fade);
   }, 120);
+}
+
+function toggleBgm() {
+  playTap();
+
+  const bgm = document.getElementById("bgm");
+  const btn = document.getElementById("playBtn");
+
+  if (bgm.paused) {
+    bgm.volume = Number(document.getElementById("volume").value);
+    bgm.play().catch(() => {});
+    bgmPlaying = true;
+    btn.textContent = "STOP";
+  } else {
+    bgm.pause();
+    bgmPlaying = false;
+    btn.textContent = "PLAY";
+  }
+}
+
+function changeVolume() {
+  const bgm = document.getElementById("bgm");
+  bgm.volume = Number(document.getElementById("volume").value);
+}
+
+function changeTrack() {
+  playTap();
+
+  const bgm = document.getElementById("bgm");
+  const select = document.getElementById("trackSelect");
+  const selected = select.options[select.selectedIndex];
+  const wasPlaying = !bgm.paused;
+
+  bgm.pause();
+  bgm.src = select.value;
+  bgm.load();
+
+  document.getElementById("trackTitle").textContent = selected.dataset.title;
+
+  if (wasPlaying) {
+    bgm.volume = Number(document.getElementById("volume").value);
+    bgm.play().catch(() => {});
+    document.getElementById("playBtn").textContent = "STOP";
+  } else {
+    document.getElementById("playBtn").textContent = "PLAY";
+  }
 }
 
 function openDoor() {
@@ -296,7 +448,7 @@ function openDoor() {
 
   setTimeout(() => {
     fadeInBgm();
-  }, 600);
+  }, 650);
 
   setTimeout(() => {
     document.getElementById("intro").classList.add("hide");
