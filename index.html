@@ -221,6 +221,90 @@ h1 {
 .name { flex: 1; text-align: center; }
 .arrow { width: 28px; text-align: right; opacity: .82; }
 
+
+.release-section {
+  margin: 46px 0 34px;
+  padding: 24px 16px 20px;
+  border: 1px solid rgba(216,189,176,.88);
+  border-radius: 28px;
+  background: rgba(255,255,255,.58);
+  box-shadow: 0 12px 30px rgba(109,73,58,.06);
+}
+
+.release-label {
+  margin: 0 0 10px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: .72rem;
+  letter-spacing: .24em;
+  color: #a17d6d;
+}
+
+.release-title {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 400;
+  letter-spacing: .08em;
+}
+
+.release-artist {
+  margin: 8px 0 0;
+  font-size: .95rem;
+  color: #7a5d50;
+}
+
+.release-date {
+  display: inline-block;
+  margin: 16px 0 20px;
+  padding: 8px 15px;
+  border-radius: 999px;
+  background: #f6e3da;
+  color: #6f4f42;
+  font-size: .88rem;
+  line-height: 1.6;
+}
+
+.linkco-frame-wrap {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 18px;
+  background: rgba(255,255,255,.74);
+}
+
+.linkco-frame {
+  display: block;
+  width: 100%;
+  height: 600px;
+  border: 0;
+}
+
+.release-note {
+  margin: 16px 0 0;
+  font-size: .8rem;
+  line-height: 1.8;
+  color: #8a6e62;
+}
+
+.release-direct-link {
+  display: inline-block;
+  margin-top: 14px;
+  color: #6f4f42;
+  font-size: .86rem;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 360px) {
+  .release-section {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .linkco-frame {
+    height: 600px;
+  }
+}
+
 .footer {
   margin-top: 50px;
   font-size: .82rem;
@@ -334,6 +418,42 @@ body.opened .music-player {
       日々の中で生まれた音楽を、<br>
       少しずつ。
     </p>
+
+    <section class="release-section" aria-labelledby="milk-release-title">
+      <p class="release-label">NEW RELEASE</p>
+      <h2 class="release-title" id="milk-release-title">ミルクの匂い</h2>
+      <p class="release-artist">うにか</p>
+
+      <div class="release-date">
+        7月18日 先行試聴開始<br>
+        8月1日 リリース
+      </div>
+
+      <div class="linkco-frame-wrap">
+        <iframe
+          class="linkco-frame"
+          src="https://linkco.re/embed/qRn9AShM"
+          title="ミルクの匂い 配信・試聴プレイヤー"
+          loading="lazy"
+          allow="autoplay; encrypted-media"
+          referrerpolicy="strict-origin-when-cross-origin">
+        </iframe>
+      </div>
+
+      <p class="release-note">
+        7月18日から先行試聴できます。<br>
+        8月1日以降は各配信サービスからお聴きいただけます。
+      </p>
+
+      <a
+        class="release-direct-link"
+        href="https://linkco.re/qRn9AShM"
+        target="_blank"
+        rel="noopener noreferrer"
+        onclick="playTap()">
+        配信ページを別画面で開く →
+      </a>
+    </section>
 
     <div class="links">
       <a href="https://www.youtube.com/@unica_jpn" target="_blank" onclick="playTap()">
