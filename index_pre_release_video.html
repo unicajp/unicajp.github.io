@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<link rel="icon" type="image/png" href="favicon.png">
+<meta property="og:title" content="うにか Official">
+
+<meta property="og:description"
+content="日々の中で生まれた音楽を、少しずつ。">
+
+<meta property="og:image"
+content="https://unicajp.github.io/ogp.jpg">
+
+<meta property="og:type"
+content="website">
+
+<meta property="og:url"
+content="https://unicajp.github.io/">
+
+<meta name="twitter:card"
+content="summary_large_image">
+<meta name="twitter:title" content="うにか Official">
+<meta name="twitter:description" content="日々の中で生まれた音楽を、少しずつ。">
+<meta name="twitter:image" content="https://unicajp.github.io/ogpx.jpg?v=2">
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>うにか Official</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  background: #fff8ef;
+  color: #4a352b;
+  text-align: center;
+  overflow-x: hidden;
+}
+
+.bg {
+  min-height: 100vh;
+  padding: 56px 20px 120px;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(247,197,188,.38), transparent 32%),
+    radial-gradient(circle at 85% 90%, rgba(239,190,178,.40), transparent 35%),
+    linear-gradient(180deg, #fff8ef 0%, #fff2ea 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* opening */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  overflow: hidden;
+  cursor: pointer;
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,.94) 0%, rgba(255,255,255,.50) 34%, transparent 60%),
+    linear-gradient(180deg, #fff8ef 0%, #f8ded3 100%);
+  transition: opacity 1.2s ease, visibility 1.2s ease;
+}
+
+.intro.hide {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.light-panel {
+  position: fixed;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 22;
+  transition: transform 2.1s cubic-bezier(.7,0,.2,1);
+}
+
+.light-panel.left {
+  left: 0;
+  background:
+    radial-gradient(circle at 96% 50%, rgba(255,255,255,.88), transparent 34%),
+    linear-gradient(90deg, rgba(255,238,230,.94), rgba(255,248,239,.70));
+}
+
+.light-panel.right {
+  right: 0;
+  background:
+    radial-gradient(circle at 4% 50%, rgba(255,255,255,.88), transparent 34%),
+    linear-gradient(270deg, rgba(255,238,230,.94), rgba(255,248,239,.70));
+}
+
+.center-glow {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  width: 1.5px;
+  height: 100%;
+  z-index: 24;
+  transform: translateX(-50%);
+  background: rgba(160,110,82,.08);
+  box-shadow:
+    0 0 28px rgba(255,255,255,1),
+    0 0 68px rgba(244,190,180,.78),
+    0 0 120px rgba(255,255,255,.95);
+}
+
+.tap-hint {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 25;
+  transform: translate(-50%, -50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.42);
+  border: 1px solid rgba(210,170,145,.22);
+  box-shadow:
+    0 0 38px rgba(255,255,255,.98),
+    0 10px 28px rgba(120,80,60,.07);
+  animation: breathe 2.8s ease-in-out infinite;
+}
+
+.tap-hint::before {
+  content: "";
+  position: absolute;
+  inset: 15px;
+  border-radius: 50%;
+  background: rgba(178,128,96,.18);
+}
+
+.open-label {
+  position: fixed;
+  left: 50%;
+  top: calc(50% + 51px);
+  z-index: 25;
+  transform: translateX(-50%);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 10px;
+  letter-spacing: .32em;
+  color: rgba(120,95,85,.43);
+  animation: openGlow 2.8s ease-in-out infinite;
+  user-select: none;
+}
+
+body.opened .light-panel.left { transform: translateX(-105%); }
+body.opened .light-panel.right { transform: translateX(105%); }
+
+body.opened .center-glow,
+body.opened .tap-hint,
+body.opened .open-label {
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+/* main */
+.content {
+  position: relative;
+  z-index: 2;
+  max-width: 420px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+body.opened .content {
+  animation: showMain 1.4s ease 1.45s forwards;
+}
+
+.icon {
+  width: 178px;
+  height: 178px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 12px 32px rgba(80,50,40,.16);
+  margin-bottom: 32px;
+}
+
+h1 {
+  font-size: 2.45rem;
+  font-weight: 400;
+  letter-spacing: .14em;
+  margin: 0 0 22px;
+}
+
+.copy {
+  font-size: 1rem;
+  line-height: 2.05;
+  color: #6a5146;
+  margin: 0 0 44px;
+}
+
+.links {
+  display: grid;
+  gap: 16px;
+}
+
+.links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 24px;
+  border: 1px solid #d8bdb0;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #4a352b;
+  background: rgba(255,255,255,.62);
+  box-shadow: 0 8px 22px rgba(109,73,58,.05);
+  transition: transform .18s ease, background .18s ease;
+  font-size: 1.05rem;
+}
+
+.links a:active {
+  transform: scale(.98);
+  background: rgba(245,223,214,.78);
+}
+
+.mark { width: 28px; text-align: center; opacity: .85; }
+.name { flex: 1; text-align: center; }
+.arrow { width: 28px; text-align: right; opacity: .82; }
+
+
+.promo-section {
+  margin: 0 0 34px;
+  padding: 16px;
+  border: 1px solid rgba(216,189,176,.88);
+  border-radius: 28px;
+  background: rgba(255,255,255,.58);
+  box-shadow: 0 12px 30px rgba(109,73,58,.06);
+}
+
+.promo-label {
+  margin: 2px 0 12px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: .72rem;
+  letter-spacing: .24em;
+  color: #a17d6d;
+}
+
+.promo-video-wrap {
+  position: relative;
+  width: min(100%, 260px);
+  aspect-ratio: 9 / 16;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #0a0908;
+  box-shadow: 0 12px 30px rgba(74,53,43,.14);
+}
+
+.promo-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #0a0908;
+}
+
+.promo-note {
+  margin: 14px 4px 2px;
+  font-size: .82rem;
+  line-height: 1.8;
+  color: #8a6e62;
+}
+
+.promo-sound-btn {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+  border: 1px solid rgba(255,255,255,.34);
+  border-radius: 999px;
+  padding: 8px 11px;
+  background: rgba(0,0,0,.48);
+  color: #fff;
+  font: inherit;
+  font-size: .76rem;
+  backdrop-filter: blur(6px);
+}
+
+
+.release-section {
+  margin: 46px 0 34px;
+  padding: 24px 16px 20px;
+  border: 1px solid rgba(216,189,176,.88);
+  border-radius: 28px;
+  background: rgba(255,255,255,.58);
+  box-shadow: 0 12px 30px rgba(109,73,58,.06);
+}
+
+.release-label {
+  margin: 0 0 10px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: .72rem;
+  letter-spacing: .24em;
+  color: #a17d6d;
+}
+
+.release-title {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 400;
+  letter-spacing: .08em;
+}
+
+.release-artist {
+  margin: 8px 0 0;
+  font-size: .95rem;
+  color: #7a5d50;
+}
+
+.release-date {
+  display: inline-block;
+  margin: 16px 0 20px;
+  padding: 8px 15px;
+  border-radius: 999px;
+  background: #f6e3da;
+  color: #6f4f42;
+  font-size: .88rem;
+  line-height: 1.6;
+}
+
+.linkco-frame-wrap {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 18px;
+  background: rgba(255,255,255,.74);
+}
+
+.linkco-frame {
+  display: block;
+  width: 100%;
+  height: 600px;
+  border: 0;
+}
+
+.release-note {
+  margin: 16px 0 0;
+  font-size: .8rem;
+  line-height: 1.8;
+  color: #8a6e62;
+}
+
+.release-direct-link {
+  display: inline-block;
+  margin-top: 14px;
+  color: #6f4f42;
+  font-size: .86rem;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 360px) {
+  .release-section {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .linkco-frame {
+    height: 600px;
+  }
+}
+
+.footer {
+  margin-top: 50px;
+  font-size: .82rem;
+  color: #9b8175;
+}
+
+/* small music player */
+.music-player {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: min(92vw, 380px);
+  padding: 10px 12px;
+  border: 1px solid rgba(216,189,176,.8);
+  border-radius: 18px;
+  background: rgba(255,255,255,.68);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 26px rgba(109,73,58,.08);
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.opened .music-player {
+  animation: showPlayer 1.2s ease 2s forwards;
+  pointer-events: auto;
+}
+
+.track-title {
+  font-size: 12px;
+  color: #6a5146;
+  margin-bottom: 8px;
+  letter-spacing: .04em;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-btn {
+  border: 1px solid #d8bdb0;
+  background: rgba(255,255,255,.65);
+  color: #4a352b;
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.track-select {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #d8bdb0;
+  background: rgba(255,255,255,.65);
+  color: #4a352b;
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.volume {
+  width: 70px;
+  accent-color: #b98d7a;
+}
+
+/* animation */
+@keyframes showMain {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes showPlayer {
+  to { opacity: 1; }
+}
+
+@keyframes breathe {
+  0%,100% { transform: translate(-50%, -50%) scale(.94); opacity: .58; }
+  50% { transform: translate(-50%, -50%) scale(1.06); opacity: .92; }
+}
+
+@keyframes openGlow {
+  0%,100% { opacity: .28; }
+  50% { opacity: .68; }
+}
+</style>
+</head>
+
+<body>
+
+<audio id="tapSound" src="tap.mp3" preload="auto"></audio>
+<audio id="bgm" src="bgm.mp3" preload="auto" loop></audio>
+
+<section class="intro" id="intro" onclick="openDoor()">
+  <div class="light-panel left"></div>
+  <div class="light-panel right"></div>
+  <div class="center-glow"></div>
+  <div class="tap-hint"></div>
+  <div class="open-label">OPEN</div>
+</section>
+
+<main class="bg">
+  <section class="content">
+    <img class="icon" src="icon.png" alt="うにか アイコン">
+
+    <h1>うにか</h1>
+
+    <p class="copy">
+      日々の中で生まれた音楽を、<br>
+      少しずつ。
+    </p>
+
+    <section class="promo-section" aria-labelledby="promo-title">
+      <p class="promo-label" id="promo-title">NEW MOVIE</p>
+
+      <div class="promo-video-wrap">
+        <video
+          class="promo-video"
+          id="promoVideo"
+          src="promo.mp4"
+          poster="promo-poster.jpg"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          aria-label="ミルクの匂い 30秒先行映像">
+        </video>
+        <button class="promo-sound-btn" id="promoSoundBtn" type="button" onclick="togglePromoSound()">音声をON</button>
+      </div>
+
+      <p class="promo-note">
+        8月1日リリースに先がけて、30秒の先行映像を公開中です。
+      </p>
+    </section>
+
+    <section class="release-section" aria-labelledby="milk-release-title">
+      <p class="release-label">NEW RELEASE</p>
+      <h2 class="release-title" id="milk-release-title">ミルクの匂い</h2>
+      <p class="release-artist">うにか</p>
+
+      <div class="release-date">
+        7月18日 先行試聴開始<br>
+        8月1日 リリース
+      </div>
+
+      <div class="linkco-frame-wrap">
+        <iframe
+          class="linkco-frame"
+          src="https://linkco.re/embed/qRn9AShM"
+          title="ミルクの匂い 配信・試聴プレイヤー"
+          loading="lazy"
+          allow="autoplay; encrypted-media"
+          referrerpolicy="strict-origin-when-cross-origin">
+        </iframe>
+      </div>
+
+      <p class="release-note">
+        7月18日から先行試聴できます。<br>
+        8月1日以降は各配信サービスからお聴きいただけます。
+      </p>
+
+      <a
+        class="release-direct-link"
+        href="https://linkco.re/qRn9AShM"
+        target="_blank"
+        rel="noopener noreferrer"
+        onclick="playTap()">
+        配信ページを別画面で開く →
+      </a>
+    </section>
+
+    <div class="links">
+      <a href="https://www.youtube.com/@unica_jpn" target="_blank" onclick="playTap()">
+        <span class="mark">▶</span><span class="name">YouTube</span><span class="arrow">→</span>
+      </a>
+      <a href="https://x.com/unica_jpn" target="_blank" onclick="playTap()">
+        <span class="mark">𝕏</span><span class="name">X</span><span class="arrow">→</span>
+      </a>
+      <a href="https://instagram.com/unica_jpn" target="_blank" onclick="playTap()">
+        <span class="mark">◎</span><span class="name">Instagram</span><span class="arrow">→</span>
+      </a>
+      <a href="https://tiktok.com/@unica_jpn" target="_blank" onclick="playTap()">
+        <span class="mark">♪</span><span class="name">TikTok</span><span class="arrow">→</span>
+      </a>
+    </div>
+
+    <div class="footer">© うにか</div>
+  </section>
+</main>
+
+<div class="music-player">
+  <div class="track-title" id="trackTitle">♪ Milk no Nioi - instrumental</div>
+
+  <div class="player-row">
+    <button class="player-btn" id="playBtn" onclick="toggleBgm()">STOP</button>
+
+    <select class="track-select" id="trackSelect" onchange="changeTrack()">
+      <option value="bgm.mp3" data-title="♪ Milk no Nioi - instrumental">♪ Milk no Nioi - instrumental</option>
+      <option value="bgm2.mp3" data-title="♪ Milk no Nioi - ambient">♪ Milk no Nioi - ambient</option>
+    </select>
+
+    <input class="volume" id="volume" type="range" min="0" max="1" step="0.01" value="0.22" oninput="changeVolume()">
+  </div>
+</div>
+
+<script>
+let opened = false;
+let bgmPlaying = false;
+
+function playTap() {
+  const tap = document.getElementById("tapSound");
+  tap.currentTime = 0;
+  tap.volume = 0.42;
+  tap.play().catch(() => {});
+}
+
+function fadeInBgm() {
+  const bgm = document.getElementById("bgm");
+  const volumeSlider = document.getElementById("volume");
+  const target = Number(volumeSlider.value);
+
+  bgm.volume = 0;
+  bgm.play().then(() => {
+    bgmPlaying = true;
+    document.getElementById("playBtn").textContent = "STOP";
+  }).catch(() => {});
+
+  let volume = 0;
+  const fade = setInterval(() => {
+    volume += 0.01;
+    bgm.volume = Math.min(volume, target);
+    if (volume >= target) clearInterval(fade);
+  }, 120);
+}
+
+function toggleBgm() {
+  playTap();
+
+  const bgm = document.getElementById("bgm");
+  const btn = document.getElementById("playBtn");
+
+  if (bgm.paused) {
+    bgm.volume = Number(document.getElementById("volume").value);
+    bgm.play().catch(() => {});
+    bgmPlaying = true;
+    btn.textContent = "STOP";
+  } else {
+    bgm.pause();
+    bgmPlaying = false;
+    btn.textContent = "PLAY";
+  }
+}
+
+function changeVolume() {
+  const bgm = document.getElementById("bgm");
+  bgm.volume = Number(document.getElementById("volume").value);
+}
+
+function changeTrack() {
+  playTap();
+
+  const bgm = document.getElementById("bgm");
+  const select = document.getElementById("trackSelect");
+  const selected = select.options[select.selectedIndex];
+  const wasPlaying = !bgm.paused;
+
+  bgm.pause();
+  bgm.src = select.value;
+  bgm.load();
+
+  document.getElementById("trackTitle").textContent = selected.dataset.title;
+
+  if (wasPlaying) {
+    bgm.volume = Number(document.getElementById("volume").value);
+    bgm.play().catch(() => {});
+    document.getElementById("playBtn").textContent = "STOP";
+  } else {
+    document.getElementById("playBtn").textContent = "PLAY";
+  }
+}
+
+function togglePromoSound() {
+  playTap();
+
+  const video = document.getElementById("promoVideo");
+  const btn = document.getElementById("promoSoundBtn");
+  const bgm = document.getElementById("bgm");
+
+  if (video.muted) {
+    video.muted = false;
+    video.volume = 0.85;
+    video.play().catch(() => {});
+    btn.textContent = "音声をOFF";
+
+    if (!bgm.paused) {
+      bgm.pause();
+      bgmPlaying = false;
+      document.getElementById("playBtn").textContent = "PLAY";
+    }
+  } else {
+    video.muted = true;
+    btn.textContent = "音声をON";
+  }
+}
+
+function openDoor() {
+  if (opened) return;
+  opened = true;
+
+  playTap();
+  document.body.classList.add("opened");
+
+  setTimeout(() => {
+    fadeInBgm();
+  }, 650);
+
+  setTimeout(() => {
+    document.getElementById("intro").classList.add("hide");
+  }, 2100);
+}
+</script>
+
+</body>
+</html>
