@@ -222,6 +222,65 @@ h1 {
 .arrow { width: 28px; text-align: right; opacity: .82; }
 
 
+.promo-section {
+  margin: 0 0 34px;
+  padding: 16px;
+  border: 1px solid rgba(216,189,176,.88);
+  border-radius: 28px;
+  background: rgba(255,255,255,.58);
+  box-shadow: 0 12px 30px rgba(109,73,58,.06);
+}
+
+.promo-label {
+  margin: 2px 0 12px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: .72rem;
+  letter-spacing: .24em;
+  color: #a17d6d;
+}
+
+.promo-video-wrap {
+  position: relative;
+  width: min(100%, 260px);
+  aspect-ratio: 9 / 16;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #0a0908;
+  box-shadow: 0 12px 30px rgba(74,53,43,.14);
+}
+
+.promo-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #0a0908;
+}
+
+.promo-note {
+  margin: 14px 4px 2px;
+  font-size: .82rem;
+  line-height: 1.8;
+  color: #8a6e62;
+}
+
+.promo-sound-btn {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+  border: 1px solid rgba(255,255,255,.34);
+  border-radius: 999px;
+  padding: 8px 11px;
+  background: rgba(0,0,0,.48);
+  color: #fff;
+  font: inherit;
+  font-size: .76rem;
+  backdrop-filter: blur(6px);
+}
+
+
 .release-section {
   margin: 46px 0 34px;
   padding: 24px 16px 20px;
@@ -419,6 +478,30 @@ body.opened .music-player {
       少しずつ。
     </p>
 
+    <section class="promo-section" aria-labelledby="promo-title">
+      <p class="promo-label" id="promo-title">NEW MOVIE</p>
+
+      <div class="promo-video-wrap">
+        <video
+          class="promo-video"
+          id="promoVideo"
+          src="promo.mp4"
+          poster="promo-poster.jpg"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          aria-label="ミルクの匂い 30秒先行映像">
+        </video>
+        <button class="promo-sound-btn" id="promoSoundBtn" type="button" onclick="togglePromoSound()">音声をON</button>
+      </div>
+
+      <p class="promo-note">
+        8月1日リリースに先がけて、30秒の先行映像を公開中です。
+      </p>
+    </section>
+
     <section class="release-section" aria-labelledby="milk-release-title">
       <p class="release-label">NEW RELEASE</p>
       <h2 class="release-title" id="milk-release-title">ミルクの匂い</h2>
@@ -562,6 +645,30 @@ function changeTrack() {
     document.getElementById("playBtn").textContent = "STOP";
   } else {
     document.getElementById("playBtn").textContent = "PLAY";
+  }
+}
+
+function togglePromoSound() {
+  playTap();
+
+  const video = document.getElementById("promoVideo");
+  const btn = document.getElementById("promoSoundBtn");
+  const bgm = document.getElementById("bgm");
+
+  if (video.muted) {
+    video.muted = false;
+    video.volume = 0.85;
+    video.play().catch(() => {});
+    btn.textContent = "音声をOFF";
+
+    if (!bgm.paused) {
+      bgm.pause();
+      bgmPlaying = false;
+      document.getElementById("playBtn").textContent = "PLAY";
+    }
+  } else {
+    video.muted = true;
+    btn.textContent = "音声をON";
   }
 }
 
