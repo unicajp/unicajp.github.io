@@ -26,6 +26,11 @@ let comments = [];
 let myLikedCommentIds = new Set();
 let songLiked = false;
 let notificationRows = [];
+let latestComments = [];
+let historyComments = [];
+let commentHistoryLoaded = false;
+let commentHistoryLoading = false;
+let commentLikeRefreshToken = 0;
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -177,11 +182,68 @@ async function toggleCommentLike(id){
 }
 window.UNICA_TOGGLE_COMMENT_LIKE = toggleCommentLike;
 async function deleteRemoteComment(id){ if(!confirm('この応援コメントを削除しますか？'))return; await deleteDoc(doc(db,'supportComments',id)); toast('応援コメントを削除しました。'); }
-function listenComments(){
-  onSnapshot(query(collection(db,'supportComments'),orderBy('createdAt','desc'),limit(300)),snap=>{comments=snap.docs.map(d=>({id:d.id,...d.data()})).filter(row=>!String(row.id||'').startsWith('demo-')&&!String(row.ownerUid||'').startsWith('demo-'));renderComments();},error=>console.error('comments',error));
+function validRemoteComments(rows){
+  return rows.filter(row=>!String(row.id||'').startsWith('demo-')&&!String(row.ownerUid||'').startsWith('demo-'));
 }
-async function refreshMyCommentLikes(){
-  const ids=[]; for(const row of comments){ const s=await getDoc(doc(db,'supportComments',row.id,'likes',uid)); if(s.exists())ids.push(row.id); } myLikedCommentIds=new Set(ids); renderComments();
+function mergeCommentRows(){
+  const byId=new Map();
+  for(const row of historyComments) byId.set(row.id,row);
+  for(const row of latestComments) byId.set(row.id,row);
+  comments=[...byId.values()].sort((a,b)=>Number(b.createdAt?.seconds||0)-Number(a.createdAt?.seconds||0));
+}
+function listenComments(){
+  // 最初は最新30件だけをリアルタイム購読し、一覧をすぐ表示する。
+  onSnapshot(query(collection(db,'supportComments'),orderBy('createdAt','desc'),limit(30)),snap=>{
+    latestComments=validRemoteComments(snap.docs.map(d=>({id:d.id,...d.data()})));
+    mergeCommentRows();
+    renderComments();
+    refreshMyCommentLikes(latestComments,{replace:!commentHistoryLoaded}).catch(()=>{});
+  },error=>console.error('comments',error));
+
+  // 応援コメント画面が開かれた時だけ、過去分を一度取得する。
+  const modal=$('#communityModal');
+  if(modal){
+    const observer=new MutationObserver(()=>{
+      if(modal.classList.contains('is-open')) ensureCommentHistoryLoaded();
+    });
+    observer.observe(modal,{attributes:true,attributeFilter:['class']});
+  }
+}
+async function ensureCommentHistoryLoaded(){
+  if(commentHistoryLoaded||commentHistoryLoading||!uid)return;
+  commentHistoryLoading=true;
+  try{
+    const snap=await getDocs(query(collection(db,'supportComments'),orderBy('createdAt','desc'),limit(300)));
+    historyComments=validRemoteComments(snap.docs.map(d=>({id:d.id,...d.data()})));
+    commentHistoryLoaded=true;
+    mergeCommentRows();
+    renderComments();
+    // 画面表示を止めず、過去分のいいね状態は小分けに並列取得する。
+    const older=historyComments.filter(row=>!latestComments.some(x=>x.id===row.id));
+    await refreshMyCommentLikes(older,{replace:false,batchSize:30});
+  }catch(error){
+    console.error('comment history',error);
+  }finally{
+    commentHistoryLoading=false;
+  }
+}
+async function refreshMyCommentLikes(rows=comments,{replace=false,batchSize=30}={}){
+  if(!uid||!rows.length){ if(replace){myLikedCommentIds=new Set();renderComments();} return; }
+  const token=++commentLikeRefreshToken;
+  const found=replace?new Set():new Set(myLikedCommentIds);
+  for(let i=0;i<rows.length;i+=batchSize){
+    const batch=rows.slice(i,i+batchSize);
+    const results=await Promise.allSettled(batch.map(row=>getDoc(doc(db,'supportComments',row.id,'likes',uid))));
+    if(token!==commentLikeRefreshToken && replace)return;
+    results.forEach((result,index)=>{
+      if(result.status==='fulfilled'&&result.value.exists()) found.add(batch[index].id);
+      else if(result.status==='fulfilled') found.delete(batch[index].id);
+    });
+    myLikedCommentIds=new Set(found);
+    renderComments();
+    // 大量件数でもメインスレッドを占有し続けない。
+    if(i+batchSize<rows.length) await new Promise(resolve=>setTimeout(resolve,0));
+  }
 }
 
 async function openMemberPass(targetUid){
@@ -221,8 +283,5 @@ installUI(); bindUI();
 onAuthStateChanged(auth,user=>{
   if(!user)return; uid=user.uid;
   listenSongLike(); listenComments(); listenNotifications();
-  // Comment-like status is refreshed after each comment snapshot without requiring a collection-group index.
-  const timer=setInterval(()=>{ if(comments.length)refreshMyCommentLikes().catch(()=>{}); },10000);
-  window.addEventListener('beforeunload',()=>clearInterval(timer),{once:true});
-  refreshMyCommentLikes().catch(()=>{});
+  // 10秒ごとの全件再取得は行わず、コメント更新時と一覧を開いた時だけ必要分を取得する。
 });
