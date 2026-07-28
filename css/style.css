@@ -3023,3 +3023,94 @@ body.support-modal-open{overflow:hidden!important;touch-action:none!important}
   .support-comment-card{padding:11px 12px 10px!important}
   .support-comment-card>p{font-size:13px!important}
 }
+
+/* Phase 10.19 — compact "応援を送る" composer */
+#communityModal .support-compose{
+  margin:8px 0 9px!important;
+  padding:10px 11px 9px!important;
+  border-radius:16px!important;
+}
+#communityModal .support-compose .community-compose-head{
+  margin:0 0 6px!important;
+  gap:8px!important;
+}
+#communityModal .support-compose .community-compose-head>span{
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  font-size:18px!important;
+}
+#communityModal .support-compose .community-compose-head strong{
+  font-size:13px!important;
+  line-height:1.25!important;
+}
+#communityModal .support-compose .community-compose-head small{
+  margin-top:1px!important;
+  font-size:9px!important;
+  line-height:1.25!important;
+}
+#communityModal .support-compose textarea{
+  display:block!important;
+  box-sizing:border-box!important;
+  min-height:62px!important;
+  height:62px!important;
+  padding:9px 10px!important;
+  border-radius:11px!important;
+  font-size:13px!important;
+  line-height:1.45!important;
+  resize:none!important;
+}
+#communityModal .support-compose .community-compose-meta{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  margin-top:6px!important;
+  gap:8px!important;
+}
+#communityModal .support-compose .community-compose-meta span{
+  font-size:10px!important;
+  line-height:1!important;
+}
+#communityModal .support-compose .community-compose-meta button{
+  width:auto!important;
+  min-width:112px!important;
+  min-height:36px!important;
+  padding:7px 14px!important;
+  font-size:12px!important;
+  line-height:1.2!important;
+}
+#communityModal .support-compose>p{
+  min-height:0!important;
+  margin:5px 1px 0!important;
+  font-size:10px!important;
+  line-height:1.3!important;
+}
+#communityModal .support-compose>p:empty{
+  display:none!important;
+  margin:0!important;
+}
+#communityModal .support-tabs{
+  margin:7px 0 8px!important;
+}
+
+@media(max-width:420px){
+  #communityModal .support-compose{
+    margin:7px 0 8px!important;
+    padding:9px 10px 8px!important;
+  }
+  #communityModal .support-compose textarea{
+    min-height:56px!important;
+    height:56px!important;
+    padding:8px 9px!important;
+  }
+  #communityModal .support-compose .community-compose-meta{
+    flex-direction:row!important;
+    align-items:center!important;
+  }
+  #communityModal .support-compose .community-compose-meta button{
+    min-width:106px!important;
+    min-height:34px!important;
+    padding:7px 12px!important;
+  }
+}
