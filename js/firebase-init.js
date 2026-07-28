@@ -2,7 +2,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.2.1/firebas
 import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
 import {
   getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp,
-  collection, query, where, onSnapshot, writeBatch
+  collection, query, where, onSnapshot, writeBatch, runTransaction
 } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -18,10 +18,12 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const MEMBER_KEY = 'unicaWorldMemberV4';
-const LEGACY_MEMBER_KEY = 'unicaWorldMemberV3';
+const LEGACY_MEMBER_KEYS = ['unicaWorldMemberV3', 'unicaWorldMemberV2', 'unicaWorldMemberV1'];
 const ONLINE_WINDOW_MS = 5 * 60 * 1000;
 let uid = null;
 let presenceTimer = null;
+let resolveAuthReady;
+const authReady = new Promise(resolve => { resolveAuthReady = resolve; });
 
 function setStatus(state, text) {
   const badge = document.getElementById('firebaseStatus');
@@ -32,7 +34,13 @@ function setStatus(state, text) {
 
 function localMember() {
   try {
-    return JSON.parse(localStorage.getItem(MEMBER_KEY) || localStorage.getItem(LEGACY_MEMBER_KEY) || 'null');
+    const current = JSON.parse(localStorage.getItem(MEMBER_KEY) || 'null');
+    if (current) return current;
+    for (const key of LEGACY_MEMBER_KEYS) {
+      const legacy = JSON.parse(localStorage.getItem(key) || 'null');
+      if (legacy) return legacy;
+    }
+    return null;
   } catch (_) {
     return null;
   }
@@ -73,6 +81,55 @@ async function restoreMember() {
     const member = localMember();
     if (member) await saveMember(member);
   }
+}
+
+async function ensureMemberNumber(profile = null) {
+  await authReady;
+  if (!uid) throw new Error('Firebase認証が完了していません。');
+
+  const userRef = doc(db, 'users', uid);
+  const counterRef = doc(db, 'system', 'memberCounter');
+
+  const assigned = await runTransaction(db, async transaction => {
+    const [userSnap, counterSnap] = await Promise.all([
+      transaction.get(userRef),
+      transaction.get(counterRef)
+    ]);
+    const userData = userSnap.exists() ? userSnap.data() : {};
+
+    // 新方式で発行済みなら同じ番号を永久に保持する。
+    if (userData.memberNumberVersion === 2 && Number(userData.number) > 0) {
+      return Number(userData.number);
+    }
+
+    const lastNumber = counterSnap.exists() ? Number(counterSnap.data().lastNumber || 0) : 0;
+    const nextNumber = lastNumber + 1;
+    transaction.set(counterRef, {
+      lastNumber: nextNumber,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    transaction.set(userRef, {
+      ...(profile || {}),
+      uid,
+      number: nextNumber,
+      memberNumberVersion: 2,
+      updatedAt: serverTimestamp(),
+      lastSeenAt: serverTimestamp()
+    }, { merge: true });
+    return nextNumber;
+  });
+
+  const member = { ...(localMember() || profile || {}), number: assigned, memberNumberVersion: 2 };
+  localStorage.setItem(MEMBER_KEY, JSON.stringify(member));
+  window.dispatchEvent(new CustomEvent('unica:firebase-member-restored', { detail: member }));
+  return assigned;
+}
+
+async function migrateLegacyMemberNumber() {
+  const member = localMember();
+  if (!member) return;
+  if (member.memberNumberVersion === 2 && Number(member.number) > 0) return;
+  await ensureMemberNumber(member);
 }
 
 async function heartbeat() {
@@ -124,6 +181,7 @@ window.UNICA_FIREBASE = {
   app, auth, db,
   get uid() { return uid; },
   saveMember: member => saveMember(member).catch(console.error),
+  ensureMemberNumber,
   removeMember: () => removeMember().catch(console.error),
   syncCommunityRows: rows => syncCommunityRows(rows).catch(console.error),
   syncCheer: data => syncCheer(data).catch(console.error),
@@ -143,8 +201,10 @@ onAuthStateChanged(auth, async user => {
   }
 
   uid = user.uid;
+  resolveAuthReady?.(uid);
   try {
     await restoreMember();
+    await migrateLegacyMemberNumber();
     await heartbeat();
     listenOnlineCount();
     presenceTimer = window.setInterval(heartbeat, 60_000);

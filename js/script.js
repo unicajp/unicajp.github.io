@@ -229,8 +229,8 @@
 
 
   // うにメン / うにパス
-  const MEMBER_KEY = 'unicaWorldMemberV2';
-  const LEGACY_MEMBER_KEY = 'unicaWorldMemberV1';
+  const MEMBER_KEY = 'unicaWorldMemberV4';
+  const LEGACY_MEMBER_KEYS = ['unicaWorldMemberV3', 'unicaWorldMemberV2', 'unicaWorldMemberV1'];
   const memberGate = document.getElementById('memberGate');
 
   const PREFECTURES = ['北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県','新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県','三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県','鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県','福岡県','佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県'];
@@ -272,7 +272,11 @@
     try {
       const current = JSON.parse(localStorage.getItem(MEMBER_KEY) || 'null');
       if (current) return current;
-      const legacy = JSON.parse(localStorage.getItem(LEGACY_MEMBER_KEY) || 'null');
+      let legacy = null;
+      for (const key of LEGACY_MEMBER_KEYS) {
+        legacy = JSON.parse(localStorage.getItem(key) || 'null');
+        if (legacy) break;
+      }
       if (!legacy) return null;
       const migrated = {
         ...legacy,
@@ -309,9 +313,12 @@
 
   function safeText(value) { return String(value ?? ''); }
 
-  function updateEmojiPreview() {
-    const one = normalizeEmoji(memberEmojiOne?.value, '🌸');
-    if (memberEmojiOne) memberEmojiOne.value = one;
+  function updateEmojiPreview(commit = false) {
+    const raw = memberEmojiOne?.value || '';
+    const one = normalizeEmoji(raw, '🌸');
+    // スマホの絵文字入力中は値を書き戻さない。
+    // ZWJ・肌色・旗など複数コードポイントの絵文字が途中で切れるのを防ぐ。
+    if (commit && memberEmojiOne) memberEmojiOne.value = one;
     if (emojiPreview) emojiPreview.textContent = one;
   }
 
@@ -415,13 +422,17 @@
     toast.timer = window.setTimeout(() => miniToast.classList.remove('is-show'), 2300);
   }
 
-  memberEmojiOne?.addEventListener('input', updateEmojiPreview);
+  let emojiComposing = false;
+  memberEmojiOne?.addEventListener('compositionstart', () => { emojiComposing = true; });
+  memberEmojiOne?.addEventListener('compositionend', () => { emojiComposing = false; updateEmojiPreview(false); });
+  memberEmojiOne?.addEventListener('input', () => { if (!emojiComposing) updateEmojiPreview(false); });
+  memberEmojiOne?.addEventListener('blur', () => updateEmojiPreview(true));
 
   document.querySelectorAll('[data-emoji]').forEach(button => {
     button.addEventListener('click', () => {
       if (!memberEmojiOne) return;
       memberEmojiOne.value = button.dataset.emoji || '';
-      updateEmojiPreview();
+      updateEmojiPreview(true);
       memberEmojiOne.focus();
     });
   });
@@ -463,7 +474,16 @@
 
   registerBack?.addEventListener('click', () => showRegisterStep('one'));
 
-  registerConfirm?.addEventListener('click', () => {
+  async function waitForFirebaseApi(timeoutMs = 10000) {
+    const started = Date.now();
+    while (!window.UNICA_FIREBASE?.ensureMemberNumber) {
+      if (Date.now() - started > timeoutMs) throw new Error('Firebaseの初期化に時間がかかっています。通信環境を確認してください。');
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    return window.UNICA_FIREBASE;
+  }
+
+  registerConfirm?.addEventListener('click', async () => {
     if (!pendingRegistration) return;
 
     if (editIconMode && member) {
@@ -482,7 +502,8 @@
       name: pendingRegistration.name,
       emojiOne: pendingRegistration.emojiOne,
       avatar: pendingRegistration.avatar,
-      number: 100 + Math.floor(Math.random() * 900),
+      number: null,
+      memberNumberVersion: 2,
       joined,
       milk: 0,
       tickets: 0,
@@ -496,7 +517,23 @@
       passStyle: 'normal',
       rewards: []
     };
-    writeMember(member);
+
+    registerConfirm.disabled = true;
+    registerConfirm.textContent = '会員番号を発行中…';
+    try {
+      const firebaseApi = await waitForFirebaseApi();
+      member.number = await firebaseApi.ensureMemberNumber(member);
+      writeMember(member);
+    } catch (error) {
+      console.error(error);
+      registerError.textContent = error?.message || '会員番号を発行できませんでした。通信環境を確認して、もう一度お試しください。';
+      showRegisterStep('one');
+      return;
+    } finally {
+      registerConfirm.disabled = false;
+      registerConfirm.textContent = 'この内容で登録する';
+    }
+
     document.getElementById('completeAvatar').textContent = member.avatar;
     document.getElementById('completeName').textContent = member.name;
     document.getElementById('completeNumber').textContent = `No.${String(member.number).padStart(4, '0')}`;
@@ -743,7 +780,7 @@
   withdrawalConfirmButton?.addEventListener('click', () => {
     if (withdrawalConfirmInput?.value.trim() !== 'たいかい') return;
     localStorage.removeItem(MEMBER_KEY);
-    localStorage.removeItem(LEGACY_MEMBER_KEY);
+    LEGACY_MEMBER_KEYS.forEach(key => localStorage.removeItem(key));
     window.UNICA_FIREBASE?.removeMember();
     member = null;
     pendingRegistration = null;
