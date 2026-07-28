@@ -2582,3 +2582,114 @@ main {
 .admin-member-list{display:grid;gap:9px}.admin-member-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px;border:1px solid rgba(116,82,87,.12);border-radius:18px;background:#fff}.admin-member-avatar{width:44px;height:44px;display:grid;place-items:center;border-radius:15px;background:#fff3f0;font-size:22px}.admin-member-info{min-width:0;display:grid;gap:2px}.admin-member-info strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#4e393c}.admin-member-info small{color:#978083;font-size:.68rem}.admin-delete-button{border:1px solid rgba(185,77,94,.22);border-radius:12px;background:#fff5f5;color:#b54f61;padding:9px 11px;font-weight:800;font-size:.72rem}.admin-delete-button:disabled{opacity:.5}.admin-empty{padding:30px 10px;text-align:center;color:#9a8588}
 .admin-delete-target{margin:14px 0;padding:14px;border-radius:16px;background:#fff3f1;color:#523b3e;font-weight:800}.admin-delete-actions{display:grid;grid-template-columns:1fr 1.25fr;gap:9px;margin-top:16px}.admin-delete-actions button{padding:13px 10px;border-radius:14px;font-weight:800}.admin-delete-actions button:first-child{border:1px solid #dccbcc;background:#fff;color:#765d61}.admin-delete-actions button:last-child{border:0;background:#b74e61;color:#fff}
 @media(max-width:520px){.admin-panel{padding:25px 16px 18px;border-radius:23px}.admin-member-row{gap:9px;padding:10px}.admin-member-avatar{width:39px;height:39px}.admin-delete-button{padding:8px 9px}.admin-members-panel{max-height:calc(100dvh - 16px)}}
+
+/* Phase 10.16 — comment scroll + readable/tappable floating comments only.
+   No intro/door selector or behavior is modified here. */
+body.support-modal-open{overflow:hidden!important;touch-action:none!important}
+#communityModal{align-items:center!important;overflow:hidden!important}
+#communityModal .support-panel-whole-scroll{
+  display:block!important;
+  width:min(680px,100%)!important;
+  height:auto!important;
+  max-height:calc(100dvh - 24px)!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  touch-action:pan-y!important;
+  -webkit-overflow-scrolling:touch!important;
+  padding-bottom:max(44px,env(safe-area-inset-bottom))!important;
+  scroll-padding-bottom:56px;
+}
+#communityModal .support-feed-natural-flow{
+  display:grid!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:visible!important;
+  touch-action:auto!important;
+  padding:2px 2px 34px!important;
+}
+#communityModal .support-panel-whole-scroll:focus-visible{outline:none}
+
+.support-comment-float-layer{
+  height:178px!important;
+  pointer-events:auto!important;
+  overflow:visible!important;
+}
+.support-floating-comment-button{
+  grid-template-columns:36px minmax(0,1fr) auto!important;
+  min-height:72px!important;
+  animation:supportCommentReadable 9.2s ease-in-out forwards!important;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important;
+}
+.support-floating-comment-button p{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:3!important;
+  overflow:hidden!important;
+  font-size:12px!important;
+  line-height:1.55!important;
+  word-break:break-word!important;
+}
+.support-floating-comment-button small{font-size:9px!important}
+.support-float-like{
+  align-self:center;
+  min-width:42px;
+  padding:7px 8px;
+  border-radius:999px;
+  background:rgba(255,244,247,.92);
+  color:#a6737e;
+  font-size:11px;
+  text-align:center;
+  white-space:nowrap;
+}
+.support-floating-comment-button.is-liked .support-float-like{background:#ffe3eb;color:#d35075}
+.support-floating-comment-button.is-tapped{transform:translateY(-4px) scale(.97)!important;box-shadow:0 16px 38px rgba(129,65,80,.23)!important}
+@keyframes supportCommentReadable{
+  0%{opacity:0;transform:translateY(16px) scale(.98)}
+  7%{opacity:1;transform:translateY(0) scale(1)}
+  88%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-8px) scale(.99)}
+}
+@media(max-width:520px){
+  #communityModal{padding:8px!important;align-items:center!important}
+  #communityModal .support-panel-whole-scroll{
+    width:100%!important;
+    max-height:calc(100dvh - 16px)!important;
+    border-radius:24px!important;
+    padding-bottom:max(58px,env(safe-area-inset-bottom))!important;
+  }
+  .support-comment-float-layer{height:162px!important}
+  .support-floating-comment-button{grid-template-columns:32px minmax(0,1fr) auto!important;padding:10px!important}
+  .support-floating-comment-button p{font-size:11px!important;-webkit-line-clamp:3!important}
+  .support-float-like{min-width:38px;padding:6px 7px;font-size:10px}
+}
+
+/* Phase10.17 — うにメン誕生日カレンダー */
+.birthday-month-card{margin:12px 0;padding:0;border:1px solid rgba(171,112,126,.18);border-radius:24px;background:linear-gradient(145deg,rgba(255,252,249,.96),rgba(252,240,242,.9));box-shadow:0 14px 35px rgba(83,55,51,.08);overflow:hidden}
+.birthday-month-open{width:100%;display:grid;grid-template-columns:48px minmax(0,1fr) auto 18px;gap:11px;align-items:center;padding:16px;border:0;background:transparent;color:inherit;text-align:left}
+.birthday-month-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(145deg,#fff,#f7e7ea);font-size:25px;box-shadow:0 7px 18px rgba(136,83,94,.09)}
+.birthday-month-copy{min-width:0;display:grid;gap:2px}.birthday-month-copy small{font-size:8px;letter-spacing:.16em;color:#9f747d}.birthday-month-copy strong{font-size:16px}.birthday-month-copy em{font-style:normal;font-size:11px;line-height:1.55;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.birthday-month-count{min-width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:#fff;color:#a35972;font-size:14px;font-weight:700}.birthday-month-arrow{font-size:24px;opacity:.35}
+.birthday-month-list{display:flex;gap:8px;padding:0 16px 15px;overflow-x:auto;scrollbar-width:none}.birthday-month-list::-webkit-scrollbar{display:none}.birthday-mini-member{flex:0 0 auto;display:grid;grid-template-columns:30px auto;grid-template-rows:auto auto;column-gap:7px;align-items:center;min-width:112px;padding:8px 10px;border:1px solid rgba(139,93,101,.1);border-radius:15px;background:rgba(255,255,255,.78);color:inherit;text-align:left}.birthday-mini-member>span{grid-row:1/3;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#fff;font-size:18px}.birthday-mini-member strong{max-width:78px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}.birthday-mini-member small{font-size:9px;color:#aa6e78}.birthday-month-empty{margin:0;padding:2px 0 4px;font-size:11px;opacity:.6}
+.birthday-today-celebration{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;margin:0 12px 13px;padding:12px;border-radius:17px;background:linear-gradient(120deg,#fff1f4,#fff8e9);border:1px solid rgba(220,145,157,.24);animation:birthdayGlow 2.4s ease-in-out infinite}.birthday-today-celebration[hidden]{display:none!important}.birthday-today-celebration>span{font-size:28px}.birthday-today-celebration small{display:block;font-size:8px;letter-spacing:.15em;color:#af6876}.birthday-today-celebration strong{display:block;font-size:12px}.birthday-today-celebration p{margin:3px 0 0;font-size:10px;opacity:.65}.birthday-today-celebration button{border:0;border-radius:999px;background:#6b444b;color:#fff;padding:8px 10px;font-size:10px;white-space:nowrap}
+@keyframes birthdayGlow{50%{box-shadow:0 0 0 6px rgba(238,174,187,.10),0 9px 25px rgba(161,94,107,.12)}}
+.birthday-calendar-panel{max-height:min(86vh,760px);overflow-y:auto;overscroll-behavior:contain}.birthday-calendar-intro{font-size:12px;line-height:1.7;opacity:.67}.birthday-calendar-months{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:15px 0}.birthday-calendar-months button{position:relative;display:flex;justify-content:center;align-items:baseline;gap:1px;min-width:0;padding:9px 2px;border:1px solid rgba(98,70,66,.09);border-radius:12px;background:rgba(255,255,255,.75);color:inherit}.birthday-calendar-months button strong{font-size:15px}.birthday-calendar-months button small{font-size:9px}.birthday-calendar-months button em{position:absolute;right:3px;top:3px;min-width:15px;height:15px;display:grid;place-items:center;border-radius:50%;background:#f3e2e5;color:#9a5967;font-size:8px;font-style:normal}.birthday-calendar-months button.is-active{background:#5c3d3c;color:#fff}.birthday-calendar-months button.is-active em{background:#fff;color:#884f5a}.birthday-calendar-heading{display:flex;align-items:center;justify-content:space-between;margin:15px 0 8px}.birthday-calendar-heading strong{font-size:15px}.birthday-calendar-heading span{padding:5px 9px;border-radius:999px;background:#f4e8e9;color:#9d5e69;font-size:10px}.birthday-calendar-list{display:grid;gap:7px;padding-bottom:10px}.birthday-calendar-member{display:grid;grid-template-columns:42px minmax(0,1fr) auto auto;gap:9px;align-items:center;padding:10px;border-radius:15px;background:rgba(255,255,255,.84);border:1px solid rgba(105,75,70,.08)}.birthday-calendar-avatar{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:#faf2ed;font-size:23px}.birthday-calendar-member div{min-width:0}.birthday-calendar-member strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}.birthday-calendar-member small{font-size:9px;opacity:.55}.birthday-calendar-member time{font-size:11px;color:#9e6470;white-space:nowrap}.birthday-calendar-member>em{font-style:normal;padding:4px 6px;border-radius:999px;background:#f2a8b2;color:#fff;font-size:8px}.birthday-calendar-empty{text-align:center;padding:35px 12px;border-radius:17px;background:rgba(255,255,255,.65)}.birthday-calendar-empty span{font-size:35px}.birthday-calendar-empty strong{display:block;margin-top:8px;font-size:13px}.birthday-calendar-empty p{font-size:10px;opacity:.6}
+.birthday-floating-message{position:fixed;z-index:10050;left:50%;top:calc(env(safe-area-inset-top,0px) + 18px);width:min(calc(100% - 28px),440px);display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;padding:12px 15px;border-radius:18px;background:rgba(255,249,244,.96);border:1px solid rgba(221,149,161,.35);box-shadow:0 16px 45px rgba(68,43,40,.22);backdrop-filter:blur(15px);transform:translate(-50%,-130%);opacity:0;transition:.48s cubic-bezier(.2,.8,.2,1);pointer-events:none}.birthday-floating-message.is-show{transform:translate(-50%,0);opacity:1}.birthday-floating-message>span{font-size:27px}.birthday-floating-message small{display:block;color:#af6574;font-size:8px;letter-spacing:.14em}.birthday-floating-message strong{display:block;font-size:12px;line-height:1.5}
+@media(max-width:480px){.birthday-month-open{grid-template-columns:43px minmax(0,1fr) auto 14px;padding:13px}.birthday-month-icon{width:43px;height:43px}.birthday-month-copy em{max-width:190px}.birthday-calendar-months{grid-template-columns:repeat(4,1fr)}.birthday-today-celebration{grid-template-columns:auto minmax(0,1fr)}.birthday-today-celebration button{grid-column:2;justify-self:start}.birthday-calendar-member{grid-template-columns:38px minmax(0,1fr) auto}.birthday-calendar-member>em{grid-column:3}.birthday-calendar-member time{grid-column:3;grid-row:1}.birthday-calendar-member>em{grid-row:2;justify-self:end}.birthday-calendar-avatar{width:38px;height:38px}}
+
+/* ===== Phase 10.18: ミルクの匂い リリースカウントダウン ===== */
+.milk-release-countdown{position:relative;overflow:hidden;border:1px solid rgba(231,162,177,.48);border-radius:24px;padding:18px;background:linear-gradient(145deg,rgba(255,252,247,.98),rgba(255,235,240,.94));box-shadow:0 14px 38px rgba(132,78,87,.13);isolation:isolate}
+.milk-release-glow{position:absolute;inset:-60%;z-index:-1;background:conic-gradient(from 0deg,transparent,rgba(255,255,255,.85),transparent 28%);animation:milkReleaseGlow 8s linear infinite}
+.milk-release-head{display:flex;align-items:center;gap:11px}.milk-release-bottle{display:grid;place-items:center;width:45px;height:45px;border-radius:16px;background:rgba(255,255,255,.8);font-size:25px;box-shadow:0 5px 15px rgba(143,85,98,.11)}
+.milk-release-title{display:flex;flex:1;min-width:0;flex-direction:column}.milk-release-title small{font-size:9px;letter-spacing:.13em;color:#a97984;font-weight:800}.milk-release-title strong{font-size:18px;line-height:1.35;color:#4a3338}
+.milk-release-badge{border-radius:999px;padding:6px 9px;background:#bd7584;color:#fff;font-size:8px;font-weight:900;letter-spacing:.08em;box-shadow:0 5px 14px rgba(154,83,99,.2)}
+.milk-release-lead{margin:17px 0 2px;text-align:center;font-size:12px;color:#8d6670}.milk-release-main{text-align:center}.milk-release-main strong{display:block;font-size:34px;line-height:1.25;color:#8f5361;letter-spacing:.02em}.milk-release-main span{display:block;margin-top:2px;font-variant-numeric:tabular-nums;font-size:12px;letter-spacing:.16em;color:#a47c85}
+.milk-release-progress{height:6px;margin:15px 5px 11px;overflow:hidden;border-radius:999px;background:rgba(173,116,129,.14)}.milk-release-progress i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#d99aaa,#af6475);transition:width .8s ease}
+.milk-release-note{margin:0;text-align:center;font-size:11px;line-height:1.65;color:#7d6268}.milk-release-link{display:block;margin:14px auto 0;border-radius:999px;padding:12px 16px;max-width:230px;background:linear-gradient(135deg,#9b5666,#c98391);color:#fff;text-align:center;text-decoration:none;font-weight:800;box-shadow:0 8px 20px rgba(151,79,96,.25)}
+.milk-release-countdown.is-eve{animation:milkReleasePulse 2.4s ease-in-out infinite}.milk-release-countdown.is-eve .milk-release-main strong{font-size:38px}.milk-release-countdown.is-released{background:linear-gradient(145deg,#fffaf0,#ffe3ea)}.milk-release-countdown.is-released .milk-release-glow{animation-duration:3s}.milk-release-countdown.is-released .milk-release-main strong{font-size:31px;background:linear-gradient(90deg,#995567,#d68d9d,#995567);-webkit-background-clip:text;background-clip:text;color:transparent}
+.milk-release-celebration{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:22px;background:rgba(52,31,38,.62);backdrop-filter:blur(9px);opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s ease}.milk-release-celebration.is-open{opacity:1;visibility:visible}.milk-release-celebration-light{position:absolute;width:min(92vw,520px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.85),rgba(255,187,204,.28) 48%,transparent 70%);animation:milkReleaseLight 2.3s ease-in-out infinite}
+.milk-release-celebration-panel{position:relative;z-index:2;width:min(92vw,390px);overflow:hidden;border:1px solid rgba(255,255,255,.78);border-radius:30px;padding:34px 24px 27px;background:linear-gradient(155deg,rgba(255,255,255,.97),rgba(255,226,234,.96));box-shadow:0 25px 80px rgba(56,22,33,.38);text-align:center;transform:scale(.86) translateY(18px);transition:transform .55s cubic-bezier(.18,.9,.25,1.2)}.milk-release-celebration.is-open .milk-release-celebration-panel{transform:scale(1) translateY(0)}
+.milk-release-celebration-close{position:absolute;top:12px;right:13px;width:34px;height:34px;border:0;border-radius:50%;background:rgba(99,59,69,.08);color:#75515a;font-size:22px}.milk-release-celebration-icon{font-size:54px;filter:drop-shadow(0 8px 12px rgba(136,78,91,.22));animation:milkBottleFloat 1.8s ease-in-out infinite}.milk-release-celebration-panel p{margin:12px 0 4px;font-size:10px;font-weight:900;letter-spacing:.18em;color:#ad7280}.milk-release-celebration-panel h2{margin:0;font-size:30px;color:#4a3037}.milk-release-celebration-panel strong{display:block;margin:8px 0 5px;font-size:26px;color:#b15f73}.milk-release-celebration-panel span{display:block;font-size:12px;color:#81656c}.milk-release-celebration-panel a{display:block;margin:21px auto 0;border-radius:999px;padding:13px 20px;background:linear-gradient(135deg,#965363,#ca7d8d);color:#fff;text-decoration:none;font-weight:900;box-shadow:0 10px 24px rgba(148,74,92,.3)}
+.milk-release-confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none}.milk-release-confetti i{position:absolute;top:-12vh;width:9px;height:15px;border-radius:3px;background:hsl(var(--h) 72% 72%);animation:milkConfettiFall var(--d) linear var(--delay) infinite;transform:rotate(var(--r))}
+@keyframes milkReleaseGlow{to{transform:rotate(360deg)}}@keyframes milkReleasePulse{50%{transform:translateY(-2px);box-shadow:0 18px 45px rgba(183,92,112,.24)}}@keyframes milkReleaseLight{50%{transform:scale(1.08);opacity:.75}}@keyframes milkBottleFloat{50%{transform:translateY(-7px) rotate(-3deg)}}@keyframes milkConfettiFall{to{transform:translate3d(var(--x),115vh,0) rotate(720deg)}}
+@media (prefers-reduced-motion:reduce){.milk-release-glow,.milk-release-countdown.is-eve,.milk-release-celebration-light,.milk-release-celebration-icon,.milk-release-confetti i{animation:none!important}}
