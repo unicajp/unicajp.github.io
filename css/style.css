@@ -2440,3 +2440,6 @@ body.is-guest #communityHomeCard .community-home-latest {
     border-radius: 24px !important;
   }
 }
+
+/* Phase10.9: mobile emoji input */
+.emoji-input,.emoji-preview{font-family:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif!important;}
