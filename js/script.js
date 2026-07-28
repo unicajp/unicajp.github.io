@@ -503,7 +503,7 @@
       emojiOne: pendingRegistration.emojiOne,
       avatar: pendingRegistration.avatar,
       number: null,
-      memberNumberVersion: 2,
+      memberNumberVersion: 3,
       joined,
       milk: 0,
       tickets: 0,

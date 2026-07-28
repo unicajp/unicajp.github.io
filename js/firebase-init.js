@@ -88,7 +88,7 @@ async function ensureMemberNumber(profile = null) {
   if (!uid) throw new Error('Firebase認証が完了していません。');
 
   const userRef = doc(db, 'users', uid);
-  const counterRef = doc(db, 'system', 'memberCounter');
+  const counterRef = doc(db, 'system', 'memberCounterV3');
 
   const assigned = await runTransaction(db, async transaction => {
     const [userSnap, counterSnap] = await Promise.all([
@@ -97,8 +97,8 @@ async function ensureMemberNumber(profile = null) {
     ]);
     const userData = userSnap.exists() ? userSnap.data() : {};
 
-    // 新方式で発行済みなら同じ番号を永久に保持する。
-    if (userData.memberNumberVersion === 2 && Number(userData.number) > 0) {
+    // 連番方式V3で発行済みなら同じ番号を永久に保持する。旧ランダム番号は再採番する。
+    if (userData.memberNumberVersion === 3 && Number(userData.number) > 0) {
       return Number(userData.number);
     }
 
@@ -112,14 +112,14 @@ async function ensureMemberNumber(profile = null) {
       ...(profile || {}),
       uid,
       number: nextNumber,
-      memberNumberVersion: 2,
+      memberNumberVersion: 3,
       updatedAt: serverTimestamp(),
       lastSeenAt: serverTimestamp()
     }, { merge: true });
     return nextNumber;
   });
 
-  const member = { ...(localMember() || profile || {}), number: assigned, memberNumberVersion: 2 };
+  const member = { ...(localMember() || profile || {}), number: assigned, memberNumberVersion: 3 };
   localStorage.setItem(MEMBER_KEY, JSON.stringify(member));
   window.dispatchEvent(new CustomEvent('unica:firebase-member-restored', { detail: member }));
   return assigned;
@@ -128,7 +128,7 @@ async function ensureMemberNumber(profile = null) {
 async function migrateLegacyMemberNumber() {
   const member = localMember();
   if (!member) return;
-  if (member.memberNumberVersion === 2 && Number(member.number) > 0) return;
+  if (member.memberNumberVersion === 3 && Number(member.number) > 0) return;
   await ensureMemberNumber(member);
 }
 
