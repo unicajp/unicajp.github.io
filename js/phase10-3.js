@@ -84,16 +84,25 @@
   function makeFloatingCommentsInteractive() {
     const layer = $('#supportCommentFloatLayer');
     if (!layer) return;
-    layer.setAttribute('aria-label', '最新の応援コメント。タップでいいねを切り替えられます。');
+    layer.setAttribute('aria-label', '最新の応援コメント。コメントをタップするといいねできます。');
     layer.addEventListener('click', async (event) => {
+      if (event.target.closest('.support-float-next')) return;
       const floating = event.target.closest('.support-floating-comment-button');
-      if (!floating || floating.disabled) return;
+      if (!floating || floating.dataset.busy === 'true') return;
       event.preventDefault();
       event.stopPropagation();
 
+      /* トップでは誤操作防止のため、いいね済みコメントの解除は行わない。 */
+      if (floating.classList.contains('is-liked')) {
+        floating.classList.add('is-tapped');
+        window.setTimeout(() => floating.classList.remove('is-tapped'), 430);
+        toast('いいね済みです。解除は応援コメント画面からできます。');
+        return;
+      }
+
       const postId = floating.dataset.postId;
       if (!postId) return;
-      floating.disabled = true;
+      floating.dataset.busy = 'true';
       floating.classList.add('is-tapped');
       const toggle = window.UNICA_TOGGLE_COMMENT_LIKE;
       let result = null;
@@ -101,17 +110,17 @@
       else {
         const card = commentCards().find((row) => row.dataset.postId === postId);
         const likeButton = card && $('[data-like-remote], [data-like-post]', card);
-        if (likeButton) likeButton.click();
+        if (likeButton && !likeButton.classList.contains('is-liked')) likeButton.click();
         else $('[data-world-nav="community"]')?.click();
       }
       window.setTimeout(() => floating.classList.remove('is-tapped'), 430);
       if (result) {
         const heart = $('.support-float-like', floating);
-        if (heart) heart.textContent = `${result.liked ? '♥' : '♡'} ${result.count}`;
-        floating.classList.toggle('is-liked', result.liked);
-        toast(result.liked ? 'いいねしました。' : 'いいねを取り消しました。');
+        if (heart) heart.textContent = `♥ ${result.count}`;
+        floating.classList.add('is-liked');
+        toast('いいねしました。');
       }
-      floating.disabled = false;
+      floating.dataset.busy = 'false';
     });
   }
 
@@ -122,6 +131,7 @@
     let timer = 0;
     let index = 0;
     let mutationTimer = 0;
+    const DISPLAY_MS = 15200;
 
     const show = () => {
       const cards = commentCards();
@@ -137,8 +147,10 @@
       floating.type = 'button';
       floating.className = `support-floating-comment support-floating-comment-button${data.liked ? ' is-liked' : ''}`;
       floating.dataset.postId = data.id;
-      floating.setAttribute('aria-label', `${data.name}さんのコメント。タップでいいねを切り替え`);
-      floating.innerHTML = '<span class="support-float-avatar"></span><div><p></p><small></small></div><b class="support-float-like"></b>';
+      floating.setAttribute('aria-label', data.liked
+        ? `${data.name}さんのコメント。いいね済みです。解除は応援コメント画面で行えます`
+        : `${data.name}さんのコメント。タップでいいね`);
+      floating.innerHTML = '<span class="support-float-avatar"></span><div class="support-float-copy"><p></p><small></small></div><b class="support-float-like"></b><button type="button" class="support-float-next" aria-label="次のコメントを表示">›</button>';
       $('.support-float-avatar', floating).textContent = data.avatar;
       $('p', floating).textContent = data.text;
       $('small', floating).textContent = `${data.name}さんからの応援`; 
@@ -146,14 +158,31 @@
       layer.replaceChildren(floating);
     };
 
+    const scheduleNext = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        show();
+        scheduleNext();
+      }, DISPLAY_MS);
+    };
+
+    const showAndRestart = () => {
+      show();
+      scheduleNext();
+    };
+
     const restart = () => {
       window.clearTimeout(mutationTimer);
-      mutationTimer = window.setTimeout(() => {
-        window.clearInterval(timer);
-        show();
-        timer = window.setInterval(show, 12400);
-      }, 120);
+      mutationTimer = window.setTimeout(showAndRestart, 120);
     };
+
+    layer.addEventListener('click', (event) => {
+      const next = event.target.closest('.support-float-next');
+      if (!next) return;
+      event.preventDefault();
+      event.stopPropagation();
+      showAndRestart();
+    });
 
     new MutationObserver(restart).observe(list, { childList: true, subtree: true });
     restart();
