@@ -2444,62 +2444,126 @@ body.is-guest #communityHomeCard .community-home-latest {
 /* Phase10.9: mobile emoji input */
 .emoji-input,.emoji-preview{font-family:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif!important;}
 
-/* Phase10.11: restore scrolling across every tab and modal */
+/* Phase 10.11-scroll-only — scroll recovery without changing the opening door */
+/* The opening animation and #intro / #introTrigger are intentionally untouched. */
 html {
   min-height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
-body.opened:not(.member-gate-open):not(.support-modal-open):not(.guest-lock-open):not(.modal-open) {
+body.opened {
+  min-height: 100%;
   overflow-x: hidden !important;
   overflow-y: auto !important;
-  touch-action: pan-y !important;
+  touch-action: pan-y;
   overscroll-behavior-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
-body.site-entered main,
-body.opened main {
-  overflow: visible !important;
+main {
+  overflow-x: hidden;
+  overflow-y: visible;
 }
+
+/* Every full-screen panel must keep its own vertical scrolling area. */
 .world-modal-panel,
 .member-register,
 .member-settings-panel,
 .guest-lock-panel,
-.support-panel-scroll-fixed,
+.support-panel,
+.notification-panel,
+.passport-detail-panel,
 .prefecture-directory-panel,
 .prefecture-members-panel,
-.notification-list {
-  -webkit-overflow-scrolling: touch;
+.fortune-panel,
+.cheer-ranking-panel {
+  max-height: calc(100dvh - 28px) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
   overscroll-behavior: contain;
   touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
 }
-.world-modal.is-open,
-.guest-lock-modal.is-open,
-.member-gate.is-open,
-.member-settings.is-open {
-  touch-action: none;
+
+/* The comment modal uses a fixed header and a separately scrolling feed. */
+.support-panel-scroll-fixed {
+  overflow: hidden !important;
+  touch-action: auto;
 }
-.world-modal.is-open .world-modal-panel,
-.guest-lock-modal.is-open .guest-lock-panel,
-.member-gate.is-open .member-register,
-.member-settings.is-open .member-settings-panel {
+.support-feed-scroll-fixed,
+.community-list,
+.notification-list,
+.prefecture-directory-list,
+.prefecture-members-list {
+  min-height: 0;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
   touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
 }
-@media (max-width: 760px) {
-  body.opened:not(.member-gate-open):not(.support-modal-open):not(.guest-lock-open):not(.modal-open) {
-    height: auto !important;
-    min-height: 100dvh;
-    position: static !important;
-  }
+
+/* Keep enough space above the phone navigation bar. */
+@media (max-width: 800px) {
+  body.opened { padding-bottom: max(92px, calc(72px + env(safe-area-inset-bottom))) !important; }
+  .world-modal,
+  .member-gate,
+  .member-settings,
+  .guest-lock-modal { padding-bottom: max(14px, env(safe-area-inset-bottom)); }
   .world-modal-panel,
   .member-register,
   .member-settings-panel,
   .guest-lock-panel,
+  .support-panel,
+  .notification-panel,
+  .passport-detail-panel,
   .prefecture-directory-panel,
   .prefecture-members-panel {
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    max-height: calc(100dvh - 24px) !important;
+    max-height: calc(100dvh - 20px) !important;
   }
 }
-\n\n/* Phase 10.12 — Google account linking and door recovery */\n.intro{z-index:10000;pointer-events:auto!important}\n.intro-trigger{pointer-events:auto!important;touch-action:manipulation!important}\n.google-auth-separator{display:flex;align-items:center;gap:10px;margin:16px 0 12px;color:#a38e84;font-size:11px}\n.google-auth-separator::before,.google-auth-separator::after{content:"";height:1px;flex:1;background:rgba(112,82,70,.14)}\n.google-auth-button,.google-settings-button{width:100%;border:1px solid rgba(92,70,62,.16);background:#fff;color:#4f3b34;border-radius:16px;display:flex;align-items:center;gap:12px;text-align:left;box-shadow:0 8px 24px rgba(76,51,43,.05)}\n.google-auth-button{padding:13px 15px;justify-content:center}\n.google-auth-button>span:nth-child(2){display:grid;gap:1px}\n.google-auth-button b,.google-settings-button b{font-size:13px}\n.google-auth-button small,.google-settings-button small{font-size:10px;color:#8e786e;font-weight:400}\n.google-g-mark{width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#fff;border:1px solid #e3e3e3;color:#4285f4;font-family:Arial,sans-serif;font-size:18px;font-weight:700;flex:0 0 auto}\n.google-auth-button:disabled,.google-settings-button:disabled{opacity:.58;cursor:wait}\n.google-auth-message{min-height:1.4em;margin:8px 0 0;text-align:center;color:#916f64;font-size:11px;line-height:1.5}\n.google-auth-message.is-error{color:#b34c58}\n.google-auth-message.is-success{color:#4f8a67}\n.settings-google-message{margin:12px 10px 0}\n.google-settings-button.is-linked{background:#f5fbf7;border-color:#cfe8d7}\n.google-settings-button.is-linked .google-g-mark{color:#34a853}\n
+
+
+/* Phase 10.12 — Google account linking only (door and scroll behavior unchanged) */
+.google-auth-separator{display:flex;align-items:center;gap:10px;margin:16px 0 12px;color:#a38e84;font-size:11px}
+.google-auth-separator::before,.google-auth-separator::after{content:"";height:1px;flex:1;background:rgba(112,82,70,.14)}
+.google-auth-button,.google-settings-button{width:100%;border:1px solid rgba(92,70,62,.16);background:#fff;color:#4f3b34;border-radius:16px;display:flex;align-items:center;gap:12px;text-align:left;box-shadow:0 8px 24px rgba(76,51,43,.05)}
+.google-auth-button{padding:13px 15px;justify-content:center}
+.google-auth-button>span:nth-child(2){display:grid;gap:1px}
+.google-auth-button b,.google-settings-button b{font-size:13px}
+.google-auth-button small,.google-settings-button small{font-size:10px;color:#8e786e;font-weight:400}
+.google-g-mark{width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#fff;border:1px solid #e3e3e3;color:#4285f4;font-family:Arial,sans-serif;font-size:18px;font-weight:700;flex:0 0 auto}
+.google-auth-button:disabled,.google-settings-button:disabled{opacity:.58;cursor:wait}
+.google-auth-message{min-height:1.4em;margin:8px 0 0;text-align:center;color:#916f64;font-size:11px;line-height:1.5}
+.google-auth-message.is-error{color:#b34c58}
+.google-auth-message.is-success{color:#4f8a67}
+.settings-google-message{margin:12px 10px 0}
+.google-settings-button.is-linked{background:#f5fbf7;border-color:#cfe8d7}
+.google-settings-button.is-linked .google-g-mark{color:#34a853}
+
+/* Phase10.13: 無料うにメン登録の案内 */
+.free-member-card {
+  margin: 0 0 22px;
+  padding: 18px 18px 16px;
+  border: 1px solid rgba(203,131,143,.28);
+  border-radius: 22px;
+  background: linear-gradient(145deg,rgba(255,255,255,.94),rgba(255,241,236,.92));
+  box-shadow: 0 12px 30px rgba(185,95,113,.09);
+  text-align: left;
+}
+.free-member-card-heading { display:flex; align-items:center; gap:11px; }
+.free-member-card-heading>span { width:42px; height:42px; flex:0 0 42px; display:grid; place-items:center; border-radius:15px; background:#fff; box-shadow:0 7px 18px rgba(185,95,113,.12); font-size:21px; }
+.free-member-card-heading div { display:grid; gap:2px; }
+.free-member-card-heading small { color:#b36c79; font-size:9px; font-weight:800; letter-spacing:.16em; }
+.free-member-card-heading strong { color:#4b3435; font-size:1rem; line-height:1.45; }
+.free-member-card>p { margin:12px 0 11px; color:#756363; font-size:.78rem; line-height:1.75; }
+.free-member-card ul { display:grid; grid-template-columns:1fr 1fr; gap:7px 10px; margin:0; padding:0; list-style:none; }
+.free-member-card li { display:flex; align-items:flex-start; gap:6px; color:#604b4c; font-size:.72rem; line-height:1.45; }
+.register-free-note { margin:9px 0 0; color:#9a6f75; font-size:.68rem; line-height:1.55; }
+.guest-free-highlight { color:#bb6172; font-size:1.02em; }
+@media (max-width:520px) {
+  .free-member-card { margin-bottom:14px; padding:14px; border-radius:18px; }
+  .free-member-card-heading>span { width:36px; height:36px; flex-basis:36px; border-radius:12px; font-size:18px; }
+  .free-member-card-heading strong { font-size:.88rem; }
+  .free-member-card>p { margin:9px 0; font-size:.69rem; line-height:1.6; }
+  .free-member-card ul { grid-template-columns:1fr; gap:4px; }
+  .free-member-card li { font-size:.68rem; }
+}
