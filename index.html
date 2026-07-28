@@ -60,7 +60,7 @@
 <section aria-label="うにか ホーム" class="hero section-shell">
 <figure aria-label="うにか アーティストビジュアル" class="hero-portrait reveal" data-depth="0.028">
 <span aria-hidden="true" class="portrait-halo"></span>
-<img alt="うにか アイコン" src="icon.png"/>
+<img alt="うにか アイコン" id="unikaAdminTrigger" src="icon.png"/>
 <button aria-label="うにかへエールを送る" aria-pressed="false" class="hero-cheer-button" id="heroCheerButton" type="button">♡</button>
 <div aria-hidden="true" class="heart-burst" id="heartBurst"></div>
 <div aria-live="polite" class="hero-cheer-counter" id="heroCheerCounter"><small>TODAY</small><strong id="heroCheerTotal">0</strong></div>
@@ -444,6 +444,43 @@
     <button class="guest-lock-cancel" data-close-guest-lock type="button">公式サイトを見る</button>
   </section>
 </div>
+
+<div aria-hidden="true" class="admin-modal" id="adminPasswordModal">
+  <div class="admin-modal-backdrop" data-close-admin></div>
+  <section class="admin-panel admin-password-panel" role="dialog" aria-modal="true" aria-labelledby="adminPasswordTitle">
+    <button class="admin-close" data-close-admin type="button" aria-label="閉じる">×</button>
+    <div class="admin-lock-icon" aria-hidden="true">🔐</div>
+    <p class="eyebrow">UNICA WORLD ADMIN</p>
+    <h2 id="adminPasswordTitle">管理画面</h2>
+    <p>管理パスワードを入力してください。</p>
+    <input id="adminPasswordInput" class="admin-password-input" type="password" autocomplete="current-password" placeholder="パスワード" />
+    <p class="admin-message" id="adminPasswordMessage" aria-live="polite"></p>
+    <button class="admin-primary" id="adminPasswordSubmit" type="button">管理画面を開く</button>
+  </section>
+</div>
+<div aria-hidden="true" class="admin-modal" id="adminMembersModal">
+  <div class="admin-modal-backdrop" data-close-admin-members></div>
+  <section class="admin-panel admin-members-panel" role="dialog" aria-modal="true" aria-labelledby="adminMembersTitle">
+    <button class="admin-close" data-close-admin-members type="button" aria-label="閉じる">×</button>
+    <p class="eyebrow">UNICA WORLD ADMIN</p>
+    <h2 id="adminMembersTitle">うにメン管理</h2>
+    <div class="admin-members-summary"><strong id="adminMemberCount">0</strong><span>人のうにメン</span></div>
+    <div class="admin-search-wrap"><input id="adminMemberSearch" type="search" placeholder="名前・会員番号・都道府県で検索" /></div>
+    <p class="admin-message" id="adminMembersMessage" aria-live="polite"></p>
+    <div class="admin-member-list" id="adminMemberList"></div>
+  </section>
+</div>
+<div aria-hidden="true" class="admin-modal" id="adminDeleteModal">
+  <div class="admin-modal-backdrop"></div>
+  <section class="admin-panel admin-delete-panel" role="dialog" aria-modal="true" aria-labelledby="adminDeleteTitle">
+    <div class="admin-delete-icon" aria-hidden="true">⚠️</div>
+    <h2 id="adminDeleteTitle">このうにメンを削除しますか？</h2>
+    <div class="admin-delete-target" id="adminDeleteTarget"></div>
+    <p>削除後、この端末から同じアカウントで再アクセスしても、うにメン情報は復元されません。</p>
+    <div class="admin-delete-actions"><button id="adminDeleteCancel" type="button">いいえ</button><button id="adminDeleteConfirm" type="button">はい、削除する</button></div>
+    <p class="admin-message" id="adminDeleteMessage" aria-live="polite"></p>
+  </section>
+</div>
 <div aria-live="polite" class="mini-toast" id="miniToast" role="status"></div>
 <script type="module" src="js/firebase-init.js"></script>
 <script type="module" src="js/phase10-2.js"></script>
@@ -453,5 +490,6 @@
 <script src="js/phase10-5-guest.js"></script>
 <script src="js/phase10-11-scroll-only.js"></script>
 <script src="js/phase10-12-google.js"></script>
+<script type="module" src="js/phase10-14-admin.js"></script>
 </body>
 </html>
