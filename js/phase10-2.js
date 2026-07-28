@@ -103,7 +103,12 @@ function renderComments(){
   const latest=[...comments].sort((a,b)=>Number(b.createdAt?.seconds||0)-Number(a.createdAt?.seconds||0))[0];
   const homeLatest=$('#communityHomeLatest');
   if(homeLatest) homeLatest.innerHTML=latest?`<span>${esc(latest.avatar||'🌸')}</span><div><button class="member-name-text" data-member-uid="${esc(latest.ownerUid)}" type="button">${esc(latest.name)}</button><p>${esc(latest.text)}</p></div><em>♥ ${Number(latest.likeCount||0)}</em>`:`<div><strong>まだ応援コメントはありません</strong><p>最初の応援コメントを書いてみよう！</p></div>`;
-  $$('#communityList [data-like-remote]').forEach(b=>b.onclick=()=>toggleCommentLike(b.dataset.likeRemote));
+  $$('#communityList [data-like-remote]').forEach(b=>b.onclick=async()=>{
+    if(b.disabled) return;
+    b.disabled=true;
+    await toggleCommentLike(b.dataset.likeRemote);
+    b.disabled=false;
+  });
   $$('#communityList [data-delete-remote]').forEach(b=>b.onclick=()=>deleteRemoteComment(b.dataset.deleteRemote));
   $$('[data-member-uid]').forEach(b=>b.onclick=()=>openMemberPass(b.dataset.memberUid));
   updateComposer(); updatePassport();
@@ -124,9 +129,40 @@ async function submitRemoteComment(event){
   ta.value=''; $('#communityCount') && ($('#communityCount').textContent='0 / 80'); toast('うにかへ応援コメントを送りました。');
 }
 async function toggleCommentLike(id){
-  if(!uid)return; const likeRef=doc(db,'supportComments',id,'likes',uid), commentRef=doc(db,'supportComments',id);
-  await runTransaction(db,async tx=>{ const [l,c]=await Promise.all([tx.get(likeRef),tx.get(commentRef)]); if(!c.exists())return; const n=Math.max(0,Number(c.data().likeCount||0)); if(l.exists()){tx.delete(likeRef);tx.update(commentRef,{likeCount:Math.max(0,n-1),updatedAt:serverTimestamp()});}else{tx.set(likeRef,{uid,createdAt:serverTimestamp()});tx.update(commentRef,{likeCount:n+1,updatedAt:serverTimestamp()}); if(c.data().ownerUid&&c.data().ownerUid!==uid){const nr=doc(collection(db,'users',c.data().ownerUid,'notifications'));tx.set(nr,{type:'commentLike',text:`${member()?.name||'うにメン'}さんがあなたの応援コメントにいいねしました`,commentId:id,read:false,createdAt:serverTimestamp()});}} });
+  if(!uid || !id) return null;
+  const likeRef=doc(db,'supportComments',id,'likes',uid), commentRef=doc(db,'supportComments',id);
+  try {
+    let nextLiked=false;
+    let nextCount=0;
+    await runTransaction(db,async tx=>{
+      const [l,c]=await Promise.all([tx.get(likeRef),tx.get(commentRef)]);
+      if(!c.exists()) throw new Error('comment-not-found');
+      const n=Math.max(0,Number(c.data().likeCount||0));
+      if(l.exists()){
+        nextLiked=false; nextCount=Math.max(0,n-1);
+        tx.delete(likeRef);
+        tx.update(commentRef,{likeCount:nextCount,updatedAt:serverTimestamp()});
+      }else{
+        nextLiked=true; nextCount=n+1;
+        tx.set(likeRef,{uid,createdAt:serverTimestamp()});
+        tx.update(commentRef,{likeCount:nextCount,updatedAt:serverTimestamp()});
+        if(c.data().ownerUid&&c.data().ownerUid!==uid){
+          const nr=doc(collection(db,'users',c.data().ownerUid,'notifications'));
+          tx.set(nr,{type:'commentLike',text:`${member()?.name||'うにメン'}さんがあなたの応援コメントにいいねしました`,commentId:id,read:false,createdAt:serverTimestamp()});
+        }
+      }
+    });
+    if(nextLiked) myLikedCommentIds.add(id); else myLikedCommentIds.delete(id);
+    const row=comments.find(x=>x.id===id); if(row) row.likeCount=nextCount;
+    renderComments();
+    return {liked:nextLiked,count:nextCount};
+  } catch(error) {
+    console.error('comment like',error);
+    toast('いいねを更新できませんでした。Firestoreルールも更新してください。');
+    return null;
+  }
 }
+window.UNICA_TOGGLE_COMMENT_LIKE = toggleCommentLike;
 async function deleteRemoteComment(id){ if(!confirm('この応援コメントを削除しますか？'))return; await deleteDoc(doc(db,'supportComments',id)); toast('応援コメントを削除しました。'); }
 function listenComments(){
   onSnapshot(query(collection(db,'supportComments'),orderBy('createdAt','desc'),limit(300)),snap=>{comments=snap.docs.map(d=>({id:d.id,...d.data()})).filter(row=>!String(row.id||'').startsWith('demo-')&&!String(row.ownerUid||'').startsWith('demo-'));renderComments();},error=>console.error('comments',error));

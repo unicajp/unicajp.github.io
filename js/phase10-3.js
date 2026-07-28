@@ -85,32 +85,33 @@
     const layer = $('#supportCommentFloatLayer');
     if (!layer) return;
     layer.setAttribute('aria-label', '最新の応援コメント。タップでいいねを切り替えられます。');
-    layer.addEventListener('click', (event) => {
+    layer.addEventListener('click', async (event) => {
       const floating = event.target.closest('.support-floating-comment-button');
-      if (!floating) return;
+      if (!floating || floating.disabled) return;
       event.preventDefault();
       event.stopPropagation();
 
       const postId = floating.dataset.postId;
-      const card = commentCards().find((row) => row.dataset.postId === postId);
-      const likeButton = card && $('[data-like-remote], [data-like-post]', card);
-      if (!likeButton) {
-        $('[data-world-nav="community"]')?.click();
-        return;
-      }
-
-      likeButton.click();
+      if (!postId) return;
+      floating.disabled = true;
       floating.classList.add('is-tapped');
+      const toggle = window.UNICA_TOGGLE_COMMENT_LIKE;
+      let result = null;
+      if (typeof toggle === 'function') result = await toggle(postId);
+      else {
+        const card = commentCards().find((row) => row.dataset.postId === postId);
+        const likeButton = card && $('[data-like-remote], [data-like-post]', card);
+        if (likeButton) likeButton.click();
+        else $('[data-world-nav="community"]')?.click();
+      }
       window.setTimeout(() => floating.classList.remove('is-tapped'), 430);
-      window.setTimeout(() => {
-        const refreshed = dataFromCard(card);
+      if (result) {
         const heart = $('.support-float-like', floating);
-        if (refreshed && heart) {
-          heart.textContent = `${refreshed.liked ? '♥' : '♡'} ${refreshed.count}`;
-          floating.classList.toggle('is-liked', refreshed.liked);
-          toast(refreshed.liked ? 'いいねしました。' : 'いいねを取り消しました。');
-        }
-      }, 500);
+        if (heart) heart.textContent = `${result.liked ? '♥' : '♡'} ${result.count}`;
+        floating.classList.toggle('is-liked', result.liked);
+        toast(result.liked ? 'いいねしました。' : 'いいねを取り消しました。');
+      }
+      floating.disabled = false;
     });
   }
 
@@ -150,7 +151,7 @@
       mutationTimer = window.setTimeout(() => {
         window.clearInterval(timer);
         show();
-        timer = window.setInterval(show, 9800);
+        timer = window.setInterval(show, 12400);
       }, 120);
     };
 

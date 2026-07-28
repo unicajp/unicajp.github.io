@@ -934,7 +934,9 @@
     floatLayer.innerHTML=''; floatLayer.appendChild(bubble); setTimeout(()=>bubble.remove(),6500);
   }
   function startSupportFloat(){
-    if(!floatLayer||floatTimer)return; showNextSupportFloat(); floatTimer=setInterval(showNextSupportFloat,8000);
+    // Phase10.16以降はFirebaseのコメント表示（phase10-3.js）が担当する。
+    // 旧ローカル表示が同じレイヤーを6.5秒で消してしまう競合を停止する。
+    return;
   }
   function openCommunityModal(){ if(!readMember()){openMemberGate(true);return;} renderCommunity(); communityModal?.classList.add('is-open'); communityModal?.setAttribute('aria-hidden','false'); body.classList.add('member-gate-open'); }
   function closeCommunityModal(){ communityModal?.classList.remove('is-open'); communityModal?.setAttribute('aria-hidden','true'); body.classList.remove('member-gate-open'); }
