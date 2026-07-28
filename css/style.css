@@ -2443,3 +2443,62 @@ body.is-guest #communityHomeCard .community-home-latest {
 
 /* Phase10.9: mobile emoji input */
 .emoji-input,.emoji-preview{font-family:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif!important;}
+
+/* Phase10.11: restore scrolling across every tab and modal */
+html {
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+body.opened:not(.member-gate-open):not(.support-modal-open):not(.guest-lock-open):not(.modal-open) {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  touch-action: pan-y !important;
+  overscroll-behavior-y: auto;
+}
+body.site-entered main,
+body.opened main {
+  overflow: visible !important;
+}
+.world-modal-panel,
+.member-register,
+.member-settings-panel,
+.guest-lock-panel,
+.support-panel-scroll-fixed,
+.prefecture-directory-panel,
+.prefecture-members-panel,
+.notification-list {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+.world-modal.is-open,
+.guest-lock-modal.is-open,
+.member-gate.is-open,
+.member-settings.is-open {
+  touch-action: none;
+}
+.world-modal.is-open .world-modal-panel,
+.guest-lock-modal.is-open .guest-lock-panel,
+.member-gate.is-open .member-register,
+.member-settings.is-open .member-settings-panel {
+  touch-action: pan-y;
+}
+@media (max-width: 760px) {
+  body.opened:not(.member-gate-open):not(.support-modal-open):not(.guest-lock-open):not(.modal-open) {
+    height: auto !important;
+    min-height: 100dvh;
+    position: static !important;
+  }
+  .world-modal-panel,
+  .member-register,
+  .member-settings-panel,
+  .guest-lock-panel,
+  .prefecture-directory-panel,
+  .prefecture-members-panel {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    max-height: calc(100dvh - 24px) !important;
+  }
+}
