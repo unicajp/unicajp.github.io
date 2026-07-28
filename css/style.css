@@ -2727,3 +2727,44 @@ body.support-modal-open{overflow:hidden!important;touch-action:none!important}
   .support-floating-comment-button{grid-template-columns:32px minmax(0,1fr) auto 29px!important;gap:7px!important}
   .support-float-next{width:28px;height:28px;font-size:21px}
 }
+
+/* Phase 10.18.3 — keep the top comment clear of the release card and widen BGM number selector */
+.support-comment-float-layer{
+  bottom:202px!important;
+  height:176px!important;
+}
+
+.music-player{
+  grid-template-columns:46px minmax(0,1fr) 68px 90px!important;
+}
+.music-player .track-select{
+  width:68px!important;
+  min-width:68px!important;
+  padding-left:13px!important;
+  padding-right:24px!important;
+  text-align:center!important;
+  text-align-last:center!important;
+}
+
+@media(max-width:520px){
+  .support-comment-float-layer{
+    bottom:198px!important;
+    height:168px!important;
+  }
+  .music-player{
+    grid-template-columns:38px minmax(0,1fr) 64px!important;
+  }
+  .music-player .track-select{
+    width:64px!important;
+    min-width:64px!important;
+    padding-left:11px!important;
+    padding-right:22px!important;
+    font-size:13px!important;
+  }
+}
+
+@media(max-width:360px){
+  .support-comment-float-layer{bottom:190px!important}
+  .music-player{grid-template-columns:36px minmax(0,1fr) 60px!important}
+  .music-player .track-select{width:60px!important;min-width:60px!important;padding-left:9px!important;padding-right:20px!important}
+}
