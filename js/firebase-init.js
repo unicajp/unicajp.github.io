@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
-import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
+import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, linkWithPopup, signInWithPopup } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
 import {
   getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp,
   collection, query, where, onSnapshot, writeBatch, runTransaction
@@ -17,6 +17,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 const MEMBER_KEY = 'unicaWorldMemberV4';
 const LEGACY_MEMBER_KEYS = ['unicaWorldMemberV3', 'unicaWorldMemberV2', 'unicaWorldMemberV1'];
 const ONLINE_WINDOW_MS = 5 * 60 * 1000;
@@ -177,6 +179,32 @@ async function syncCheer(data) {
   }, { merge: true });
 }
 
+function authInfo() {
+  const user = auth.currentUser;
+  return {
+    signedIn: Boolean(user),
+    anonymous: Boolean(user?.isAnonymous),
+    googleLinked: Boolean(user?.providerData?.some(provider => provider.providerId === 'google.com')),
+    email: user?.providerData?.find(provider => provider.providerId === 'google.com')?.email || ''
+  };
+}
+
+async function linkGoogleAccount() {
+  await authReady;
+  const user = auth.currentUser;
+  if (!user) throw new Error('Firebase認証が完了していません。');
+  if (user.providerData.some(provider => provider.providerId === 'google.com')) return authInfo();
+  const result = await linkWithPopup(user, googleProvider);
+  window.dispatchEvent(new CustomEvent('unica:auth-provider-changed', { detail: authInfo() }));
+  return { ...authInfo(), credentialUser: result.user };
+}
+
+async function signInGoogleAccount() {
+  const result = await signInWithPopup(auth, googleProvider);
+  window.dispatchEvent(new CustomEvent('unica:auth-provider-changed', { detail: authInfo() }));
+  return { ...authInfo(), credentialUser: result.user };
+}
+
 window.UNICA_FIREBASE = {
   app, auth, db,
   get uid() { return uid; },
@@ -185,7 +213,10 @@ window.UNICA_FIREBASE = {
   removeMember: () => removeMember().catch(console.error),
   syncCommunityRows: rows => syncCommunityRows(rows).catch(console.error),
   syncCheer: data => syncCheer(data).catch(console.error),
-  heartbeat: () => heartbeat().catch(console.error)
+  heartbeat: () => heartbeat().catch(console.error),
+  authInfo,
+  linkGoogleAccount,
+  signInGoogleAccount
 };
 
 setStatus('connecting', 'Firebase 接続中');
@@ -202,6 +233,7 @@ onAuthStateChanged(auth, async user => {
 
   uid = user.uid;
   resolveAuthReady?.(uid);
+  window.dispatchEvent(new CustomEvent('unica:auth-provider-changed', { detail: authInfo() }));
   try {
     await restoreMember();
     await migrateLegacyMemberNumber();
