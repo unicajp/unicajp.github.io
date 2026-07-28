@@ -2881,3 +2881,35 @@ body.support-modal-open{overflow:hidden!important;touch-action:none!important}
     height:94px!important;
   }
 }
+
+/* Phase 10.18.6 — reserve a real gap between the floating support comment and release card */
+@media(max-width:780px){
+  /* The comment is absolutely positioned below the portrait, so reserve its space in normal flow. */
+  .hero-portrait{
+    margin-bottom:196px!important;
+  }
+  #unime.unime-section{
+    padding-top:28px!important;
+  }
+  #worldHome .release-card.app-feature-card{
+    margin-top:18px!important;
+  }
+}
+
+@media(max-width:520px){
+  .hero-portrait{
+    margin-bottom:208px!important;
+  }
+  #unime.unime-section{
+    padding-top:32px!important;
+  }
+  #worldHome .release-card.app-feature-card{
+    margin-top:20px!important;
+  }
+}
+
+@media(max-width:360px){
+  .hero-portrait{
+    margin-bottom:214px!important;
+  }
+}
