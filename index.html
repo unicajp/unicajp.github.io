@@ -254,6 +254,12 @@
 <p aria-live="polite" class="register-error" id="registerError"></p>
 <button class="register-primary" id="registerSubmit" type="button">登録内容を確認する</button>
 <button class="register-skip" id="registerSkip" type="button">今は登録せず、公式サイトを見る</button>
+<div class="google-auth-separator"><span>または</span></div>
+<button class="google-auth-button google-auth-restore" id="googleRestoreButton" type="button">
+  <span class="google-g-mark" aria-hidden="true">G</span>
+  <span><b>Googleで引き継ぐ</b><small>別の端末で使っていたうにパスを開きます</small></span>
+</button>
+<p class="google-auth-message" id="googleRestoreMessage" aria-live="polite"></p>
 </div>
 <div class="register-step register-confirm" hidden="" id="registerStepConfirm">
 <p class="complete-small">CONFIRM YOUR UNICA PASS</p>
@@ -297,9 +303,10 @@
 </div>
 <div class="settings-menu" id="settingsMenu">
 <button id="settingsEditIcon" type="button"><span>🌸</span><div><b>アイコンを変更</b><small>好きな絵文字を1つ選びます</small></div><i>›</i></button>
-<button class="settings-danger-link" id="openWithdrawal" type="button"><span>↩</span><div><b>UNICA WORLDから退会</b><small>うにパスと保存データを削除します</small></div><i>›</i></button>
+<button class="google-settings-button" id="googleLinkButton" type="button"><span class="google-g-mark" aria-hidden="true">G</span><div><b id="googleLinkTitle">Googleアカウントと連携</b><small id="googleLinkDescription">機種変更後も同じうにパスを引き継げます</small></div><i>›</i></button>
 </div>
-<div class="withdrawal-step" hidden="" id="withdrawalStep">
+<p class="google-auth-message settings-google-message" id="googleLinkMessage" aria-live="polite"></p>
+<div class="withdrawal-step" hidden="" id="withdrawalStep" style="display:none!important">
 <button class="withdrawal-back" id="withdrawalBack" type="button">← 設定に戻る</button>
 <div class="withdrawal-symbol">🌙</div>
 <h3>本当に退会しますか？</h3>
@@ -433,5 +440,6 @@
 <script type="module" src="js/phase10-7-prefectures.js"></script>
 <script src="js/phase10-5-guest.js"></script>
 <script src="js/phase10-11-scroll-fix.js"></script>
+<script src="js/phase10-12-google-door-fix.js"></script>
 </body>
 </html>
