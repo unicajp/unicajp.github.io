@@ -2768,3 +2768,75 @@ body.support-modal-open{overflow:hidden!important;touch-action:none!important}
   .music-player{grid-template-columns:36px minmax(0,1fr) 60px!important}
   .music-player .track-select{width:60px!important;min-width:60px!important;padding-left:9px!important;padding-right:20px!important}
 }
+
+/* Phase 10.18.4 — compact NEW RELEASE card and keep floating comments readable */
+.release-card.app-feature-card{
+  grid-template-columns:78px minmax(0,1fr)!important;
+  gap:12px!important;
+  padding:13px 14px!important;
+  border-radius:22px!important;
+  margin-top:18px!important;
+}
+.release-card .release-art{
+  min-height:102px!important;
+  height:102px!important;
+  border-radius:17px!important;
+}
+.release-card .release-art span{font-size:29px!important}
+.release-card .release-copy small{font-size:9px!important}
+.release-card .release-copy h2{
+  margin:2px 0 3px!important;
+  font-size:21px!important;
+  line-height:1.25!important;
+}
+.release-card .release-copy>p{
+  margin:0 0 8px!important;
+  font-size:11px!important;
+  line-height:1.45!important;
+}
+.release-card .app-card-actions{gap:6px!important}
+.release-card .app-card-actions a{
+  padding:8px 11px!important;
+  font-size:10px!important;
+}
+.release-card .song-like-box{
+  margin-top:8px!important;
+  gap:8px!important;
+  flex-wrap:nowrap!important;
+}
+.release-card .song-like-box button{
+  gap:5px!important;
+  padding:7px 11px!important;
+  font-size:11px!important;
+}
+.release-card .song-like-box button span{font-size:17px!important}
+.release-card .song-like-box p{font-size:10px!important;white-space:nowrap!important}
+.release-card .song-like-box p b{font-size:14px!important}
+
+@media(max-width:520px){
+  .release-card.app-feature-card{
+    grid-template-columns:72px minmax(0,1fr)!important;
+    gap:10px!important;
+    padding:12px!important;
+    margin-top:20px!important;
+  }
+  .release-card .release-art{
+    min-height:96px!important;
+    height:96px!important;
+    border-radius:16px!important;
+  }
+  .release-card .release-copy h2{font-size:20px!important}
+  .release-card .release-copy>p{font-size:10px!important;margin-bottom:7px!important}
+  .release-card .app-card-actions a{padding:7px 10px!important;font-size:9px!important}
+  .release-card .song-like-box{margin-top:7px!important}
+  .release-card .song-like-box button{padding:6px 9px!important}
+}
+
+@media(max-width:360px){
+  .release-card.app-feature-card{
+    grid-template-columns:66px minmax(0,1fr)!important;
+    padding:10px!important;
+  }
+  .release-card .release-art{min-height:90px!important;height:90px!important}
+  .release-card .release-copy h2{font-size:18px!important}
+}
