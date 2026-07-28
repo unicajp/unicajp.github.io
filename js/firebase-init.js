@@ -67,6 +67,13 @@ async function removeMember() {
 
 async function restoreMember() {
   if (!uid) return;
+  const deletedSnap = await getDoc(doc(db, 'deletedMembers', uid));
+  if (deletedSnap.exists()) {
+    localStorage.removeItem(MEMBER_KEY);
+    LEGACY_MEMBER_KEYS.forEach(key => localStorage.removeItem(key));
+    window.dispatchEvent(new CustomEvent('unica:firebase-member-deleted'));
+    return;
+  }
   const snap = await getDoc(doc(db, 'users', uid));
   if (snap.exists()) {
     const remote = snap.data();
