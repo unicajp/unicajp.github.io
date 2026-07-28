@@ -97,6 +97,19 @@ function filteredComments(){ let rows=[...comments]; if(activeTab==='mine')rows=
 function renderComments(){
   const m=member(); const list=$('#communityList'); if(!list)return;
   const rows=filteredComments();
+  /* トップで巡回するコメントは、タブの並び替えに影響されない最新30件だけ。 */
+  window.UNICA_TOP_SUPPORT_COMMENTS = [...comments]
+    .sort((a,b)=>Number(b.createdAt?.seconds||0)-Number(a.createdAt?.seconds||0))
+    .slice(0,30)
+    .map(row=>({
+      id:String(row.id||''),
+      ownerUid:String(row.ownerUid||''),
+      name:String(row.name||'うにメン'),
+      avatar:String(row.avatar||'🌸'),
+      text:String(row.text||''),
+      count:Number(row.likeCount||0),
+      liked:myLikedCommentIds.has(row.id)
+    }));
   list.innerHTML=rows.map(row=>`<article class="community-post-plus support-comment-card${row.ownerUid===uid?' is-me':''}" data-post-id="${esc(row.id)}"><header><button class="community-post-avatar member-name-button" data-member-uid="${esc(row.ownerUid)}" type="button">${esc(row.avatar||'🌸')}</button><div><button class="member-name-text" data-member-uid="${esc(row.ownerUid)}" type="button">${esc(row.name||'うにメン')}${row.ownerUid===uid?'（あなた）':''}</button><small>${esc(row.prefecture||'')}${row.prefecture?'・':''}${esc(commentDate(row))}</small></div>${row.ownerUid===uid?`<button class="community-more" data-delete-remote="${esc(row.id)}" type="button">×</button>`:'<span></span>'}</header><p>${esc(row.text)}</p><div class="community-post-actions support-actions"><button class="${myLikedCommentIds.has(row.id)?'is-liked':''}" data-like-remote="${esc(row.id)}" type="button">${myLikedCommentIds.has(row.id)?'♥':'♡'} いいね <b>${Number(row.likeCount||0)}</b></button></div></article>`).join('') || `<div class="community-empty">${activeTab==='mine'?'まだ応援コメントを送っていません。':'まだ応援コメントはありません。'}</div>`;
   $('#homeCommunityPosts') && ($('#homeCommunityPosts').textContent=String(comments.length));
   $('#homeCommunityMembers') && ($('#homeCommunityMembers').textContent=String(comments.reduce((s,x)=>s+Number(x.likeCount||0),0)));

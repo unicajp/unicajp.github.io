@@ -134,12 +134,17 @@
     const DISPLAY_MS = 15200;
 
     const show = () => {
-      const cards = commentCards();
-      if (!cards.length) {
+      const latestRows = Array.isArray(window.UNICA_TOP_SUPPORT_COMMENTS)
+        ? window.UNICA_TOP_SUPPORT_COMMENTS.slice(0,30)
+        : [];
+      const cards = commentCards().slice(0,30);
+      if (!latestRows.length && !cards.length) {
         layer.replaceChildren();
         return;
       }
-      const data = dataFromCard(cards[index % cards.length]);
+      const source = latestRows.length ? latestRows : cards;
+      const raw = source[index % source.length];
+      const data = latestRows.length ? raw : dataFromCard(raw);
       index += 1;
       if (!data?.text) return;
 
