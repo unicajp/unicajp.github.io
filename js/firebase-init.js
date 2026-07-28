@@ -181,11 +181,12 @@ async function syncCheer(data) {
 
 function authInfo() {
   const user = auth.currentUser;
+  const google = user?.providerData?.find(provider => provider.providerId === 'google.com');
   return {
     signedIn: Boolean(user),
     anonymous: Boolean(user?.isAnonymous),
-    googleLinked: Boolean(user?.providerData?.some(provider => provider.providerId === 'google.com')),
-    email: user?.providerData?.find(provider => provider.providerId === 'google.com')?.email || ''
+    googleLinked: Boolean(google),
+    email: google?.email || ''
   };
 }
 
@@ -194,15 +195,17 @@ async function linkGoogleAccount() {
   const user = auth.currentUser;
   if (!user) throw new Error('Firebase認証が完了していません。');
   if (user.providerData.some(provider => provider.providerId === 'google.com')) return authInfo();
+
+  // 匿名ユーザーへGoogle認証をリンクするため、UIDと会員データを維持できます。
   const result = await linkWithPopup(user, googleProvider);
   window.dispatchEvent(new CustomEvent('unica:auth-provider-changed', { detail: authInfo() }));
-  return { ...authInfo(), credentialUser: result.user };
+  return { ...authInfo(), user: result.user };
 }
 
 async function signInGoogleAccount() {
   const result = await signInWithPopup(auth, googleProvider);
   window.dispatchEvent(new CustomEvent('unica:auth-provider-changed', { detail: authInfo() }));
-  return { ...authInfo(), credentialUser: result.user };
+  return { ...authInfo(), user: result.user };
 }
 
 window.UNICA_FIREBASE = {
