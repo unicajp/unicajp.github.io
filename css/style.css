@@ -2618,7 +2618,7 @@ body.support-modal-open{overflow:hidden!important;touch-action:none!important}
 .support-floating-comment-button{
   grid-template-columns:36px minmax(0,1fr) auto!important;
   min-height:72px!important;
-  animation:supportCommentReadable 9.2s ease-in-out forwards!important;
+  animation:supportCommentReadable 12s ease-in-out forwards!important;
   transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important;
 }
 .support-floating-comment-button p{
@@ -2646,8 +2646,8 @@ body.support-modal-open{overflow:hidden!important;touch-action:none!important}
 .support-floating-comment-button.is-tapped{transform:translateY(-4px) scale(.97)!important;box-shadow:0 16px 38px rgba(129,65,80,.23)!important}
 @keyframes supportCommentReadable{
   0%{opacity:0;transform:translateY(16px) scale(.98)}
-  7%{opacity:1;transform:translateY(0) scale(1)}
-  88%{opacity:1;transform:translateY(0) scale(1)}
+  4%{opacity:1;transform:translateY(0) scale(1)}
+  96%{opacity:1;transform:translateY(0) scale(1)}
   100%{opacity:0;transform:translateY(-8px) scale(.99)}
 }
 @media(max-width:520px){
