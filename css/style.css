@@ -3140,3 +3140,165 @@ body.support-modal-open{overflow:hidden!important;touch-action:none!important}
  .birthday-month-list{grid-template-columns:1fr!important}.birthday-calendar-member{grid-template-columns:minmax(0,1fr) auto auto!important}.birthday-calendar-member>em{display:none}
  .support-ranking-row{grid-template-columns:24px 64px 1fr auto;gap:6px}
 }
+
+/* Phase 10.21: compact modern birthday + support ranking UI */
+/* Birthday home card: remove oversized card feeling */
+#birthdayMonthCard{
+  border-radius:14px!important;
+  margin:8px 0!important;
+  padding:0!important;
+  box-shadow:0 5px 16px rgba(89,62,72,.055)!important;
+  overflow:hidden;
+}
+#birthdayMonthCard .birthday-month-open{
+  min-height:0!important;
+  padding:9px 11px!important;
+  gap:8px!important;
+}
+#birthdayMonthCard .birthday-month-icon{
+  width:28px!important;height:28px!important;min-width:28px!important;
+  font-size:16px!important;border-radius:9px!important;
+}
+#birthdayMonthCard .birthday-month-copy{gap:0!important;line-height:1.15!important}
+#birthdayMonthCard .birthday-month-copy small{font-size:7px!important;letter-spacing:.11em!important}
+#birthdayMonthCard .birthday-month-copy strong{font-size:13px!important;line-height:1.25!important}
+#birthdayMonthCard .birthday-month-copy em{display:none!important}
+#birthdayMonthCard .birthday-month-count{
+  font-size:10px!important;padding:4px 7px!important;min-width:auto!important;
+}
+#birthdayMonthCard .birthday-month-arrow{font-size:18px!important}
+#birthdayMonthCard .birthday-month-list{
+  display:grid!important;grid-template-columns:1fr!important;
+  gap:0!important;padding:0 10px 8px!important;
+}
+#birthdayMonthCard .birthday-mini-member{
+  min-height:32px!important;padding:4px 2px!important;border-radius:0!important;
+  border:0!important;border-top:1px solid rgba(91,68,77,.08)!important;
+  background:transparent!important;box-shadow:none!important;
+}
+#birthdayMonthCard .birthday-mini-member>div{gap:7px!important;min-width:0!important}
+#birthdayMonthCard .birthday-member-name{
+  font-size:11px!important;line-height:1.25!important;
+  white-space:normal!important;overflow:visible!important;text-overflow:clip!important;
+}
+#birthdayMonthCard .birthday-mini-member small{font-size:9px!important;color:#9b8790!important}
+#birthdayMonthCard .birthday-wish-button{
+  min-width:47px!important;height:27px!important;padding:3px 7px!important;
+  border-radius:9px!important;font-size:11px!important;gap:2px!important;
+}
+#birthdayMonthCard .birthday-wish-button span{font-size:13px!important}
+#birthdayMonthCard .birthday-wish-button b{font-size:10px!important}
+#birthdayMonthCard .birthday-today-celebration{margin:0 9px 8px!important;padding:8px!important;border-radius:11px!important}
+
+/* Home support card: ranking-first and dense */
+#communityHomeCard{
+  margin:8px 0!important;border-radius:15px!important;
+  box-shadow:0 5px 16px rgba(89,62,72,.05)!important;
+}
+#communityHomeCard .community-home-button{
+  min-height:0!important;padding:10px 11px 8px!important;gap:8px!important;
+}
+#communityHomeCard .community-home-icon{
+  width:30px!important;height:30px!important;min-width:30px!important;
+  font-size:15px!important;border-radius:9px!important;
+}
+#communityHomeCard .community-home-main small{font-size:7px!important;letter-spacing:.1em!important}
+#communityHomeCard .community-home-main strong{font-size:13px!important;line-height:1.2!important}
+#communityHomeCard .community-home-main em{font-size:9px!important;margin-top:1px!important}
+#communityHomeCard .community-home-stats{gap:1px 4px!important}
+#communityHomeCard .community-home-stats b{font-size:12px!important}
+#communityHomeCard .community-home-stats small{font-size:7px!important}
+#communityHomeCard .community-home-arrow{font-size:18px!important}
+#communityHomeLatest.is-ranking{display:block!important;padding:0 10px 9px!important}
+.home-support-ranking-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:5px 2px 4px;border-top:1px solid rgba(91,68,77,.08)
+}
+.home-support-ranking-head strong{font-size:10px;color:#725964}
+.home-support-ranking-head small{font-size:8px;font-weight:900;color:#bd587c;letter-spacing:.08em}
+.home-support-ranking-list{display:grid;gap:0}
+.home-support-ranking-row{
+  width:100%;min-height:29px;display:grid;grid-template-columns:24px minmax(0,1fr) auto;
+  align-items:center;gap:5px;padding:3px 2px;border:0;border-top:1px solid rgba(91,68,77,.065);
+  background:transparent;color:inherit;text-align:left;cursor:pointer;
+}
+.home-support-ranking-row span{font-size:14px;text-align:center}
+.home-support-ranking-row b{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.home-support-ranking-row em{font-size:10px;font-style:normal;font-weight:900;color:#bd587c;white-space:nowrap}
+.home-support-ranking-empty{padding:8px 2px!important}.home-support-ranking-empty strong{font-size:11px}.home-support-ranking-empty p{font-size:9px;margin:2px 0 0}
+
+/* Support modal: significantly denser, modern timeline style */
+#communityModal .support-panel{
+  padding:14px 12px 16px!important;border-radius:18px 18px 0 0!important;
+}
+#communityModal .support-head{margin:0 0 7px!important;gap:8px!important}
+#communityModal .support-head h2{font-size:18px!important;margin:1px 0!important}
+#communityModal .support-head p:not(.eyebrow){font-size:10px!important;line-height:1.45!important;margin:2px 0 0!important}
+#communityModal .community-live{padding:6px 8px!important;border-radius:11px!important;min-width:50px!important}
+#communityModal .community-live span{font-size:14px!important}
+#communityModal .community-live strong{font-size:13px!important}
+#communityModal .community-live small{font-size:7px!important}
+#communityModal .support-like-ranking{
+  margin:6px 0!important;padding:8px 9px!important;border-radius:13px!important;
+}
+#communityModal .support-like-ranking-head{margin-bottom:3px!important}
+#communityModal .support-like-ranking-head small{font-size:7px!important}
+#communityModal .support-like-ranking-head strong{font-size:12px!important}
+#communityModal .support-like-ranking-head>span{font-size:8px!important;padding:3px 6px!important}
+#communityModal .support-like-ranking-list{gap:0!important}
+#communityModal .support-ranking-row{
+  min-height:30px!important;grid-template-columns:22px minmax(60px,auto) 1fr auto!important;
+  gap:5px!important;padding:3px 1px!important;border-top:1px solid rgba(91,68,77,.055)!important;
+}
+#communityModal .support-ranking-row:first-child{border-top:0!important}
+#communityModal .support-ranking-rank{font-size:14px!important}
+#communityModal .support-ranking-name{font-size:10px!important}
+#communityModal .support-ranking-bar{height:5px!important}
+#communityModal .support-ranking-row>strong{font-size:9px!important}
+#communityModal .support-compose{margin:6px 0!important;padding:8px 9px 7px!important;border-radius:12px!important}
+#communityModal .support-compose .community-compose-head{margin-bottom:5px!important}
+#communityModal .support-compose textarea{min-height:48px!important;height:48px!important;font-size:12px!important;line-height:1.4!important}
+#communityModal .support-compose .community-compose-meta button{min-height:31px!important;min-width:94px!important;padding:5px 10px!important;font-size:10px!important;border-radius:9px!important}
+#communityModal .support-tabs{margin:5px 0!important;padding:3px!important;gap:3px!important;border-radius:10px!important}
+#communityModal .support-tabs button{min-height:30px!important;padding:5px 6px!important;font-size:9px!important;border-radius:8px!important}
+#communityModal .community-notice{margin:5px 0!important;padding:7px 8px!important;border-radius:10px!important;gap:2px!important}
+#communityModal .community-notice strong{font-size:10px!important}
+#communityModal .community-notice span{font-size:8px!important;line-height:1.35!important}
+#communityModal .support-feed{gap:0!important}
+#communityModal .support-comment-card{
+  margin:0!important;padding:8px 2px!important;border:0!important;border-radius:0!important;
+  border-top:1px solid rgba(91,68,77,.1)!important;background:transparent!important;box-shadow:none!important;
+}
+#communityModal .support-comment-card header{gap:7px!important;margin:0!important}
+#communityModal .support-comment-card .community-post-avatar{width:30px!important;height:30px!important;min-width:30px!important;font-size:15px!important}
+#communityModal .support-comment-card header>div{gap:0!important}
+#communityModal .support-comment-card .member-name-text{font-size:11px!important;line-height:1.2!important}
+#communityModal .support-comment-card header small{font-size:8px!important;line-height:1.2!important}
+#communityModal .support-comment-card>p{font-size:11px!important;line-height:1.45!important;margin:5px 2px 3px 37px!important}
+#communityModal .support-actions{margin:0 0 0 37px!important}
+#communityModal .support-actions button{min-height:27px!important;padding:3px 8px!important;font-size:9px!important;border-radius:8px!important}
+
+/* Birthday calendar modal also compact */
+#birthdayCalendarModal .birthday-calendar-panel{padding:15px 12px 18px!important}
+#birthdayCalendarModal h2{font-size:17px!important;margin-bottom:2px!important}
+#birthdayCalendarModal .birthday-calendar-intro{font-size:9px!important;margin:2px 0 7px!important}
+#birthdayCalendarModal .birthday-calendar-months{gap:3px!important;margin:6px 0!important}
+#birthdayCalendarModal .birthday-calendar-months button{min-height:34px!important;padding:4px 2px!important;border-radius:8px!important}
+#birthdayCalendarModal .birthday-calendar-heading{padding:6px 2px!important}
+#birthdayCalendarModal .birthday-calendar-list{gap:0!important}
+#birthdayCalendarModal .birthday-calendar-member{
+  min-height:38px!important;padding:5px 2px!important;border-radius:0!important;border:0!important;
+  border-top:1px solid rgba(91,68,77,.09)!important;background:transparent!important;
+}
+#birthdayCalendarModal .birthday-calendar-member>div{font-size:11px!important}
+#birthdayCalendarModal .birthday-calendar-member>div small{font-size:7px!important}
+#birthdayCalendarModal .birthday-calendar-member time{font-size:9px!important}
+#birthdayCalendarModal .birthday-wish-button{height:27px!important;padding:3px 7px!important;border-radius:8px!important;font-size:10px!important}
+
+@media(max-width:420px){
+  #birthdayMonthCard .birthday-month-open{padding:8px 9px!important}
+  #birthdayMonthCard .birthday-month-list{padding:0 8px 7px!important}
+  #communityHomeCard .community-home-stats{display:none!important}
+  #communityModal .support-panel{padding:12px 9px 14px!important}
+  #communityModal .support-head p:not(.eyebrow){display:none!important}
+}
