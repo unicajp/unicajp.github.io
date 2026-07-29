@@ -3302,3 +3302,24 @@ body.support-modal-open{overflow:hidden!important;touch-action:none!important}
   #communityModal .support-panel{padding:12px 9px 14px!important}
   #communityModal .support-head p:not(.eyebrow){display:none!important}
 }
+
+/* Phase 10.21.1 — align the floating-comment like control */
+.support-floating-comment-button .support-float-controls{
+  margin-left:0!important;
+  padding-left:8px!important;
+  gap:14px!important;
+}
+.support-floating-comment-button .support-float-like-button{
+  position:relative;
+  left:-7px;
+}
+@media(max-width:480px){
+  .support-floating-comment-button .support-float-controls{
+    margin-left:0!important;
+    padding-left:6px!important;
+    gap:12px!important;
+  }
+  .support-floating-comment-button .support-float-like-button{
+    left:-6px;
+  }
+}
