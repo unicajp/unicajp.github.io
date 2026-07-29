@@ -138,9 +138,16 @@ function renderComments(){
   list.innerHTML=rows.map(row=>`<article class="community-post-plus support-comment-card${row.ownerUid===uid?' is-me':''}" data-post-id="${esc(row.id)}"><header><button class="community-post-avatar member-name-button" data-member-uid="${esc(row.ownerUid)}" type="button">${esc(row.avatar||'🌸')}</button><div><button class="member-name-text" data-member-uid="${esc(row.ownerUid)}" type="button">${esc(row.name||'うにメン')}${row.ownerUid===uid?'（あなた）':''}</button><small>${esc(row.prefecture||'')}${row.prefecture?'・':''}${esc(commentDate(row))}</small></div>${row.ownerUid===uid?`<button class="community-more" data-delete-remote="${esc(row.id)}" type="button">×</button>`:'<span></span>'}</header><p>${esc(row.text)}</p><div class="community-post-actions support-actions"><button class="${myLikedCommentIds.has(row.id)?'is-liked':''}" data-like-remote="${esc(row.id)}" type="button">${myLikedCommentIds.has(row.id)?'♥':'♡'} いいね <b>${Number(row.likeCount||0)}</b></button></div></article>`).join('') || `<div class="community-empty">${activeTab==='mine'?'まだ応援コメントを送っていません。':'まだ応援コメントはありません。'}</div>`;
   $('#homeCommunityPosts') && ($('#homeCommunityPosts').textContent=String(comments.length));
   $('#homeCommunityMembers') && ($('#homeCommunityMembers').textContent=String(comments.reduce((s,x)=>s+Number(x.likeCount||0),0)));
-  const latest=[...comments].sort((a,b)=>Number(b.createdAt?.seconds||0)-Number(a.createdAt?.seconds||0))[0];
+  /* トップは新着1件ではなく、累計いいねランキングTOP3を表示。 */
   const homeLatest=$('#communityHomeLatest');
-  if(homeLatest) homeLatest.innerHTML=latest?`<span>${esc(latest.avatar||'🌸')}</span><div><button class="member-name-text" data-member-uid="${esc(latest.ownerUid)}" type="button">${esc(latest.name)}</button><p>${esc(latest.text)}</p></div><em>♥ ${Number(latest.likeCount||0)}</em>`:`<div><strong>まだ応援コメントはありません</strong><p>最初の応援コメントを書いてみよう！</p></div>`;
+  if(homeLatest){
+    const top=cumulativeLikeRanking();
+    const medals=['🥇','🥈','🥉'];
+    homeLatest.classList.add('is-ranking');
+    homeLatest.innerHTML=top.length
+      ? `<div class="home-support-ranking-head"><strong>累計いいねランキング</strong><small>TOP 3</small></div><div class="home-support-ranking-list">${top.map((x,i)=>`<button type="button" class="home-support-ranking-row" data-member-uid="${esc(x.uid)}"><span>${medals[i]}</span><b>${esc(x.name)}</b><em>♥ ${x.likes}</em></button>`).join('')}</div>`
+      : `<div class="home-support-ranking-empty"><strong>ランキング集計中</strong><p>応援コメントにいいねが集まると表示されます。</p></div>`;
+  }
   $$('#communityList [data-like-remote]').forEach(b=>b.onclick=async()=>{
     if(b.disabled) return;
     b.disabled=true;
@@ -276,7 +283,7 @@ async function openMemberPass(targetUid){
   $('#detailPostCount') && ($('#detailPostCount').textContent=`💌 ${ownComments.length}`);
   $('#detailReactionCount') && ($('#detailReactionCount').textContent=`♥ ${totalLikes}`);
   const birthdayWishes=Number(window.UNICA_BIRTHDAY_WISH_COUNTS?.[targetUid]||0);
-  $('#detailBirthdayWishCount') && ($('#detailBirthdayWishCount').textContent=`㊗️ ${birthdayWishes}人`);
+  $('#detailBirthdayWishCount') && ($('#detailBirthdayWishCount').textContent=`🎂 ${birthdayWishes}人`);
   $('#detailPrefecture') && ($('#detailPrefecture').textContent=u.prefecturePublic===false?'非公開':(u.prefecture||'—'));
   $('#detailBirthday') && ($('#detailBirthday').textContent=u.birthdayPublic===false?'非公開':(u.birthMonth&&u.birthDay?`${u.birthMonth}月${u.birthDay}日`:'—'));
   $('#detailOpenSettings')?.toggleAttribute('hidden',targetUid!==uid);
@@ -288,7 +295,7 @@ window.addEventListener('unica:open-member-pass',event=>openMemberPass(event.det
 function renderNotifications(){
   const unread=notificationRows.filter(n=>!n.read).length, badge=$('#notificationBadge'); if(badge){badge.hidden=unread===0;badge.textContent=String(unread);}
   const list=$('#notificationList'); if(!list)return;
-  list.innerHTML=notificationRows.map(n=>`<article class="notification-row${n.read?'':' is-unread'}"><span>${n.type==='commentLike'?'♥':(n.type==='birthdayWish'?'㊗️':'🔔')}</span><div><p>${esc(n.text||'新しい通知があります')}</p><small>${n.createdAt?.toDate?new Intl.DateTimeFormat('ja-JP',{dateStyle:'short',timeStyle:'short'}).format(n.createdAt.toDate()):'たった今'}</small></div></article>`).join('')||'<div class="notification-empty">通知はまだありません。</div>';
+  list.innerHTML=notificationRows.map(n=>`<article class="notification-row${n.read?'':' is-unread'}"><span>${n.type==='commentLike'?'♥':(n.type==='birthdayWish'?'🎂':'🔔')}</span><div><p>${esc(n.text||'新しい通知があります')}</p><small>${n.createdAt?.toDate?new Intl.DateTimeFormat('ja-JP',{dateStyle:'short',timeStyle:'short'}).format(n.createdAt.toDate()):'たった今'}</small></div></article>`).join('')||'<div class="notification-empty">通知はまだありません。</div>';
 }
 async function markAllRead(){ await Promise.all(notificationRows.filter(n=>!n.read).map(n=>setDoc(doc(db,'users',uid,'notifications',n.id),{read:true},{merge:true}))); }
 function listenNotifications(){ onSnapshot(query(collection(db,'users',uid,'notifications'),orderBy('createdAt','desc'),limit(50)),snap=>{notificationRows=snap.docs.map(d=>({id:d.id,...d.data()}));renderNotifications();}); }
