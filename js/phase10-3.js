@@ -84,9 +84,10 @@
   function makeFloatingCommentsInteractive() {
     const layer = $('#supportCommentFloatLayer');
     if (!layer) return;
-    layer.setAttribute('aria-label', '最新の応援コメント。コメントをタップするといいねできます。');
+    layer.setAttribute('aria-label', '最新の応援コメント。ハートボタンでいいね、矢印ボタンで次のコメントを表示できます。');
     layer.addEventListener('click', async (event) => {
-      if (event.target.closest('.support-float-next')) return;
+      const likeControl = event.target.closest('.support-float-like-button');
+      if (!likeControl || event.target.closest('.support-float-next')) return;
       const floating = event.target.closest('.support-floating-comment-button');
       if (!floating || floating.dataset.busy === 'true') return;
       event.preventDefault();
@@ -155,7 +156,7 @@
       floating.setAttribute('aria-label', data.liked
         ? `${data.name}さんのコメント。いいね済みです。解除は応援コメント画面で行えます`
         : `${data.name}さんのコメント。タップでいいね`);
-      floating.innerHTML = '<span class="support-float-avatar"></span><div class="support-float-copy"><p></p><small></small></div><b class="support-float-like"></b><button type="button" class="support-float-next" aria-label="次のコメントを表示">›</button>';
+      floating.innerHTML = '<span class="support-float-avatar"></span><div class="support-float-copy"><p></p><small></small></div><span class="support-float-controls"><span class="support-float-like-button" role="button" tabindex="0" aria-label="このコメントにいいね"><b class="support-float-like"></b></span><button type="button" class="support-float-next" aria-label="次のコメントを表示">›</button></span>';
       $('.support-float-avatar', floating).textContent = data.avatar;
       $('p', floating).textContent = data.text;
       $('small', floating).textContent = `${data.name}さんからの応援`; 
