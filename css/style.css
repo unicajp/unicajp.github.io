@@ -3343,3 +3343,28 @@ body.support-modal-open{overflow:hidden!important;touch-action:none!important}
 @media(max-width:520px){
   .prefecture-member-button small{font-size:.66rem}
 }
+
+
+/* Phase 10.21.3: member numbers and clear birthday gifting */
+#birthdayMonthCard .birthday-mini-info{min-width:0;display:grid;gap:1px}
+#birthdayMonthCard .birthday-mini-name-line{min-width:0;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+#birthdayMonthCard .birthday-mini-number{font-size:7.5px!important;color:#ad98a0!important;white-space:nowrap!important;letter-spacing:.01em}
+#birthdayMonthCard .birthday-mini-date{display:block;font-size:8.5px!important;color:#8e7881!important;margin-top:1px}
+#birthdayMonthCard .birthday-wish-button{min-width:92px!important;justify-content:center!important;gap:5px!important;padding:3px 8px!important}
+#birthdayMonthCard .birthday-wish-label{font-size:9px!important;white-space:nowrap}
+#birthdayMonthCard .birthday-wish-button b{min-width:15px;text-align:center}
+.birthday-wish-button.is-wished{background:#f3eef0!important;color:#98868c!important}
+.birthday-wish-button:disabled{opacity:.72!important;cursor:default}
+#birthdayCalendarModal .birthday-wish-button{min-width:88px!important;justify-content:center!important}
+#birthdayCalendarModal .birthday-wish-label{font-size:9px!important;white-space:nowrap}
+.support-ranking-name{display:grid!important;gap:0!important;min-width:0}
+.support-ranking-name>b{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.support-ranking-name>small{font-size:7px;color:#9b8790;white-space:nowrap}
+.home-support-ranking-row{grid-template-columns:24px minmax(0,1fr) auto!important}
+.home-support-ranking-person{min-width:0;display:grid;gap:0}
+.home-support-ranking-person b{font-size:10px!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.home-support-ranking-person small{font-size:7px;color:#9b8790;white-space:nowrap}
+@media(max-width:380px){
+  #birthdayMonthCard .birthday-wish-button{min-width:82px!important;padding-inline:6px!important}
+  #birthdayMonthCard .birthday-wish-label{font-size:8px!important}
+}
