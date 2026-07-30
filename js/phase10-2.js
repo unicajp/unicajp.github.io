@@ -274,20 +274,73 @@ async function refreshMyCommentLikes(rows=comments,{replace=false,batchSize=30}=
   }
 }
 
+let memberPassRequestToken=0;
+function memberJoinedDate(value){
+  if(!value)return null;
+  if(typeof value==='string'){
+    const normalized=value.replace(/[.\/]/g,'-');
+    const d=new Date(`${normalized}T00:00:00`);
+    return Number.isNaN(d.getTime())?null:d;
+  }
+  if(typeof value?.toDate==='function')return value.toDate();
+  if(Number.isFinite(value?.seconds))return new Date(value.seconds*1000);
+  if(value instanceof Date)return value;
+  return null;
+}
+function formatMemberJoined(value){
+  const d=memberJoinedDate(value);
+  if(!d)return '登録日の記録なし';
+  return new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit'}).format(d).replaceAll('/','.');
+}
+function memberJoinedDays(value){
+  const d=memberJoinedDate(value);
+  if(!d)return '—';
+  const start=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  const now=new Date(); const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  return `${Math.max(1,Math.floor((today-start)/86400000)+1)}日`;
+}
 async function openMemberPass(targetUid){
-  if(!targetUid)return; const snap=await getDoc(doc(db,'users',targetUid)); if(!snap.exists()){toast('このうにメンの情報はまだありません。');return;} const u=snap.data();
-  const ownComments=comments.filter(row=>row.ownerUid===targetUid);
-  const totalLikes=ownComments.reduce((sum,row)=>sum+Math.max(0,Number(row.likeCount||0)),0);
-  $('#detailAvatar') && ($('#detailAvatar').textContent=u.avatar||'🌸'); $('#detailName') && ($('#detailName').textContent=u.name||'うにメン');
-  $('#detailNumber') && ($('#detailNumber').textContent=u.number?`No.${String(u.number).padStart(4,'0')}`:'UNICA MEMBER');
-  $('#detailPostCount') && ($('#detailPostCount').textContent=`💌 ${ownComments.length}`);
-  $('#detailReactionCount') && ($('#detailReactionCount').textContent=`♥ ${totalLikes}`);
-  const birthdayWishes=Number(window.UNICA_BIRTHDAY_WISH_COUNTS?.[targetUid]||0);
-  $('#detailBirthdayWishCount') && ($('#detailBirthdayWishCount').textContent=`🎂 ${birthdayWishes}人`);
-  $('#detailPrefecture') && ($('#detailPrefecture').textContent=u.prefecturePublic===false?'非公開':(u.prefecture||'—'));
-  $('#detailBirthday') && ($('#detailBirthday').textContent=u.birthdayPublic===false?'非公開':(u.birthMonth&&u.birthDay?`${u.birthMonth}月${u.birthDay}日`:'—'));
-  $('#detailOpenSettings')?.toggleAttribute('hidden',targetUid!==uid);
-  $('#passportModal')?.classList.add('is-open'); $('#passportModal')?.setAttribute('aria-hidden','false'); document.body.classList.add('member-gate-open');
+  if(!targetUid)return;
+  const token=++memberPassRequestToken;
+  const modal=$('#passportModal');
+  // 一覧モーダルより先に、うにパスを即表示して読み込み待ちを分かりやすくする。
+  $('#detailAvatar') && ($('#detailAvatar').textContent='🌸');
+  $('#detailName') && ($('#detailName').textContent='読み込み中…');
+  $('#detailNumber') && ($('#detailNumber').textContent='うにメンNo.----');
+  $('#detailJoined') && ($('#detailJoined').textContent='読み込み中…');
+  $('#detailDays') && ($('#detailDays').textContent='—');
+  $('#detailPostCount') && ($('#detailPostCount').textContent='💌 —');
+  $('#detailReactionCount') && ($('#detailReactionCount').textContent='♥ —');
+  $('#detailBirthdayWishCount') && ($('#detailBirthdayWishCount').textContent='🎂 —');
+  $('#detailPrefecture') && ($('#detailPrefecture').textContent='—');
+  $('#detailBirthday') && ($('#detailBirthday').textContent='—');
+  $('#detailOpenSettings')?.toggleAttribute('hidden',true);
+  modal?.classList.add('is-open'); modal?.setAttribute('aria-hidden','false'); document.body.classList.add('member-gate-open','modal-open');
+  try{
+    const snap=await getDoc(doc(db,'users',targetUid));
+    if(token!==memberPassRequestToken)return;
+    if(!snap.exists()){toast('このうにメンの情報はまだありません。');modal?.classList.remove('is-open');modal?.setAttribute('aria-hidden','true');return;}
+    const u=snap.data();
+    const ownComments=comments.filter(row=>row.ownerUid===targetUid);
+    const totalLikes=ownComments.reduce((sum,row)=>sum+Math.max(0,Number(row.likeCount||0)),0);
+    const joinedValue=u.joined||u.joinedAt||u.registeredAt||u.createdAt||u.created;
+    $('#detailAvatar') && ($('#detailAvatar').textContent=u.avatar||'🌸');
+    $('#detailName') && ($('#detailName').textContent=u.name||'うにメン');
+    $('#detailNumber') && ($('#detailNumber').textContent=u.number?`うにメンNo.${String(u.number).padStart(4,'0')}`:'うにメンNo.----');
+    $('#detailJoined') && ($('#detailJoined').textContent=formatMemberJoined(joinedValue));
+    $('#detailDays') && ($('#detailDays').textContent=memberJoinedDays(joinedValue));
+    $('#detailPostCount') && ($('#detailPostCount').textContent=`💌 ${ownComments.length}`);
+    $('#detailReactionCount') && ($('#detailReactionCount').textContent=`♥ ${totalLikes}`);
+    const birthdayWishes=Number(window.UNICA_BIRTHDAY_WISH_COUNTS?.[targetUid]||0);
+    $('#detailBirthdayWishCount') && ($('#detailBirthdayWishCount').textContent=`🎂 ${birthdayWishes}人`);
+    $('#detailPrefecture') && ($('#detailPrefecture').textContent=u.prefecturePublic===false?'非公開':(u.prefecture||'—'));
+    $('#detailBirthday') && ($('#detailBirthday').textContent=u.birthdayPublic===false?'非公開':(u.birthMonth&&u.birthDay?`${u.birthMonth}月${u.birthDay}日`:'—'));
+    $('#detailTitle') && ($('#detailTitle').textContent=u.title||'はじまりのうにメン');
+    $('#detailOpenSettings')?.toggleAttribute('hidden',targetUid!==uid);
+  }catch(error){
+    console.error('member pass',error);
+    if(token===memberPassRequestToken){$('#detailName') && ($('#detailName').textContent='読み込みに失敗しました');$('#detailJoined') && ($('#detailJoined').textContent='もう一度お試しください');}
+  }
 }
 window.UNICA_OPEN_MEMBER_PASS=openMemberPass;
 window.addEventListener('unica:open-member-pass',event=>openMemberPass(event.detail?.uid));
