@@ -3323,3 +3323,23 @@ body.support-modal-open{overflow:hidden!important;touch-action:none!important}
     left:-6px;
   }
 }
+
+/* Phase10.21.2 — passport stacking and clearer member number */
+#passportModal{
+  z-index: 1650 !important;
+}
+#passportModal.is-open{
+  pointer-events:auto;
+}
+.prefecture-member-button small{
+  display:block;
+  margin-top:3px;
+  font-size:.7rem;
+  line-height:1.35;
+  letter-spacing:.02em;
+  color:#987f75;
+  white-space:nowrap;
+}
+@media(max-width:520px){
+  .prefecture-member-button small{font-size:.66rem}
+}
