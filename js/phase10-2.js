@@ -31,6 +31,7 @@ let historyComments = [];
 let commentHistoryLoaded = false;
 let commentHistoryLoading = false;
 let commentLikeRefreshToken = 0;
+let memberDirectory = new Map();
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -105,10 +106,12 @@ function cumulativeLikeRanking(){
   comments.forEach(row=>{
     const ownerUid=String(row.ownerUid||'');
     if(!ownerUid)return;
-    const current=byUid.get(ownerUid)||{uid:ownerUid,name:row.name||'うにメン',avatar:row.avatar||'🌸',likes:0};
+    const profile=memberDirectory.get(ownerUid)||{};
+    const current=byUid.get(ownerUid)||{uid:ownerUid,name:profile.name||row.name||'うにメン',avatar:profile.avatar||row.avatar||'🌸',number:Number(profile.number||0),likes:0};
     current.likes+=Math.max(0,Number(row.likeCount||0));
     if(row.name)current.name=row.name;
     if(row.avatar)current.avatar=row.avatar;
+    if(profile.number)current.number=Number(profile.number);
     byUid.set(ownerUid,current);
   });
   return [...byUid.values()].sort((a,b)=>b.likes-a.likes||String(a.name).localeCompare(String(b.name),'ja')).slice(0,3);
@@ -116,7 +119,7 @@ function cumulativeLikeRanking(){
 function renderSupportLikeRanking(){
   const box=$('#supportLikeRankingList'); if(!box)return;
   const top=cumulativeLikeRanking(); const medals=['🥇','🥈','🥉']; const max=Math.max(1,...top.map(x=>x.likes));
-  box.innerHTML=top.length?top.map((x,i)=>`<button type="button" class="support-ranking-row" data-member-uid="${esc(x.uid)}"><span class="support-ranking-rank">${medals[i]}</span><span class="support-ranking-name">${esc(x.name)}</span><span class="support-ranking-bar"><i style="width:${Math.max(5,x.likes/max*100)}%"></i></span><strong>♥ ${x.likes}</strong></button>`).join(''):'<p class="support-ranking-empty">いいねが集まるとランキングに表示されます。</p>';
+  box.innerHTML=top.length?top.map((x,i)=>`<button type="button" class="support-ranking-row" data-member-uid="${esc(x.uid)}"><span class="support-ranking-rank">${medals[i]}</span><span class="support-ranking-name"><b>${esc(x.name)}</b><small>うにメンNo.${String(Number(x.number||0)).padStart(4,'0')}</small></span><span class="support-ranking-bar"><i style="width:${Math.max(5,x.likes/max*100)}%"></i></span><strong>♥ ${x.likes}</strong></button>`).join(''):'<p class="support-ranking-empty">いいねが集まるとランキングに表示されます。</p>';
 }
 
 function renderComments(){
@@ -145,7 +148,7 @@ function renderComments(){
     const medals=['🥇','🥈','🥉'];
     homeLatest.classList.add('is-ranking');
     homeLatest.innerHTML=top.length
-      ? `<div class="home-support-ranking-head"><strong>累計いいねランキング</strong><small>TOP 3</small></div><div class="home-support-ranking-list">${top.map((x,i)=>`<button type="button" class="home-support-ranking-row" data-member-uid="${esc(x.uid)}"><span>${medals[i]}</span><b>${esc(x.name)}</b><em>♥ ${x.likes}</em></button>`).join('')}</div>`
+      ? `<div class="home-support-ranking-head"><strong>累計いいねランキング</strong><small>TOP 3</small></div><div class="home-support-ranking-list">${top.map((x,i)=>`<button type="button" class="home-support-ranking-row" data-member-uid="${esc(x.uid)}"><span>${medals[i]}</span><span class="home-support-ranking-person"><b>${esc(x.name)}</b><small>うにメンNo.${String(Number(x.number||0)).padStart(4,'0')}</small></span><em>♥ ${x.likes}</em></button>`).join('')}</div>`
       : `<div class="home-support-ranking-empty"><strong>ランキング集計中</strong><p>応援コメントにいいねが集まると表示されます。</p></div>`;
   }
   $$('#communityList [data-like-remote]').forEach(b=>b.onclick=async()=>{
@@ -372,5 +375,6 @@ installUI(); bindUI();
 onAuthStateChanged(auth,user=>{
   if(!user)return; uid=user.uid;
   listenSongLike(); listenComments(); listenNotifications();
+  onSnapshot(collection(db,'users'),snap=>{memberDirectory=new Map(snap.docs.map(d=>[d.id,{uid:d.id,...d.data()}]));if(comments.length)renderComments();});
   // 10秒ごとの全件再取得は行わず、コメント更新時と一覧を開いた時だけ必要分を取得する。
 });

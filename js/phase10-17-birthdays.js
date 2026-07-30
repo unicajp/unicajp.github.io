@@ -20,7 +20,16 @@ function formatNames(rows,max=3){const names=rows.slice(0,max).map(x=>`${x.name|
 function isToday(x){const n=new Date();return Number(x.birthMonth)===n.getMonth()+1&&Number(x.birthDay)===n.getDate()}
 function wishKey(targetUid){return `${new Date().getFullYear()}_${targetUid}`}
 function wishCount(targetUid){return new Set(wishRows.filter(x=>x.targetUid===targetUid).map(x=>x.senderUid)).size}
-function wishButton(row,compact=false){const wished=myWishes.has(wishKey(row.uid)); const count=wishCount(row.uid);return `<button class="birthday-wish-button${wished?' is-wished':''}${compact?' is-compact':''}" type="button" data-birthday-wish="${esc(row.uid||'')}" ${row.uid===uid?'disabled':''} aria-label="${esc(row.name||'うにメン')}さんをお祝いする"><span>🎂</span><b>${count}</b></button>`}
+function memberNo(row){return `うにメンNo.${String(Number(row.number||0)).padStart(4,'0')}`}
+function wishButton(row,compact=false){
+  const currentMonth=new Date().getMonth()+1;
+  if(Number(row.birthMonth)!==currentMonth)return '';
+  const wished=myWishes.has(wishKey(row.uid));
+  const count=wishCount(row.uid);
+  const own=row.uid===uid;
+  const label=own?'自分':(wished?'お祝い済み':'🎂を贈る');
+  return `<button class="birthday-wish-button${wished?' is-wished':''}${compact?' is-compact':''}" type="button" data-birthday-wish="${esc(row.uid||'')}" ${(own||wished)?'disabled':''} aria-label="${esc(row.name||'うにメン')}さんへ誕生日のお祝いを贈る"><span class="birthday-wish-label">${label}</span><b>${count}</b></button>`
+}
 function memberName(row){return `<button type="button" class="birthday-member-name" data-member-uid="${esc(row.uid||'')}">${esc(row.name||'うにメン')}</button>`}
 
 function renderHome(){
@@ -29,15 +38,17 @@ function renderHome(){
   $('#birthdayMonthCount')&&($('#birthdayMonthCount').textContent=`${rows.length}人`);
   $('#birthdayMonthSummary')&&($('#birthdayMonthSummary').textContent=rows.length?`${formatNames(rows)}がお誕生日です。`:`${month}月のお誕生日メンバーはまだいません。`);
   const list=$('#birthdayMonthList');
-  if(list) list.innerHTML=rows.length?rows.map(row=>`<div class="birthday-mini-member"><div>${memberName(row)}<small>${month}月${Number(row.birthDay)}日</small></div>${wishButton(row,true)}</div>`).join(''):'<p class="birthday-month-empty">今月のお誕生日メンバーが登録されると、ここに表示されます。</p>';
+  if(list) list.innerHTML=rows.length?rows.map(row=>`<div class="birthday-mini-member"><div class="birthday-mini-info"><div class="birthday-mini-name-line">${memberName(row)}<small class="birthday-mini-number">${memberNo(row)}</small></div><small class="birthday-mini-date">${month}月${Number(row.birthDay)}日</small></div>${wishButton(row,true)}</div>`).join(''):'<p class="birthday-month-empty">今月のお誕生日メンバーが登録されると、ここに表示されます。</p>';
   const celebration=$('#birthdayTodayCelebration');
   if(celebration){celebration.hidden=!today.length;if(today.length){celebration.innerHTML=`<span>🎉</span><div><small>HAPPY BIRTHDAY</small><strong>今日は${formatNames(today,4)}のお誕生日！</strong><p>🎂ボタンからお祝いを届けられます。</p></div><button type="button" data-open-birthday-calendar>お祝いする</button>`;startCelebrationTicker(today)}else stopCelebrationTicker()}
 }
 function renderMonthButtons(){const wrap=$('#birthdayCalendarMonths');if(!wrap)return;wrap.innerHTML=Array.from({length:12},(_,i)=>{const m=i+1,c=membersForMonth(m).length;return `<button type="button" role="tab" aria-selected="${m===selectedMonth}" class="${m===selectedMonth?'is-active':''}" data-birthday-month="${m}"><strong>${m}</strong><small>月</small><em>${c}</em></button>`}).join('')}
-function renderCalendar(){const rows=membersForMonth(selectedMonth);$('#birthdayCalendarMonthTitle')&&($('#birthdayCalendarMonthTitle').textContent=`${selectedMonth}月のお誕生日`);$('#birthdayCalendarMonthCount')&&($('#birthdayCalendarMonthCount').textContent=`${rows.length}人`);const list=$('#birthdayCalendarList');if(list)list.innerHTML=rows.length?rows.map(row=>`<article class="birthday-calendar-member"><div>${memberName(row)}<small>うにメン No.${String(Number(row.number||0)).padStart(4,'0')}</small></div><time>${selectedMonth}月${Number(row.birthDay)}日</time>${isToday(row)?'<em>今日！</em>':''}${wishButton(row)}</article>`).join(''):`<div class="birthday-calendar-empty"><span>🎂</span><strong>${selectedMonth}月のお誕生日メンバーはいません</strong></div>`;renderMonthButtons()}
+function renderCalendar(){const rows=membersForMonth(selectedMonth);$('#birthdayCalendarMonthTitle')&&($('#birthdayCalendarMonthTitle').textContent=`${selectedMonth}月のお誕生日`);$('#birthdayCalendarMonthCount')&&($('#birthdayCalendarMonthCount').textContent=`${rows.length}人`);const list=$('#birthdayCalendarList');if(list)list.innerHTML=rows.length?rows.map(row=>`<article class="birthday-calendar-member"><div>${memberName(row)}<small>${memberNo(row)}</small></div><time>${selectedMonth}月${Number(row.birthDay)}日</time>${isToday(row)?'<em>今日！</em>':''}${wishButton(row)}</article>`).join(''):`<div class="birthday-calendar-empty"><span>🎂</span><strong>${selectedMonth}月のお誕生日メンバーはいません</strong></div>`;renderMonthButtons()}
 
 async function sendBirthdayWish(targetUid){
   if(!uid||!targetUid||targetUid===uid)return;
+  const target=members.find(x=>x.uid===targetUid);
+  if(!target||Number(target.birthMonth)!==new Date().getMonth()+1){toast('🎂は今月お誕生日のうにメンにだけ贈れます。');return;}
   const key=wishKey(targetUid); if(myWishes.has(key)){toast('今年のお祝いは送信済みです。');return}
   const year=new Date().getFullYear(), sender=member();
   const wishRef=doc(db,'birthdayWishes',`${year}_${targetUid}_${uid}`);
