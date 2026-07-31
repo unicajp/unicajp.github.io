@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://unicajp.github.io/sitemap.xml
