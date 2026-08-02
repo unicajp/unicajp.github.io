@@ -5036,3 +5036,36 @@ body.support-modal-open{overflow:hidden!important;touch-action:none!important}
   68%{transform:scale(1.08) rotate(2deg);filter:brightness(1.55) saturate(1.5)}
   100%{transform:scale(1) rotate(0);filter:brightness(1.35) saturate(1.45)}
 }
+
+
+/* Ver.4.21 STORY daily limit complete state */
+.milk-story-daily-finished{
+  display:grid;
+  gap:3px;
+  margin:2px 0 4px;
+  padding:8px 10px;
+  border:1px solid rgba(196,181,253,.45);
+  border-radius:11px;
+  background:linear-gradient(135deg,rgba(91,33,182,.32),rgba(30,41,59,.55));
+  color:#fff;
+  text-align:center;
+}
+.milk-story-daily-finished strong{font-size:13px;line-height:1.2}
+.milk-story-daily-finished span{font-size:10px;line-height:1.35;color:rgba(255,255,255,.88)}
+.milk-story-daily-finished small{font-size:8px;line-height:1.2;color:rgba(255,255,255,.6)}
+.milk-match-lobby-card .milk-lobby-start.is-daily-finished,
+.milk-match-lobby-card .milk-lobby-start.is-daily-finished:disabled{
+  opacity:1!important;
+  cursor:not-allowed!important;
+  color:rgba(255,255,255,.72)!important;
+  border-color:rgba(255,255,255,.13)!important;
+  background:linear-gradient(135deg,rgba(71,85,105,.78),rgba(51,65,85,.78))!important;
+  box-shadow:none!important;
+  filter:saturate(.55)!important;
+}
+@media (max-height:720px){
+  .milk-story-daily-finished{padding:6px 8px;gap:2px;margin:1px 0 3px}
+  .milk-story-daily-finished strong{font-size:11px}
+  .milk-story-daily-finished span{font-size:8px}
+  .milk-story-daily-finished small{font-size:7px}
+}
