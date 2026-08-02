@@ -81,6 +81,17 @@
 </div>
 </article>
 
+<article class="milk-match-home-card" id="milkMatchHomeCard">
+  <button class="milk-match-home-open" id="openMilkMatch" type="button" aria-label="ミルクの匂い MATCHを開く">
+    <span class="milk-match-home-mark" aria-hidden="true"><i>✦</i><b>3</b><em>+</em></span>
+    <span class="milk-match-home-copy"><small>UNICA PUZZLE</small><strong>MILK BLOOM</strong><em>そろえて咲かせる、ミルクの物語。</em></span>
+    <span class="milk-match-home-play"><small>🥛 <b id="milkMatchHomeFragments">0</b></small><span>PLAY</span><i>›</i></span>
+  </button>
+</article>
+<button class="milk-lyrics-home-open member-only-surface" id="openMilkLyrics" type="button" data-member-only>
+  <span>📖</span><strong>ミルクの匂い 歌詞図鑑</strong><small><b id="milkLyricsHomeUnlocked">0</b> / 9 CHAPTER</small><i>›</i>
+</button>
+
 <article class="milk-release-countdown" id="milkReleaseCountdown" aria-live="polite">
   <div class="milk-release-glow" aria-hidden="true"></div>
   <div class="milk-release-head">
@@ -543,6 +554,86 @@
     <a href="https://linkco.re/qRn9AShM" rel="noopener noreferrer" target="_blank">今すぐ聴く</a>
   </section>
 </div>
+
+<div aria-hidden="true" class="milk-match-modal" id="milkMatchModal">
+  <div class="milk-match-backdrop" data-close-milk-match></div>
+  <section class="milk-match-panel" role="dialog" aria-modal="true" aria-labelledby="milkMatchTitle">
+    <header class="milk-match-header">
+      <div><small>UNICA WORLD PUZZLE</small><h2 id="milkMatchTitle">MILK BLOOM</h2></div>
+      <button class="milk-match-close" data-close-milk-match type="button" aria-label="閉じる">×</button>
+    </header>
+    <div class="milk-match-mode-tabs" role="tablist" aria-label="ゲームモード">
+      <button id="milkMatchStoryMode" class="is-active" type="button"><b>STORY</b><small>歌詞を解放</small></button>
+      <button id="milkMatchUnlimitedMode" type="button"><b>SCORE</b><small>何度でも挑戦</small></button>
+    </div>
+    <div class="milk-match-quickbar">
+      <button id="milkMatchRankingSpot" class="milk-match-ranking-spot" type="button">
+        <span>🌐 ONLINE</span><strong id="milkMatchRankingPreview">ランキングを確認</strong>
+      </button>
+      <button id="milkMatchRules" class="milk-match-rules-open" type="button">？ ルール</button>
+    </div>
+    <div class="milk-match-stats">
+      <div><small>SCORE</small><strong id="milkMatchScore">0</strong></div>
+      <div><small>残り手数</small><strong><span id="milkMatchMoves">20</span>手</strong></div>
+      <div><small>MODE</small><strong id="milkMatchModeLabel">STORY</strong></div>
+    </div>
+    <div class="milk-match-goal" id="milkMatchGoal" aria-live="polite">
+      <span>今回の目標</span><strong id="milkMatchGoalText">35手以内に 12,000点</strong>
+      <div><i id="milkMatchGoalBar"></i></div>
+    </div>
+    <div class="milk-match-skill" aria-live="polite">
+      <div class="milk-match-skill-meter" id="milkMatchSkillMeter" role="progressbar" aria-label="MILK SKILL" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span>🥛 MILK SKILL</span><strong id="milkMatchSkillText">0 / 100</strong>
+        <div class="milk-match-skill-track"><i id="milkMatchSkillBar"></i></div>
+      </div>
+      <div class="milk-match-skill-actions">
+        <button id="milkMatchSkillRainbow" type="button" disabled aria-label="MILK SKILLで虹アイテムを作る"><span>🌈</span><b>虹を作る</b></button>
+        <button id="milkMatchSkillShuffle" type="button" disabled hidden aria-hidden="true">並べ直す</button>
+      </div>
+    </div>
+    <div class="milk-match-challenge" id="milkMatchChallenge" hidden>
+      <span id="milkMatchChallengeText">本日の挑戦</span><div><i id="milkMatchChallengeBar"></i></div>
+    </div>
+    <div class="milk-match-board-wrap">
+      <div class="milk-match-board" id="milkMatchBoard" role="grid" aria-label="マッチ3ゲーム盤面"></div>
+      <div class="milk-match-combo" id="milkMatchCombo" aria-live="polite"></div>
+    </div>
+    <p class="milk-match-help">スワイプで3つ以上そろえる</p>
+    <div class="milk-match-actions">
+      <button id="milkMatchNewGame" type="button">次の挑戦</button>
+      <button id="milkMatchHint" type="button">ヒント</button>
+      <button id="openMilkLyricsFromGame" type="button">📖 歌詞図鑑</button>
+      <button id="milkMatchRecords" class="is-online-ranking" type="button">🌐 オンラインランキング</button>
+    </div>
+    <div class="milk-match-volume">
+      <button id="milkMatchSoundToggle" type="button">🔊</button>
+      <label for="milkMatchVolume">効果音</label>
+      <input id="milkMatchVolume" type="range" min="0" max="300" step="5" value="120" aria-label="効果音の音量">
+    </div>
+    <aside class="milk-match-phase-note">
+      <span>VER.4.17</span>
+      <p>新しく作った特殊アイテムを保護し、虹合体と全消し演出を強化しました。</p>
+    </aside>
+  </section>
+</div>
+
+<div aria-hidden="true" class="milk-lyrics-modal" id="milkLyricsModal">
+  <div class="milk-lyrics-backdrop" data-close-milk-lyrics></div>
+  <section class="milk-lyrics-panel" role="dialog" aria-modal="true" aria-labelledby="milkLyricsTitle">
+    <header class="milk-lyrics-header">
+      <div><small>LYRICS COLLECTION</small><h2 id="milkLyricsTitle">ミルクの匂い 歌詞図鑑</h2></div>
+      <button class="milk-lyrics-close" data-close-milk-lyrics type="button" aria-label="閉じる">×</button>
+    </header>
+    <div class="milk-lyrics-summary">
+      <div><small>図鑑</small><strong><span id="milkLyricsUnlocked">0</span> / 9</strong></div>
+      <div class="milk-lyrics-progress"><i id="milkLyricsProgress"></i></div>
+    </div>
+    <p class="milk-lyrics-guide">ストーリーステージをクリアすると、対応する歌詞とフレーズ試聴が順番に解放されます。</p>
+    <div class="milk-lyrics-list" id="milkLyricsList"></div>
+    <p class="milk-lyrics-audio-note">解放済みChapterは、専用音源を追加するとこの画面からいつでも試聴できます。</p>
+  </section>
+</div>
+
 <div aria-live="polite" class="mini-toast" id="miniToast" role="status"></div>
 <script type="module" src="js/firebase-init.js"></script>
 <script type="module" src="js/phase10-2.js"></script>
@@ -555,5 +646,7 @@
 <script type="module" src="js/phase10-14-admin.js"></script>
 <script type="module" src="js/phase10-17-birthdays.js"></script>
 <script src="js/phase10-18-release-countdown.js"></script>
+<script src="js/phase11-1-milk-match.js"></script>
+<script src="js/phase11-3-lyrics-audio.js"></script>
 </body>
 </html>
