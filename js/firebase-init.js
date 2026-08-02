@@ -234,6 +234,10 @@ async function saveMilkMatchProgress(progress) {
       playsUsed: Math.max(0, Number(progress.playsUsed || 0)),
       fragments: Math.max(0, Number(progress.fragments || 0)),
       unlockedChapters: Array.isArray(progress.unlockedChapters) ? progress.unlockedChapters.map(Number).filter(Number.isInteger) : [],
+      storyStage: Math.max(0, Number(progress.storyStage || 0)),
+      stageStars: Array.isArray(progress.stageStars)
+        ? progress.stageStars.map(value => Math.max(0, Math.min(3, Number(value || 0))))
+        : [],
       updatedAtMs: Date.now()
     },
     updatedAt: serverTimestamp()

@@ -265,7 +265,11 @@
         playsUsed: Math.max(l.playsUsed, r.playsUsed),
         fragments: Math.max(l.fragments, r.fragments),
         updatedAtMs: Math.max(l.updatedAtMs, r.updatedAtMs),
-        unlockedChapters: [...new Set([...(l.unlockedChapters || []), ...(r.unlockedChapters || [])])].sort((a, b) => a - b)
+        unlockedChapters: [...new Set([...(l.unlockedChapters || []), ...(r.unlockedChapters || [])])].sort((a, b) => a - b),
+        storyStage: Math.max(l.storyStage || 0, r.storyStage || 0),
+        stageStars: Array.from({ length: STORY_STAGES.length }, (_, i) =>
+          Math.max(Number(l.stageStars?.[i] || 0), Number(r.stageStars?.[i] || 0))
+        )
       };
       saveProgress();
     } catch (error) {
