@@ -26,7 +26,7 @@
   const STORY_GOAL = STORY_STAGES[0].goal;
   const UNLIMITED_MOVES = 60;
   const UNLIMITED_GOAL = 60000;
-  const DAILY_LIMIT = 3;
+  const DAILY_LIMIT = 5;
   // Phase11.3.2 TEST MODE: 公開前の動作確認中は回数を消費しない。
   // 本番公開時は false に戻すだけで、1日3回制限が再有効化されます。
   const TEST_MODE = false;
