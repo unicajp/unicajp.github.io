@@ -483,7 +483,7 @@
     if (homePlaysEl) homePlaysEl.textContent = TEST_MODE ? '∞' : String(remaining);
     if (newGameBtn) {
       newGameBtn.disabled = (!TEST_MODE && remaining <= 0) || attemptActive;
-      newGameBtn.textContent = (!TEST_MODE && remaining <= 0) ? '本日は終了' : '次の挑戦';
+      newGameBtn.textContent = (!TEST_MODE && remaining <= 0) ? 'また明日チャレンジ！' : '次の挑戦';
     }
   }
 
@@ -1515,7 +1515,14 @@
           <span>${isStory ? `クリアでChapter ${storyStageIndex + 1}解放・★評価` : '回数無制限・スコア記録'}</span>
         </div>
         <p>${isStory ? '後半ほど手数が減り、目標スコアが上がります。' : '自己ベストと日替わりチャレンジを楽しもう。'}</p>
-        <button class="milk-lobby-start" type="button" ${(!TEST_MODE && isStory && remaining <= 0) ? 'disabled' : ''}>${isStory ? `STAGE ${storyStageIndex + 1} 開始` : 'スコア挑戦'}</button>
+        ${(!TEST_MODE && isStory && remaining <= 0) ? `
+          <div class="milk-story-daily-finished" role="status">
+            <strong>🌙 今日はここまで</strong>
+            <span>たくさん遊んでくれてありがとう！<br>また明日チャレンジしてね♪</span>
+            <small>STORYは1日5回まで・日本時間0時に回復</small>
+          </div>
+        ` : ''}
+        <button class="milk-lobby-start ${(!TEST_MODE && isStory && remaining <= 0) ? 'is-daily-finished' : ''}" type="button" ${(!TEST_MODE && isStory && remaining <= 0) ? 'disabled aria-disabled="true"' : ''}>${isStory ? ((!TEST_MODE && remaining <= 0) ? 'また明日チャレンジ！' : `STAGE ${storyStageIndex + 1} 開始`) : 'スコア挑戦'}</button>
       </div>`);
     layer.querySelector('.milk-lobby-start')?.addEventListener('click', beginAttempt);
     layer.querySelectorAll('[data-story-stage]').forEach(button => button.addEventListener('click', () => {
