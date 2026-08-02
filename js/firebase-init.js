@@ -1,8 +1,9 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app-check.js';
 import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, linkWithPopup, signInWithPopup } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
 import {
   getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp,
-  collection, query, where, onSnapshot, writeBatch, runTransaction
+  collection, query, where, onSnapshot, writeBatch, runTransaction, getDocs
 } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -15,6 +16,16 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+// Firebase App Check: UNICA WORLD の正規Webアプリからのリクエストを識別します。
+// reCAPTCHA Enterprise のサイトキーは公開用キーのため、ブラウザコードに含めて問題ありません。
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaEnterpriseProvider(
+    '6LdfbXEtAAAAAK_75BRfPmWxsx_dRxKjIAsAYGgA'
+  ),
+  isTokenAutoRefreshEnabled: true
+});
+
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
@@ -62,7 +73,29 @@ async function saveMember(member) {
 
 async function removeMember() {
   if (!uid) return;
-  await deleteDoc(doc(db, 'users', uid));
+  const userRef = doc(db, 'users', uid);
+  const counterRef = doc(db, 'system', 'memberCounterV3');
+  await runTransaction(db, async transaction => {
+    const [userSnap, counterSnap] = await Promise.all([
+      transaction.get(userRef),
+      transaction.get(counterRef)
+    ]);
+    const releasedNumber = userSnap.exists() ? Number(userSnap.data().number || 0) : 0;
+    const counter = counterSnap.exists() ? counterSnap.data() : {};
+    const availableNumbers = Array.isArray(counter.availableNumbers)
+      ? counter.availableNumbers.map(Number).filter(n => Number.isInteger(n) && n > 0)
+      : [];
+    if (releasedNumber > 0 && !availableNumbers.includes(releasedNumber)) {
+      availableNumbers.push(releasedNumber);
+      availableNumbers.sort((a, b) => a - b);
+    }
+    transaction.set(counterRef, {
+      lastNumber: Number(counter.lastNumber || 0),
+      availableNumbers,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    transaction.delete(userRef);
+  });
 }
 
 async function restoreMember() {
@@ -111,10 +144,15 @@ async function ensureMemberNumber(profile = null) {
       return Number(userData.number);
     }
 
-    const lastNumber = counterSnap.exists() ? Number(counterSnap.data().lastNumber || 0) : 0;
-    const nextNumber = lastNumber + 1;
+    const counter = counterSnap.exists() ? counterSnap.data() : {};
+    const lastNumber = Number(counter.lastNumber || 0);
+    const availableNumbers = Array.isArray(counter.availableNumbers)
+      ? [...new Set(counter.availableNumbers.map(Number).filter(n => Number.isInteger(n) && n > 0))].sort((a, b) => a - b)
+      : [];
+    const nextNumber = availableNumbers.length ? availableNumbers.shift() : lastNumber + 1;
     transaction.set(counterRef, {
-      lastNumber: nextNumber,
+      lastNumber: Math.max(lastNumber, nextNumber),
+      availableNumbers,
       updatedAt: serverTimestamp()
     }, { merge: true });
     transaction.set(userRef, {
@@ -186,6 +224,85 @@ async function syncCheer(data) {
   }, { merge: true });
 }
 
+
+async function saveMilkMatchProgress(progress) {
+  await authReady;
+  if (!uid || !progress) return;
+  await setDoc(doc(db, 'users', uid), {
+    milkMatch: {
+      date: String(progress.date || ''),
+      playsUsed: Math.max(0, Number(progress.playsUsed || 0)),
+      fragments: Math.max(0, Number(progress.fragments || 0)),
+      unlockedChapters: Array.isArray(progress.unlockedChapters) ? progress.unlockedChapters.map(Number).filter(Number.isInteger) : [],
+      updatedAtMs: Date.now()
+    },
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+}
+
+async function loadMilkMatchProgress() {
+  await authReady;
+  if (!uid) return null;
+  const snap = await getDoc(doc(db, 'users', uid));
+  return snap.exists() ? (snap.data().milkMatch || null) : null;
+}
+
+async function submitMilkMatchLeaderboard(result) {
+  await authReady;
+  const member = localMember();
+  if (!uid || !member || !Number(member.number || 0) || !result) {
+    return { eligible: false };
+  }
+  const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Tokyo' }).format(new Date());
+  const jstNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+  const monday = new Date(jstNow);
+  const day = (monday.getDay() + 6) % 7;
+  monday.setDate(monday.getDate() - day);
+  const weekKey = `${monday.getFullYear()}-${String(monday.getMonth()+1).padStart(2,'0')}-${String(monday.getDate()).padStart(2,'0')}`;
+  const ref = doc(db, 'milkMatchLeaderboard', uid);
+  const score = Math.max(0, Number(result.score || 0));
+  const combo = Math.max(0, Number(result.bestCombo || 0));
+  const matched = Math.max(0, Number(result.matched || 0));
+  await runTransaction(db, async transaction => {
+    const snap = await transaction.get(ref);
+    const old = snap.exists() ? snap.data() : {};
+    transaction.set(ref, {
+      uid,
+      name: String(member.name || 'うにメン'),
+      number: Number(member.number || 0),
+      allScore: Math.max(Number(old.allScore || 0), score),
+      allCombo: Math.max(Number(old.allCombo || 0), combo),
+      totalMatched: Number(old.totalMatched || 0) + matched,
+      dailyDate: today,
+      dailyScore: old.dailyDate === today ? Math.max(Number(old.dailyScore || 0), score) : score,
+      weekKey,
+      weeklyScore: old.weekKey === weekKey ? Math.max(Number(old.weeklyScore || 0), score) : score,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  });
+  return { eligible: true };
+}
+
+async function loadMilkMatchLeaderboard(period = 'all') {
+  await authReady;
+  const snap = await getDocs(collection(db, 'milkMatchLeaderboard'));
+  const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Tokyo' }).format(new Date());
+  const jstNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+  const monday = new Date(jstNow);
+  const day = (monday.getDay() + 6) % 7;
+  monday.setDate(monday.getDate() - day);
+  const weekKey = `${monday.getFullYear()}-${String(monday.getMonth()+1).padStart(2,'0')}-${String(monday.getDate()).padStart(2,'0')}`;
+  return snap.docs.map(d => d.data()).filter(row => {
+    if (period === 'today') return row.dailyDate === today;
+    if (period === 'week') return row.weekKey === weekKey;
+    return true;
+  }).map(row => ({
+    uid: row.uid || '', name: row.name || 'うにメン', number: Number(row.number || 0),
+    score: period === 'today' ? Number(row.dailyScore || 0) : period === 'week' ? Number(row.weeklyScore || 0) : Number(row.allScore || 0),
+    combo: Number(row.allCombo || 0)
+  })).sort((a,b) => b.score - a.score || b.combo - a.combo || a.number - b.number).slice(0, 20);
+}
+
 function authInfo() {
   const user = auth.currentUser;
   const google = user?.providerData?.find(provider => provider.providerId === 'google.com');
@@ -216,13 +333,17 @@ async function signInGoogleAccount() {
 }
 
 window.UNICA_FIREBASE = {
-  app, auth, db,
+  app, appCheck, auth, db,
   get uid() { return uid; },
   saveMember: member => saveMember(member).catch(console.error),
   ensureMemberNumber,
   removeMember: () => removeMember().catch(console.error),
   syncCommunityRows: rows => syncCommunityRows(rows).catch(console.error),
   syncCheer: data => syncCheer(data).catch(console.error),
+  saveMilkMatchProgress,
+  loadMilkMatchProgress,
+  submitMilkMatchLeaderboard,
+  loadMilkMatchLeaderboard,
   heartbeat: () => heartbeat().catch(console.error),
   authInfo,
   linkGoogleAccount,

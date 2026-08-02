@@ -777,11 +777,19 @@
     if (withdrawalError) withdrawalError.textContent = matches || !withdrawalConfirmInput.value ? '' : '「たいかい」とひらがなで入力してください。';
   });
 
-  withdrawalConfirmButton?.addEventListener('click', () => {
+  withdrawalConfirmButton?.addEventListener('click', async () => {
     if (withdrawalConfirmInput?.value.trim() !== 'たいかい') return;
+    withdrawalConfirmButton.disabled = true;
+    try {
+      await window.UNICA_FIREBASE?.removeMember?.();
+    } catch (error) {
+      console.error(error);
+      if (withdrawalError) withdrawalError.textContent = '退会処理に失敗しました。通信環境を確認して、もう一度お試しください。';
+      withdrawalConfirmButton.disabled = false;
+      return;
+    }
     localStorage.removeItem(MEMBER_KEY);
     LEGACY_MEMBER_KEYS.forEach(key => localStorage.removeItem(key));
-    window.UNICA_FIREBASE?.removeMember();
     member = null;
     pendingRegistration = null;
     closeSettings();

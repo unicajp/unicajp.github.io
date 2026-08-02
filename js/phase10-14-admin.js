@@ -1,6 +1,6 @@
 import {
   collection, deleteDoc, doc, getDocs, orderBy, query,
-  serverTimestamp, setDoc, where, writeBatch
+  serverTimestamp, setDoc, where, writeBatch, runTransaction
 } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js';
 
 const $ = selector => document.querySelector(selector);
@@ -79,6 +79,29 @@ function renderMembers() {
   });
 }
 
+
+async function reconcileMemberNumberPool() {
+  const api = window.UNICA_FIREBASE;
+  if (!api?.db) return;
+  const occupied = new Set(members.map(row => Number(row.number || 0)).filter(n => Number.isInteger(n) && n > 0));
+  const counterRef = doc(api.db, 'system', 'memberCounterV3');
+  await runTransaction(api.db, async transaction => {
+    const counterSnap = await transaction.get(counterRef);
+    const counter = counterSnap.exists() ? counterSnap.data() : {};
+    const highestOccupied = occupied.size ? Math.max(...occupied) : 0;
+    const lastNumber = Math.max(Number(counter.lastNumber || 0), highestOccupied);
+    const availableNumbers = [];
+    for (let number = 1; number <= lastNumber; number++) {
+      if (!occupied.has(number)) availableNumbers.push(number);
+    }
+    transaction.set(counterRef, {
+      lastNumber,
+      availableNumbers,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  });
+}
+
 async function loadMembers() {
   membersMessage.classList.remove('is-success');
   membersMessage.textContent = 'うにメン一覧を読み込み中…';
@@ -87,6 +110,7 @@ async function loadMembers() {
   if (!api?.db) throw new Error('Firebaseへの接続が完了していません。');
   const snap = await getDocs(query(collection(api.db, 'users'), orderBy('number', 'asc')));
   members = snap.docs.map(docSnap => ({ uid: docSnap.id, ...docSnap.data() }));
+  await reconcileMemberNumberPool();
   membersMessage.textContent = '';
   renderMembers();
 }
@@ -112,17 +136,41 @@ async function deleteMemberDirectly(member) {
 
   const db = api.db;
   const commentsSnap = await getDocs(query(collection(db, 'supportComments'), where('ownerUid', '==', member.uid)));
-  const batch = writeBatch(db);
+  const userRef = doc(db, 'users', member.uid);
+  const counterRef = doc(db, 'system', 'memberCounterV3');
 
-  // 削除済み印を先に残し、対象端末のローカルデータから再登録されるのを防ぎます。
-  batch.set(doc(db, 'deletedMembers', member.uid), {
-    uid: member.uid,
-    name: member.name || '',
-    number: Number(member.number || 0),
-    deletedAt: serverTimestamp(),
-    deletedBy: api.uid || 'browser-admin'
+  // 会員番号を空き番号プールへ戻してから会員データを削除します。
+  await runTransaction(db, async transaction => {
+    const [userSnap, counterSnap] = await Promise.all([
+      transaction.get(userRef),
+      transaction.get(counterRef)
+    ]);
+    const userData = userSnap.exists() ? userSnap.data() : member;
+    const releasedNumber = Number(userData.number || member.number || 0);
+    const counter = counterSnap.exists() ? counterSnap.data() : {};
+    const availableNumbers = Array.isArray(counter.availableNumbers)
+      ? counter.availableNumbers.map(Number).filter(n => Number.isInteger(n) && n > 0)
+      : [];
+    if (releasedNumber > 0 && !availableNumbers.includes(releasedNumber)) {
+      availableNumbers.push(releasedNumber);
+      availableNumbers.sort((a, b) => a - b);
+    }
+    transaction.set(counterRef, {
+      lastNumber: Number(counter.lastNumber || 0),
+      availableNumbers,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    transaction.set(doc(db, 'deletedMembers', member.uid), {
+      uid: member.uid,
+      name: member.name || '',
+      number: releasedNumber,
+      deletedAt: serverTimestamp(),
+      deletedBy: api.uid || 'browser-admin'
+    });
+    transaction.delete(userRef);
   });
-  batch.delete(doc(db, 'users', member.uid));
+
+  const batch = writeBatch(db);
   batch.delete(doc(db, 'presence', member.uid));
   commentsSnap.docs.forEach(commentDoc => batch.delete(commentDoc.ref));
   await batch.commit();
