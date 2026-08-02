@@ -4,7 +4,6 @@
   const PROGRESS_KEY = 'unicaMilkMatchProgressV2';
   const VIEWED_KEY = 'unicaMilkLyricsViewedV1';
   const COMPLETE_KEY = 'unicaMilkLyricsCompleteShownV1';
-  const CHAPTER_COSTS = [12, 16, 20, 24, 28, 32, 36, 40, 48];
 
   const CHAPTERS = [
     { lines:['昨日まで着ていた服が','少しだけ短く見える','気付けば増えた写真に','季節だけが写ってる'], audio:'assets/audio/milk_chapter_01.mp3' },
@@ -203,7 +202,7 @@
     const progress = readProgress();
     const unlocked = progress.unlockedChapters;
     const viewed = readViewed();
-    fragmentEl.textContent = String(progress.fragments);
+    if (fragmentEl) fragmentEl.textContent = '';
     unlockedEl.textContent = String(unlocked.length);
     if (homeUnlockedEl) homeUnlockedEl.textContent = String(unlocked.length);
     progressEl.style.width = `${(unlocked.length / CHAPTERS.length) * 100}%`;
@@ -211,9 +210,6 @@
 
     CHAPTERS.forEach((chapter, chapterIndex) => {
       const isUnlocked = unlocked.includes(chapterIndex);
-      const previousUnlocked = chapterIndex === 0 || unlocked.includes(chapterIndex - 1);
-      const chapterCost = CHAPTER_COSTS[chapterIndex] || 48;
-      const enough = progress.fragments >= chapterCost;
       const isNew = isUnlocked && !viewed.has(chapterIndex);
       const availability = audioAvailability.get(chapterIndex);
       if (isUnlocked) probeAudio(chapterIndex);
@@ -231,8 +227,7 @@
         else if (availability === false) actionHtml = `<button class="milk-lyrics-play" type="button" disabled>🎧 試聴音源準備中</button>`;
         else actionHtml = `<button class="milk-lyrics-play" type="button" disabled>🎧 音源を確認中…</button>`;
       } else {
-        const label = !previousUnlocked ? '前のChapterを先に解放' : enough ? `🥛 ${chapterCost}個で解放` : `あと${chapterCost - progress.fragments}個`;
-        actionHtml = `<button class="milk-lyrics-unlock" type="button" data-unlock="${chapterIndex}" ${(!previousUnlocked || !enough) ? 'disabled' : ''}>${label}</button>`;
+        actionHtml = `<div class="milk-lyrics-stage-lock">STORY STAGE ${chapterIndex + 1} クリアで解放</div>`;
       }
 
       card.innerHTML = `<header><span>CHAPTER ${String(chapterIndex + 1).padStart(2,'0')}</span><div>${isNew ? '<em>NEW</em>' : ''}<b>${isUnlocked ? '解放済み' : 'LOCKED'}</b></div></header><div class="milk-lyrics-text">${lineHtml}</div>${actionHtml}`;
@@ -286,23 +281,35 @@
     });
   }
 
-  function unlockChapter(index) {
-    const progress = readProgress();
-    if (progress.unlockedChapters.includes(index)) return;
-    if (index > 0 && !progress.unlockedChapters.includes(index - 1)) return;
-    const chapterCost = CHAPTER_COSTS[index] || 48;
-    if (progress.fragments < chapterCost) return;
-    progress.fragments -= chapterCost;
-    progress.unlockedChapters.push(index);
-    progress.unlockedChapters.sort((a,b)=>a-b);
-    saveProgress(progress);
+  function handleProgressUpdate(event) {
+    const previous = new Set(readProgress().unlockedChapters);
+    const detail = event?.detail || {};
+    const incoming = Array.isArray(detail.unlockedChapters)
+      ? [...new Set(detail.unlockedChapters.map(Number).filter(n => Number.isInteger(n) && n >= 0 && n < CHAPTERS.length))].sort((a,b)=>a-b)
+      : [];
+
+    // ゲーム側が先にlocalStorageへ保存するため、通常はrenderだけで反映されます。
+    // 念のためイベント詳細の方が進んでいる場合は統合して保存します。
+    if (incoming.length) {
+      const current = readProgress();
+      const merged = [...new Set([...(current.unlockedChapters || []), ...incoming])].sort((a,b)=>a-b);
+      if (merged.length !== current.unlockedChapters.length) {
+        current.unlockedChapters = merged;
+        current.stageStars = Array.isArray(detail.stageStars) ? detail.stageStars : current.stageStars;
+        current.storyStage = Math.max(Number(current.storyStage || 0), Number(detail.storyStage || 0));
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(current));
+      }
+    }
+
+    const after = readProgress().unlockedChapters;
     render();
-    petals();
-    setTimeout(() => showUnlockOverlay(index), 250);
-    const card = list.children[index];
-    card?.classList.add('is-newly-unlocked');
-    card?.scrollIntoView({ behavior:'smooth', block:'center' });
-    if (progress.unlockedChapters.length === CHAPTERS.length) setTimeout(showCompleteOverlay, 1200);
+
+    const newlyUnlocked = after.filter(index => !previous.has(index));
+    if (newlyUnlocked.length && modal.classList.contains('is-open')) {
+      petals();
+      setTimeout(() => showUnlockOverlay(newlyUnlocked[newlyUnlocked.length - 1]), 250);
+    }
+    if (after.length === CHAPTERS.length) setTimeout(showCompleteOverlay, 900);
   }
 
   function openModal() {
@@ -323,18 +330,16 @@
   openFromGame?.addEventListener('click', openModal);
   modal.querySelectorAll('[data-close-milk-lyrics]').forEach(el => el.addEventListener('click', closeModal));
   list.addEventListener('click', event => {
-    const unlock = event.target.closest('[data-unlock]');
-    if (unlock) unlockChapter(Number(unlock.dataset.unlock));
     const play = event.target.closest('[data-play]');
     if (play) playChapter(Number(play.dataset.play));
     const card = event.target.closest('.milk-lyrics-card.has-new');
-    if (card && !unlock) {
+    if (card) {
       markViewed(Number(card.dataset.chapter));
       card.classList.remove('has-new');
       card.querySelector('header em')?.remove();
     }
   });
-  window.addEventListener('unica:milk-match-progress', render);
+  window.addEventListener('unica:milk-match-progress', handleProgressUpdate);
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
   });
