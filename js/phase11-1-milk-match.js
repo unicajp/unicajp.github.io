@@ -10,16 +10,15 @@
   ];
   const TYPES = PIECES.map(piece => piece.name);
   const STORY_STAGES = [
-    // Ver.4.9: 全ステージを少し軽めに再調整。
-    // Chapter 1は早めに解放し、後半は段階的に難しくなる。
-    { moves: 18, goal: 18000 },
-    { moves: 17, goal: 27000 },
-    { moves: 16, goal: 36000 },
-    { moves: 15, goal: 45000 },
-    { moves: 14, goal: 54000 },
-    { moves: 13, goal: 63000 },
-    { moves: 12, goal: 72000 },
-    { moves: 11, goal: 81000 },
+    // Ver.4.22: 序盤は解放しやすく、後半は達成感を残しつつ現実的な難易度へ。
+    { moves: 18, goal: 15000 },
+    { moves: 17, goal: 28000 },
+    { moves: 16, goal: 34000 },
+    { moves: 15, goal: 41000 },
+    { moves: 14, goal: 48000 },
+    { moves: 13, goal: 55000 },
+    { moves: 12, goal: 60000 },
+    { moves: 11, goal: 70000 },
     { moves: 10, goal: 90000 }
   ];
   const STORY_MOVES = STORY_STAGES[0].moves;
@@ -71,6 +70,7 @@
   let selected = null;
   let lastSwap = null;
   let pendingPlayerCreation = null;
+  let skillPlacementMode = false;
   let locked = false;
   let gameEnded = true;
   let attemptActive = false;
@@ -328,8 +328,15 @@
   }
 
   function comboMultiplier(chain) {
-    const table = [0, 1, 1.45, 1.95, 2.6, 3.35, 4.2, 5.15];
-    return table[Math.min(chain, table.length - 1)] || (5.15 + (chain - 7) * 1.1);
+    const table = [0, 1, 1.45, 1.95, 2.6, 3.35, 4.35, 5.4];
+    return table[Math.min(chain, table.length - 1)] || (5.4 + (chain - 7) * 1.15);
+  }
+
+  function applyScoreBonuses(base, { special = false } = {}) {
+    let value = Number(base) || 0;
+    if (special) value *= 1.15;
+    if (mode === 'story' && moves <= 3) value *= 1.2;
+    return Math.round(value);
   }
 
   function weekKeyJst() {
@@ -737,8 +744,8 @@
   function storyMoves() { return currentStoryStage().moves; }
 
   function starsForClear(remainingMoves) {
-    if (remainingMoves >= 5) return 3;
-    if (remainingMoves >= 3) return 2;
+    if (remainingMoves >= 4) return 3;
+    if (remainingMoves >= 2) return 2;
     return 1;
   }
 
@@ -870,7 +877,7 @@
       runMaxCombo = Math.max(runMaxCombo, chain);
       runMatched += matches.length;
       const sizeBonus = matches.length >= 5 ? 1.55 : matches.length === 4 ? 1.22 : 1;
-      const gain = Math.round(matches.length * 34 * comboMultiplier(chain) * sizeBonus);
+      const gain = applyScoreBonuses(matches.length * 34 * comboMultiplier(chain) * sizeBonus);
       score += gain;
       matches.forEach(i => { const t = board[i]; if (Number.isInteger(t)) runTypeCounts[t]++; });
       const creations = new Map();
@@ -1044,7 +1051,7 @@
     makeBurst(targets, Math.min(10, 5 + chain.waves.length));
     await sleep(400 + Math.min(4, chain.waves.length - 1) * 95);
     const chainBonus = 1 + Math.max(0, chain.waves.length - 1) * 0.35;
-    const gain = Math.round(targets.length * 92 * chainBonus);
+    const gain = applyScoreBonuses(targets.length * 92 * chainBonus, { special: true });
     score += gain;
     runMatched += targets.length;
     targets.forEach(j => {
@@ -1088,7 +1095,7 @@
       if (Number.isInteger(type)) runTypeCounts[type]++;
     });
     const sizeBonus = normalMatches.length >= 5 ? 1.35 : normalMatches.length === 4 ? 1.16 : 1;
-    const gain = Math.round(normalMatches.length * 34 * sizeBonus);
+    const gain = applyScoreBonuses(normalMatches.length * 34 * sizeBonus);
     score += gain;
 
     showCombo(1, gain);
@@ -1165,108 +1172,42 @@
 
   async function activateLineLineCombo(a, b, preferredType = null) {
     const target = b;
-    // ライン同士の交換では、交換後の盤面状態に依存せず必ず虹合体を成立させる。
-    // 移動先に元々あったピースの種類を優先し、取得不能時だけ現在値へフォールバックする。
-    const sourceType = Number.isInteger(board[a]) ? board[a] : null;
+    const sourceType = Number.isInteger(board[a]) ? board[a] : 0;
     const targetType = Number.isInteger(board[b]) ? board[b] : sourceType;
-    const rainbowType = Number.isInteger(preferredType)
-      ? preferredType
-      : (Number.isInteger(targetType) ? targetType : (Number.isInteger(sourceType) ? sourceType : 0));
+    const rainbowType = Number.isInteger(preferredType) ? preferredType : targetType;
 
     try {
       boardEl.children[a]?.classList.add('is-special-combo-source');
       boardEl.children[b]?.classList.add('is-special-combo-target');
       sfx.combo(6);
-      await sleep(130);
+      await sleep(150);
 
-      // ライン2個をスライド先へ集約し、虹へ変化させる。
-      // board に null を置いた状態で render() すると描画処理が例外になり、
-      // 虹が表示される前にフォールバック発動へ進んでしまうため、
-      // 移動元は一時的な透明プレースホルダーとして描画する。
-      const placeholderType = (rainbowType + 1) % TYPES.length;
-      board[a] = placeholderType;
-      specials[a] = null;
-      board[target] = rainbowType;
-      specials[target] = 'rainbow';
-      render();
-
-      const sourceTile = boardEl.children[a];
-      sourceTile?.classList.add('is-combo-source-vacated');
-      const targetTile = boardEl.children[target];
-      targetTile?.classList.add('is-rainbow-forming', 'is-combo-created');
-      toast('🌈 ライン合体！ 虹アイテム完成');
-      showComboLabel?.('虹アイテム完成！');
-      // 虹の見た目を十分確認できる時間を確保する。
-      await sleep(1800);
-
-      // 発動直前まで虹を盤面に固定し、移動元だけ空きマスへ戻す。
       board[a] = null;
       specials[a] = null;
       board[target] = rainbowType;
       specials[target] = 'rainbow';
+      collapseBoard([target]);
+      // collapse後も移動先に虹を固定する。
+      board[target] = rainbowType;
+      specials[target] = 'rainbow';
       render();
-      const activeRainbowTile = boardEl.children[target];
-      activeRainbowTile?.classList.add('is-rainbow-ready');
-      toast('🌈 虹アイテムが発動します');
-      await sleep(700);
-      activeRainbowTile?.classList.add('is-special-activating');
-      await sleep(320);
 
-      // 汎用キューを経由せず、生成した虹をこの場で確実に発動する。
-      const targets = board
-        .map((type, index) => type === rainbowType ? index : -1)
-        .filter(index => index >= 0);
-      if (!targets.includes(target)) targets.push(target);
-
-      targets.forEach((index, order) => {
-        const tile = boardEl.children[index];
-        if (!tile) return;
-        tile.style.setProperty('--special-delay', `${Math.min(order, 18) * 12}ms`);
-        tile.classList.add('is-special-target');
-      });
-      boardEl.children[target]?.classList.add('is-special-activating');
-      playSpecialBeam('rainbow', target);
-      sfx.combo(8);
-      toast('🌈 同じアイコンを全消し！');
-      makeBurst(targets, 8);
-      await sleep(520);
-
-      const gain = Math.round(targets.length * 110 + 900);
-      score += gain;
-      runMatched += targets.length;
-      runSkills += 2;
-      targets.forEach(index => {
-        const type = board[index];
-        if (Number.isInteger(type)) runTypeCounts[type]++;
-        board[index] = null;
-        specials[index] = null;
-      });
-      showCombo(5, gain);
+      const targetTile = boardEl.children[target];
+      targetTile?.classList.add('is-rainbow-forming', 'is-combo-created', 'is-rainbow-ready');
+      toast('🌈 LINE COMBO！ 虹アイテム完成');
+      showComboLabel?.('虹アイテム完成！');
+      makeBurst([target], 7);
+      await sleep(900);
+      targetTile?.classList.remove('is-rainbow-forming');
       updateStats();
-
-      collapseBoard();
-      render();
-      [...boardEl.children].forEach(tile => tile.classList.add('is-falling'));
-      await sleep(190);
       return true;
     } catch (error) {
       console.error('Line + line combo failed:', error);
-      // 失敗時も空白や発動待ちを残さず、盤面を必ず復旧する。
+      if (!Number.isInteger(board[target])) board[target] = rainbowType;
+      specials[target] = 'rainbow';
       if (board[a] == null) board[a] = Math.floor(Math.random() * TYPES.length);
-      // 例外時も「ただ消える」状態にはせず、対象色を最低限消して盤面を復旧する。
-      const fallbackTargets = board
-        .map((type, index) => type === rainbowType ? index : -1)
-        .filter(index => index >= 0);
-      fallbackTargets.forEach(index => {
-        board[index] = null;
-        specials[index] = null;
-      });
-      specials[a] = null;
-      collapseBoard();
       render();
-      [...boardEl.children].forEach(tile => tile.classList.add('is-falling'));
-      toast('🌈 ライン合体を発動しました');
-      await sleep(190);
+      toast('🌈 虹アイテムを生成しました');
       return true;
     }
   }
@@ -1298,7 +1239,7 @@
     await sleep(360);
     const specialCount = allSpecials.length;
     const baseGain = (allIndices.length * 105) + (specialCount * 650);
-    const gain = Math.round(baseGain * 2);
+    const gain = applyScoreBonuses(baseGain * 2, { special: true });
     score += gain;
     runMatched += allIndices.length;
     runSkills += specialCount;
@@ -1437,35 +1378,47 @@
   }
 
   async function useSkill(kind) {
+    if (kind !== 'rainbow') return;
+    if (skillPlacementMode) {
+      skillPlacementMode = false;
+      boardEl.classList.remove('is-skill-placement');
+      toast('虹の配置をキャンセルしました');
+      updateStats();
+      return;
+    }
     if (skill < 100 || locked || gameEnded || !attemptActive) {
       if (skill < 100) toast(`MILK SKILLはあと${Math.max(0, 100 - Math.floor(skill))}で使えます`);
       return;
     }
-    locked = true;
     selected = null;
-    skill = 0;
+    skillPlacementMode = true;
+    boardEl.classList.add('is-skill-placement');
+    [...boardEl.children].forEach(tile => tile.classList.add('is-skill-selectable'));
+    toast('🌈 虹を置きたいマスをタップしてください');
     updateStats();
+  }
+
+  async function placeSkillRainbow(target) {
+    if (!skillPlacementMode || locked || gameEnded || !attemptActive || !Number.isInteger(target)) return false;
+    locked = true;
+    skillPlacementMode = false;
+    boardEl.classList.remove('is-skill-placement');
+    skill = 0;
+    selected = null;
+    const type = Number.isInteger(board[target]) ? board[target] : 0;
+    board[target] = type;
+    specials[target] = 'rainbow';
+    render();
+    const tile = boardEl.children[target];
+    tile?.classList.add('is-rainbow-forming', 'is-skill-created');
     sfx.clear();
-    if (kind === 'shuffle') {
-      boardEl.classList.add('is-shuffling');
-      await sleep(180);
-      board = createBoard();
-      specials = Array(SIZE * SIZE).fill(null);
-      render();
-      boardEl.classList.remove('is-shuffling');
-      toast('🔀 盤面をシャッフルしました');
-    } else {
-      const candidates = board.map((_, i) => i).filter(i => !specials[i]);
-      const target = selected !== null && candidates.includes(selected) ? selected : candidates[Math.floor(Math.random() * candidates.length)];
-      if (Number.isInteger(target)) {
-        specials[target] = 'rainbow';
-        render();
-        boardEl.children[target]?.classList.add('is-rainbow-forming');
-        toast('🌈 虹アイテムを生成しました');
-      }
-    }
+    toast('🌈 好きな場所に虹アイテムを配置しました');
+    makeBurst([target], 7);
+    await sleep(650);
+    tile?.classList.remove('is-rainbow-forming');
     updateStats();
     locked = false;
+    return true;
   }
 
   function createOverlay(className, html) {
@@ -1701,6 +1654,10 @@
     if (!tile || locked || gameEnded || !attemptActive) return;
     const i = Number(tile.dataset.index);
     if (!Number.isInteger(i)) return;
+    if (skillPlacementMode) {
+      placeSkillRainbow(i);
+      return;
+    }
     if (specials[i]) {
       activateSpecial(i);
       return;
@@ -1729,7 +1686,7 @@
 
   boardEl.addEventListener('pointerdown', event => {
     const tile = tileFromEvent(event);
-    if (!tile || locked || gameEnded || !attemptActive) return;
+    if (!tile || locked || gameEnded || !attemptActive || skillPlacementMode) return;
     event.preventDefault();
     const i = Number(tile.dataset.index);
     gesture = { pointerId: event.pointerId, i, x: event.clientX, y: event.clientY };
