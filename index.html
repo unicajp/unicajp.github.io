@@ -497,10 +497,52 @@
     <button aria-label="閉じる" class="world-modal-close" data-close-birthday-calendar type="button">×</button>
     <p class="eyebrow">UNICA MEMBER BIRTHDAYS</p>
     <h2 id="birthdayCalendarTitle">🎂 うにメン誕生日カレンダー</h2>
-    <p class="birthday-calendar-intro">公開設定になっている誕生日を、月ごとに確認できます。</p>
+    <div class="birthday-calendar-topline"><p class="birthday-calendar-intro">公開設定になっている誕生日を、月ごとに確認できます。</p><button type="button" id="openBirthdayAlbum" data-open-birthday-album>🎂 お祝いアルバム</button></div>
     <div class="birthday-calendar-months" id="birthdayCalendarMonths" role="tablist" aria-label="月を選択"></div>
     <div class="birthday-calendar-heading"><strong id="birthdayCalendarMonthTitle">今月のお誕生日</strong><span id="birthdayCalendarMonthCount">0人</span></div>
     <div class="birthday-calendar-list" id="birthdayCalendarList" aria-live="polite"></div>
+  </section>
+</div>
+
+
+
+<div aria-hidden="true" class="birthday-experience-modal" id="birthdayExperienceModal">
+  <div class="birthday-experience-backdrop" data-close-birthday-experience></div>
+  <div class="birthday-celebration-particles" aria-hidden="true"></div>
+  <section class="birthday-experience-panel" role="dialog" aria-modal="true" aria-label="今日のお誕生日">
+    <button class="birthday-experience-close" type="button" data-close-birthday-experience aria-label="閉じる">×</button>
+    <div id="birthdayExperienceBody"></div>
+  </section>
+</div>
+
+<div aria-hidden="true" class="world-modal birthday-comment-modal" id="birthdayCommentModal">
+  <div class="world-modal-backdrop" data-close-birthday-comment></div>
+  <section class="world-modal-panel birthday-comment-panel" role="dialog" aria-modal="true" aria-labelledby="birthdayCommentTitle">
+    <button class="world-modal-close" type="button" data-close-birthday-comment aria-label="閉じる">×</button>
+    <div class="birthday-comment-hero"><span id="birthdayGrowthIcon">🌱</span><div><small>HAPPY BIRTHDAY</small><h2 id="birthdayCommentTitle"><b id="birthdayCommentPerson">うにメンさん</b>へ</h2><p><span id="birthdayCommentDate"></span>・<b id="birthdayCommentCount">0件</b></p></div></div>
+    <div class="birthday-growth-status"><span id="birthdayGrowthLabel">お祝いで育ちます</span><i><b></b></i></div>
+    <div id="birthdayCommentComposer" class="birthday-comment-composer"><textarea id="birthdayCommentInput" maxlength="120" rows="3" placeholder="お誕生日おめでとう！素敵な一年になりますように…"></textarea><button type="button" id="birthdayCommentSubmit">💌 お祝いコメントを送る</button><small>コメントは当日だけ・1人につき1回送れます。みんなに公開されます。</small></div>
+    <p class="birthday-comment-done" id="birthdayCommentDone" hidden>✅ 今日はお祝い済みです</p>
+    <p class="birthday-comment-own" id="birthdayCommentOwnNotice" hidden>🎁 みんなから届いたお祝いコメントです</p>
+    <div class="birthday-comment-list" id="birthdayCommentList" aria-live="polite"></div>
+  </section>
+</div>
+
+<div aria-hidden="true" class="world-modal birthday-album-modal" id="birthdayAlbumModal">
+  <div class="world-modal-backdrop" data-close-birthday-album></div>
+  <section class="world-modal-panel birthday-album-panel" role="dialog" aria-modal="true" aria-labelledby="birthdayAlbumTitle">
+    <button class="world-modal-close" type="button" data-close-birthday-album aria-label="閉じる">×</button>
+    <p class="eyebrow">BIRTHDAY ALBUM</p><h2 id="birthdayAlbumTitle">🎂 お祝いコメントの思い出</h2><p class="birthday-calendar-intro">日付とお誕生日の人を選ぶと、いつでもコメントを読み返せます。</p>
+    <div id="birthdayAlbumList" class="birthday-album-list"></div>
+  </section>
+</div>
+
+<div aria-hidden="true" class="world-modal birthday-history-modal" id="birthdayHistoryModal">
+  <div class="world-modal-backdrop" data-close-birthday-history></div>
+  <section class="world-modal-panel birthday-history-panel" role="dialog" aria-modal="true" aria-labelledby="birthdayHistoryTitle">
+    <button class="world-modal-close" type="button" data-close-birthday-history aria-label="閉じる">×</button>
+    <p class="eyebrow" id="birthdayHistoryDate"></p><h2 id="birthdayHistoryTitle">お誕生日</h2><p id="birthdayHistoryCount" class="birthday-history-count">💌 0件</p>
+    <div id="birthdayHistoryList" class="birthday-comment-list"></div>
   </section>
 </div>
 
@@ -644,7 +686,7 @@
 <script src="js/phase10-11-scroll-only.js"></script>
 <script src="js/phase10-12-google.js"></script>
 <script type="module" src="js/phase10-14-admin.js"></script>
-<script type="module" src="js/phase10-17-birthdays.js"></script>
+<script type="module" src="js/phase10-17-birthdays.js?v=5.0-birthday-comments"></script>
 <script src="js/phase10-18-release-countdown.js"></script>
 <script src="js/phase11-1-milk-match.js?v=4.20-lyrics-unlock-fix"></script>
 <script src="js/phase11-3-lyrics-audio.js?v=4.20-lyrics-unlock-fix"></script>
