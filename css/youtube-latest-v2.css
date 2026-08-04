@@ -171,3 +171,22 @@
   #unicoLatestYouTube .youtube-latest-body{display:flex;flex-direction:column;justify-content:center;padding:22px}
   #unicoLatestYouTube .youtube-latest-body>strong{font-size:18px !important}
 }
+
+
+/* Phase12.5.0 — loading state / duplicate play fix */
+#unicoLatestYouTube [hidden]{display:none !important;}
+#unicoLatestYouTube .youtube-latest-thumb-wrap.is-loaded .youtube-latest-placeholder{display:none !important;}
+#unicoLatestYouTube .youtube-latest-thumb-wrap:not(.is-loaded) .youtube-latest-play{display:none !important;}
+#unicoLatestYouTube .youtube-latest-thumb-wrap.is-loaded .youtube-latest-play{display:grid !important;}
+#unicoLatestYouTube .youtube-latest-thumb-wrap.is-loaded{background:#171114;}
+#unicoLatestYouTube .youtube-latest-thumb-wrap.is-loaded::after{height:24%;background:linear-gradient(to top,rgba(25,11,17,.26),transparent);}
+#unicoLatestYouTube .youtube-latest-placeholder{z-index:2;}
+#unicoLatestYouTube .youtube-latest-placeholder span{width:50px;height:50px;font-size:21px;}
+#unicoLatestYouTube .youtube-latest-thumb-wrap img{opacity:0;}
+#unicoLatestYouTube .youtube-latest-thumb-wrap.is-loaded img{opacity:1;}
+#unicoLatestYouTube .youtube-latest-play{width:50px;height:50px;font-size:21px;}
+#unicoLatestYouTube .youtube-latest-body{padding:12px 14px 14px;}
+#unicoLatestYouTube .youtube-latest-kicker{margin-bottom:6px;}
+#unicoLatestYouTube .youtube-latest-body>strong{font-size:14px !important;line-height:1.45 !important;}
+#unicoLatestYouTube .youtube-latest-body>p{margin:5px 0 10px !important;}
+#unicoLatestYouTube .youtube-latest-cta{min-height:40px;}
