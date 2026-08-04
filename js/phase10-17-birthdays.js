@@ -9,6 +9,7 @@ const firebaseConfig = {
 const app=getApps()[0]||initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+function scentBadgeFor(uidValue){const row=members.find(x=>x.uid===uidValue)||{};const scent=row.scentDiagnosis;if(!scent?.typeId)return '';const type=window.UNICA_SCENT16?.typeById?.(scent.typeId);const flower=type?.flower||scent.flower||'🌸';const name=scent.scentName||type?.name||'診断済み';return `<span class="scent-mini-badge" title="${esc(name)}" aria-label="${esc(name)}">${esc(flower)}</span>`}
 const member=()=>{try{return JSON.parse(localStorage.getItem('unicaWorldMemberV4')||localStorage.getItem('unicaWorldMemberV3')||'null')}catch{return null}};
 let members=[], selectedMonth=1, celebrationTimer=null, uid=null, birthdayComments=[], birthdayCommentLikes=[], birthdayAlbumReplies=[], birthdayReplyLikes=[], selectedBirthdayUid='', selectedHistoryKey='', dataReady={members:false,comments:false}, prompted=false;
 
@@ -28,6 +29,8 @@ function commentLikeCount(commentId){return birthdayCommentLikes.filter(x=>x.com
 function hasLikedComment(commentId){return birthdayCommentLikes.some(x=>x.commentId===commentId&&x.uid===uid)}
 function replyFor(eventKey){return birthdayAlbumReplies.find(x=>x.eventKey===eventKey)}
 function replyLikeCount(eventKey){return birthdayReplyLikes.filter(x=>x.eventKey===eventKey).length}
+function groupLikeCount(group){return group.comments.reduce((sum,x)=>sum+commentLikeCount(x.id),0)+replyLikeCount(group.eventKey)}
+function todayLikeCount(rows=todayMembers()){return rows.reduce((sum,row)=>{const key=eventKey(row.uid);return sum+commentsFor(row.uid).reduce((n,x)=>n+commentLikeCount(x.id),0)+replyLikeCount(key)},0)}
 function hasLikedReply(eventKey){return birthdayReplyLikes.some(x=>x.eventKey===eventKey&&x.uid===uid)}
 function daysSince(key){const [y,m,d]=String(key).split('-').map(Number);const event=Date.UTC(y,m-1,d);const n=todayParts();const today=Date.UTC(n.year,n.month-1,n.day);return Math.floor((today-event)/86400000)}
 function likeButton(kind,id,count,liked){return `<button type="button" class="birthday-like-button${liked?' is-liked':''}" data-birthday-like="${kind}" data-like-id="${esc(id)}" aria-pressed="${liked}"><span>♥</span><b>${count}</b></button>`}
@@ -47,13 +50,13 @@ function renderHome(){
   $('#birthdayMonthSummary')&&($('#birthdayMonthSummary').textContent=rows.length?`${formatNames(rows)}がお誕生日です。`:`${n.month}月のお誕生日メンバーはまだいません。`);
   const list=$('#birthdayMonthList');
   if(list) list.innerHTML=rows.length?rows.map(row=>`<div class="birthday-mini-member"><div class="birthday-mini-info"><div class="birthday-mini-name-line">${memberName(row)}<small class="birthday-mini-number">${memberNo(row)}</small></div><small class="birthday-mini-date">${n.month}月${Number(row.birthDay)}日</small></div>${wishButton(row,true)}</div>`).join(''):'<p class="birthday-month-empty">今月のお誕生日メンバーが登録されると、ここに表示されます。</p>';
-  const albumShortcut=$('#birthdayAlbumShortcut');if(albumShortcut){const groups=albumGroups();albumShortcut.innerHTML=`<button type="button" data-open-birthday-album><span>📖</span><div><small>BIRTHDAY ALBUM</small><strong>お祝いコメントアルバム</strong><p>過去のお祝いをいつでも見返せます</p></div><em>${groups.length}件</em><b>›</b></button>`}
+  const albumShortcut=$('#birthdayAlbumShortcut');if(albumShortcut){const groups=albumGroups();albumShortcut.innerHTML=`<button type="button" data-open-birthday-album><span>📖</span><div><small>BIRTHDAY ALBUM</small><strong>お祝いコメントアルバム</strong><p>日付ごとのコメントと本人のお礼を見返せます</p></div><em>${groups.length}件・♥ ${groups.reduce((n,g)=>n+groupLikeCount(g),0)}</em><b>›</b></button>`}
   const celebration=$('#birthdayTodayCelebration');
   if(celebration){
     celebration.hidden=!today.length;
     if(today.length){
-      const total=today.reduce((s,x)=>s+commentsFor(x.uid).length,0), growth=stageForCount(total);
-      celebration.innerHTML=`<span>${growth.icon}</span><div><small>TODAY'S BIRTHDAY</small><strong>今日は${formatNames(today,4)}のお誕生日！</strong><p>${growth.label}・お祝いコメント ${total}件</p></div><button type="button" data-open-birthday-comment="${esc(today.find(x=>x.uid!==uid)?.uid||today[0].uid)}">お祝いする</button>`;
+      const total=today.reduce((s,x)=>s+commentsFor(x.uid).length,0), likes=todayLikeCount(today), growth=stageForCount(total);
+      celebration.innerHTML=`<span>${growth.icon}</span><div><small>TODAY'S BIRTHDAY</small><strong>今日は${formatNames(today,4)}のお誕生日！</strong><div class="birthday-today-stats"><b>💌 ${total}件</b><b>♥ ${likes}</b><em>${growth.label}</em></div></div><button type="button" data-open-birthday-comment="${esc(today.find(x=>x.uid!==uid)?.uid||today[0].uid)}">お祝いを見る</button>`;
       startCelebrationTicker(today)
     }else stopCelebrationTicker()
   }
@@ -77,7 +80,7 @@ function renderCommentModal(targetUid){
   const ownNotice=$('#birthdayCommentOwnNotice');ownNotice.hidden=!own;
   $('#birthdayCommentInput').value='';
   const list=$('#birthdayCommentList');
-  list.innerHTML=rows.length?rows.map(x=>`<article class="birthday-message-row"><button type="button" data-member-uid="${esc(x.senderUid)}">${esc(x.senderName||'うにメン')}</button><p>${esc(x.message||'')}</p><div class="birthday-message-meta"><time>${x.createdAt?.toDate?.().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})||''}</time>${likeButton('comment',x.id,commentLikeCount(x.id),hasLikedComment(x.id))}</div></article>`).join(''):'<div class="birthday-no-comments">最初のお祝いコメントを届けよう 💌</div>';
+  list.innerHTML=rows.length?rows.map(x=>`<article class="birthday-message-row"><button type="button" data-member-uid="${esc(x.senderUid)}">${esc(x.senderName||'うにメン')}${scentBadgeFor(x.senderUid)}</button><p>${esc(x.message||'')}</p><div class="birthday-message-meta"><time>${x.createdAt?.toDate?.().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})||''}</time>${likeButton('comment',x.id,commentLikeCount(x.id),hasLikedComment(x.id))}</div></article>`).join(''):'<div class="birthday-no-comments">最初のお祝いコメントを届けよう 💌</div>';
 }
 function openBirthdayComment(targetUid){const target=members.find(x=>x.uid===targetUid);if(!target)return;if(!isToday(target)){toast('お祝いコメントを書けるのは誕生日当日だけです。');return}renderCommentModal(targetUid);openModal('#birthdayCommentModal')}
 async function submitBirthdayComment(){
@@ -101,20 +104,20 @@ function albumGroups(){
 }
 function renderAlbum(){
   const groups=albumGroups(), list=$('#birthdayAlbumList');
-  list.innerHTML=groups.length?groups.map(g=>`<button type="button" class="birthday-album-row" data-open-birthday-history="${esc(g.eventKey)}"><span>🎂</span><div><time>${esc(g.eventDate.replaceAll('-','/'))}</time><strong>${esc(g.targetName)}さん</strong><small>${replyFor(g.eventKey)?'本人からのお礼コメントあり':'お祝いの思い出'}</small></div><em>💌 ${g.comments.length}件</em><b>›</b></button>`).join(''):'<div class="birthday-no-comments">まだ誕生日アルバムはありません。</div>'
+  list.innerHTML=groups.length?groups.map(g=>`<button type="button" class="birthday-album-row" data-open-birthday-history="${esc(g.eventKey)}"><span>🎂</span><div><time>${esc(g.eventDate.replaceAll('-','/'))}</time><strong>${esc(g.targetName)}さん${scentBadgeFor(g.targetUid)}</strong><small>${replyFor(g.eventKey)?'本人からのお礼コメントあり':'お祝いの思い出'}</small></div><em>💌 ${g.comments.length}・♥ ${groupLikeCount(g)}</em><b>›</b></button>`).join(''):'<div class="birthday-no-comments">まだ誕生日アルバムはありません。</div>'
 }
 function openAlbum(){renderAlbum();openModal('#birthdayAlbumModal')}
 function renderHistory(key){
   const g=albumGroups().find(x=>x.eventKey===key);if(!g)return;selectedHistoryKey=key;
   const reply=replyFor(key), canReply=uid===g.targetUid&&daysSince(g.eventDate)>=1&&!reply;
-  $('#birthdayHistoryTitle').textContent=`${g.targetName}さんのお誕生日`;$('#birthdayHistoryDate').textContent=g.eventDate.replaceAll('-','/');$('#birthdayHistoryCount').textContent=`💌 ${g.comments.length}件`;
+  $('#birthdayHistoryTitle').textContent=`${g.targetName}さんのお誕生日`;$('#birthdayHistoryDate').textContent=g.eventDate.replaceAll('-','/');$('#birthdayHistoryCount').textContent=`💌 ${g.comments.length}件　♥ ${groupLikeCount(g)}`;
   const replyWrap=$('#birthdayOwnerReplyArea');
   if(replyWrap){
-    if(reply) replyWrap.innerHTML=`<article class="birthday-owner-reply"><div><span>🎂 本人からのコメント</span><strong>${esc(g.targetName)}さん</strong></div><p>${esc(reply.message||'')}</p>${likeButton('reply',key,replyLikeCount(key),hasLikedReply(key))}</article>`;
+    if(reply) replyWrap.innerHTML=`<article class="birthday-owner-reply"><div><span>🎂 本人からのコメント</span><strong>${esc(g.targetName)}さん${scentBadgeFor(g.targetUid)}</strong></div><p>${esc(reply.message||'')}</p>${likeButton('reply',key,replyLikeCount(key),hasLikedReply(key))}</article>`;
     else if(canReply) replyWrap.innerHTML=`<div class="birthday-owner-reply-composer"><strong>誕生日の本人から一度だけコメントを残せます</strong><p>お祝いしてくれたみんなへ、翌日以降に1回だけメッセージを残せます。</p><textarea id="birthdayOwnerReplyInput" maxlength="160" rows="3" placeholder="みんな、お祝いしてくれてありがとう！"></textarea><button type="button" id="birthdayOwnerReplySubmit">コメントを残す</button></div>`;
     else replyWrap.innerHTML='';
   }
-  $('#birthdayHistoryList').innerHTML=g.comments.sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0)).map(x=>`<article class="birthday-message-row"><button type="button" data-member-uid="${esc(x.senderUid)}">${esc(x.senderName||'うにメン')}</button><p>${esc(x.message||'')}</p><div class="birthday-message-meta">${likeButton('comment',x.id,commentLikeCount(x.id),hasLikedComment(x.id))}</div></article>`).join('');
+  $('#birthdayHistoryList').innerHTML=g.comments.sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0)).map(x=>`<article class="birthday-message-row"><button type="button" data-member-uid="${esc(x.senderUid)}">${esc(x.senderName||'うにメン')}${scentBadgeFor(x.senderUid)}</button><p>${esc(x.message||'')}</p><div class="birthday-message-meta">${likeButton('comment',x.id,commentLikeCount(x.id),hasLikedComment(x.id))}</div></article>`).join('');
 }
 function openHistory(key){renderHistory(key);closeModal('#birthdayAlbumModal');openModal('#birthdayHistoryModal')}
 async function toggleBirthdayLike(kind,id){
@@ -125,7 +128,7 @@ async function submitOwnerReply(){
   const g=albumGroups().find(x=>x.eventKey===selectedHistoryKey), input=$('#birthdayOwnerReplyInput');if(!g||uid!==g.targetUid||daysSince(g.eventDate)<1||replyFor(g.eventKey))return;
   const message=String(input?.value||'').trim();if(!message){toast('コメントを入力してください。');return}if(message.length>160){toast('160文字以内で入力してください。');return}
   const ref=doc(db,'birthdayAlbumReplies',g.eventKey), me=members.find(x=>x.uid===uid)||member()||{};
-  try{await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(snap.exists())throw new Error('already');tx.set(ref,{eventKey:g.eventKey,eventDate:g.eventDate,targetUid:g.targetUid,targetName:g.targetName||me.name||'うにメン',message,createdAt:serverTimestamp()})});toast('みんなへのコメントを残しました！')}catch(e){console.error(e);toast(e.message==='already'?'コメントは一度だけ残せます。':'保存できませんでした。')}
+  try{await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(snap.exists())throw new Error('already');tx.set(ref,{eventKey:g.eventKey,eventDate:g.eventDate,targetUid:g.targetUid,targetName:g.targetName||me.name||'うにメン',message,createdAt:serverTimestamp()});const recipients=[...new Set(g.comments.map(x=>x.senderUid).filter(x=>x&&x!==uid))];recipients.forEach(recipientUid=>{const notice=doc(collection(db,'users',recipientUid,'notifications'));tx.set(notice,{type:'birthdayReply',text:`${g.targetName||me.name||'誕生日の本人'}さんからお礼コメントが届きました`,senderUid:uid,read:false,createdAt:serverTimestamp()})})});toast('みんなへのコメントを残しました！')}catch(e){console.error(e);toast(e.message==='already'?'コメントは一度だけ残せます。':'保存できませんでした。')}
 }
 
 function showLoginExperience(){

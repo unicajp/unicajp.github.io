@@ -427,7 +427,7 @@
           <li><b>4</b><span>STORYは目標点で歌詞解放、SCOREはハイスコア勝負</span></li>
         </ol>
         <div class="milk-match-combo-guide">
-          <span>⇆＋⇅<strong>虹になって発動</strong></span>
+          <span>⇆＋⇅<strong>虹に変化して盤面に残る</strong></span>
           <span>🌈＋🌈<strong>全特殊発動 → 全消し・2倍</strong></span>
         </div>
         <button type="button" class="milk-match-rules-ok" data-rules-close>わかった</button>

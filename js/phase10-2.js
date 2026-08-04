@@ -99,6 +99,7 @@ function listenSongLike(){
 }
 
 function commentDate(row){ const date=row.date||''; return `${date===todayKey()?'今日':date}${row.time?' '+row.time:''}`; }
+function scentMiniBadge(ownerUid){ const profile=memberDirectory.get(String(ownerUid||''))||{}; const scent=profile.scentDiagnosis; if(!scent?.typeId)return ''; const type=window.UNICA_SCENT16?.typeById?.(scent.typeId); const flower=type?.flower||scent.flower||'🌸'; const name=scent.scentName||type?.name||'診断済み'; return `<span class="scent-mini-badge" title="${esc(name)}" aria-label="${esc(name)}">${esc(flower)}</span>`; }
 function filteredComments(){ let rows=[...comments]; if(activeTab==='mine')rows=rows.filter(x=>x.ownerUid===uid); if(activeTab==='popular')rows.sort((a,b)=>Number(b.likeCount||0)-Number(a.likeCount||0)); else rows.sort((a,b)=>Number(b.createdAt?.seconds||0)-Number(a.createdAt?.seconds||0)); return rows; }
 
 function cumulativeLikeRanking(){
@@ -119,7 +120,7 @@ function cumulativeLikeRanking(){
 function renderSupportLikeRanking(){
   const box=$('#supportLikeRankingList'); if(!box)return;
   const top=cumulativeLikeRanking(); const medals=['🥇','🥈','🥉']; const max=Math.max(1,...top.map(x=>x.likes));
-  box.innerHTML=top.length?top.map((x,i)=>`<button type="button" class="support-ranking-row" data-member-uid="${esc(x.uid)}"><span class="support-ranking-rank">${medals[i]}</span><span class="support-ranking-name"><b>${esc(x.name)}</b><small>うにメンNo.${String(Number(x.number||0)).padStart(4,'0')}</small></span><span class="support-ranking-bar"><i style="width:${Math.max(5,x.likes/max*100)}%"></i></span><strong>♥ ${x.likes}</strong></button>`).join(''):'<p class="support-ranking-empty">いいねが集まるとランキングに表示されます。</p>';
+  box.innerHTML=top.length?top.map((x,i)=>`<button type="button" class="support-ranking-row" data-member-uid="${esc(x.uid)}"><span class="support-ranking-rank">${medals[i]}</span><span class="support-ranking-name"><b>${esc(x.name)}${scentMiniBadge(x.uid)}</b><small>うにメンNo.${String(Number(x.number||0)).padStart(4,'0')}</small></span><span class="support-ranking-bar"><i style="width:${Math.max(5,x.likes/max*100)}%"></i></span><strong>♥ ${x.likes}</strong></button>`).join(''):'<p class="support-ranking-empty">いいねが集まるとランキングに表示されます。</p>';
 }
 
 function renderComments(){
@@ -138,7 +139,7 @@ function renderComments(){
       count:Number(row.likeCount||0),
       liked:myLikedCommentIds.has(row.id)
     }));
-  list.innerHTML=rows.map(row=>`<article class="community-post-plus support-comment-card${row.ownerUid===uid?' is-me':''}" data-post-id="${esc(row.id)}"><header><button class="community-post-avatar member-name-button" data-member-uid="${esc(row.ownerUid)}" type="button">${esc(row.avatar||'🌸')}</button><div><button class="member-name-text" data-member-uid="${esc(row.ownerUid)}" type="button">${esc(row.name||'うにメン')}${row.ownerUid===uid?'（あなた）':''}</button><small>${esc(row.prefecture||'')}${row.prefecture?'・':''}${esc(commentDate(row))}</small></div>${row.ownerUid===uid?`<button class="community-more" data-delete-remote="${esc(row.id)}" type="button">×</button>`:'<span></span>'}</header><p>${esc(row.text)}</p><div class="community-post-actions support-actions"><button class="${myLikedCommentIds.has(row.id)?'is-liked':''}" data-like-remote="${esc(row.id)}" type="button">${myLikedCommentIds.has(row.id)?'♥':'♡'} いいね <b>${Number(row.likeCount||0)}</b></button></div></article>`).join('') || `<div class="community-empty">${activeTab==='mine'?'まだ応援コメントを送っていません。':'まだ応援コメントはありません。'}</div>`;
+  list.innerHTML=rows.map(row=>`<article class="community-post-plus support-comment-card${row.ownerUid===uid?' is-me':''}" data-post-id="${esc(row.id)}"><header><button class="community-post-avatar member-name-button" data-member-uid="${esc(row.ownerUid)}" type="button">${esc(row.avatar||'🌸')}</button><div><button class="member-name-text" data-member-uid="${esc(row.ownerUid)}" type="button">${esc(row.name||'うにメン')}${scentMiniBadge(row.ownerUid)}${row.ownerUid===uid?'（あなた）':''}</button><small>${esc(row.prefecture||'')}${row.prefecture?'・':''}${esc(commentDate(row))}</small></div>${row.ownerUid===uid?`<button class="community-more" data-delete-remote="${esc(row.id)}" type="button">×</button>`:'<span></span>'}</header><p>${esc(row.text)}</p><div class="community-post-actions support-actions"><button class="${myLikedCommentIds.has(row.id)?'is-liked':''}" data-like-remote="${esc(row.id)}" type="button">${myLikedCommentIds.has(row.id)?'♥':'♡'} いいね <b>${Number(row.likeCount||0)}</b></button></div></article>`).join('') || `<div class="community-empty">${activeTab==='mine'?'まだ応援コメントを送っていません。':'まだ応援コメントはありません。'}</div>`;
   $('#homeCommunityPosts') && ($('#homeCommunityPosts').textContent=String(comments.length));
   $('#homeCommunityMembers') && ($('#homeCommunityMembers').textContent=String(comments.reduce((s,x)=>s+Number(x.likeCount||0),0)));
   /* トップは新着1件ではなく、累計いいねランキングTOP3を表示。 */
@@ -317,7 +318,7 @@ async function openMemberPass(targetUid){
   $('#detailBirthdayWishCount') && ($('#detailBirthdayWishCount').textContent='🎂 —');
   $('#detailPrefecture') && ($('#detailPrefecture').textContent='—');
   $('#detailBirthday') && ($('#detailBirthday').textContent='—');
-  $('#detailOpenSettings')?.toggleAttribute('hidden',true);
+  $('#detailOpenSettings')?.toggleAttribute('hidden',true); $('#detailScentRow')?.toggleAttribute('hidden',true);
   modal?.classList.add('is-open'); modal?.setAttribute('aria-hidden','false'); document.body.classList.add('member-gate-open','modal-open');
   try{
     const snap=await getDoc(doc(db,'users',targetUid));
@@ -339,6 +340,18 @@ async function openMemberPass(targetUid){
     $('#detailPrefecture') && ($('#detailPrefecture').textContent=u.prefecturePublic===false?'非公開':(u.prefecture||'—'));
     $('#detailBirthday') && ($('#detailBirthday').textContent=u.birthdayPublic===false?'非公開':(u.birthMonth&&u.birthDay?`${u.birthMonth}月${u.birthDay}日`:'—'));
     $('#detailTitle') && ($('#detailTitle').textContent=u.title||'はじまりのうにメン');
+    const scent=u.scentDiagnosis; const scentRow=$('#detailScentRow');
+    if(scent?.typeId){
+      const scentType=window.UNICA_SCENT16?.typeById?.(scent.typeId);
+      scentRow?.toggleAttribute('hidden',false);
+      $('#detailScentFlower') && ($('#detailScentFlower').textContent=scentType?.flower||scent.flower||'🌸');
+      $('#detailScentName') && ($('#detailScentName').textContent=scent.scentName||scentType?.name||'診断済み');
+      $('#detailScentDate') && ($('#detailScentDate').textContent=`診断日：${String(scent.diagnosedDate||'—').replaceAll('-','/')}`);
+      const mine=window.UNICA_SCENT16?.getMyResult?.();
+      const match=(mine&&targetUid!==uid)?window.UNICA_SCENT16?.compatibility?.(mine,scent,uid,targetUid):null;
+      $('#detailScentMatch') && ($('#detailScentMatch').textContent=match?`${match}% ${match>=95?'🌈 運命の香り':match>=90?'💖 ベストマッチ':''}`:'');
+      const btn=$('#detailScentButton'); if(btn) btn.onclick=()=>{ modal?.classList.remove('is-open'); modal?.setAttribute('aria-hidden','true'); document.body.classList.remove('member-gate-open','modal-open'); document.getElementById('openScent16')?.click(); };
+    }else scentRow?.toggleAttribute('hidden',true);
     $('#detailOpenSettings')?.toggleAttribute('hidden',targetUid!==uid);
   }catch(error){
     console.error('member pass',error);
