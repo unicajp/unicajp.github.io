@@ -129,57 +129,109 @@
     const list = $('#communityList');
     const layer = $('#supportCommentFloatLayer');
     if (!list || !layer) return;
-    let timer = 0;
-    let index = 0;
-    let mutationTimer = 0;
-    const DISPLAY_MS = 15200;
 
-    const show = () => {
-      const latestRows = Array.isArray(window.UNICA_TOP_SUPPORT_COMMENTS)
-        ? window.UNICA_TOP_SUPPORT_COMMENTS.slice(0,30)
+    let featuredIndex = 0;
+    let latestPrevious = -1;
+    let featuredTimer = 0;
+    let latestTimer = 0;
+    let mutationTimer = 0;
+    const FEATURED_MS = 10000;
+    const LATEST_MS = 8500;
+
+    const cardFallbackRows = () => commentCards().map(dataFromCard).filter(Boolean);
+    const getFeatured = () => {
+      const rows = Array.isArray(window.UNICA_TOP_SUPPORT_FEATURED)
+        ? window.UNICA_TOP_SUPPORT_FEATURED.filter(row => row?.text)
         : [];
-      const cards = commentCards().slice(0,30);
-      if (!latestRows.length && !cards.length) {
-        layer.replaceChildren();
+      if (rows.length) return rows.slice(0, 5);
+      return cardFallbackRows()
+        .sort((a,b) => Number(b.count||0) - Number(a.count||0))
+        .slice(0,5);
+    };
+    const getLatest = () => {
+      const rows = Array.isArray(window.UNICA_TOP_SUPPORT_LATEST)
+        ? window.UNICA_TOP_SUPPORT_LATEST.filter(row => row?.text)
+        : [];
+      return (rows.length ? rows : cardFallbackRows()).slice(0,10);
+    };
+
+    /* 最新ほど選ばれやすい重み。10件なら 10,9,...1。 */
+    const weightedLatestIndex = (rows) => {
+      if (rows.length <= 1) return 0;
+      const weights = rows.map((_, i) => rows.length - i);
+      const total = weights.reduce((sum, n) => sum + n, 0);
+      let chosen = 0;
+      for (let retry = 0; retry < 4; retry += 1) {
+        let roll = Math.random() * total;
+        chosen = 0;
+        for (let i = 0; i < weights.length; i += 1) {
+          roll -= weights[i];
+          if (roll <= 0) { chosen = i; break; }
+        }
+        if (chosen !== latestPrevious) break;
+      }
+      latestPrevious = chosen;
+      return chosen;
+    };
+
+    const makeCard = (kind, data) => {
+      if (!data?.text) return null;
+      const card = document.createElement('div');
+      card.className = `support-floating-comment support-floating-comment-button support-floating-comment-${kind}${data.liked ? ' is-liked' : ''}`;
+      card.dataset.postId = data.id || '';
+      card.dataset.kind = kind;
+      card.setAttribute('role', 'group');
+      card.setAttribute('aria-label', `${kind === 'featured' ? '注目' : '新着'}コメント。${data.name}さんからの応援`);
+      card.innerHTML = '<span class="support-float-label"></span><span class="support-float-avatar"></span><div class="support-float-copy"><p></p><small></small></div><span class="support-float-controls"><button type="button" class="support-float-like-button" aria-label="このコメントにいいね"><b class="support-float-like"></b></button><button type="button" class="support-float-next" aria-label="次のコメントを表示">›</button></span>';
+      $('.support-float-label', card).textContent = kind === 'featured' ? '注目' : '新着';
+      $('.support-float-avatar', card).textContent = data.avatar || '🌸';
+      $('p', card).textContent = data.text;
+      $('small', card).textContent = `${data.name}さん`;
+      $('.support-float-like', card).textContent = `${data.liked ? '♥' : '♡'} ${Number(data.count||0)}`;
+      return card;
+    };
+
+    const replaceCard = (kind, data) => {
+      const nextCard = makeCard(kind, data);
+      const current = layer.querySelector(`[data-kind="${kind}"]`);
+      if (!nextCard) {
+        current?.remove();
         return;
       }
-      const source = latestRows.length ? latestRows : cards;
-      const raw = source[index % source.length];
-      const data = latestRows.length ? raw : dataFromCard(raw);
-      index += 1;
-      if (!data?.text) return;
-
-      const floating = document.createElement('button');
-      floating.type = 'button';
-      floating.className = `support-floating-comment support-floating-comment-button${data.liked ? ' is-liked' : ''}`;
-      floating.dataset.postId = data.id;
-      floating.setAttribute('aria-label', data.liked
-        ? `${data.name}さんのコメント。いいね済みです。解除は応援コメント画面で行えます`
-        : `${data.name}さんのコメント。タップでいいね`);
-      floating.innerHTML = '<span class="support-float-avatar"></span><div class="support-float-copy"><p></p><small></small></div><span class="support-float-controls"><span class="support-float-like-button" role="button" tabindex="0" aria-label="このコメントにいいね"><b class="support-float-like"></b></span><button type="button" class="support-float-next" aria-label="次のコメントを表示">›</button></span>';
-      $('.support-float-avatar', floating).textContent = data.avatar;
-      $('p', floating).textContent = data.text;
-      $('small', floating).textContent = `${data.name}さんからの応援`; 
-      $('.support-float-like', floating).textContent = `${data.liked ? '♥' : '♡'} ${data.count}`;
-      layer.replaceChildren(floating);
+      nextCard.classList.add('is-entering');
+      if (current) current.replaceWith(nextCard);
+      else layer.appendChild(nextCard);
+      requestAnimationFrame(() => nextCard.classList.remove('is-entering'));
     };
 
-    const scheduleNext = () => {
-      window.clearTimeout(timer);
-      timer = window.setTimeout(() => {
-        show();
-        scheduleNext();
-      }, DISPLAY_MS);
+    const showFeatured = () => {
+      const rows = getFeatured();
+      if (!rows.length) return replaceCard('featured', null);
+      replaceCard('featured', rows[featuredIndex % rows.length]);
+      featuredIndex += 1;
+    };
+    const showLatest = () => {
+      const rows = getLatest();
+      if (!rows.length) return replaceCard('latest', null);
+      replaceCard('latest', rows[weightedLatestIndex(rows)]);
     };
 
-    const showAndRestart = () => {
-      show();
-      scheduleNext();
+    const scheduleFeatured = () => {
+      clearTimeout(featuredTimer);
+      featuredTimer = setTimeout(() => { showFeatured(); scheduleFeatured(); }, FEATURED_MS);
     };
-
+    const scheduleLatest = () => {
+      clearTimeout(latestTimer);
+      latestTimer = setTimeout(() => { showLatest(); scheduleLatest(); }, LATEST_MS);
+    };
     const restart = () => {
-      window.clearTimeout(mutationTimer);
-      mutationTimer = window.setTimeout(showAndRestart, 120);
+      clearTimeout(mutationTimer);
+      mutationTimer = setTimeout(() => {
+        showFeatured();
+        showLatest();
+        scheduleFeatured();
+        scheduleLatest();
+      }, 120);
     };
 
     layer.addEventListener('click', (event) => {
@@ -187,10 +239,18 @@
       if (!next) return;
       event.preventDefault();
       event.stopPropagation();
-      showAndRestart();
+      const card = next.closest('.support-floating-comment-button');
+      if (card?.dataset.kind === 'featured') {
+        showFeatured();
+        scheduleFeatured();
+      } else {
+        showLatest();
+        scheduleLatest();
+      }
     });
 
     new MutationObserver(restart).observe(list, { childList: true, subtree: true });
+    layer.classList.add('is-two-tier');
     restart();
   }
 
