@@ -51,6 +51,30 @@ function renderHome(){
   const list=$('#birthdayMonthList');
   if(list) list.innerHTML=rows.length?rows.map(row=>`<div class="birthday-mini-member"><div class="birthday-mini-info"><div class="birthday-mini-name-line">${memberName(row)}<small class="birthday-mini-number">${memberNo(row)}</small></div><small class="birthday-mini-date">${n.month}月${Number(row.birthDay)}日</small></div>${wishButton(row,true)}</div>`).join(''):'<p class="birthday-month-empty">今月のお誕生日メンバーが登録されると、ここに表示されます。</p>';
   const albumShortcut=$('#birthdayAlbumShortcut');if(albumShortcut){const groups=albumGroups();albumShortcut.innerHTML=`<button type="button" data-open-birthday-album><span>📖</span><div><small>BIRTHDAY ALBUM</small><strong>お祝いコメントアルバム</strong><p>日付ごとのコメントと本人のお礼を見返せます</p></div><em>${groups.length}件・♥ ${groups.reduce((n,g)=>n+groupLikeCount(g),0)}</em><b>›</b></button>`}
+  // Phase12.4.5: expose a compact dashboard summary for the renewed home cards.
+  try {
+    const all = publicBirthdays();
+    const now = todayParts();
+    const todayOrdinal = Date.UTC(now.year, now.month - 1, now.day);
+    const upcoming = all.map(row => {
+      let year = now.year;
+      let date = Date.UTC(year, Number(row.birthMonth) - 1, Number(row.birthDay));
+      if (date < todayOrdinal) { year += 1; date = Date.UTC(year, Number(row.birthMonth) - 1, Number(row.birthDay)); }
+      return { row, date, days: Math.round((date - todayOrdinal) / 86400000) };
+    }).sort((a,b)=>a.date-b.date || String(a.row.name||'').localeCompare(String(b.row.name||''),'ja'));
+    const first = upcoming[0];
+    const sameDay = first ? upcoming.filter(x=>x.date===first.date) : [];
+    const groups = albumGroups();
+    const latest = groups[0] || null;
+    window.dispatchEvent(new CustomEvent('unica:birthday-summary',{detail:{
+      next:first?{month:Number(first.row.birthMonth),day:Number(first.row.birthDay),name:String(first.row.name||'うにメン'),days:first.days,count:sameDay.length}:null,
+      todayCount:today.length,
+      albumCount:groups.length,
+      albumLikes:groups.reduce((n,g)=>n+groupLikeCount(g),0),
+      latestAlbum:latest?{date:latest.eventDate,name:latest.targetName||'うにメン',comments:latest.comments.length,likes:groupLikeCount(latest)}:null
+    }}));
+  } catch (_) {}
+
   const celebration=$('#birthdayTodayCelebration');
   if(celebration){
     celebration.hidden=!today.length;
