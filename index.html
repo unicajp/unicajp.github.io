@@ -132,31 +132,16 @@
 </button>
 <div class="community-home-latest" id="communityHomeLatest"></div>
 </article>
-<article class="daily-message-card daily-fortune-card" id="dailyMessageCard" aria-label="今日のうに占い">
-  <button class="daily-message-button daily-fortune-button" id="openDailyMessage" type="button">
-    <span class="daily-message-flower" id="dailyMessageFlower">🔮</span>
-    <span class="daily-message-copy">
-      <small>TODAY'S UNI FORTUNE</small>
-      <strong>今日のうに占い</strong>
-      <em id="dailyMessagePreview">名前・誕生日・今日の日付から、あなた専用の結果を占います。</em>
+<article class="scent16-home-card member-only-surface" id="scent16HomeCard" data-member-only>
+  <button class="scent16-home-open" id="openScent16" type="button" aria-label="うにかの匂い16診断を開く">
+    <span class="scent16-home-flower" id="scent16HomeFlower" aria-hidden="true">🌸</span>
+    <span class="scent16-home-copy">
+      <small>『ミルクの匂い』リリース記念</small>
+      <strong>うにかの匂い16診断</strong>
+      <em id="scent16HomeSummary">40問で、あなたの花・匂い・花言葉を見つけます。</em>
     </span>
-    <span class="daily-fortune-cta" id="dailyFortuneCta">占う</span>
+    <span class="scent16-home-cta" id="scent16HomeCta">診断する</span>
   </button>
-  <div aria-hidden="true" class="daily-fortune-sparkles" id="dailyFortuneSparkles"></div>
-  <div class="daily-message-detail" id="dailyMessageDetail" hidden>
-    <div class="daily-message-result">
-      <small id="dailyMessageDate">TODAY</small>
-      <h3 id="dailyMessageTitle">今日のあなたへ</h3>
-      <p id="dailyMessageText"></p>
-    </div>
-    <div class="daily-message-luck daily-fortune-luck">
-      <div><small>今日の花</small><strong id="dailyFlowerName">—</strong></div>
-      <div><small>花言葉</small><strong id="dailyFlowerMeaning">—</strong></div>
-      <div><small>ラッキーカラー</small><strong id="dailyLuckyColor">—</strong></div>
-      <div><small>ラッキーアイテム</small><strong id="dailyLuckyItem">—</strong></div>
-    </div>
-    <p class="daily-message-note">結果は、登録した名前・誕生日・今日の日付を組み合わせて毎日変わります。</p>
-  </div>
 </article>
 
 <article class="prefecture-home-card member-only-surface" id="prefectureHomeCard" data-member-only>
@@ -387,24 +372,15 @@
 <div class="online-member-list" id="onlineMemberList"></div>
 </section>
 </div>
-<div aria-hidden="true" class="world-modal" id="fortuneModal">
-<div class="world-modal-backdrop" data-close-fortune=""></div>
-<section aria-labelledby="fortuneTitle" aria-modal="true" class="world-modal-panel fortune-panel" role="dialog">
-<button aria-label="閉じる" class="world-modal-close" data-close-fortune="" type="button">×</button>
-<p class="eyebrow">UNICA OMIKUJI</p>
-<h2 id="fortuneTitle">うにみくじ</h2>
-<div aria-hidden="true" class="fortune-shrine">⛩️</div>
-<div class="fortune-result" id="fortuneResult">
-<small>今日の運勢</small><strong>まだ引いていません</strong><p>一日一回、うにみくじを引けます。</p>
-</div>
-<button class="fortune-draw-button" id="drawFortune" type="button">うにみくじを引く</button>
-<div class="fortune-tabs" role="tablist">
-<button class="is-active" data-fortune-tab="history" type="button">みんなの履歴</button>
-<button data-fortune-tab="collection" type="button">コレクション</button>
-</div>
-<div class="fortune-tab-panel" id="fortuneHistoryPanel"><div class="fortune-history-list" id="fortuneHistoryList"></div></div>
-<div class="fortune-tab-panel" hidden="" id="fortuneCollectionPanel"><div class="fortune-collection-summary" id="fortuneCollectionSummary"></div><div class="fortune-collection-list" id="fortuneCollectionList"></div></div>
-</section>
+<div aria-hidden="true" class="scent16-modal" id="scent16Modal">
+  <div class="scent16-backdrop" data-close-scent16></div>
+  <section class="scent16-panel" role="dialog" aria-modal="true" aria-labelledby="scent16Title">
+    <header class="scent16-header">
+      <div><small>UNICA SCENT 16</small><h2 id="scent16Title">うにかの匂い16診断</h2></div>
+      <button type="button" class="scent16-close" data-close-scent16 aria-label="閉じる">×</button>
+    </header>
+    <div id="scent16Screen" class="scent16-screen" aria-live="polite"></div>
+  </section>
 </div>
 <div aria-hidden="true" class="world-modal" id="communityModal">
 <div class="world-modal-backdrop" data-close-community=""></div>
@@ -688,6 +664,7 @@
 <script type="module" src="js/phase10-14-admin.js"></script>
 <script type="module" src="js/phase10-17-birthdays.js?v=5.2-album-likes-reply"></script>
 <script src="js/phase10-18-release-countdown.js"></script>
+<script type="module" src="js/phase12-scent16.js?v=1.0"></script>
 <script src="js/phase11-1-milk-match.js?v=4.22-balance-rainbow-placement"></script>
 <script src="js/phase11-3-lyrics-audio.js?v=4.20-lyrics-unlock-fix"></script>
 </body>
