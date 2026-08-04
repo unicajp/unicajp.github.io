@@ -5298,3 +5298,72 @@ body.support-modal-open{overflow:hidden!important;touch-action:none!important}
   .support-comment-float-layer.is-two-tier .support-floating-comment-button p{font-size:9px!important}
   .support-comment-float-layer.is-two-tier .support-float-like-button{min-width:40px!important;padding-inline:5px!important}
 }
+
+/* ===== Phase 12.6.1: compact swipe/tap pager for top comments ===== */
+.support-comment-float-layer.is-two-tier .support-floating-comment-button{
+  touch-action:pan-y!important;
+  user-select:none!important;
+}
+.support-comment-float-layer.is-two-tier .support-float-controls{
+  gap:5px!important;
+  margin-left:2px!important;
+}
+.support-comment-float-layer.is-two-tier .support-float-like-button{
+  min-width:39px!important;
+  height:26px!important;
+  padding:0 6px!important;
+}
+.support-comment-float-layer.is-two-tier .support-float-pager{
+  display:grid!important;
+  grid-template-columns:20px auto 20px!important;
+  align-items:center!important;
+  gap:1px!important;
+  height:26px!important;
+  padding:0 2px!important;
+  border:1px solid rgba(118,91,98,.12)!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.82)!important;
+}
+.support-comment-float-layer.is-two-tier .support-float-prev,
+.support-comment-float-layer.is-two-tier .support-float-next{
+  display:grid!important;
+  place-items:center!important;
+  width:20px!important;
+  height:22px!important;
+  min-width:20px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  color:#715760!important;
+  box-shadow:none!important;
+  font-size:17px!important;
+  line-height:1!important;
+  cursor:pointer!important;
+}
+.support-comment-float-layer.is-two-tier .support-float-count{
+  min-width:24px!important;
+  color:#907b82!important;
+  font-size:7px!important;
+  font-weight:800!important;
+  line-height:1!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+.support-comment-float-layer.is-two-tier .support-float-prev:active,
+.support-comment-float-layer.is-two-tier .support-float-next:active{
+  background:#f5ecef!important;
+  transform:scale(.88)!important;
+}
+@media(max-width:390px){
+  .support-comment-float-layer.is-two-tier .support-floating-comment-button{
+    grid-template-columns:25px 25px minmax(0,1fr) auto!important;
+    gap:5px!important;
+    min-height:52px!important;
+  }
+  .support-comment-float-layer.is-two-tier .support-float-like-button{min-width:36px!important;padding-inline:4px!important}
+  .support-comment-float-layer.is-two-tier .support-float-pager{grid-template-columns:18px auto 18px!important}
+  .support-comment-float-layer.is-two-tier .support-float-prev,
+  .support-comment-float-layer.is-two-tier .support-float-next{width:18px!important;min-width:18px!important;font-size:16px!important}
+  .support-comment-float-layer.is-two-tier .support-float-count{min-width:20px!important;font-size:6.5px!important}
+}
