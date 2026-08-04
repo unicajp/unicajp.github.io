@@ -5138,3 +5138,26 @@ body.support-modal-open{overflow:hidden!important;touch-action:none!important}
 /* Phase12.3 Birthday Community polish */
 .birthday-today-stats{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;align-items:center}.birthday-today-stats b,.birthday-today-stats em{font-style:normal;font-size:9px;border-radius:999px;padding:3px 7px;background:rgba(255,255,255,.72);color:#a24b72;border:1px solid rgba(178,75,117,.12)}.birthday-today-stats em{color:#7d6570}.birthday-album-row em{min-width:76px;text-align:right}.birthday-history-count{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:5px 10px;background:#fff3f8;color:#a34e73;font-weight:800}.detail-scent-match{white-space:normal}.birthday-message-row .scent-mini-badge{margin-left:4px}
 @media(max-width:420px){.birthday-today-stats{gap:3px}.birthday-today-stats b,.birthday-today-stats em{font-size:8px;padding:2px 6px}.birthday-album-row em{min-width:66px;font-size:8px}}
+
+
+/* Phase12.4.8: うにこ最新YouTubeカード */
+.youtube-latest-card{margin-top:16px;border-radius:24px;background:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.95);box-shadow:0 14px 34px rgba(74,38,48,.12);overflow:hidden}
+.youtube-latest-link{display:block;color:inherit;text-decoration:none}
+.youtube-latest-thumb-wrap{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#fff1f3,#f4e9ff);overflow:hidden}
+.youtube-latest-thumb-wrap img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .28s ease}
+.youtube-latest-link:active .youtube-latest-thumb-wrap img{transform:scale(1.025)}
+.youtube-latest-placeholder{position:absolute;inset:0;display:grid;place-content:center;gap:8px;text-align:center;color:#8d5c70;background:linear-gradient(135deg,#fff2f5,#eee8ff)}
+.youtube-latest-placeholder span{margin:auto;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;padding-left:4px;background:#fff;color:#e63a3a;font-size:24px;box-shadow:0 10px 24px rgba(128,65,89,.15)}
+.youtube-latest-placeholder b{font-size:12px;letter-spacing:.04em}
+.youtube-latest-play{position:absolute;left:50%;top:50%;translate:-50% -50%;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;padding-left:4px;background:rgba(255,255,255,.92);color:#e52f3f;font-size:25px;box-shadow:0 10px 28px rgba(35,17,24,.22)}
+.youtube-latest-new{position:absolute;left:12px;top:12px;padding:7px 10px;border-radius:999px;background:#ff365e;color:#fff;font-size:10px;font-weight:900;letter-spacing:.08em;box-shadow:0 7px 18px rgba(199,32,68,.28)}
+.youtube-latest-body{padding:15px 16px 17px}
+.youtube-latest-kicker{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.youtube-latest-kicker span{font-size:10px;font-weight:900;letter-spacing:.16em;color:#e32f43}
+.youtube-latest-kicker em{font-size:11px;font-style:normal;color:#886f78}
+.youtube-latest-body>strong{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;font-size:16px;line-height:1.5;color:#432f36}
+.youtube-latest-body>p{margin:6px 0 12px;font-size:11px;color:#927d84}
+.youtube-latest-cta{display:flex;justify-content:center;align-items:center;gap:8px;min-height:44px;border-radius:15px;background:linear-gradient(135deg,#ff4054,#d6253a);color:#fff;font-size:13px;font-weight:800;box-shadow:0 9px 20px rgba(211,42,62,.2)}
+.youtube-latest-cta b{font-size:15px}
+.youtube-latest-note{margin:0;padding:10px 14px 13px;font-size:10px;line-height:1.6;text-align:center;color:#8d747d;background:#fff8fa}
+@media(min-width:700px){.youtube-latest-link{display:grid;grid-template-columns:minmax(230px,42%) 1fr}.youtube-latest-thumb-wrap{aspect-ratio:auto;min-height:210px}.youtube-latest-body{display:flex;flex-direction:column;justify-content:center;padding:22px}.youtube-latest-body>strong{font-size:18px}}
