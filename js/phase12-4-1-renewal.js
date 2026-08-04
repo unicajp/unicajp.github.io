@@ -15,6 +15,8 @@ function statusText(key){
  return '開く';
 }
 function card({key,cls,icon,title,desc,badge,open}){const b=make('button',`fun-card ${cls}`);b.type='button';b.dataset.featureKey=key;b.innerHTML=`<span class="fun-icon">${icon}</span><strong>${title}</strong><small>${desc}</small><em data-status-for="${key}">${statusText(key)}</em>${badge?`<span class="feature-badge">${badge}</span>`:''}`;b.addEventListener('click',()=>{remember(key,title,icon);open()});return b}
+function subLink({key,icon,title,status,open}){const b=make('button','fun-sub-link');b.type='button';b.dataset.subFeatureKey=key;b.innerHTML=`<span>${icon}</span><strong>${title}</strong><em data-sub-status-for="${key}">${status||''}</em><b>›</b>`;b.addEventListener('click',()=>{remember(key,title,icon);open()});return b}
+function featureStack(main,sub){const w=make('div','fun-feature-stack');w.append(main);if(sub)w.append(sub);return w}
 function build(){
  const stack=$('#worldHome .app-home-stack');if(!stack||$('#phase1241Renewal'))return;
  const root=make('div','phase1241-renewal');root.id='phase1241Renewal';
@@ -25,19 +27,27 @@ function build(){
  const recent=make('button','recent-feature-card');recent.type='button';recent.id='renewalRecent';root.append(recent);
  const fun=make('section','renewal-section','<div class="renewal-section-head"><div><small>ENJOY UNICA WORLD</small><h2>楽しむ</h2></div><p>機能を選ぶ</p></div>');const grid=make('div','fun-grid');
  grid.append(
-  card({key:'game',cls:'game',icon:'🎮',title:'MILK BLOOM',desc:'歌詞を集めながら遊ぼう！',badge:'UPDATE',open:()=>clickTarget('openMilkMatch')}),
-  card({key:'scent',cls:'scent',icon:'🌸',title:'うにかの匂い16診断',desc:'あなただけの花と香りを見つけよう！',badge:'NEW',open:()=>clickTarget('openScent16')}),
-  card({key:'birthday',cls:'birthday',icon:'🎂',title:'誕生日',desc:'うにメンをみんなでお祝いしよう！',badge:'UPDATE',open:()=>clickTarget('openBirthdayCalendar')}),
-  card({key:'passport',cls:'passport',icon:'👤',title:'うにパス',desc:'あなた専用のプロフィールカード。',open:()=>clickTarget('statusOpenPass')}),
-  card({key:'prefecture',cls:'prefecture',icon:'🗾',title:'全国のうにメン',desc:'全国にいる仲間を見てみよう！',open:()=>clickTarget('openPrefectureDirectory')}),
-  card({key:'flowers',cls:'flowers',icon:'🌼',title:'花図鑑',desc:'16種類の花と花言葉を知ろう！',open:()=>{clickTarget('openScent16');setTimeout(()=>clickTarget('viewFlowerBook'),180)}}),
-  card({key:'lyrics',cls:'lyrics',icon:'📖',title:'歌詞図鑑',desc:'解放した歌詞をいつでも見返そう！',open:()=>clickTarget('openMilkLyrics')})
+  featureStack(
+   card({key:'game',cls:'game',icon:'🎮',title:'MILK BLOOM',desc:'歌詞を集めながら遊ぼう！',badge:'UPDATE',open:()=>clickTarget('openMilkMatch')}),
+   subLink({key:'lyrics',icon:'📖',title:'歌詞図鑑',status:`解放 ${statusText('lyrics')}`,open:()=>clickTarget('openMilkLyrics')})
+  ),
+  featureStack(
+   card({key:'scent',cls:'scent',icon:'🌸',title:'うにかの匂い16診断',desc:'あなただけの花と香りを見つけよう！',badge:'NEW',open:()=>clickTarget('openScent16')}),
+   subLink({key:'flowers',icon:'🌼',title:'花図鑑',status:'全16種類',open:()=>{clickTarget('openScent16');setTimeout(()=>clickTarget('viewFlowerBook'),180)}})
+  ),
+  featureStack(
+   card({key:'birthday',cls:'birthday',icon:'🎂',title:'誕生日',desc:'うにメンをみんなでお祝いしよう！',badge:'UPDATE',open:()=>clickTarget('openBirthdayCalendar')}),
+   subLink({key:'album',icon:'💌',title:'お祝いアルバム',status:'思い出を見る',open:()=>document.querySelector('[data-open-birthday-album]')?.click()})
+  ),
+  featureStack(
+   card({key:'prefecture',cls:'prefecture',icon:'🗾',title:'全国のうにメン',desc:'全国にいる仲間を見てみよう！',open:()=>clickTarget('openPrefectureDirectory')})
+  )
  );fun.append(grid);root.append(fun);
  root.append(make('section','renewal-contact','<small>SUPPORT</small><h3>お問い合わせ</h3><p>不具合・ご要望・その他のお問い合わせは<br>X（旧Twitter）のDMからお気軽にご連絡ください。</p><a href="https://x.com/unica_jpn" target="_blank" rel="noopener noreferrer">𝕏 DMを開く ↗</a>'));
  stack.prepend(root);
  ['#milkMatchHomeCard','#openMilkLyrics','.milk-release-countdown','#birthdayBanner','#birthdayMonthCard','#scent16HomeCard','#prefectureHomeCard'].forEach(sel=>{const e=$(sel,stack);if(e)e.classList.add('phase1241-hidden-home')});
  renderRecent();
- setInterval(()=>document.querySelectorAll('[data-status-for]').forEach(e=>e.textContent=statusText(e.dataset.statusFor)),2500);
+ setInterval(()=>{document.querySelectorAll('[data-status-for]').forEach(e=>e.textContent=statusText(e.dataset.statusFor));const ly=document.querySelector('[data-sub-status-for="lyrics"]');if(ly)ly.textContent=`解放 ${statusText('lyrics')}`},2500);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
 })();
