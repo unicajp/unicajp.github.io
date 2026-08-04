@@ -84,7 +84,7 @@
   function makeFloatingCommentsInteractive() {
     const layer = $('#supportCommentFloatLayer');
     if (!layer) return;
-    layer.setAttribute('aria-label', '最新の応援コメント。ハートボタンでいいね、矢印ボタンで次のコメントを表示できます。');
+    layer.setAttribute('aria-label', '応援コメント。ハートでいいね、左右スワイプまたはカード左右のタップで切り替えられます。');
     layer.addEventListener('click', async (event) => {
       const likeControl = event.target.closest('.support-float-like-button');
       if (!likeControl || event.target.closest('.support-float-next')) return;
@@ -131,6 +131,7 @@
     if (!list || !layer) return;
 
     let featuredIndex = 0;
+    let latestIndex = 0;
     let latestPrevious = -1;
     let featuredTimer = 0;
     let latestTimer = 0;
@@ -182,7 +183,7 @@
       card.dataset.kind = kind;
       card.setAttribute('role', 'group');
       card.setAttribute('aria-label', `${kind === 'featured' ? '注目' : '新着'}コメント。${data.name}さんからの応援`);
-      card.innerHTML = '<span class="support-float-label"></span><span class="support-float-avatar"></span><div class="support-float-copy"><p></p><small></small></div><span class="support-float-controls"><button type="button" class="support-float-like-button" aria-label="このコメントにいいね"><b class="support-float-like"></b></button><button type="button" class="support-float-next" aria-label="次のコメントを表示">›</button></span>';
+      card.innerHTML = '<span class="support-float-label"></span><span class="support-float-avatar"></span><div class="support-float-copy"><p></p><small></small></div><span class="support-float-controls"><button type="button" class="support-float-like-button" aria-label="このコメントにいいね"><b class="support-float-like"></b></button><span class="support-float-pager"><button type="button" class="support-float-prev" aria-label="前のコメントを表示">‹</button><span class="support-float-count" aria-hidden="true"></span><button type="button" class="support-float-next" aria-label="次のコメントを表示">›</button></span></span>';
       $('.support-float-label', card).textContent = kind === 'featured' ? '注目' : '新着';
       $('.support-float-avatar', card).textContent = data.avatar || '🌸';
       $('p', card).textContent = data.text;
@@ -204,21 +205,33 @@
       requestAnimationFrame(() => nextCard.classList.remove('is-entering'));
     };
 
-    const showFeatured = () => {
+    const setPager = (kind, index, total) => {
+      const card = layer.querySelector(`[data-kind="${kind}"]`);
+      if (!card) return;
+      const count = $('.support-float-count', card);
+      if (count) count.textContent = `${index + 1}/${total}`;
+      card.dataset.index = String(index);
+      card.dataset.total = String(total);
+    };
+    const showFeatured = (direction = 1) => {
       const rows = getFeatured();
       if (!rows.length) return replaceCard('featured', null);
-      replaceCard('featured', rows[featuredIndex % rows.length]);
-      featuredIndex += 1;
+      featuredIndex = (featuredIndex + direction + rows.length) % rows.length;
+      replaceCard('featured', rows[featuredIndex]);
+      setPager('featured', featuredIndex, rows.length);
     };
-    const showLatest = () => {
+    const showLatest = (direction = 0) => {
       const rows = getLatest();
       if (!rows.length) return replaceCard('latest', null);
-      replaceCard('latest', rows[weightedLatestIndex(rows)]);
+      if (direction === 0) latestIndex = weightedLatestIndex(rows);
+      else latestIndex = (latestIndex + direction + rows.length) % rows.length;
+      replaceCard('latest', rows[latestIndex]);
+      setPager('latest', latestIndex, rows.length);
     };
 
     const scheduleFeatured = () => {
       clearTimeout(featuredTimer);
-      featuredTimer = setTimeout(() => { showFeatured(); scheduleFeatured(); }, FEATURED_MS);
+      featuredTimer = setTimeout(() => { showFeatured(1); scheduleFeatured(); }, FEATURED_MS);
     };
     const scheduleLatest = () => {
       clearTimeout(latestTimer);
@@ -227,27 +240,59 @@
     const restart = () => {
       clearTimeout(mutationTimer);
       mutationTimer = setTimeout(() => {
-        showFeatured();
-        showLatest();
+        showFeatured(0);
+        showLatest(0);
         scheduleFeatured();
         scheduleLatest();
       }, 120);
     };
 
-    layer.addEventListener('click', (event) => {
-      const next = event.target.closest('.support-float-next');
-      if (!next) return;
-      event.preventDefault();
-      event.stopPropagation();
-      const card = next.closest('.support-floating-comment-button');
-      if (card?.dataset.kind === 'featured') {
-        showFeatured();
+    const moveCard = (card, direction) => {
+      if (!card) return;
+      if (card.dataset.kind === 'featured') {
+        showFeatured(direction);
         scheduleFeatured();
       } else {
-        showLatest();
+        showLatest(direction);
         scheduleLatest();
       }
+    };
+
+    layer.addEventListener('click', (event) => {
+      if (event.target.closest('.support-float-like-button')) return;
+      const card = event.target.closest('.support-floating-comment-button');
+      if (!card) return;
+      const prev = event.target.closest('.support-float-prev');
+      const next = event.target.closest('.support-float-next');
+      let direction = 0;
+      if (prev) direction = -1;
+      else if (next) direction = 1;
+      else {
+        const rect = card.getBoundingClientRect();
+        direction = event.clientX < rect.left + rect.width / 2 ? -1 : 1;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      moveCard(card, direction);
     });
+
+    let swipeStartX = 0;
+    let swipeStartY = 0;
+    layer.addEventListener('pointerdown', (event) => {
+      if (event.target.closest('button')) return;
+      swipeStartX = event.clientX;
+      swipeStartY = event.clientY;
+    }, { passive: true });
+    layer.addEventListener('pointerup', (event) => {
+      if (!swipeStartX || event.target.closest('button')) return;
+      const dx = event.clientX - swipeStartX;
+      const dy = event.clientY - swipeStartY;
+      swipeStartX = 0;
+      swipeStartY = 0;
+      if (Math.abs(dx) < 34 || Math.abs(dx) <= Math.abs(dy)) return;
+      const card = event.target.closest('.support-floating-comment-button');
+      moveCard(card, dx < 0 ? 1 : -1);
+    }, { passive: true });
 
     new MutationObserver(restart).observe(list, { childList: true, subtree: true });
     layer.classList.add('is-two-tier');
