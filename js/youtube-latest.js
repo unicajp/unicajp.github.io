@@ -6,6 +6,7 @@
 
   const link = document.getElementById("unicoLatestYouTubeLink");
   const thumb = document.getElementById("unicoLatestYouTubeThumb");
+  const thumbWrap = card.querySelector(".youtube-latest-thumb-wrap");
   const placeholder = document.getElementById("unicoLatestYouTubePlaceholder");
   const title = document.getElementById("unicoLatestYouTubeTitle");
   const date = document.getElementById("unicoLatestYouTubeDate");
@@ -21,6 +22,8 @@
     placeholder.hidden = false;
     placeholder.querySelector("b").textContent = "YouTubeで最新動画を見る";
     thumb.hidden = true;
+    thumb.removeAttribute("src");
+    thumbWrap?.classList.remove("is-loaded");
     newBadge.hidden = true;
     if (message) {
       note.textContent = message;
@@ -41,9 +44,28 @@
     date.textContent = formatDate(video.publishedAt);
     const image = video.thumbnail;
     if (image) {
-      thumb.src = image;
+      thumbWrap?.classList.remove("is-loaded");
+      placeholder.hidden = false;
       thumb.hidden = false;
-      placeholder.hidden = true;
+      thumb.onload = () => {
+        placeholder.hidden = true;
+        thumbWrap?.classList.add("is-loaded");
+      };
+      thumb.onerror = () => {
+        thumb.hidden = true;
+        thumbWrap?.classList.remove("is-loaded");
+        placeholder.hidden = false;
+        const label = placeholder.querySelector("b");
+        if (label) label.textContent = "サムネイルを表示できません";
+      };
+      thumb.src = image;
+      if (thumb.complete && thumb.naturalWidth > 0) thumb.onload();
+    } else {
+      thumb.hidden = true;
+      thumbWrap?.classList.remove("is-loaded");
+      placeholder.hidden = false;
+      const label = placeholder.querySelector("b");
+      if (label) label.textContent = "YouTubeで最新動画を見る";
     }
     const days = (Date.now() - new Date(video.publishedAt).getTime()) / 86400000;
     newBadge.hidden = !(days >= 0 && days <= Number(config.newBadgeDays || 7));
