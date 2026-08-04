@@ -176,7 +176,23 @@
 <div class="profile-note">「うにこ」は、ボーカル名UNICAの親しみを込めた愛称です。</div>
 </div>
 <div aria-label="うにこの公式SNS" class="social-follow-grid reveal">
-<a class="follow-card youtube" href="https://www.youtube.com/@utachan_hikigatari" rel="noopener noreferrer" target="_blank"><span class="follow-logo">▶</span><div><small>YouTube</small><strong>眠れる弾き語り</strong><em>Relaxing Piano Cover</em><b>@utachan_hikigatari</b></div><i>↗</i></a>
+<article class="youtube-latest-card" id="unicoLatestYouTube" aria-live="polite">
+  <a class="youtube-latest-link" id="unicoLatestYouTubeLink" href="https://www.youtube.com/@utachan_hikigatari" rel="noopener noreferrer" target="_blank">
+    <div class="youtube-latest-thumb-wrap">
+      <img id="unicoLatestYouTubeThumb" alt="うにこの最新YouTube動画のサムネイル" loading="lazy" hidden>
+      <div class="youtube-latest-placeholder" id="unicoLatestYouTubePlaceholder"><span>▶</span><b>最新動画を取得中…</b></div>
+      <span class="youtube-latest-new" id="unicoLatestYouTubeNew" hidden>NEW VIDEO</span>
+      <span class="youtube-latest-play" aria-hidden="true">▶</span>
+    </div>
+    <div class="youtube-latest-body">
+      <div class="youtube-latest-kicker"><span>YOUTUBE</span><em>うにこの最新動画</em></div>
+      <strong id="unicoLatestYouTubeTitle">最新動画を読み込んでいます</strong>
+      <p id="unicoLatestYouTubeDate">@utachan_hikigatari</p>
+      <span class="youtube-latest-cta">YouTubeで見る・応援する <b>↗</b></span>
+    </div>
+  </a>
+  <p class="youtube-latest-note" id="unicoLatestYouTubeNote" hidden></p>
+</article>
 <a class="follow-card tiktok" href="https://www.tiktok.com/@komoriuttan" rel="noopener noreferrer" target="_blank"><span class="follow-logo">♪</span><div><small>TikTok</small><strong>こもりうったん</strong><b>@komoriuttan</b></div><i>↗</i></a>
 <a class="follow-card instagram" href="https://www.instagram.com/uta_chan17/" rel="noopener noreferrer" target="_blank"><span class="follow-logo">◎</span><div><small>Instagram</small><strong>うた_chan</strong><b>@uta_chan17</b></div><i>↗</i></a>
 </div>
@@ -678,5 +694,7 @@
 <script src="js/phase12-4-3-milk-bloom-ui.js?v=12.4.4"></script>
 <script src="js/phase12-4-4-final-polish.js?v=12.4.4"></script>
 <script src="js/phase12-4-5-dashboard.js?v=12.4.7"></script>
+<script src="js/youtube-latest-config.js?v=1.0"></script>
+<script src="js/youtube-latest.js?v=1.0"></script>
 </body>
 </html>
