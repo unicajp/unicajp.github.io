@@ -307,6 +307,44 @@ async function loadMilkMatchLeaderboard(period = 'all') {
   })).sort((a,b) => b.score - a.score || b.combo - a.combo || a.number - b.number).slice(0, 20);
 }
 
+async function saveScentDiagnosis(result) {
+  await authReady;
+  const member = localMember();
+  if (!uid || !member || !result) throw new Error('うにメン情報を確認できません。');
+  const payload = {
+    typeId: String(result.typeId || ''),
+    flower: String(result.flower || ''),
+    scentName: String(result.scentName || ''),
+    flowerMeaning: String(result.flowerMeaning || ''),
+    stats: result.stats || {},
+    diagnosedDate: String(result.diagnosedDate || ''),
+    message: String(result.message || '')
+  };
+  await setDoc(doc(db, 'users', uid), {
+    scentDiagnosis: payload,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+  const updated = { ...member, scentDiagnosis: payload };
+  localStorage.setItem(MEMBER_KEY, JSON.stringify(updated));
+  window.dispatchEvent(new CustomEvent('unica:scent-diagnosis-saved', { detail: payload }));
+  return payload;
+}
+
+async function loadScentMembers() {
+  await authReady;
+  const snap = await getDocs(collection(db, 'users'));
+  return snap.docs.map(row => {
+    const data = row.data();
+    return {
+      uid: row.id,
+      name: String(data.name || 'うにメン'),
+      number: Number(data.number || 0),
+      avatar: String(data.avatar || '🌸'),
+      scentDiagnosis: data.scentDiagnosis || null
+    };
+  }).filter(row => row.scentDiagnosis && row.scentDiagnosis.typeId);
+}
+
 function authInfo() {
   const user = auth.currentUser;
   const google = user?.providerData?.find(provider => provider.providerId === 'google.com');
@@ -348,6 +386,8 @@ window.UNICA_FIREBASE = {
   loadMilkMatchProgress,
   submitMilkMatchLeaderboard,
   loadMilkMatchLeaderboard,
+  saveScentDiagnosis,
+  loadScentMembers,
   heartbeat: () => heartbeat().catch(console.error),
   authInfo,
   linkGoogleAccount,
