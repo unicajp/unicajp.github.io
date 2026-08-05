@@ -731,8 +731,11 @@
       ], { duration: 210 + order * 14, easing:'cubic-bezier(.2,.78,.2,1)', fill:'forwards' }).finished.catch(()=>{}));
     });
     targetTile.classList.add(special === 'rainbow' ? 'is-rainbow-forming' : 'is-special-forming');
-    await Promise.all(animations);
-    await sleep(45);
+    await Promise.race([
+      Promise.all(animations),
+      sleep(500)
+    ]);
+    await sleep(30);
   }
 
   function currentStoryStage() {
@@ -870,8 +873,9 @@
         await explodeSpecialChain(matchedSpecialOrigins, false);
         chain++;
         runMaxCombo = Math.max(runMaxCombo, chain);
-        await resolveBoard();
-        break;
+        // 同じ resolveBoard のループ内で続行する。再帰呼び出しは
+        // 多重ロックとスタック増加の原因になるため使用しない。
+        continue;
       }
       chain++;
       runMaxCombo = Math.max(runMaxCombo, chain);
@@ -1171,45 +1175,36 @@
   }
 
   async function activateLineLineCombo(a, b, preferredType = null) {
+    // ライン同士は「移動先に虹を1個作って終了」。
+    // 落下処理をここで行うと生成位置がずれたり、同時解決と競合して
+    // 操作ロックが残るため、盤面の座標は動かさない。
     const target = b;
-    const sourceType = Number.isInteger(board[a]) ? board[a] : 0;
-    const targetType = Number.isInteger(board[b]) ? board[b] : sourceType;
+    const source = a;
+    const sourceType = Number.isInteger(board[source]) ? board[source] : 0;
+    const targetType = Number.isInteger(board[target]) ? board[target] : sourceType;
     const rainbowType = Number.isInteger(preferredType) ? preferredType : targetType;
 
-    try {
-      boardEl.children[a]?.classList.add('is-special-combo-source');
-      boardEl.children[b]?.classList.add('is-special-combo-target');
-      sfx.combo(6);
-      await sleep(150);
+    boardEl.children[source]?.classList.add('is-special-combo-source');
+    boardEl.children[target]?.classList.add('is-special-combo-target');
+    try { sfx.combo(6); } catch (_) {}
+    await sleep(140);
 
-      board[a] = null;
-      specials[a] = null;
-      board[target] = rainbowType;
-      specials[target] = 'rainbow';
-      collapseBoard([target]);
-      // collapse後も移動先に虹を固定する。
-      board[target] = rainbowType;
-      specials[target] = 'rainbow';
-      render();
+    // source 側は通常ピースへ戻し、target 側だけ虹にする。
+    // null を作らないため、この処理だけで落下・連鎖は発生しない。
+    board[source] = Math.floor(Math.random() * TYPES.length);
+    specials[source] = null;
+    board[target] = rainbowType;
+    specials[target] = 'rainbow';
+    render();
 
-      const targetTile = boardEl.children[target];
-      targetTile?.classList.add('is-rainbow-forming', 'is-combo-created', 'is-rainbow-ready');
-      toast('🌈 LINE COMBO！ 虹アイテム完成');
-      showComboLabel?.('虹アイテム完成！');
-      makeBurst([target], 7);
-      await sleep(900);
-      targetTile?.classList.remove('is-rainbow-forming');
-      updateStats();
-      return true;
-    } catch (error) {
-      console.error('Line + line combo failed:', error);
-      if (!Number.isInteger(board[target])) board[target] = rainbowType;
-      specials[target] = 'rainbow';
-      if (board[a] == null) board[a] = Math.floor(Math.random() * TYPES.length);
-      render();
-      toast('🌈 虹アイテムを生成しました');
-      return true;
-    }
+    const targetTile = boardEl.children[target];
+    targetTile?.classList.add('is-rainbow-forming', 'is-combo-created', 'is-rainbow-ready');
+    toast('🌈 ライン同士が虹アイテムになりました');
+    try { makeBurst([target], 7); } catch (_) {}
+    await sleep(520);
+    boardEl.children[target]?.classList.remove('is-rainbow-forming', 'is-combo-created');
+    updateStats();
+    return true;
   }
 
   async function activateRainbowRainbowCombo(a, b) {
@@ -1442,38 +1437,32 @@
     locked = true;
     clearSkillPlacementState();
     selected = null;
-
     try {
-      const type = Number.isInteger(board[target]) ? board[target] : 0;
+      const type = Number.isInteger(board[target]) ? board[target] : Math.floor(Math.random() * TYPES.length);
       board[target] = type;
       specials[target] = 'rainbow';
       skill = 0;
-
       render();
-      const createdTile = boardEl.children[target];
-      createdTile?.classList.add('is-rainbow-forming', 'is-skill-created');
+      const tile = boardEl.children[target];
+      tile?.classList.add('is-rainbow-forming', 'is-skill-created', 'is-rainbow-ready');
       try { sfx.clear(); } catch (_) {}
-      toast('🌈 好きな場所に虹アイテムを配置しました');
-      try { makeBurst([target], 7); } catch (_) {}
+      try { makeBurst([target], 6); } catch (_) {}
+      toast('🌈 虹アイテムを配置しました');
       updateStats();
-
-      await sleep(420);
+      await sleep(260);
       boardEl.children[target]?.classList.remove('is-rainbow-forming', 'is-skill-created');
       return true;
     } catch (error) {
       console.error('Rainbow placement failed:', error);
-      // 配置途中で描画エラーが起きても操作ロックを残さない。
-      if (target >= 0 && target < specials.length) {
-        const type = Number.isInteger(board[target]) ? board[target] : 0;
-        board[target] = type;
-        specials[target] = 'rainbow';
-      }
-      try { render(); } catch (_) {}
-      try { updateStats(); } catch (_) {}
-      toast('虹を配置しました');
+      // 最低限の盤面を必ず復元する。
+      if (!Number.isInteger(board[target])) board[target] = Math.floor(Math.random() * TYPES.length);
+      specials[target] = 'rainbow';
+      try { render(); updateStats(); } catch (_) {}
+      toast('虹アイテムを配置しました');
       return true;
     } finally {
       clearSkillPlacementState();
+      selected = null;
       locked = false;
     }
   }
