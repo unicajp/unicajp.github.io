@@ -1264,11 +1264,26 @@
     if (locked || gameEnded || !attemptActive || !specials[i]) return;
     locked = true;
     selected = null;
-    await explodeSpecialChain([i], true);
-    await resolveBoard();
+    try {
+      await explodeSpecialChain([i], true);
+      await Promise.race([
+        resolveBoard(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('special timeout')), 9000))
+      ]);
+    } catch (error) {
+      console.error('Special activation failed:', error);
+      collapseBoard();
+      if (board.some(value => value == null)) {
+        board = createBoard();
+        specials = Array(SIZE * SIZE).fill(null);
+      }
+      render();
+      toast('盤面を復旧しました');
+    } finally {
+      locked = false;
+    }
     const goal = mode === 'story' ? storyGoal() : UNLIMITED_GOAL;
     if ((mode === 'story' && score >= goal) || moves <= 0) finishGame(mode === 'story' ? score >= goal : true);
-    locked = false;
   }
 
   async function attemptSwap(a, b) {
@@ -1366,14 +1381,30 @@
     moves--;
     lastSwap = { from: a, to: b };
     pendingPlayerCreation = choosePlayerCreation(findMatchGroups(board), a, b);
-    await resolveBoard();
-    lastSwap = null;
+    try {
+      await Promise.race([
+        resolveBoard(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('resolve timeout')), 9000))
+      ]);
+    } catch (error) {
+      console.error('Board resolution failed:', error);
+      collapseBoard();
+      if (board.some(value => value == null)) {
+        board = createBoard();
+        specials = Array(SIZE * SIZE).fill(null);
+      }
+      render();
+      toast('盤面を復旧しました');
+    } finally {
+      lastSwap = null;
+      pendingPlayerCreation = null;
+      locked = false;
+    }
 
     const goal = mode === 'story' ? storyGoal() : UNLIMITED_GOAL;
     if ((mode === 'story' && score >= goal) || moves <= 0) {
       finishGame(mode === 'story' ? score >= goal : true);
     }
-    locked = false;
     updateStats();
   }
 
