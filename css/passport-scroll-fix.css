@@ -1,5 +1,0 @@
-/* Preserved from the latest build; unrelated to MILK BLOOM. */
-#passportModal.is-open{overflow-y:auto!important;overscroll-behavior:contain!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important}
-#passportModal .passport-detail-panel{display:block!important;max-height:calc(100dvh - 18px)!important;overflow-y:auto!important;overscroll-behavior:contain!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important;padding-bottom:calc(32px + env(safe-area-inset-bottom))!important}
-#passportModal .passport-detail-card{overflow:visible!important;min-height:max-content!important}
-body.phase1244-modal-open #passportModal.is-open{touch-action:pan-y!important}
