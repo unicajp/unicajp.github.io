@@ -792,7 +792,8 @@
     const mark = special
       ? `<i class="milk-match-special-mark" aria-hidden="true"><b>${specialSymbol}</b><em>${specialName}</em></i>`
       : '';
-    tile.innerHTML = `<span class="milk-match-piece-icon">${PIECES[type].icon}</span><small>${PIECES[type].name}</small>${mark}`;
+    tile.setAttribute('aria-label', PIECES[type].name + (special ? '・特殊アイテム' : ''));
+    tile.innerHTML = `<span class="milk-match-piece-icon" aria-hidden="true">${PIECES[type].icon}</span>${mark}`;
     return tile;
   }
 
