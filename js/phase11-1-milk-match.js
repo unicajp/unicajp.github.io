@@ -1408,17 +1408,23 @@
     updateStats();
   }
 
+  function clearSkillPlacementState() {
+    skillPlacementMode = false;
+    boardEl.classList.remove('is-skill-placement');
+    [...boardEl.children].forEach(tile => tile.classList.remove('is-skill-selectable'));
+  }
+
   async function useSkill(kind) {
     if (kind !== 'rainbow') return;
     if (skillPlacementMode) {
-      skillPlacementMode = false;
-      boardEl.classList.remove('is-skill-placement');
+      clearSkillPlacementState();
       toast('虹の配置をキャンセルしました');
       updateStats();
       return;
     }
     if (skill < 100 || locked || gameEnded || !attemptActive) {
       if (skill < 100) toast(`MILK SKILLはあと${Math.max(0, 100 - Math.floor(skill))}で使えます`);
+      else if (locked) toast('盤面の処理が終わるまで少しお待ちください');
       return;
     }
     selected = null;
@@ -1431,25 +1437,45 @@
 
   async function placeSkillRainbow(target) {
     if (!skillPlacementMode || locked || gameEnded || !attemptActive || !Number.isInteger(target)) return false;
+    if (target < 0 || target >= board.length) return false;
+
     locked = true;
-    skillPlacementMode = false;
-    boardEl.classList.remove('is-skill-placement');
-    skill = 0;
+    clearSkillPlacementState();
     selected = null;
-    const type = Number.isInteger(board[target]) ? board[target] : 0;
-    board[target] = type;
-    specials[target] = 'rainbow';
-    render();
-    const tile = boardEl.children[target];
-    tile?.classList.add('is-rainbow-forming', 'is-skill-created');
-    sfx.clear();
-    toast('🌈 好きな場所に虹アイテムを配置しました');
-    makeBurst([target], 7);
-    await sleep(650);
-    tile?.classList.remove('is-rainbow-forming');
-    updateStats();
-    locked = false;
-    return true;
+
+    try {
+      const type = Number.isInteger(board[target]) ? board[target] : 0;
+      board[target] = type;
+      specials[target] = 'rainbow';
+      skill = 0;
+
+      render();
+      const createdTile = boardEl.children[target];
+      createdTile?.classList.add('is-rainbow-forming', 'is-skill-created');
+      try { sfx.clear(); } catch (_) {}
+      toast('🌈 好きな場所に虹アイテムを配置しました');
+      try { makeBurst([target], 7); } catch (_) {}
+      updateStats();
+
+      await sleep(420);
+      boardEl.children[target]?.classList.remove('is-rainbow-forming', 'is-skill-created');
+      return true;
+    } catch (error) {
+      console.error('Rainbow placement failed:', error);
+      // 配置途中で描画エラーが起きても操作ロックを残さない。
+      if (target >= 0 && target < specials.length) {
+        const type = Number.isInteger(board[target]) ? board[target] : 0;
+        board[target] = type;
+        specials[target] = 'rainbow';
+      }
+      try { render(); } catch (_) {}
+      try { updateStats(); } catch (_) {}
+      toast('虹を配置しました');
+      return true;
+    } finally {
+      clearSkillPlacementState();
+      locked = false;
+    }
   }
 
   function createOverlay(className, html) {
@@ -1682,13 +1708,14 @@
   boardEl.addEventListener('click', event => {
     if (Date.now() < suppressClickUntil) return;
     const tile = tileFromEvent(event);
-    if (!tile || locked || gameEnded || !attemptActive) return;
+    if (!tile || gameEnded || !attemptActive) return;
     const i = Number(tile.dataset.index);
     if (!Number.isInteger(i)) return;
     if (skillPlacementMode) {
-      placeSkillRainbow(i);
+      if (!locked) placeSkillRainbow(i);
       return;
     }
+    if (locked) return;
     if (specials[i]) {
       activateSpecial(i);
       return;
