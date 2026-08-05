@@ -1,0 +1,50 @@
+/* Phase12.4-4 final responsive / accessibility polish */
+:root{--app-safe-bottom:max(12px,env(safe-area-inset-bottom));--app-safe-top:max(0px,env(safe-area-inset-top));--app-vh:1vh}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body.phase1244-modal-open{overflow:hidden;overscroll-behavior:none;touch-action:none}
+img{max-width:100%;height:auto}
+button,a,[role="button"]{-webkit-tap-highlight-color:transparent}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid rgba(121,99,255,.58);outline-offset:3px}
+.phase1244-offline{position:fixed;left:50%;top:calc(10px + var(--app-safe-top));z-index:99999;transform:translate(-50%,-130%);padding:8px 14px;border-radius:999px;background:#28233d;color:#fff;font-size:12px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.24);transition:transform .25s ease;pointer-events:none}
+.phase1244-offline.is-visible{transform:translate(-50%,0)}
+.phase1244-offline.is-online{background:#2f8c69}
+.phase1244-hidden{display:none!important}
+
+/* Ensure every full-screen feature fits short and narrow phones. */
+.scent16-panel,.birthday-experience-panel,.birthday-calendar-panel,.birthday-comment-panel,.birthday-album-panel,.birthday-history-panel,.passport-detail-card,.milk-match-game,.milk-lyrics-panel{max-height:calc(var(--app-vh)*100 - var(--app-safe-top) - var(--app-safe-bottom) - 12px);overscroll-behavior:contain}
+.milk-match-modal,.scent16-modal,.birthday-experience-modal,.birthday-calendar-modal,.birthday-comment-modal,.birthday-album-modal,.birthday-history-modal,.passport-detail-modal,.milk-lyrics-modal{padding-top:var(--app-safe-top);padding-bottom:var(--app-safe-bottom)}
+
+/* Final home spacing and compact mobile layout. */
+.phase1241-renewal{padding-bottom:calc(18px + var(--app-safe-bottom))}
+.fun-card{min-width:0;overflow:hidden}
+.fun-card strong,.fun-card small,.fun-card em{overflow-wrap:anywhere}
+.renewal-contact a{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+
+/* The phase note was useful during development, but is noise in production. */
+.milk-match-phase-note{display:none!important}
+
+@media (max-width:420px){
+  .fun-grid{gap:9px!important}
+  .fun-card{min-height:124px!important;padding:13px 10px 11px!important}
+  .fun-card .fun-icon{font-size:30px!important}
+  .fun-card strong{font-size:13px!important;line-height:1.3}
+  .fun-card small{font-size:10px!important;line-height:1.35}
+  .feature-badge{font-size:8px!important;padding:3px 5px!important}
+  .renewal-announcement{padding:18px 15px!important}
+  .renewal-section{padding:15px 12px!important}
+  .renewal-section-head h2{font-size:18px!important}
+}
+@media (max-height:720px){
+  .milk-match-game{padding-top:8px!important;padding-bottom:8px!important}
+  .milk-match-header{margin-bottom:5px!important}
+  .milk-match-stats{gap:5px!important;margin-bottom:5px!important}
+  .milk-match-goal{margin-bottom:5px!important}
+  .milk-match-skill{margin-bottom:5px!important}
+  .milk-match-help{margin:3px 0!important}
+  .milk-match-actions{gap:5px!important}
+  .milk-match-volume{margin-top:4px!important}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+  .phase1242-petal,.mb-effect-particle{display:none!important}
+}
