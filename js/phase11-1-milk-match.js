@@ -72,6 +72,13 @@
   let pendingPlayerCreation = null;
   let skillPlacementMode = false;
   let locked = false;
+  let resolutionPromise = null;
+
+  function runBoardResolution() {
+    if (resolutionPromise) return resolutionPromise;
+    resolutionPromise = resolveBoard().finally(() => { resolutionPromise = null; });
+    return resolutionPromise;
+  }
   let gameEnded = true;
   let attemptActive = false;
   let progress = loadProgress();
@@ -881,10 +888,7 @@
         // Existing specials caught in a match fire once, then normal resolution resumes.
         const matchedSpecialOrigins = matches.filter(index => Boolean(specials[index]));
         if (matchedSpecialOrigins.length) {
-          const fired = await Promise.race([
-            explodeSpecialChain(matchedSpecialOrigins, false),
-            sleep(2200).then(() => false)
-          ]);
+          const fired = await explodeSpecialChain(matchedSpecialOrigins, false);
           if (!fired) {
             matchedSpecialOrigins.forEach(index => {
               board[index] = null;
@@ -1320,10 +1324,7 @@
     selected = null;
     try {
       await explodeSpecialChain([i], true);
-      await Promise.race([
-        resolveBoard(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('special timeout')), 9000))
-      ]);
+      await runBoardResolution();
     } catch (error) {
       console.error('Special activation failed:', error);
       collapseBoard();
@@ -1384,7 +1385,7 @@
         // 特殊アイテム同士の合体は通常の特殊キューより先に専用処理する。
         if (movedSpecials.length === 2 && specials[a] === 'rainbow' && specials[b] === 'rainbow') {
           await activateRainbowRainbowCombo(a, b);
-          await resolveBoard();
+          await runBoardResolution();
         } else if (
           isLineSpecial(beforeA.special) &&
           isLineSpecial(beforeB.special)
@@ -1392,14 +1393,14 @@
           // 交換後の specials 配列ではなく交換前の状態で判定する。
           // これにより、描画・着地処理中に特殊状態が変化してもライン合体を取りこぼさない。
           await activateLineLineCombo(a, b, beforeB.type);
-          await resolveBoard();
+          await runBoardResolution();
         } else {
           const movedGroups = findMatchGroups(board);
           const movedCreation = chooseMovedSpecialCreation(movedGroups, a, b);
           // 通常消去を先に見せ、通常ピース側の4/5マッチ変換を確定してから
           // 待機キューの特殊アイテムを発動する。
           await processMovedSpecialQueue(movedSpecials, movedCreation);
-          await resolveBoard();
+          await runBoardResolution();
         }
       } catch (error) {
         console.error('Special swap failed:', error);
@@ -1436,10 +1437,7 @@
     lastSwap = { from: a, to: b };
     pendingPlayerCreation = choosePlayerCreation(findMatchGroups(board), a, b);
     try {
-      await Promise.race([
-        resolveBoard(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('resolve timeout')), 9000))
-      ]);
+      await runBoardResolution();
     } catch (error) {
       console.error('Board resolution failed:', error);
       collapseBoard();
