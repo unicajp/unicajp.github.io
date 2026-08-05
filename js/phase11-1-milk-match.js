@@ -522,8 +522,8 @@
       while (c < SIZE) {
         const type = arr[idx(r, c)];
         let end = c + 1;
-        while (end < SIZE && type !== null && arr[idx(r, end)] === type) end++;
-        if (type !== null && end - c >= 3) {
+        while (end < SIZE && Number.isInteger(type) && arr[idx(r, end)] === type) end++;
+        if (Number.isInteger(type) && end - c >= 3) {
           for (let x = c; x < end; x++) found.add(idx(r, x));
         }
         c = end;
@@ -535,8 +535,8 @@
       while (r < SIZE) {
         const type = arr[idx(r, c)];
         let end = r + 1;
-        while (end < SIZE && type !== null && arr[idx(end, c)] === type) end++;
-        if (type !== null && end - r >= 3) {
+        while (end < SIZE && Number.isInteger(type) && arr[idx(end, c)] === type) end++;
+        if (Number.isInteger(type) && end - r >= 3) {
           for (let y = r; y < end; y++) found.add(idx(y, c));
         }
         r = end;
@@ -553,8 +553,8 @@
       while (c < SIZE) {
         const type = arr[idx(r, c)];
         let end = c + 1;
-        while (end < SIZE && type !== null && arr[idx(r, end)] === type) end++;
-        if (type !== null && end - c >= 3) groups.push({ indices: Array.from({length:end-c}, (_,k)=>idx(r,c+k)), direction:'h', type });
+        while (end < SIZE && Number.isInteger(type) && arr[idx(r, end)] === type) end++;
+        if (Number.isInteger(type) && end - c >= 3) groups.push({ indices: Array.from({length:end-c}, (_,k)=>idx(r,c+k)), direction:'h', type });
         c = end;
       }
     }
@@ -563,8 +563,8 @@
       while (r < SIZE) {
         const type = arr[idx(r, c)];
         let end = r + 1;
-        while (end < SIZE && type !== null && arr[idx(end, c)] === type) end++;
-        if (type !== null && end - r >= 3) groups.push({ indices: Array.from({length:end-r}, (_,k)=>idx(r+k,c)), direction:'v', type });
+        while (end < SIZE && Number.isInteger(type) && arr[idx(end, c)] === type) end++;
+        if (Number.isInteger(type) && end - r >= 3) groups.push({ indices: Array.from({length:end-r}, (_,k)=>idx(r+k,c)), direction:'v', type });
         r = end;
       }
     }
@@ -837,69 +837,74 @@
     comboEl.classList.add('show', 'is-all-clear');
   }
 
+  function sanitizeBoardState() {
+    const total = SIZE * SIZE;
+    if (!Array.isArray(board) || board.length !== total) board = new Array(total).fill(null);
+    if (!Array.isArray(specials) || specials.length !== total) specials = new Array(total).fill(null);
+    for (let i = 0; i < total; i++) {
+      if (!Number.isInteger(board[i]) || board[i] < 0 || board[i] >= TYPES.length) {
+        board[i] = null;
+        specials[i] = null;
+      }
+      if (!['line-h', 'line-v', 'rainbow'].includes(specials[i])) specials[i] = null;
+    }
+  }
+
   function collapseBoard() {
+    sanitizeBoardState();
     for (let c = 0; c < SIZE; c++) {
       const kept = [];
       for (let r = SIZE - 1; r >= 0; r--) {
         const i = idx(r, c);
-        if (board[i] !== null) kept.push({ type: board[i], special: specials[i] || null });
+        if (Number.isInteger(board[i])) kept.push({ type: board[i], special: specials[i] || null });
       }
-      let k = 0;
-      for (let r = SIZE - 1; r >= 0; r--) {
+      for (let r = SIZE - 1, k = 0; r >= 0; r--, k++) {
         const i = idx(r, c);
         if (k < kept.length) {
           board[i] = kept[k].type;
           specials[i] = kept[k].special;
-          k++;
         } else {
           board[i] = Math.floor(Math.random() * TYPES.length);
           specials[i] = null;
         }
       }
     }
+    // 最終保証：盤面に null / undefined を残さない。
+    for (let i = 0; i < board.length; i++) {
+      if (!Number.isInteger(board[i])) {
+        board[i] = Math.floor(Math.random() * TYPES.length);
+        specials[i] = null;
+      }
+    }
   }
 
   async function resolveBoard() {
-    // Phase12.8: normal-match resolution rebuilt around a finite, repeat-safe loop.
-    // Every pass must either remove pieces or exit; repeated board states are shuffled.
+    // Phase13.1: internal board state is completed first; animation never controls progression.
     let chain = 0;
-    const MAX_CASCADE = 10;
+    const MAX_CASCADE = 12;
     const seenStates = new Set();
 
     try {
+      sanitizeBoardState();
+      collapseBoard();
+
       while (chain < MAX_CASCADE) {
-        const signature = board.map((value, i) => `${value ?? 'x'}:${specials[i] || '-'}`).join('|');
+        sanitizeBoardState();
+        const groups = findMatchGroups(board);
+        if (!groups.length) break;
+
+        const signature = board.join(',') + '|' + specials.join(',');
         if (seenStates.has(signature)) {
           board = createBoard();
           specials = Array(SIZE * SIZE).fill(null);
-          pendingPlayerCreation = null;
-          render();
           toast('連鎖を整理して盤面を更新しました');
           break;
         }
         seenStates.add(signature);
 
-        const groups = findMatchGroups(board);
-        if (!groups.length) break;
-
-        const matches = [...new Set(groups.flatMap(group => group.indices))];
+        const matches = [...new Set(groups.flatMap(group => group.indices))]
+          .filter(index => Number.isInteger(index) && Number.isInteger(board[index]));
         if (!matches.length) break;
-
-        // Existing specials caught in a match fire once, then normal resolution resumes.
-        const matchedSpecialOrigins = matches.filter(index => Boolean(specials[index]));
-        if (matchedSpecialOrigins.length) {
-          const fired = await explodeSpecialChain(matchedSpecialOrigins, false);
-          if (!fired) {
-            matchedSpecialOrigins.forEach(index => {
-              board[index] = null;
-              specials[index] = null;
-            });
-            collapseBoard();
-            render();
-          }
-          chain += 1;
-          continue;
-        }
 
         chain += 1;
         runMaxCombo = Math.max(runMaxCombo, chain);
@@ -909,57 +914,33 @@
           if (Number.isInteger(type)) runTypeCounts[type]++;
         });
 
-        const sizeBonus = matches.length >= 5 ? 1.55 : matches.length === 4 ? 1.22 : 1;
-        const gain = applyScoreBonuses(matches.length * 34 * comboMultiplier(chain) * sizeBonus);
-        score += gain;
-
         const creations = new Map();
-        const specialPriority = { 'line-h': 1, 'line-v': 1, rainbow: 2 };
+        const priority = { 'line-h': 1, 'line-v': 1, rainbow: 2 };
         if (chain === 1 && pendingPlayerCreation) {
           creations.set(pendingPlayerCreation.target, pendingPlayerCreation.special);
-          try {
-            await Promise.race([
-              animateGatherToTarget(
-                pendingPlayerCreation.indices,
-                pendingPlayerCreation.target,
-                pendingPlayerCreation.special
-              ),
-              sleep(420)
-            ]);
-          } catch (_) {}
         }
-
         groups.filter(group => group.indices.length >= 4).forEach(group => {
-          const special = group.indices.length >= 5
-            ? 'rainbow'
-            : (group.direction === 'h' ? 'line-h' : 'line-v');
-          if (
-            chain === 1 &&
-            pendingPlayerCreation &&
-            group.indices.some(index => pendingPlayerCreation.indices.includes(index))
-          ) return;
+          const special = group.indices.length >= 5 ? 'rainbow' : (group.direction === 'h' ? 'line-h' : 'line-v');
+          if (chain === 1 && pendingPlayerCreation && group.indices.some(i => pendingPlayerCreation.indices.includes(i))) return;
           const center = group.indices[Math.floor(group.indices.length / 2)];
           const current = creations.get(center);
-          if (!current || specialPriority[special] > specialPriority[current]) {
-            creations.set(center, special);
-          }
+          if (!current || priority[special] > priority[current]) creations.set(center, special);
         });
 
         const preserved = new Set(creations.keys());
+        const sizeBonus = matches.length >= 5 ? 1.55 : matches.length === 4 ? 1.22 : 1;
+        const gain = applyScoreBonuses(matches.length * 34 * comboMultiplier(chain) * sizeBonus);
+        score += gain;
         showCombo(chain, gain);
         updateStats();
         completeDailyChallengeIfNeeded();
-        makeBurst(matches, chain);
-        try { sfx.match(chain); } catch (_) {}
+        try { makeBurst(matches, chain); sfx.match(chain); } catch (_) {}
 
-        matches.forEach((index, order) => {
-          if (preserved.has(index)) return;
-          const tile = boardEl.children[index];
-          if (!tile) return;
-          tile.style.setProperty('--pop-delay', `${Math.min(order, 10) * 12}ms`);
-          tile.classList.add('is-matched');
+        // 見た目は短い補助演出だけ。処理完了条件にはしない。
+        matches.forEach(index => {
+          if (!preserved.has(index)) boardEl.children[index]?.classList.add('is-matched');
         });
-        await sleep(150);
+        await sleep(90);
 
         matches.forEach(index => {
           if (!preserved.has(index)) {
@@ -968,52 +949,43 @@
           }
         });
         creations.forEach((special, index) => {
-          if (!Number.isInteger(board[index])) {
-            const fallbackType = groups.find(group => group.indices.includes(index))?.type;
-            board[index] = Number.isInteger(fallbackType) ? fallbackType : 0;
-          }
+          const group = groups.find(g => g.indices.includes(index));
+          board[index] = Number.isInteger(group?.type) ? group.type : Math.floor(Math.random() * TYPES.length);
           specials[index] = special;
         });
 
         let charge = 4 + Math.max(0, matches.length - 3) * 2 + Math.max(0, chain - 1) * 3;
-        if (creations.size) {
-          creations.forEach(special => { charge += special === 'rainbow' ? 24 : 14; });
-          runSkills += creations.size;
-        }
-        charge = Math.max(1, Math.ceil(Math.min(42, charge) / 2));
-        addSkill(charge);
+        creations.forEach(special => { charge += special === 'rainbow' ? 24 : 14; });
+        if (creations.size) runSkills += creations.size;
+        addSkill(Math.max(1, Math.ceil(Math.min(42, charge) / 2)));
 
         collapseBoard();
         render();
-        [...boardEl.children].forEach((tile, index) => {
-          tile.style.setProperty('--fall-delay', `${Math.min(90, (pos(index).r * 7) + (pos(index).c * 2))}ms`);
-          tile.classList.add('is-falling');
-        });
         try { sfx.fall(); } catch (_) {}
-        await sleep(110);
+        await sleep(70);
       }
 
-      if (chain >= MAX_CASCADE && findMatches(board).length) {
+      if (findMatchGroups(board).length) {
         board = createBoard();
         specials = Array(SIZE * SIZE).fill(null);
-        render();
         toast('長い連鎖を整理して盤面を更新しました');
       }
 
+      collapseBoard();
+      render();
       pendingPlayerCreation = null;
       if (!hasPossibleMove(board)) {
-        boardEl.classList.add('is-shuffling');
-        try { sfx.shuffle(); } catch (_) {}
-        await sleep(120);
         board = createBoard();
         specials = Array(SIZE * SIZE).fill(null);
         render();
-        boardEl.classList.remove('is-shuffling');
         toast('手詰まりのためシャッフルしました');
       }
       setBest(score);
     } finally {
       pendingPlayerCreation = null;
+      sanitizeBoardState();
+      collapseBoard();
+      render();
       boardEl.classList.remove('is-shuffling');
     }
   }
