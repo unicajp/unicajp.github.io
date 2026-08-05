@@ -1,0 +1,111 @@
+/* Phase13.2 — MILK BLOOM compact UI only. Game logic untouched. */
+#milkMatchModal .milk-match-panel{
+  width:min(100%,500px)!important;
+  max-height:100dvh!important;
+  padding:8px 10px calc(10px + env(safe-area-inset-bottom))!important;
+  border-radius:18px 18px 0 0!important;
+  gap:4px!important;
+}
+#milkMatchModal .milk-match-header{min-height:34px!important;height:auto!important;margin:0 0 4px!important;padding:0!important}
+#milkMatchModal .milk-match-header small{display:none!important}
+#milkMatchModal .milk-match-header h2{font-size:16px!important;line-height:1!important;letter-spacing:.06em!important;margin:0!important}
+#milkMatchModal .milk-match-close{width:32px!important;height:32px!important;min-width:32px!important;font-size:21px!important;line-height:1!important}
+
+#milkMatchModal .milk-match-mode-tabs{height:38px!important;min-height:38px!important;margin:0 0 4px!important;padding:2px!important;gap:3px!important;border-radius:12px!important}
+#milkMatchModal .milk-match-mode-tabs button{height:34px!important;min-height:34px!important;padding:3px 8px!important;border-radius:10px!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:5px!important}
+#milkMatchModal .milk-match-mode-tabs button b{font-size:12px!important;line-height:1!important}
+#milkMatchModal .milk-match-mode-tabs button small{display:none!important}
+
+#milkMatchModal .milk-match-quickbar{height:36px!important;min-height:36px!important;gap:5px!important;margin:0 0 4px!important}
+#milkMatchModal .milk-match-ranking-spot,#milkMatchModal .milk-match-rules-open{height:36px!important;min-height:36px!important;border-radius:10px!important;padding:4px 9px!important}
+#milkMatchModal .milk-match-ranking-spot{display:flex!important;align-items:center!important;gap:8px!important;overflow:hidden!important}
+#milkMatchModal .milk-match-ranking-spot span{font-size:7px!important;white-space:nowrap!important}
+#milkMatchModal .milk-match-ranking-spot strong{font-size:10px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#milkMatchModal .milk-match-rules-open{font-size:11px!important;white-space:nowrap!important}
+
+#milkMatchModal .milk-match-stats{grid-template-columns:1fr 1fr!important;height:40px!important;min-height:40px!important;gap:5px!important;margin:0 0 4px!important}
+#milkMatchModal .milk-match-stats>div{height:40px!important;min-height:40px!important;padding:4px 7px!important;border-radius:10px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important}
+#milkMatchModal .milk-match-stats>div:nth-child(3){display:none!important}
+#milkMatchModal .milk-match-stats small{display:inline!important;font-size:7px!important;line-height:1!important;letter-spacing:.06em!important;white-space:nowrap!important}
+#milkMatchModal .milk-match-stats strong{font-size:15px!important;line-height:1!important;white-space:nowrap!important}
+
+#milkMatchModal .milk-match-goal{height:37px!important;min-height:37px!important;padding:5px 8px!important;margin:0 0 4px!important;border-radius:10px!important;grid-template-columns:auto 1fr!important;gap:2px 6px!important}
+#milkMatchModal .milk-match-goal span{font-size:7px!important;white-space:nowrap!important}
+#milkMatchModal .milk-match-goal strong{font-size:10px!important;line-height:1.15!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#milkMatchModal .milk-match-goal div{height:3px!important}
+
+#milkMatchModal .milk-match-skill{height:48px!important;min-height:48px!important;padding:4px 5px!important;margin:0 0 4px!important;display:grid!important;grid-template-columns:minmax(0,1fr) 74px!important;gap:6px!important;align-items:center!important;border-radius:10px!important}
+#milkMatchModal .milk-match-skill-meter{height:40px!important;min-height:40px!important;padding:3px 4px!important;display:grid!important;grid-template-columns:1fr auto!important;grid-template-rows:17px 12px!important;gap:2px 5px!important;align-items:center!important}
+#milkMatchModal .milk-match-skill-meter>span{font-size:8px!important;line-height:1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#milkMatchModal .milk-match-skill-meter>strong{font-size:9px!important;line-height:1!important;white-space:nowrap!important}
+#milkMatchModal .milk-match-skill-track{grid-column:1/3!important;height:9px!important}
+#milkMatchModal .milk-match-skill-actions{width:74px!important;height:38px!important;margin:0!important;display:block!important}
+#milkMatchModal .milk-match-skill-actions #milkMatchSkillRainbow{width:74px!important;height:38px!important;min-height:38px!important;padding:2px 4px!important;border-radius:9px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:3px!important}
+#milkMatchModal .milk-match-skill-actions #milkMatchSkillRainbow span{font-size:15px!important}
+#milkMatchModal .milk-match-skill-actions #milkMatchSkillRainbow b{font-size:8px!important;white-space:nowrap!important}
+
+#milkMatchModal .milk-match-challenge{min-height:31px!important;padding:4px 7px!important;margin:0 0 4px!important;border-radius:9px!important}
+#milkMatchModal .milk-match-challenge span{font-size:8px!important}
+#milkMatchModal .milk-match-challenge div{height:5px!important}
+
+#milkMatchModal .milk-match-board-wrap{width:min(88vw,390px)!important;max-width:390px!important;margin:2px auto 0!important}
+#milkMatchModal .milk-match-board{gap:3px!important;padding:5px!important;border-radius:15px!important}
+#milkMatchModal .milk-match-tile{border-radius:9px!important;font-size:clamp(16px,4.8vw,24px)!important}
+#milkMatchModal .milk-match-help{display:none!important}
+
+#milkMatchModal .milk-match-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important;margin-top:5px!important}
+#milkMatchModal .milk-match-actions button{height:34px!important;min-height:34px!important;padding:4px 5px!important;border-radius:9px!important;font-size:9px!important;line-height:1.1!important}
+#milkMatchModal .milk-match-volume{height:32px!important;min-height:32px!important;padding:3px 6px!important;margin-top:5px!important;border-radius:9px!important;gap:5px!important}
+#milkMatchModal .milk-match-volume button{width:27px!important;height:27px!important;font-size:15px!important}
+#milkMatchModal .milk-match-volume label{font-size:8px!important}
+#milkMatchModal .milk-match-phase-note{display:none!important}
+
+/* Story / score lobby overlay */
+#milkMatchModal .milk-match-lobby{padding:7px!important;align-items:center!important;overflow:hidden!important}
+#milkMatchModal .milk-match-lobby-card{width:min(88%,340px)!important;max-height:min(78dvh,520px)!important;padding:8px 9px 9px!important;border-radius:16px!important;gap:4px!important;overflow:auto!important}
+#milkMatchModal .milk-match-lobby-card .milk-lobby-head{min-height:28px!important;gap:6px!important;margin:0!important}
+#milkMatchModal .milk-match-lobby-card .milk-lobby-head>span{width:28px!important;height:28px!important;font-size:15px!important;border-radius:8px!important}
+#milkMatchModal .milk-match-lobby-card .milk-lobby-head small{font-size:6px!important}
+#milkMatchModal .milk-match-lobby-card .milk-lobby-head h3{font-size:13px!important;line-height:1.1!important;margin:0!important}
+#milkMatchModal .milk-stage-map{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:3px!important;margin:1px 0!important}
+#milkMatchModal .milk-match-lobby-card .milk-stage-chip{min-height:31px!important;padding:2px!important;border-radius:8px!important;gap:1px!important}
+#milkMatchModal .milk-match-lobby-card .milk-stage-chip b{font-size:11px!important}
+#milkMatchModal .milk-match-lobby-card .milk-stage-chip span{font-size:8px!important;min-height:9px!important}
+#milkMatchModal .milk-match-lobby-card .milk-lobby-rule{padding:5px 7px!important;border-radius:9px!important;gap:1px!important}
+#milkMatchModal .milk-match-lobby-card .milk-lobby-rule strong{font-size:10px!important}
+#milkMatchModal .milk-match-lobby-card .milk-lobby-rule span{font-size:7px!important}
+#milkMatchModal .milk-match-lobby-card>p{display:none!important}
+#milkMatchModal .milk-story-daily-finished{padding:5px 7px!important;margin:0!important;gap:1px!important;border-radius:9px!important}
+#milkMatchModal .milk-story-daily-finished strong{font-size:10px!important}
+#milkMatchModal .milk-story-daily-finished span{font-size:7px!important;line-height:1.25!important}
+#milkMatchModal .milk-story-daily-finished small{font-size:6px!important}
+#milkMatchModal .milk-match-lobby-card .milk-lobby-start{min-height:34px!important;height:34px!important;padding:5px 9px!important;border-radius:10px!important;font-size:11px!important;margin:0!important}
+
+/* Result card */
+#milkMatchModal .milk-match-result{padding:12px!important}
+#milkMatchModal .milk-match-result-card{width:min(86%,330px)!important;padding:14px!important;border-radius:17px!important}
+#milkMatchModal .milk-match-result-card b{font-size:27px!important}
+#milkMatchModal .milk-match-result-card h3{font-size:17px!important;margin:5px 0 3px!important}
+#milkMatchModal .milk-match-result-card p{font-size:10px!important;margin-bottom:8px!important}
+#milkMatchModal .milk-match-result-card button{min-height:34px!important;padding:7px 16px!important;font-size:11px!important}
+
+@media (max-width:380px){
+  #milkMatchModal .milk-match-panel{padding-left:7px!important;padding-right:7px!important}
+  #milkMatchModal .milk-match-board-wrap{width:min(92vw,370px)!important}
+  #milkMatchModal .milk-match-ranking-spot strong{font-size:9px!important}
+  #milkMatchModal .milk-match-goal strong{font-size:9px!important}
+}
+@media (max-height:700px){
+  #milkMatchModal .milk-match-header{min-height:29px!important}
+  #milkMatchModal .milk-match-header h2{font-size:14px!important}
+  #milkMatchModal .milk-match-mode-tabs{height:34px!important;min-height:34px!important}
+  #milkMatchModal .milk-match-mode-tabs button{height:30px!important;min-height:30px!important}
+  #milkMatchModal .milk-match-quickbar,#milkMatchModal .milk-match-ranking-spot,#milkMatchModal .milk-match-rules-open{height:32px!important;min-height:32px!important}
+  #milkMatchModal .milk-match-stats,#milkMatchModal .milk-match-stats>div{height:35px!important;min-height:35px!important}
+  #milkMatchModal .milk-match-goal{height:32px!important;min-height:32px!important}
+  #milkMatchModal .milk-match-skill{height:43px!important;min-height:43px!important}
+  #milkMatchModal .milk-match-skill-meter{height:35px!important;min-height:35px!important}
+  #milkMatchModal .milk-match-skill-actions,#milkMatchModal .milk-match-skill-actions #milkMatchSkillRainbow{height:34px!important;min-height:34px!important}
+  #milkMatchModal .milk-match-actions button{height:30px!important;min-height:30px!important}
+  #milkMatchModal .milk-match-volume{height:29px!important;min-height:29px!important}
+}
