@@ -72,13 +72,6 @@
   let pendingPlayerCreation = null;
   let skillPlacementMode = false;
   let locked = false;
-  let resolutionPromise = null;
-
-  function runBoardResolution() {
-    if (resolutionPromise) return resolutionPromise;
-    resolutionPromise = resolveBoard().finally(() => { resolutionPromise = null; });
-    return resolutionPromise;
-  }
   let gameEnded = true;
   let attemptActive = false;
   let progress = loadProgress();
@@ -522,8 +515,8 @@
       while (c < SIZE) {
         const type = arr[idx(r, c)];
         let end = c + 1;
-        while (end < SIZE && Number.isInteger(type) && arr[idx(r, end)] === type) end++;
-        if (Number.isInteger(type) && end - c >= 3) {
+        while (end < SIZE && type !== null && arr[idx(r, end)] === type) end++;
+        if (type !== null && end - c >= 3) {
           for (let x = c; x < end; x++) found.add(idx(r, x));
         }
         c = end;
@@ -535,8 +528,8 @@
       while (r < SIZE) {
         const type = arr[idx(r, c)];
         let end = r + 1;
-        while (end < SIZE && Number.isInteger(type) && arr[idx(end, c)] === type) end++;
-        if (Number.isInteger(type) && end - r >= 3) {
+        while (end < SIZE && type !== null && arr[idx(end, c)] === type) end++;
+        if (type !== null && end - r >= 3) {
           for (let y = r; y < end; y++) found.add(idx(y, c));
         }
         r = end;
@@ -553,8 +546,8 @@
       while (c < SIZE) {
         const type = arr[idx(r, c)];
         let end = c + 1;
-        while (end < SIZE && Number.isInteger(type) && arr[idx(r, end)] === type) end++;
-        if (Number.isInteger(type) && end - c >= 3) groups.push({ indices: Array.from({length:end-c}, (_,k)=>idx(r,c+k)), direction:'h', type });
+        while (end < SIZE && type !== null && arr[idx(r, end)] === type) end++;
+        if (type !== null && end - c >= 3) groups.push({ indices: Array.from({length:end-c}, (_,k)=>idx(r,c+k)), direction:'h', type });
         c = end;
       }
     }
@@ -563,8 +556,8 @@
       while (r < SIZE) {
         const type = arr[idx(r, c)];
         let end = r + 1;
-        while (end < SIZE && Number.isInteger(type) && arr[idx(end, c)] === type) end++;
-        if (Number.isInteger(type) && end - r >= 3) groups.push({ indices: Array.from({length:end-r}, (_,k)=>idx(r+k,c)), direction:'v', type });
+        while (end < SIZE && type !== null && arr[idx(end, c)] === type) end++;
+        if (type !== null && end - r >= 3) groups.push({ indices: Array.from({length:end-r}, (_,k)=>idx(r+k,c)), direction:'v', type });
         r = end;
       }
     }
@@ -738,11 +731,8 @@
       ], { duration: 210 + order * 14, easing:'cubic-bezier(.2,.78,.2,1)', fill:'forwards' }).finished.catch(()=>{}));
     });
     targetTile.classList.add(special === 'rainbow' ? 'is-rainbow-forming' : 'is-special-forming');
-    await Promise.race([
-      Promise.all(animations),
-      sleep(500)
-    ]);
-    await sleep(30);
+    await Promise.all(animations);
+    await sleep(45);
   }
 
   function currentStoryStage() {
@@ -799,8 +789,7 @@
     const mark = special
       ? `<i class="milk-match-special-mark" aria-hidden="true"><b>${specialSymbol}</b><em>${specialName}</em></i>`
       : '';
-    tile.setAttribute('aria-label', PIECES[type].name + (special ? '・特殊アイテム' : ''));
-    tile.innerHTML = `<span class="milk-match-piece-icon" aria-hidden="true">${PIECES[type].icon}</span>${mark}`;
+    tile.innerHTML = `<span class="milk-match-piece-icon">${PIECES[type].icon}</span><small>${PIECES[type].name}</small>${mark}`;
     return tile;
   }
 
@@ -837,157 +826,129 @@
     comboEl.classList.add('show', 'is-all-clear');
   }
 
-  function sanitizeBoardState() {
-    const total = SIZE * SIZE;
-    if (!Array.isArray(board) || board.length !== total) board = new Array(total).fill(null);
-    if (!Array.isArray(specials) || specials.length !== total) specials = new Array(total).fill(null);
-    for (let i = 0; i < total; i++) {
-      if (!Number.isInteger(board[i]) || board[i] < 0 || board[i] >= TYPES.length) {
-        board[i] = null;
-        specials[i] = null;
-      }
-      if (!['line-h', 'line-v', 'rainbow'].includes(specials[i])) specials[i] = null;
-    }
-  }
-
   function collapseBoard() {
-    sanitizeBoardState();
     for (let c = 0; c < SIZE; c++) {
       const kept = [];
       for (let r = SIZE - 1; r >= 0; r--) {
         const i = idx(r, c);
-        if (Number.isInteger(board[i])) kept.push({ type: board[i], special: specials[i] || null });
+        if (board[i] !== null) kept.push({ type: board[i], special: specials[i] || null });
       }
-      for (let r = SIZE - 1, k = 0; r >= 0; r--, k++) {
+      let k = 0;
+      for (let r = SIZE - 1; r >= 0; r--) {
         const i = idx(r, c);
         if (k < kept.length) {
           board[i] = kept[k].type;
           specials[i] = kept[k].special;
+          k++;
         } else {
           board[i] = Math.floor(Math.random() * TYPES.length);
           specials[i] = null;
         }
       }
     }
-    // 最終保証：盤面に null / undefined を残さない。
-    for (let i = 0; i < board.length; i++) {
-      if (!Number.isInteger(board[i])) {
-        board[i] = Math.floor(Math.random() * TYPES.length);
-        specials[i] = null;
-      }
-    }
   }
 
   async function resolveBoard() {
-    // Phase13.1: internal board state is completed first; animation never controls progression.
     let chain = 0;
-    const MAX_CASCADE = 12;
-    const seenStates = new Set();
-
-    try {
-      sanitizeBoardState();
-      collapseBoard();
-
-      while (chain < MAX_CASCADE) {
-        sanitizeBoardState();
-        const groups = findMatchGroups(board);
-        if (!groups.length) break;
-
-        const signature = board.join(',') + '|' + specials.join(',');
-        if (seenStates.has(signature)) {
-          board = createBoard();
-          specials = Array(SIZE * SIZE).fill(null);
-          toast('連鎖を整理して盤面を更新しました');
-          break;
-        }
-        seenStates.add(signature);
-
-        const matches = [...new Set(groups.flatMap(group => group.indices))]
-          .filter(index => Number.isInteger(index) && Number.isInteger(board[index]));
-        if (!matches.length) break;
-
-        chain += 1;
-        runMaxCombo = Math.max(runMaxCombo, chain);
-        runMatched += matches.length;
-        matches.forEach(index => {
-          const type = board[index];
-          if (Number.isInteger(type)) runTypeCounts[type]++;
-        });
-
-        const creations = new Map();
-        const priority = { 'line-h': 1, 'line-v': 1, rainbow: 2 };
-        if (chain === 1 && pendingPlayerCreation) {
-          creations.set(pendingPlayerCreation.target, pendingPlayerCreation.special);
-        }
-        groups.filter(group => group.indices.length >= 4).forEach(group => {
-          const special = group.indices.length >= 5 ? 'rainbow' : (group.direction === 'h' ? 'line-h' : 'line-v');
-          if (chain === 1 && pendingPlayerCreation && group.indices.some(i => pendingPlayerCreation.indices.includes(i))) return;
-          const center = group.indices[Math.floor(group.indices.length / 2)];
-          const current = creations.get(center);
-          if (!current || priority[special] > priority[current]) creations.set(center, special);
-        });
-
-        const preserved = new Set(creations.keys());
-        const sizeBonus = matches.length >= 5 ? 1.55 : matches.length === 4 ? 1.22 : 1;
-        const gain = applyScoreBonuses(matches.length * 34 * comboMultiplier(chain) * sizeBonus);
-        score += gain;
-        showCombo(chain, gain);
-        updateStats();
-        completeDailyChallengeIfNeeded();
-        try { makeBurst(matches, chain); sfx.match(chain); } catch (_) {}
-
-        // 見た目は短い補助演出だけ。処理完了条件にはしない。
-        matches.forEach(index => {
-          if (!preserved.has(index)) boardEl.children[index]?.classList.add('is-matched');
-        });
-        await sleep(90);
-
-        matches.forEach(index => {
-          if (!preserved.has(index)) {
-            board[index] = null;
-            specials[index] = null;
-          }
-        });
-        creations.forEach((special, index) => {
-          const group = groups.find(g => g.indices.includes(index));
-          board[index] = Number.isInteger(group?.type) ? group.type : Math.floor(Math.random() * TYPES.length);
-          specials[index] = special;
-        });
-
-        let charge = 4 + Math.max(0, matches.length - 3) * 2 + Math.max(0, chain - 1) * 3;
-        creations.forEach(special => { charge += special === 'rainbow' ? 24 : 14; });
-        if (creations.size) runSkills += creations.size;
-        addSkill(Math.max(1, Math.ceil(Math.min(42, charge) / 2)));
-
-        collapseBoard();
-        render();
-        try { sfx.fall(); } catch (_) {}
-        await sleep(70);
-      }
-
-      if (findMatchGroups(board).length) {
+    const MAX_CASCADE = 24;
+    while (true) {
+      if (chain >= MAX_CASCADE) {
+        // Safety guard: a malformed/preserved match must never loop forever.
         board = createBoard();
         specials = Array(SIZE * SIZE).fill(null);
-        toast('長い連鎖を整理して盤面を更新しました');
+        pendingPlayerCreation = null;
+        render();
+        toast('連鎖を整理して盤面を更新しました');
+        break;
       }
+      const groups = findMatchGroups(board);
+      if (!groups.length) break;
+      const matches = [...new Set(groups.flatMap(g => g.indices))];
+      const matchedSpecialOrigins = matches.filter(i => specials[i]);
+      if (matchedSpecialOrigins.length) {
+        // 特殊アイテムが3マッチ等に巻き込まれた場合、通常消去せず必ず効果を発動する。
+        await explodeSpecialChain(matchedSpecialOrigins, false);
+        chain++;
+        runMaxCombo = Math.max(runMaxCombo, chain);
+        await resolveBoard();
+        break;
+      }
+      chain++;
+      runMaxCombo = Math.max(runMaxCombo, chain);
+      runMatched += matches.length;
+      const sizeBonus = matches.length >= 5 ? 1.55 : matches.length === 4 ? 1.22 : 1;
+      const gain = applyScoreBonuses(matches.length * 34 * comboMultiplier(chain) * sizeBonus);
+      score += gain;
+      matches.forEach(i => { const t = board[i]; if (Number.isInteger(t)) runTypeCounts[t]++; });
+      const creations = new Map();
+      const specialPriority = { 'line-h': 1, 'line-v': 1, rainbow: 2 };
+      if (chain === 1 && pendingPlayerCreation) {
+        creations.set(pendingPlayerCreation.target, pendingPlayerCreation.special);
+        await animateGatherToTarget(pendingPlayerCreation.indices, pendingPlayerCreation.target, pendingPlayerCreation.special);
+      }
+      groups.filter(group => group.indices.length >= 4).forEach(group => {
+        const special = group.indices.length >= 5 ? 'rainbow' : (group.direction === 'h' ? 'line-h' : 'line-v');
+        if (chain === 1 && pendingPlayerCreation && group.indices.some(i => pendingPlayerCreation.indices.includes(i))) return;
+        const center = group.indices[Math.floor(group.indices.length / 2)];
+        const current = creations.get(center);
+        if (!current || specialPriority[special] > specialPriority[current]) creations.set(center, special);
+      });
+      // Only a special item created by this resolution is preserved.
+      // Preserving an already-existing special inside a 3-match leaves the same
+      // matched shape on the board and can cause an endless cascade.
+      const preserved = new Set(creations.keys());
 
+      showCombo(chain, gain);
+      updateStats();
+      completeDailyChallengeIfNeeded();
+      makeBurst(matches, chain);
+      sfx.match(chain);
+      matches.forEach((i, order) => {
+        if (preserved.has(i)) return;
+        const tile = boardEl.children[i];
+        if (!tile) return;
+        tile.style.setProperty('--pop-delay', `${Math.min(order, 10) * 20}ms`);
+        tile.classList.add('is-matched');
+      });
+      await sleep(270);
+      matches.forEach(i => {
+        if (!preserved.has(i)) { board[i] = null; specials[i] = null; }
+      });
+      creations.forEach((special, i) => { specials[i] = special; });
+      // 通常マッチでも少しずつ蓄積し、4個・5個マッチでは大きく増える。
+      // 4個マッチは約半分、5個以上はほぼ即使用可能になる調整。
+      // ゲージが進んでいる実感を明確にする。通常マッチでも最低12、連鎖・大量消去で加速。
+      // Ver.3.18: 通常プレイ約8〜12手で満タンになるよう再調整。
+      let charge = 4 + Math.max(0, matches.length - 3) * 2 + Math.max(0, chain - 1) * 3;
+      if (creations.size) {
+        creations.forEach(sp => { charge += sp === 'rainbow' ? 24 : 14; });
+        runSkills += creations.size;
+      }
+      // Ver.4.9: 虹ゲージの蓄積量を従来の約半分に抑える。
+      charge = Math.max(1, Math.ceil(Math.min(42, charge) / 2));
+      addSkill(charge);
       collapseBoard();
       render();
-      pendingPlayerCreation = null;
-      if (!hasPossibleMove(board)) {
-        board = createBoard();
-        specials = Array(SIZE * SIZE).fill(null);
-        render();
-        toast('手詰まりのためシャッフルしました');
-      }
-      setBest(score);
-    } finally {
-      pendingPlayerCreation = null;
-      sanitizeBoardState();
-      collapseBoard();
+      [...boardEl.children].forEach((tile, i) => {
+        tile.style.setProperty('--fall-delay', `${(pos(i).r * 10) + (pos(i).c * 4)}ms`);
+        tile.classList.add('is-falling');
+      });
+      sfx.fall();
+      await sleep(170);
+    }
+
+    pendingPlayerCreation = null;
+    if (!hasPossibleMove(board)) {
+      boardEl.classList.add('is-shuffling');
+      sfx.shuffle();
+      await sleep(250);
+      board = createBoard();
+      specials = Array(SIZE * SIZE).fill(null);
       render();
       boardEl.classList.remove('is-shuffling');
+      toast('手詰まりのためシャッフルしました');
     }
+    setBest(score);
   }
 
   function playSpecialBeam(special, originIndex) {
@@ -1210,36 +1171,45 @@
   }
 
   async function activateLineLineCombo(a, b, preferredType = null) {
-    // ライン同士は「移動先に虹を1個作って終了」。
-    // 落下処理をここで行うと生成位置がずれたり、同時解決と競合して
-    // 操作ロックが残るため、盤面の座標は動かさない。
     const target = b;
-    const source = a;
-    const sourceType = Number.isInteger(board[source]) ? board[source] : 0;
-    const targetType = Number.isInteger(board[target]) ? board[target] : sourceType;
+    const sourceType = Number.isInteger(board[a]) ? board[a] : 0;
+    const targetType = Number.isInteger(board[b]) ? board[b] : sourceType;
     const rainbowType = Number.isInteger(preferredType) ? preferredType : targetType;
 
-    boardEl.children[source]?.classList.add('is-special-combo-source');
-    boardEl.children[target]?.classList.add('is-special-combo-target');
-    try { sfx.combo(6); } catch (_) {}
-    await sleep(140);
+    try {
+      boardEl.children[a]?.classList.add('is-special-combo-source');
+      boardEl.children[b]?.classList.add('is-special-combo-target');
+      sfx.combo(6);
+      await sleep(150);
 
-    // source 側は通常ピースへ戻し、target 側だけ虹にする。
-    // null を作らないため、この処理だけで落下・連鎖は発生しない。
-    board[source] = Math.floor(Math.random() * TYPES.length);
-    specials[source] = null;
-    board[target] = rainbowType;
-    specials[target] = 'rainbow';
-    render();
+      board[a] = null;
+      specials[a] = null;
+      board[target] = rainbowType;
+      specials[target] = 'rainbow';
+      collapseBoard([target]);
+      // collapse後も移動先に虹を固定する。
+      board[target] = rainbowType;
+      specials[target] = 'rainbow';
+      render();
 
-    const targetTile = boardEl.children[target];
-    targetTile?.classList.add('is-rainbow-forming', 'is-combo-created', 'is-rainbow-ready');
-    toast('🌈 ライン同士が虹アイテムになりました');
-    try { makeBurst([target], 7); } catch (_) {}
-    await sleep(520);
-    boardEl.children[target]?.classList.remove('is-rainbow-forming', 'is-combo-created');
-    updateStats();
-    return true;
+      const targetTile = boardEl.children[target];
+      targetTile?.classList.add('is-rainbow-forming', 'is-combo-created', 'is-rainbow-ready');
+      toast('🌈 LINE COMBO！ 虹アイテム完成');
+      showComboLabel?.('虹アイテム完成！');
+      makeBurst([target], 7);
+      await sleep(900);
+      targetTile?.classList.remove('is-rainbow-forming');
+      updateStats();
+      return true;
+    } catch (error) {
+      console.error('Line + line combo failed:', error);
+      if (!Number.isInteger(board[target])) board[target] = rainbowType;
+      specials[target] = 'rainbow';
+      if (board[a] == null) board[a] = Math.floor(Math.random() * TYPES.length);
+      render();
+      toast('🌈 虹アイテムを生成しました');
+      return true;
+    }
   }
 
   async function activateRainbowRainbowCombo(a, b) {
@@ -1294,23 +1264,11 @@
     if (locked || gameEnded || !attemptActive || !specials[i]) return;
     locked = true;
     selected = null;
-    try {
-      await explodeSpecialChain([i], true);
-      await runBoardResolution();
-    } catch (error) {
-      console.error('Special activation failed:', error);
-      collapseBoard();
-      if (board.some(value => value == null)) {
-        board = createBoard();
-        specials = Array(SIZE * SIZE).fill(null);
-      }
-      render();
-      toast('盤面を復旧しました');
-    } finally {
-      locked = false;
-    }
+    await explodeSpecialChain([i], true);
+    await resolveBoard();
     const goal = mode === 'story' ? storyGoal() : UNLIMITED_GOAL;
     if ((mode === 'story' && score >= goal) || moves <= 0) finishGame(mode === 'story' ? score >= goal : true);
+    locked = false;
   }
 
   async function attemptSwap(a, b) {
@@ -1357,7 +1315,7 @@
         // 特殊アイテム同士の合体は通常の特殊キューより先に専用処理する。
         if (movedSpecials.length === 2 && specials[a] === 'rainbow' && specials[b] === 'rainbow') {
           await activateRainbowRainbowCombo(a, b);
-          await runBoardResolution();
+          await resolveBoard();
         } else if (
           isLineSpecial(beforeA.special) &&
           isLineSpecial(beforeB.special)
@@ -1365,14 +1323,14 @@
           // 交換後の specials 配列ではなく交換前の状態で判定する。
           // これにより、描画・着地処理中に特殊状態が変化してもライン合体を取りこぼさない。
           await activateLineLineCombo(a, b, beforeB.type);
-          await runBoardResolution();
+          await resolveBoard();
         } else {
           const movedGroups = findMatchGroups(board);
           const movedCreation = chooseMovedSpecialCreation(movedGroups, a, b);
           // 通常消去を先に見せ、通常ピース側の4/5マッチ変換を確定してから
           // 待機キューの特殊アイテムを発動する。
           await processMovedSpecialQueue(movedSpecials, movedCreation);
-          await runBoardResolution();
+          await resolveBoard();
         }
       } catch (error) {
         console.error('Special swap failed:', error);
@@ -1408,47 +1366,28 @@
     moves--;
     lastSwap = { from: a, to: b };
     pendingPlayerCreation = choosePlayerCreation(findMatchGroups(board), a, b);
-    try {
-      await runBoardResolution();
-    } catch (error) {
-      console.error('Board resolution failed:', error);
-      collapseBoard();
-      if (board.some(value => value == null)) {
-        board = createBoard();
-        specials = Array(SIZE * SIZE).fill(null);
-      }
-      render();
-      toast('盤面を復旧しました');
-    } finally {
-      lastSwap = null;
-      pendingPlayerCreation = null;
-      locked = false;
-    }
+    await resolveBoard();
+    lastSwap = null;
 
     const goal = mode === 'story' ? storyGoal() : UNLIMITED_GOAL;
     if ((mode === 'story' && score >= goal) || moves <= 0) {
       finishGame(mode === 'story' ? score >= goal : true);
     }
+    locked = false;
     updateStats();
-  }
-
-  function clearSkillPlacementState() {
-    skillPlacementMode = false;
-    boardEl.classList.remove('is-skill-placement');
-    [...boardEl.children].forEach(tile => tile.classList.remove('is-skill-selectable'));
   }
 
   async function useSkill(kind) {
     if (kind !== 'rainbow') return;
     if (skillPlacementMode) {
-      clearSkillPlacementState();
+      skillPlacementMode = false;
+      boardEl.classList.remove('is-skill-placement');
       toast('虹の配置をキャンセルしました');
       updateStats();
       return;
     }
     if (skill < 100 || locked || gameEnded || !attemptActive) {
       if (skill < 100) toast(`MILK SKILLはあと${Math.max(0, 100 - Math.floor(skill))}で使えます`);
-      else if (locked) toast('盤面の処理が終わるまで少しお待ちください');
       return;
     }
     selected = null;
@@ -1461,39 +1400,25 @@
 
   async function placeSkillRainbow(target) {
     if (!skillPlacementMode || locked || gameEnded || !attemptActive || !Number.isInteger(target)) return false;
-    if (target < 0 || target >= board.length) return false;
-
     locked = true;
-    clearSkillPlacementState();
+    skillPlacementMode = false;
+    boardEl.classList.remove('is-skill-placement');
+    skill = 0;
     selected = null;
-    try {
-      const type = Number.isInteger(board[target]) ? board[target] : Math.floor(Math.random() * TYPES.length);
-      board[target] = type;
-      specials[target] = 'rainbow';
-      skill = 0;
-      render();
-      const tile = boardEl.children[target];
-      tile?.classList.add('is-rainbow-forming', 'is-skill-created', 'is-rainbow-ready');
-      try { sfx.clear(); } catch (_) {}
-      try { makeBurst([target], 6); } catch (_) {}
-      toast('🌈 虹アイテムを配置しました');
-      updateStats();
-      await sleep(260);
-      boardEl.children[target]?.classList.remove('is-rainbow-forming', 'is-skill-created');
-      return true;
-    } catch (error) {
-      console.error('Rainbow placement failed:', error);
-      // 最低限の盤面を必ず復元する。
-      if (!Number.isInteger(board[target])) board[target] = Math.floor(Math.random() * TYPES.length);
-      specials[target] = 'rainbow';
-      try { render(); updateStats(); } catch (_) {}
-      toast('虹アイテムを配置しました');
-      return true;
-    } finally {
-      clearSkillPlacementState();
-      selected = null;
-      locked = false;
-    }
+    const type = Number.isInteger(board[target]) ? board[target] : 0;
+    board[target] = type;
+    specials[target] = 'rainbow';
+    render();
+    const tile = boardEl.children[target];
+    tile?.classList.add('is-rainbow-forming', 'is-skill-created');
+    sfx.clear();
+    toast('🌈 好きな場所に虹アイテムを配置しました');
+    makeBurst([target], 7);
+    await sleep(650);
+    tile?.classList.remove('is-rainbow-forming');
+    updateStats();
+    locked = false;
+    return true;
   }
 
   function createOverlay(className, html) {
@@ -1726,14 +1651,13 @@
   boardEl.addEventListener('click', event => {
     if (Date.now() < suppressClickUntil) return;
     const tile = tileFromEvent(event);
-    if (!tile || gameEnded || !attemptActive) return;
+    if (!tile || locked || gameEnded || !attemptActive) return;
     const i = Number(tile.dataset.index);
     if (!Number.isInteger(i)) return;
     if (skillPlacementMode) {
-      if (!locked) placeSkillRainbow(i);
+      placeSkillRainbow(i);
       return;
     }
-    if (locked) return;
     if (specials[i]) {
       activateSpecial(i);
       return;
