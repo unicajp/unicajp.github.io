@@ -1,0 +1,1709 @@
+/* Extracted exactly from Phase12.4.2 stable build: MILK BLOOM / lyrics related cumulative CSS. */
+   PHASE 11.0 — ミルクの匂い MATCH
+   ========================================================= */
+.milk-match-home-card{margin:10px 0;border:1px solid rgba(131,94,75,.18);border-radius:20px;background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(250,242,232,.96));box-shadow:0 9px 24px rgba(90,60,45,.08);overflow:hidden}.milk-match-home-open{width:100%;min-height:88px;padding:12px 13px;border:0;background:transparent;display:grid;grid-template-columns:72px 1fr auto;gap:11px;align-items:center;text-align:left;color:#4a3430}.milk-match-home-mark{width:68px;height:62px;border-radius:18px;background:linear-gradient(145deg,#fff,#f2dfcc);display:flex;align-items:center;justify-content:center;gap:3px;box-shadow:inset 0 0 0 1px rgba(151,103,77,.12),0 5px 14px rgba(115,76,58,.12)}.milk-match-home-mark b{width:19px;height:25px;display:grid;place-items:center;border-radius:8px;color:#715044;background:#fff;font-size:15px;box-shadow:0 2px 6px rgba(80,50,40,.13)}.milk-match-home-copy{min-width:0;display:flex;flex-direction:column;gap:3px}.milk-match-home-copy small{font-size:9px;letter-spacing:.13em;color:#a37661}.milk-match-home-copy strong{font-size:17px;line-height:1.25}.milk-match-home-copy em{font-size:11px;font-style:normal;color:#89716a}.milk-match-home-play{padding:8px 9px;border-radius:999px;background:#5e433c;color:#fff;font-size:10px;font-weight:800;white-space:nowrap}.milk-match-home-play i{font-style:normal;font-size:15px}.milk-match-modal{position:fixed;inset:0;z-index:2147483000;display:none;align-items:flex-end;justify-content:center}.milk-match-modal.is-open{display:flex}.milk-match-backdrop{position:absolute;inset:0;background:rgba(35,23,22,.67);backdrop-filter:blur(8px)}.milk-match-panel{position:relative;width:min(100%,520px);max-height:96dvh;overflow:auto;padding:15px 14px calc(18px + env(safe-area-inset-bottom));border-radius:27px 27px 0 0;background:radial-gradient(circle at 50% -10%,#fff 0,#fbf4eb 42%,#f2e7da 100%);box-shadow:0 -20px 70px rgba(25,14,12,.24)}.milk-match-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.milk-match-header small{font-size:9px;letter-spacing:.14em;color:#a37561}.milk-match-header h2{margin:2px 0 0;font-size:21px;color:#48312e}.milk-match-close{width:35px;height:35px;border:0;border-radius:50%;background:rgba(82,55,50,.09);font-size:25px;color:#5a403b}.milk-match-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:8px}.milk-match-stats>div{padding:7px 5px;border-radius:13px;background:rgba(255,255,255,.78);text-align:center;box-shadow:inset 0 0 0 1px rgba(118,80,63,.09)}.milk-match-stats small{display:block;font-size:8px;letter-spacing:.12em;color:#a07b68}.milk-match-stats strong{font-size:17px;color:#4c3531}.milk-match-goal{padding:9px 11px;margin-bottom:9px;border-radius:14px;background:#5b403a;color:white;display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:center}.milk-match-goal span{font-size:9px;opacity:.75}.milk-match-goal strong{font-size:12px;text-align:right}.milk-match-goal div{grid-column:1/-1;height:5px;border-radius:99px;background:rgba(255,255,255,.19);overflow:hidden}.milk-match-goal i{display:block;width:0;height:100%;border-radius:inherit;background:#fff;transition:width .25s ease}.milk-match-board-wrap{position:relative;width:min(92vw,430px);margin:auto}.milk-match-board{--size:8;display:grid;grid-template-columns:repeat(var(--size),1fr);gap:4px;padding:7px;border-radius:19px;background:linear-gradient(145deg,#c6a48d,#a87f68);box-shadow:inset 0 2px 9px rgba(57,34,28,.22),0 11px 26px rgba(65,42,34,.14);touch-action:none;user-select:none}.milk-match-tile{aspect-ratio:1;border:0;border-radius:11px;display:grid;place-items:center;position:relative;font-family:"Noto Sans JP",sans-serif;font-size:clamp(17px,5vw,27px);font-weight:900;color:#593f39;background:linear-gradient(145deg,#fff,#f4e6d9);box-shadow:0 3px 0 rgba(97,63,50,.15),inset 0 0 0 1px rgba(103,70,57,.08);transition:transform .14s ease,opacity .16s ease,filter .16s ease}.milk-match-tile[data-type="0"]{background:linear-gradient(145deg,#fff,#f6e8ee)}.milk-match-tile[data-type="1"]{background:linear-gradient(145deg,#fff,#e8f1f5)}.milk-match-tile[data-type="2"]{background:linear-gradient(145deg,#fff,#f5eed7)}.milk-match-tile[data-type="3"]{background:linear-gradient(145deg,#fff,#e8f2e6)}.milk-match-tile[data-type="4"]{background:linear-gradient(145deg,#fff,#eee8f5)}.milk-match-tile[data-type="5"]{background:linear-gradient(145deg,#fff,#f5e8df)}.milk-match-tile.is-selected{transform:scale(.86);filter:brightness(1.08);outline:3px solid rgba(255,255,255,.85)}.milk-match-tile.is-matched{animation:milkMatchPop .28s ease forwards}.milk-match-tile.is-hint{animation:milkMatchHint .75s ease 2}.milk-match-tile.is-invalid{animation:milkMatchShake .25s ease}.milk-match-combo{pointer-events:none;position:absolute;inset:0;display:grid;place-items:center;font-size:28px;font-weight:900;color:white;text-shadow:0 3px 9px rgba(61,38,32,.7);opacity:0;transform:scale(.6)}.milk-match-combo.show{animation:milkMatchCombo .7s ease}.milk-match-help{margin:8px 5px 7px;text-align:center;font-size:11px;color:#79645d}.milk-match-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.milk-match-actions button{border:0;border-radius:13px;padding:10px;font-weight:800}.milk-match-actions button:first-child{background:#5d423c;color:#fff}.milk-match-actions button:last-child{background:#fff;color:#5d423c;box-shadow:inset 0 0 0 1px rgba(96,65,58,.15)}.milk-match-phase-note{margin-top:8px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.62);display:flex;gap:8px;align-items:center}.milk-match-phase-note span{font-size:9px;font-weight:900;color:#9b6e5a;white-space:nowrap}.milk-match-phase-note p{margin:0;font-size:9px;line-height:1.45;color:#816c65}.milk-match-result{position:absolute;inset:0;z-index:5;display:grid;place-items:center;padding:22px;background:rgba(60,39,35,.78);backdrop-filter:blur(5px);border-radius:19px}.milk-match-result-card{width:85%;padding:22px;border-radius:22px;background:#fffaf4;text-align:center;box-shadow:0 20px 55px rgba(30,16,13,.32)}.milk-match-result-card b{display:block;font-size:35px}.milk-match-result-card h3{margin:7px 0 4px;font-size:23px;color:#4d3631}.milk-match-result-card p{margin:0 0 13px;font-size:12px;color:#806b64}.milk-match-result-card button{border:0;border-radius:999px;padding:11px 25px;background:#5c413b;color:#fff;font-weight:900}@keyframes milkMatchPop{50%{transform:scale(1.17) rotate(4deg);opacity:1}100%{transform:scale(.1);opacity:0}}@keyframes milkMatchHint{50%{transform:scale(.86);box-shadow:0 0 0 5px rgba(255,255,255,.6),0 0 22px white}}@keyframes milkMatchShake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}@keyframes milkMatchCombo{35%{opacity:1;transform:scale(1.15)}70%{opacity:1}100%{opacity:0;transform:scale(1.35)}}
+@media(min-width:600px){.milk-match-modal{align-items:center}.milk-match-panel{border-radius:27px;max-height:94vh}.milk-match-home-open{grid-template-columns:78px 1fr auto}}
+
+/* Phase 11.1: ミルクのかけら・デイリー挑戦 */
+.milk-match-stats{grid-template-columns:repeat(4,1fr)}
+.milk-match-stats strong{font-size:15px}
+.milk-match-home-play{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.milk-match-home-play small{font-size:8px;font-weight:700;opacity:.82}
+.milk-match-home-play small b{font-size:9px}
+.milk-match-lobby{position:absolute;inset:0;z-index:5;display:grid;place-items:center;padding:22px;background:rgba(60,39,35,.72);backdrop-filter:blur(5px);border-radius:19px}
+.milk-match-lobby-card{width:86%;padding:22px;border-radius:22px;background:#fffaf4;text-align:center;box-shadow:0 20px 55px rgba(30,16,13,.32)}
+.milk-match-lobby-card>b{display:block;font-size:38px}.milk-match-lobby-card h3{margin:7px 0 5px;font-size:22px;color:#4d3631}.milk-match-lobby-card p{margin:0 0 14px;font-size:12px;line-height:1.7;color:#806b64}.milk-match-lobby-card p strong{font-size:18px;color:#5c413b}.milk-match-lobby-card button{border:0;border-radius:999px;padding:11px 28px;background:#5c413b;color:#fff;font-weight:900}.milk-match-lobby-card button:disabled{background:#c9b9b2;color:#fff;opacity:.8}
+.milk-match-result-card p strong{font-size:16px;color:#5c413b}.milk-match-result-card p small{display:inline-block;margin-top:5px;color:#9b7d71}
+.milk-match-actions button:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:380px){.milk-match-stats{gap:4px}.milk-match-stats>div{padding:6px 2px}.milk-match-stats small{font-size:7px}.milk-match-stats strong{font-size:13px}}
+
+/* Phase 11.2 - lyrics collection */
+.milk-lyrics-home-open{width:100%;margin:-2px 0 10px;padding:9px 12px;border:1px solid rgba(131,94,75,.16);border-radius:15px;background:rgba(255,255,255,.9);display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;text-align:left;color:#543c36;box-shadow:0 6px 16px rgba(90,60,45,.06)}
+.milk-lyrics-home-open>span{font-size:19px}.milk-lyrics-home-open strong{font-size:12px}.milk-lyrics-home-open small{font-size:9px;color:#9a7462}.milk-lyrics-home-open i{font-style:normal;font-size:18px}
+.milk-match-actions{grid-template-columns:repeat(3,1fr)}.milk-match-actions button:nth-child(3){background:#efe2d5;color:#5d423c}
+.milk-lyrics-modal{position:fixed;inset:0;z-index:2147483100;display:none;align-items:flex-end;justify-content:center}.milk-lyrics-modal.is-open{display:flex}.milk-lyrics-backdrop{position:absolute;inset:0;background:rgba(35,23,22,.7);backdrop-filter:blur(8px)}
+.milk-lyrics-panel{position:relative;width:min(100%,520px);max-height:96dvh;overflow:auto;padding:15px 14px calc(20px + env(safe-area-inset-bottom));border-radius:27px 27px 0 0;background:radial-gradient(circle at 50% -5%,#fff 0,#fbf4eb 44%,#f1e4d7 100%);box-shadow:0 -20px 70px rgba(25,14,12,.25)}
+.milk-lyrics-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.milk-lyrics-header small{font-size:9px;letter-spacing:.14em;color:#a37561}.milk-lyrics-header h2{margin:2px 0 0;font-size:20px;color:#48312e}.milk-lyrics-close{width:35px;height:35px;border:0;border-radius:50%;background:rgba(82,55,50,.09);font-size:25px;color:#5a403b}
+.milk-lyrics-summary{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px}.milk-lyrics-summary>div:not(.milk-lyrics-progress){padding:8px;border-radius:13px;background:rgba(255,255,255,.8);text-align:center;box-shadow:inset 0 0 0 1px rgba(118,80,63,.09)}.milk-lyrics-summary small{display:block;font-size:8px;letter-spacing:.1em;color:#9f7966}.milk-lyrics-summary strong{font-size:17px;color:#4c3531}.milk-lyrics-progress{grid-column:1/-1;height:6px;border-radius:99px;background:rgba(88,59,52,.12);overflow:hidden}.milk-lyrics-progress i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#d8b8a2,#7d574b);transition:width .3s ease}
+.milk-lyrics-guide{margin:7px 3px 9px;font-size:10px;line-height:1.55;text-align:center;color:#7c665f}.milk-lyrics-list{display:grid;gap:8px}.milk-lyrics-card{padding:10px;border-radius:16px;background:rgba(255,255,255,.78);box-shadow:inset 0 0 0 1px rgba(112,75,61,.09),0 5px 14px rgba(80,52,42,.05);overflow:hidden}.milk-lyrics-card header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}.milk-lyrics-card header span{font-size:9px;font-weight:900;letter-spacing:.12em;color:#956c59}.milk-lyrics-card header b{font-size:8px;color:#a78a7d}.milk-lyrics-card.is-unlocked header b{color:#7c5a4d}.milk-lyrics-text{padding:8px 10px;border-radius:12px;background:#fffaf5}.milk-lyrics-text p{margin:0;font-size:12px;line-height:1.75;color:#4e3934}.milk-lyrics-hidden{display:grid;gap:5px}.milk-lyrics-hidden span{font-size:10px;letter-spacing:.18em;color:#c6b5ad;filter:blur(.3px)}.milk-lyrics-card button{width:100%;margin-top:8px;padding:9px;border:0;border-radius:11px;font-size:11px;font-weight:900}.milk-lyrics-unlock{background:#5d423c;color:#fff}.milk-lyrics-unlock:disabled{background:#d4c4bc;color:#fff}.milk-lyrics-play{background:#ead9ca;color:#523a34}.milk-lyrics-play.is-playing{background:#5d423c;color:#fff}.milk-lyrics-play:disabled{opacity:.68}.milk-lyrics-audio-note{margin:10px 4px 0;font-size:9px;line-height:1.5;color:#9b8075;text-align:center}.milk-lyrics-card.is-newly-unlocked{animation:milkLyricsUnlock .9s ease}@keyframes milkLyricsUnlock{0%{transform:scale(.94);box-shadow:0 0 0 rgba(255,255,255,0)}45%{transform:scale(1.02);box-shadow:0 0 28px rgba(255,255,255,.95)}100%{transform:scale(1)}}
+@media(min-width:600px){.milk-lyrics-modal{align-items:center}.milk-lyrics-panel{border-radius:27px;max-height:94vh}}
+@media(max-width:380px){.milk-match-actions{grid-template-columns:1fr 1fr}.milk-match-actions button:nth-child(3){grid-column:1/-1}}
+
+/* Phase 11.3 — lyrics audio player, NEW state, unlock/complete presentation */
+.milk-lyrics-card header>div{display:flex;align-items:center;gap:6px}.milk-lyrics-card header em{padding:2px 6px;border-radius:99px;background:#c66278;color:#fff;font-size:7px;font-style:normal;font-weight:900;letter-spacing:.08em;animation:milkNewPulse 1.5s ease-in-out infinite}.milk-lyrics-card.has-new{box-shadow:inset 0 0 0 1px rgba(198,98,120,.35),0 8px 24px rgba(198,98,120,.12)}
+@keyframes milkNewPulse{50%{transform:scale(1.08);box-shadow:0 0 12px rgba(198,98,120,.35)}}
+.milk-audio-player{position:sticky;bottom:0;z-index:5;margin:12px -4px -10px;padding:10px;border:1px solid rgba(95,63,54,.14);border-radius:18px;background:rgba(255,250,245,.96);box-shadow:0 -7px 26px rgba(70,45,40,.13);backdrop-filter:blur(12px);display:grid;grid-template-columns:1fr 38px;grid-template-areas:'now main' 'track track' 'stop stop';gap:7px;align-items:center}.milk-audio-player[hidden]{display:none}.milk-audio-now{grid-area:now;min-width:0}.milk-audio-now span{display:block;font-size:7px;font-weight:900;letter-spacing:.14em;color:#a47c69}.milk-audio-now strong{display:block;margin-top:2px;font-size:12px;color:#49332f}.milk-audio-main{grid-area:main;width:38px;height:38px;border:0;border-radius:50%;background:#5d423c;color:#fff;font-weight:900}.milk-audio-track{grid-area:track}.milk-audio-track input{width:100%;height:5px;accent-color:#745147}.milk-audio-track>div{display:flex;justify-content:space-between;margin-top:1px;color:#9b7b6e;font-size:8px}.milk-audio-stop{grid-area:stop;border:0;background:transparent;color:#886d61;font-size:9px;font-weight:800}
+.milk-petal-layer{position:fixed;inset:0;z-index:2147483646;pointer-events:none;overflow:hidden}.milk-petal-layer i{position:absolute;left:var(--x);top:-20px;width:10px;height:15px;border-radius:80% 20% 80% 20%;background:linear-gradient(145deg,#fff,#f1b9c4);opacity:.92;transform:rotate(var(--r)) scale(var(--s));animation:milkPetalFall 1.9s var(--d) cubic-bezier(.2,.65,.35,1) forwards}@keyframes milkPetalFall{to{top:105%;transform:translateX(45px) rotate(calc(var(--r) + 380deg)) scale(var(--s));opacity:.2}}
+.milk-unlock-overlay,.milk-complete-overlay{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:18px;background:rgba(31,20,19,.78);backdrop-filter:blur(10px);opacity:0;transition:opacity .3s ease}.milk-unlock-overlay.is-visible,.milk-complete-overlay.is-visible{opacity:1}.milk-unlock-overlay>div,.milk-complete-overlay>div{width:min(100%,390px);padding:25px 20px;border-radius:27px;background:radial-gradient(circle at 50% 0,#fff,#fff7ef 58%,#f0dfd0);text-align:center;box-shadow:0 25px 80px rgba(0,0,0,.3);transform:translateY(18px) scale(.96);transition:transform .38s cubic-bezier(.2,.8,.2,1)}.milk-unlock-overlay.is-visible>div,.milk-complete-overlay.is-visible>div{transform:none}.milk-unlock-overlay small,.milk-complete-overlay small{display:block;color:#a27764;font-size:8px;font-weight:900;letter-spacing:.18em}.milk-unlock-overlay strong,.milk-complete-overlay strong{display:block;margin:5px 0 13px;color:#503631;font-size:22px;letter-spacing:.04em}.milk-unlock-overlay p{margin:0;padding:13px 10px;border-radius:15px;background:rgba(255,255,255,.73);color:#513c37;font-size:13px;line-height:1.85}.milk-unlock-overlay button,.milk-complete-overlay button{width:100%;margin-top:17px;padding:12px;border:0;border-radius:14px;background:#5d423c;color:#fff;font-size:12px;font-weight:900}.milk-complete-overlay>div>span{display:block;margin-bottom:6px;font-size:42px;animation:milkCompleteBloom 1.3s ease-in-out infinite alternate}.milk-complete-overlay p{color:#74584f;font-size:13px;line-height:1.7}@keyframes milkCompleteBloom{to{transform:scale(1.12) rotate(4deg);filter:drop-shadow(0 0 12px rgba(218,156,171,.65))}}
+@media(max-width:430px){.milk-unlock-overlay>div,.milk-complete-overlay>div{padding:22px 16px}.milk-unlock-overlay p{font-size:12px}.milk-audio-player{margin-left:-1px;margin-right:-1px}}
+
+/* Phase11.3.1 Match3 input + visibility fix */
+.milk-match-board{gap:5px;padding:8px;touch-action:none!important;-webkit-user-select:none;user-select:none}
+.milk-match-tile{cursor:pointer;touch-action:none!important;overflow:hidden;border:2px solid rgba(255,255,255,.72);color:#fff!important;text-shadow:0 1px 2px rgba(55,31,28,.48);box-shadow:0 4px 0 rgba(75,45,38,.22),inset 0 1px 0 rgba(255,255,255,.5),inset 0 -10px 18px rgba(75,40,35,.08)!important}
+.milk-match-tile span{pointer-events:none;display:grid;place-items:center;width:100%;height:100%;font-weight:950}
+.milk-match-tile[data-type="0"]{background:linear-gradient(145deg,#ef7f99,#c94f72)!important}
+.milk-match-tile[data-type="1"]{background:linear-gradient(145deg,#66a9d7,#347fae)!important}
+.milk-match-tile[data-type="2"]{background:linear-gradient(145deg,#e5b64c,#c58b1f)!important}
+.milk-match-tile[data-type="3"]{background:linear-gradient(145deg,#70bc82,#3d9055)!important}
+.milk-match-tile[data-type="4"]{background:linear-gradient(145deg,#a781d1,#7550a6)!important}
+.milk-match-tile[data-type="5"]{background:linear-gradient(145deg,#ec9565,#c66536)!important}
+.milk-match-tile.is-selected{transform:scale(.84)!important;outline:4px solid #fff!important;outline-offset:-3px;filter:brightness(1.16) saturate(1.15)!important;z-index:2}
+.milk-match-tile.is-swapping{transform:scale(.92)}
+.milk-match-tile.is-matched{animation:milkMatchPop .28s ease forwards!important}
+.milk-match-lobby{position:absolute;inset:0;z-index:6;display:grid;place-items:center;padding:22px;background:rgba(60,39,35,.72);backdrop-filter:blur(5px);border-radius:19px}
+.milk-match-lobby-card{width:85%;padding:22px;border-radius:22px;background:#fffaf4;text-align:center;box-shadow:0 20px 55px rgba(30,16,13,.32)}
+.milk-match-lobby-card>b{display:block;font-size:35px}.milk-match-lobby-card h3{margin:7px 0 4px;font-size:23px;color:#4d3631}.milk-match-lobby-card p{font-size:12px;color:#806b64}.milk-match-lobby-card button{border:0;border-radius:999px;padding:11px 25px;background:#5c413b;color:#fff;font-weight:900}.milk-match-lobby-card button:disabled{opacity:.45}
+
+
+/* Phase11.3.4 — dramatic motion & synthesized sound UI */
+.milk-match-board-wrap{overflow:visible}
+.milk-match-board{position:relative;transform-origin:center;will-change:transform,filter}
+.milk-match-board.is-impact{animation:milkBoardImpact .5s cubic-bezier(.15,.8,.2,1)}
+.milk-match-board.is-shuffling{animation:milkBoardShuffle .36s ease-in-out}
+.milk-match-tile{will-change:transform,opacity,filter;transform-origin:center}
+.milk-match-tile.is-swap-land{animation:milkSwapLand .3s cubic-bezier(.2,1.2,.35,1)}
+.milk-match-tile.is-matched{animation:milkMatchMegaPop .62s cubic-bezier(.15,.8,.15,1) var(--pop-delay,0ms) forwards!important;z-index:4}
+.milk-match-tile.is-falling{animation:milkTileFall .44s cubic-bezier(.12,.85,.22,1.2) var(--fall-delay,0ms) both}
+.milk-match-combo{z-index:20;display:flex!important;flex-direction:column;gap:0;line-height:1;filter:drop-shadow(0 7px 8px rgba(45,20,22,.35))}
+.milk-match-combo strong{font-size:clamp(27px,8vw,45px);letter-spacing:.03em;-webkit-text-stroke:1px rgba(255,255,255,.35)}
+.milk-match-combo small{margin-top:7px;font-size:15px;color:#fff8c5}
+.milk-match-combo.show{animation:milkMatchComboMega 1.12s cubic-bezier(.12,.8,.18,1)}
+.milk-match-fx-layer{position:absolute;inset:0;z-index:18;pointer-events:none;overflow:visible}
+.milk-match-burst-ring{position:absolute;width:10px;height:10px;margin:-5px;border:3px solid rgba(255,255,255,.9);border-radius:50%;box-shadow:0 0 16px #fff,0 0 26px rgba(255,226,155,.8);animation:milkBurstRing .72s ease-out both}
+.milk-match-spark{position:absolute;width:7px;height:7px;margin:-3.5px;border-radius:50%;background:#fff9d2;box-shadow:0 0 9px #fff,0 0 14px #ffd26b;animation:milkSparkFly .82s cubic-bezier(.1,.75,.2,1) both}
+.milk-match-actions{grid-template-columns:repeat(2,1fr)!important}
+.milk-match-actions .milk-match-sound{grid-column:1/-1;background:#fff7e8!important;color:#6a4a40!important;box-shadow:inset 0 0 0 1px rgba(96,65,58,.15)}
+@keyframes milkMatchMegaPop{
+  0%{transform:scale(1) rotate(0);opacity:1;filter:brightness(1) saturate(1)}
+  22%{transform:scale(1.28) rotate(-5deg);filter:brightness(1.7) saturate(1.45);box-shadow:0 0 0 5px rgba(255,255,255,.75),0 0 30px #fff}
+  48%{transform:scale(.92) rotate(6deg);opacity:1;filter:brightness(2)}
+  100%{transform:scale(.05) rotate(22deg);opacity:0;filter:brightness(2.5) blur(2px)}
+}
+@keyframes milkTileFall{
+  0%{transform:translateY(-90%) scale(.82);opacity:0;filter:brightness(1.5)}
+  68%{transform:translateY(8%) scale(1.06);opacity:1}
+  86%{transform:translateY(-4%) scale(.98)}
+  100%{transform:translateY(0) scale(1);opacity:1;filter:none}
+}
+@keyframes milkSwapLand{0%{transform:scale(1.18)}55%{transform:scale(.88)}100%{transform:scale(1)}}
+@keyframes milkBoardImpact{0%,100%{transform:scale(1)}28%{transform:scale(calc(1 + var(--impact,1)*.005)) rotate(-.45deg);filter:brightness(1.12)}55%{transform:scale(.99) rotate(.35deg)}}
+@keyframes milkBoardShuffle{0%,100%{transform:translateX(0) rotate(0)}20%{transform:translateX(-8px) rotate(-1.5deg)}40%{transform:translateX(7px) rotate(1.2deg)}60%{transform:translateX(-5px) rotate(-.7deg)}80%{transform:translateX(3px) rotate(.4deg)}}
+@keyframes milkBurstRing{0%{transform:scale(.35);opacity:1}100%{transform:scale(5.4);opacity:0}}
+@keyframes milkSparkFly{0%{transform:translate(0,0) scale(1.2);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.1);opacity:0}}
+@keyframes milkMatchComboMega{0%{opacity:0;transform:scale(.35) rotate(-7deg)}20%{opacity:1;transform:scale(1.28) rotate(3deg)}42%{transform:scale(.98) rotate(-1deg)}72%{opacity:1;transform:scale(1.05)}100%{opacity:0;transform:translateY(-35px) scale(1.22)}}
+@media (prefers-reduced-motion:reduce){.milk-match-tile.is-matched,.milk-match-tile.is-falling,.milk-match-board.is-impact,.milk-match-combo.show{animation-duration:.12s!important}.milk-match-fx-layer{display:none}}
+
+/* ===== Milk Match Ver.2.0a fixed game UI ===== */
+.milk-match-modal.is-open{align-items:center!important;padding:0!important}
+.milk-match-panel{width:min(100%,520px)!important;height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;border-radius:0!important;padding:8px 10px calc(8px + env(safe-area-inset-bottom))!important;display:flex!important;flex-direction:column!important}
+.milk-match-header{margin-bottom:4px!important;flex:0 0 auto}.milk-match-header h2{font-size:17px!important}.milk-match-header small{font-size:7px!important}.milk-match-close{width:30px!important;height:30px!important;font-size:21px!important}
+.milk-match-mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:5px;flex:0 0 auto}.milk-match-mode-tabs button{border:0;border-radius:11px;padding:7px 5px;background:#eadfd6;color:#74564c;font-weight:900;font-size:11px}.milk-match-mode-tabs button.is-active{background:#5c413b;color:#fff;box-shadow:0 3px 9px rgba(72,42,36,.2)}
+.milk-match-stats{margin-bottom:4px!important;gap:4px!important;flex:0 0 auto}.milk-match-stats>div{padding:4px 2px!important;border-radius:10px!important}.milk-match-stats small{font-size:6.5px!important}.milk-match-stats strong{font-size:12px!important}
+.milk-match-goal{padding:5px 8px!important;margin-bottom:4px!important;border-radius:10px!important;flex:0 0 auto}.milk-match-goal strong{font-size:10px!important}.milk-match-goal div{height:4px!important}
+.milk-match-fever{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px;padding:4px 7px;margin-bottom:5px;border-radius:10px;background:rgba(255,255,255,.78);box-shadow:inset 0 0 0 1px rgba(112,73,57,.1);flex:0 0 auto}.milk-match-fever span,.milk-match-fever strong{font-size:9px;color:#784f61}.milk-match-fever>div{height:7px;border-radius:99px;background:#e8d9dd;overflow:hidden}.milk-match-fever i{display:block;width:0;height:100%;background:linear-gradient(90deg,#ec87a0,#ffcc69,#fff2a8);transition:width .25s ease}.milk-match-fever.is-active{animation:milkFeverPulse .8s ease-in-out infinite alternate;background:#fff2d4}.milk-match-fever.is-active strong{color:#c64d6c}
+.milk-match-board-wrap{width:min(88vw,390px)!important;max-height:min(49dvh,390px);flex:1 1 auto;display:flex;align-items:center;justify-content:center}.milk-match-board{width:100%}.milk-match-help{font-size:9px!important;margin:3px 0!important;flex:0 0 auto}.milk-match-actions{gap:5px!important;flex:0 0 auto}.milk-match-actions button{padding:7px 4px!important;font-size:10px!important}.milk-match-actions{grid-template-columns:repeat(3,1fr)!important}
+.milk-match-volume{display:grid;grid-template-columns:32px auto 1fr;align-items:center;gap:6px;margin-top:5px;padding:5px 7px;border-radius:10px;background:rgba(255,255,255,.72);flex:0 0 auto}.milk-match-volume button{border:0;border-radius:8px;height:28px;background:#5d423c;color:#fff}.milk-match-volume label{font-size:9px;white-space:nowrap;color:#6f544b}.milk-match-volume input{width:100%;accent-color:#c96783}.milk-match-phase-note{display:none!important}
+.milk-match-board.is-impact{animation:none!important}.milk-match-board.is-fever{box-shadow:inset 0 2px 9px rgba(57,34,28,.22),0 0 0 3px #ffd97a,0 0 28px rgba(255,187,92,.75)!important}
+@keyframes milkFeverPulse{to{transform:scale(1.012);box-shadow:0 0 18px rgba(255,179,91,.55)}}
+@media(min-width:600px){.milk-match-panel{height:min(100dvh,760px)!important;border-radius:24px!important}.milk-match-board-wrap{max-height:390px}}
+@media(max-height:700px){.milk-match-board-wrap{width:min(76vw,330px)!important;max-height:42dvh}.milk-match-header h2{font-size:15px!important}.milk-match-help{display:none}.milk-match-volume{margin-top:3px;padding:3px 6px}.milk-match-mode-tabs button{padding:5px}.milk-match-stats>div{padding:2px!important}}
+
+/* Milk Match Ver.2.0b — 10-second fever presentation */
+.milk-match-board-wrap{position:relative}
+.milk-match-fever-banner{position:absolute;left:50%;top:44%;z-index:32;pointer-events:none;display:flex;flex-direction:column;align-items:center;transform:translate(-50%,-50%) scale(.35) rotate(-4deg);opacity:0;filter:drop-shadow(0 10px 14px rgba(88,37,55,.35));white-space:nowrap}
+.milk-match-fever-banner strong{font-size:clamp(29px,9vw,52px);font-weight:1000;letter-spacing:.04em;color:#fff7ba;-webkit-text-stroke:2px #cb4f79;text-shadow:0 0 8px #fff,0 0 20px #ffadce,0 5px 0 #a73f64}
+.milk-match-fever-banner span{margin-top:7px;padding:5px 14px;border-radius:999px;background:rgba(93,51,58,.88);color:#fff;font-size:12px;font-weight:950;letter-spacing:.08em}
+.milk-match-fever-banner.show{animation:milkFeverBanner 1.35s cubic-bezier(.12,.82,.18,1) both}
+.milk-fever-petal-layer{position:absolute;inset:-8px;z-index:25;overflow:hidden;pointer-events:none;border-radius:20px}
+.milk-fever-petal-layer i{position:absolute;top:-18px;width:10px;height:14px;border-radius:70% 30% 70% 30%;background:linear-gradient(145deg,#fff,#ff9fc3 60%,#d95988);box-shadow:0 0 10px rgba(255,255,255,.9);animation:milkFeverPetalFall linear both}
+.milk-match-board.is-fever .milk-match-tile{animation:milkFeverTileGlow .62s ease-in-out infinite alternate}
+.milk-match-fever.is-active>div{box-shadow:0 0 10px rgba(255,169,80,.85)}
+.milk-match-fever.is-active i{background:linear-gradient(90deg,#fff0a9,#ff9bc1,#fff0a9);box-shadow:0 0 9px #fff}
+@keyframes milkFeverBanner{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-7deg)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.18) rotate(2deg)}34%{transform:translate(-50%,-50%) scale(.98) rotate(-1deg)}76%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-62%) scale(1.05)}}
+@keyframes milkFeverPetalFall{0%{transform:translate3d(0,-15px,0) rotate(0);opacity:0}12%{opacity:1}100%{transform:translate3d(var(--drift),115%,0) rotate(540deg);opacity:0}}
+@keyframes milkFeverTileGlow{from{filter:brightness(1.04) saturate(1.08);box-shadow:0 4px 0 rgba(75,45,38,.22),0 0 5px rgba(255,236,151,.25),inset 0 1px 0 rgba(255,255,255,.5)}to{filter:brightness(1.24) saturate(1.22);box-shadow:0 4px 0 rgba(75,45,38,.22),0 0 14px rgba(255,221,108,.85),inset 0 1px 0 rgba(255,255,255,.75)}}
+@media(prefers-reduced-motion:reduce){.milk-match-fever-banner.show,.milk-fever-petal-layer i,.milk-match-board.is-fever .milk-match-tile{animation-duration:.15s!important}}
+/* Milk Match Ver.2.0c records */
+.milk-match-actions{grid-template-columns:repeat(4,1fr)!important;gap:5px!important}.milk-match-actions button{padding:8px 3px!important;font-size:10px!important}.milk-match-actions button:nth-child(n+2){background:#fff;color:#5d423c;box-shadow:inset 0 0 0 1px rgba(96,65,58,.15)}
+.milk-match-records{padding:10px!important}.milk-match-record-card{width:min(96%,430px);max-height:92%;overflow:auto;padding:15px;border-radius:20px;background:#fffaf4;box-shadow:0 20px 55px rgba(30,16,13,.32)}.milk-match-record-head{display:flex;align-items:center;justify-content:space-between}.milk-match-record-head small{font-size:8px;letter-spacing:.13em;color:#a37661}.milk-match-record-head h3{margin:2px 0 0!important;font-size:20px!important}.milk-match-record-head button{width:32px;height:32px;border:0;border-radius:50%;font-size:20px;background:#eee3d8}.milk-match-record-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:9px 0}.milk-match-record-summary span{padding:7px 3px;border-radius:11px;background:#f4e8dc;font-size:8px;color:#8b6e61}.milk-match-record-summary strong{display:block;font-size:16px;color:#503833}.milk-match-record-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.milk-match-record-tabs button{border:0;border-radius:999px;padding:7px;background:#eee4dc;color:#73564d;font-weight:800}.milk-match-record-tabs button.is-active{background:#5d423c;color:#fff}.milk-match-record-list{margin-top:8px;display:grid;gap:4px}.milk-match-record-list>div{display:grid;grid-template-columns:24px 1fr auto auto;align-items:center;gap:6px;padding:7px 8px;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 1px rgba(96,65,58,.1)}.milk-match-record-list>div>b{font-size:12px}.milk-match-record-list>div>strong{font-size:13px;text-align:left}.milk-match-record-list>div>span{font-size:9px;font-weight:800;color:#9a6c58}.milk-match-record-list>div>small{font-size:8px;color:#a18b82}.milk-match-record-list>p{font-size:11px;color:#8c746b}
+
+
+/* Milk Match Ver.2.0d */
+.milk-match-challenge{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;padding:6px 10px;border:1px solid rgba(142,102,45,.22);border-radius:12px;background:linear-gradient(135deg,#fff9e9,#f8efe0);font-size:11px;font-weight:800;color:#74522c}
+.milk-match-challenge[hidden]{display:none!important}
+.milk-match-challenge>div{height:7px;border-radius:99px;overflow:hidden;background:rgba(116,82,44,.12)}
+.milk-match-challenge i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#e59d4b,#f2cb5c);transition:width .35s ease}
+.milk-match-challenge.is-complete{border-color:rgba(94,151,89,.42);background:linear-gradient(135deg,#f4fff0,#e9f8e4);color:#3f753b}
+.milk-match-challenge.is-complete i{background:linear-gradient(90deg,#6eb667,#a2d76e)}
+
+/* ===== MILK MATCH VER.3.0 ===== */
+.milk-match-modal{align-items:stretch!important}
+.milk-match-panel{
+  width:min(100%,520px)!important;height:100dvh!important;max-height:100dvh!important;
+  overflow:hidden!important;border-radius:0!important;padding:8px 10px calc(8px + env(safe-area-inset-bottom))!important;
+  display:flex!important;flex-direction:column!important;gap:4px!important
+}
+.milk-match-header{margin:0!important;min-height:38px;flex:0 0 auto}.milk-match-header h2{font-size:17px!important;margin:0!important}.milk-match-header small{font-size:7px!important}
+.milk-match-mode-tabs{flex:0 0 auto;margin:0!important}.milk-match-mode-tabs button{padding:5px!important;font-size:10px!important}
+.milk-match-stats{grid-template-columns:repeat(4,1fr)!important;gap:4px!important;margin:0!important;flex:0 0 auto}.milk-match-stats>div{padding:3px 2px!important;border-radius:9px!important}.milk-match-stats small{font-size:6px!important}.milk-match-stats strong{font-size:12px!important}
+.milk-match-goal{padding:4px 7px!important;margin:0!important;border-radius:9px!important;flex:0 0 auto}.milk-match-goal span{font-size:7px!important}.milk-match-goal strong{font-size:9px!important}.milk-match-goal div{height:3px!important}
+.milk-match-fever{margin:0!important;padding:3px 6px!important;min-height:22px;flex:0 0 auto}.milk-match-fever span,.milk-match-fever strong{font-size:8px!important}
+.milk-match-challenge{margin:0!important;padding:3px 6px!important;flex:0 0 auto}.milk-match-challenge span{font-size:7px!important}
+.milk-match-board-wrap{width:min(calc(100vw - 20px),430px)!important;max-width:100%!important;flex:1 1 auto;min-height:0!important;display:grid!important;place-items:center!important;margin:0 auto!important}
+.milk-match-board{width:min(100%,calc((100dvh - 250px)));max-width:430px;max-height:calc(100dvh - 250px);aspect-ratio:1;gap:3px!important;padding:5px!important;border-radius:15px!important}
+.milk-match-tile{border-radius:12px!important;padding:0!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:0!important;transition:transform .08s linear,filter .1s ease!important}
+.milk-match-piece-icon{font-size:clamp(19px,5.5vw,31px)!important;line-height:1!important;filter:drop-shadow(0 2px 2px rgba(45,25,20,.3));pointer-events:none}
+.milk-match-tile small{font-size:clamp(6px,1.65vw,9px)!important;color:#fff;font-weight:900;line-height:1;text-shadow:0 1px 2px rgba(45,25,20,.75);pointer-events:none}
+.milk-match-tile[data-type="0"]{background:linear-gradient(145deg,#fff5df,#d9a95c)!important}
+.milk-match-tile[data-type="1"]{background:linear-gradient(145deg,#9fc8ef,#4e83bc)!important}
+.milk-match-tile[data-type="2"]{background:linear-gradient(145deg,#ff9fba,#d94f7c)!important}
+.milk-match-tile[data-type="3"]{background:linear-gradient(145deg,#fff1a4,#e8a933)!important}
+.milk-match-tile[data-type="4"]{background:linear-gradient(145deg,#c69cf0,#8255bd)!important}
+.milk-match-tile[data-type="5"]{background:linear-gradient(145deg,#b7e5f3,#70aec4)!important}
+.milk-match-tile.is-selected{transform:scale(.9)!important}.milk-match-tile.is-swap-land{animation:milkSwapLandV3 .14s cubic-bezier(.2,1.45,.4,1)!important}.milk-match-tile.is-falling{animation:milkTileFallV3 .22s cubic-bezier(.16,.88,.24,1.15) var(--fall-delay,0ms) both!important}
+.milk-match-tile.is-matched{animation:milkMatchLocalPop .38s cubic-bezier(.12,.75,.16,1) var(--pop-delay,0ms) forwards!important}
+.milk-match-board,.milk-match-board.is-impact,.milk-match-board.is-fever{filter:none!important;opacity:1!important}
+.milk-match-board.is-impact{animation:none!important}.milk-match-board::before,.milk-match-board::after{display:none!important}
+.milk-match-help{font-size:8px!important;margin:1px 0!important;flex:0 0 auto}.milk-match-actions{grid-template-columns:repeat(4,1fr)!important;gap:4px!important;flex:0 0 auto}.milk-match-actions button{padding:6px 2px!important;font-size:8px!important;border-radius:9px!important}
+.milk-match-volume{margin:0!important;padding:3px 5px!important;grid-template-columns:28px 92px 1fr!important;flex:0 0 auto}.milk-match-volume button{height:24px!important}.milk-match-volume label{font-size:8px!important}.milk-match-volume input{height:20px!important}
+.milk-match-result-card{padding:15px!important}.milk-title-progress{display:flex;justify-content:center;gap:4px;margin:7px 0}.milk-title-progress span{display:grid;place-items:center;width:28px;height:32px;border-radius:9px;background:linear-gradient(145deg,#fff,#ead8c8);font-weight:950;color:#68483f;animation:milkTitleReveal .45s ease both}.milk-title-progress span:nth-child(2){animation-delay:.08s}.milk-title-progress span:nth-child(3){animation-delay:.16s}.milk-title-progress span:nth-child(4){animation-delay:.24s}.milk-title-progress span:nth-child(5){animation-delay:.32s}.milk-title-progress span:nth-child(6){animation-delay:.4s}
+@keyframes milkMatchLocalPop{0%{transform:scale(1);opacity:1;filter:brightness(1)}45%{transform:scale(1.2) rotate(4deg);opacity:1;filter:brightness(1.45) drop-shadow(0 0 8px #fff)}100%{transform:scale(.18) rotate(18deg);opacity:0;filter:brightness(1.7)}}
+@keyframes milkSwapLandV3{0%{transform:scale(.88)}65%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes milkTileFallV3{0%{transform:translateY(-55%) scale(.92);opacity:.1}75%{transform:translateY(5%) scale(1.03);opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}
+@keyframes milkTitleReveal{0%{opacity:0;transform:translateY(8px) scale(.7)}100%{opacity:1;transform:none}}
+@media(max-height:650px){.milk-match-board{width:min(100%,calc(100dvh - 218px));max-height:calc(100dvh - 218px)}.milk-match-header small,.milk-match-help{display:none!important}.milk-match-header{min-height:30px}.milk-match-actions button{padding:4px 1px!important}.milk-match-volume{padding:2px 4px!important}}
+/* VER.3.1 mode cards / tap special items */
+.milk-match-mode-tabs{grid-template-columns:1fr 1fr!important;gap:7px!important}
+.milk-match-mode-tabs button{display:flex!important;min-height:48px;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;padding:7px 9px!important;border:2px solid transparent!important}
+.milk-match-mode-tabs button b{font-size:12px;line-height:1.2}
+.milk-match-mode-tabs button small{display:block;margin-top:2px;font-size:8px;line-height:1.25;opacity:.78;font-weight:700}
+.milk-match-mode-tabs button.is-active{border-color:#ffd9a8!important;box-shadow:0 0 0 2px rgba(92,65,59,.13),0 5px 12px rgba(72,42,36,.2)!important}
+.milk-match-tile.has-special{overflow:hidden;box-shadow:0 0 0 3px #fff,0 0 14px rgba(255,185,67,.9),0 3px 0 rgba(97,63,50,.15)!important;animation:none!important}
+.milk-match-special-mark{position:absolute;inset:0;z-index:3;display:block;pointer-events:none;border-radius:inherit;overflow:hidden}
+.milk-match-special-mark::before,.milk-match-special-mark::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:linear-gradient(90deg,#fff6b0,#ff9f43,#fff6b0);box-shadow:0 0 6px #fff,0 0 13px #ffad42}
+.milk-match-tile[data-special="line-h"] .milk-match-special-mark::before{width:88%;height:8px;border-radius:999px}
+.milk-match-tile[data-special="line-h"] .milk-match-special-mark::after{width:100%;height:2px;background:#fff}
+.milk-match-tile[data-special="line-v"] .milk-match-special-mark::before{width:8px;height:88%;border-radius:999px;background:linear-gradient(180deg,#fff6b0,#ff9f43,#fff6b0)}
+.milk-match-tile[data-special="line-v"] .milk-match-special-mark::after{width:2px;height:100%;background:#fff}
+.milk-match-tile[data-special="rainbow"] .milk-match-special-mark{inset:4px;border-radius:50%;background:conic-gradient(#ff5c8a,#ffd45c,#55e5a4,#59aaff,#c56cff,#ff5c8a);box-shadow:inset 0 0 0 3px #fff,0 0 12px rgba(255,255,255,.95)}
+.milk-match-tile[data-special="rainbow"] .milk-match-special-mark::before{width:38%;height:38%;border-radius:50%;background:#fff;box-shadow:0 0 12px #fff}
+.milk-match-tile[data-special="rainbow"] .milk-match-special-mark::after{display:none}
+.milk-match-tile.has-special::after{content:"TAP";position:absolute;right:2px;bottom:2px;z-index:4;padding:1px 3px;border-radius:5px;background:rgba(52,34,30,.88);color:#fff;font-size:6px;font-weight:950;letter-spacing:.04em}
+.milk-match-tile.is-special-activating{animation:milkSpecialCharge .48s ease-out forwards!important}
+@keyframes milkSpecialCharge{0%{filter:brightness(1)}45%{filter:brightness(1.8) drop-shadow(0 0 10px #fff)}100%{filter:brightness(2);opacity:.25}}
+.milk-match-tile.is-special-target{animation:milkSpecialTarget .42s ease var(--special-delay,0ms) forwards!important}
+@keyframes milkSpecialTarget{0%{filter:brightness(1)}40%{filter:brightness(2.1) saturate(1.45);box-shadow:inset 0 0 0 3px #fff,0 0 18px #ffd15b}100%{filter:brightness(1.7);opacity:.12}}
+.milk-match-special-beam{position:absolute;z-index:18;pointer-events:none;left:0;top:0;transform-origin:center;mix-blend-mode:screen}
+.milk-match-special-beam.line-h{left:0;top:calc(var(--beam-y) - 7px);width:100%;height:14px;background:linear-gradient(90deg,transparent,#fff 12%,#ffd25d 35%,#fff 50%,#ff9f43 68%,#fff 88%,transparent);box-shadow:0 0 9px #fff,0 0 22px #ffbd3b;animation:milkBeamH .58s ease-out forwards}
+.milk-match-special-beam.line-v{left:calc(var(--beam-x) - 7px);top:0;width:14px;height:100%;background:linear-gradient(180deg,transparent,#fff 12%,#ffd25d 35%,#fff 50%,#ff9f43 68%,#fff 88%,transparent);box-shadow:0 0 9px #fff,0 0 22px #ffbd3b;animation:milkBeamV .58s ease-out forwards}
+.milk-match-special-beam.rainbow{left:calc(var(--beam-x) - 18px);top:calc(var(--beam-y) - 18px);width:36px;height:36px;border:5px solid #fff;border-radius:50%;box-shadow:0 0 14px #fff,0 0 28px #ff74c8;animation:milkRainbowBurst .62s ease-out forwards}
+@keyframes milkBeamH{0%{transform:scaleX(.04);opacity:0}18%{opacity:1}65%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1.05);opacity:0}}
+@keyframes milkBeamV{0%{transform:scaleY(.04);opacity:0}18%{opacity:1}65%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1.05);opacity:0}}
+@keyframes milkRainbowBurst{0%{transform:scale(.2);opacity:0}30%{opacity:1}100%{transform:scale(13);opacity:0}}
+.milk-match-volume{grid-template-columns:28px 58px 1fr!important}
+.milk-match-volume label{font-size:9px!important;font-weight:800}
+@media(max-height:650px){.milk-match-mode-tabs button{min-height:40px;padding:4px 7px!important}.milk-match-mode-tabs button small{font-size:7px}}
+
+/* Ver.3.3 performance and deterministic special-item patch */
+.milk-match-tile.is-matched{animation-duration:.27s!important}
+.milk-match-tile.is-falling{animation-duration:.16s!important}
+.milk-match-burst-ring{animation-duration:.48s!important}
+.milk-match-spark{animation-duration:.52s!important}
+.milk-match-fx-layer{contain:layout paint;will-change:opacity}
+.milk-match-special-beam{will-change:transform,opacity}
+
+/* Ver.3.4: 特殊アイテムの識別性と連鎖発動 */
+.milk-match-tile.has-special .milk-match-piece-icon,
+.milk-match-tile.has-special small{opacity:.36;filter:saturate(.7)}
+.milk-match-special-mark{display:flex!important;align-items:center;justify-content:center;flex-direction:column;gap:0;overflow:visible!important;background:rgba(28,20,42,.34);box-shadow:inset 0 0 0 2px rgba(255,255,255,.88),0 2px 8px rgba(50,24,70,.3)}
+.milk-match-special-mark b{position:relative;z-index:3;display:block;color:#fff;font-style:normal;font-weight:1000;font-size:clamp(21px,6.2vw,31px);line-height:.9;text-shadow:0 2px 2px rgba(54,20,62,.8),0 0 8px #fff;letter-spacing:-.08em}
+.milk-match-special-mark em{position:relative;z-index:3;margin-top:3px;padding:1px 4px;border-radius:999px;background:rgba(25,15,40,.78);color:#fff;font-size:7px;line-height:1.2;font-style:normal;font-weight:900;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.milk-match-tile[data-special="line-h"] .milk-match-special-mark{background:linear-gradient(180deg,rgba(33,93,197,.5),rgba(16,43,108,.52))}
+.milk-match-tile[data-special="line-v"] .milk-match-special-mark{background:linear-gradient(180deg,rgba(212,80,76,.5),rgba(111,28,34,.52))}
+.milk-match-tile[data-special="rainbow"] .milk-match-special-mark{inset:2px!important;border-radius:inherit!important;background:conic-gradient(from 30deg,rgba(255,65,112,.88),rgba(255,210,62,.9),rgba(65,222,151,.9),rgba(71,151,255,.9),rgba(181,83,255,.9),rgba(255,65,112,.88))!important;box-shadow:inset 0 0 0 3px #fff,0 0 12px rgba(255,255,255,.9)!important}
+.milk-match-tile[data-special="rainbow"] .milk-match-special-mark b{font-size:clamp(23px,6.8vw,34px);filter:drop-shadow(0 2px 2px rgba(0,0,0,.45))}
+.milk-match-tile[data-special="rainbow"] .milk-match-special-mark em{background:rgba(45,18,62,.82)}
+.milk-match-tile[data-special="line-h"] .milk-match-special-mark::before,
+.milk-match-tile[data-special="line-h"] .milk-match-special-mark::after,
+.milk-match-tile[data-special="line-v"] .milk-match-special-mark::before,
+.milk-match-tile[data-special="line-v"] .milk-match-special-mark::after,
+.milk-match-tile[data-special="rainbow"] .milk-match-special-mark::before,
+.milk-match-tile[data-special="rainbow"] .milk-match-special-mark::after{display:none!important}
+.milk-match-tile.is-chain-special{animation:milkChainSpecial .48s cubic-bezier(.2,.8,.25,1) var(--chain-delay,0ms) both}
+@keyframes milkChainSpecial{0%{filter:brightness(1);transform:scale(1)}45%{filter:brightness(1.8) saturate(1.5);transform:scale(1.08)}100%{filter:brightness(1);transform:scale(1)}}
+
+/* Ver.3.5: moved-piece special creation and convergence feedback */
+.milk-match-tile.is-gathering{z-index:8!important;pointer-events:none!important}
+.milk-match-tile.is-special-forming,.milk-match-tile.is-rainbow-forming{z-index:9!important;animation:milkSpecialFormPulse .3s cubic-bezier(.18,.9,.22,1.2) both!important}
+.milk-match-tile.is-rainbow-forming{filter:brightness(1.35) saturate(1.45)!important;box-shadow:0 0 0 3px #fff,0 0 24px rgba(255,180,55,.95)!important}
+@keyframes milkSpecialFormPulse{0%{transform:scale(.82)}55%{transform:scale(1.08)}100%{transform:scale(1)}}
+
+/* MILK BLOOM Ver.3.7 visual renewal */
+.milk-match-home-card{
+  position:relative!important;margin:8px 0!important;border:0!important;border-radius:18px!important;
+  overflow:hidden!important;background:linear-gradient(128deg,#241938 0%,#4d2865 48%,#bd547f 100%)!important;
+  box-shadow:0 12px 28px rgba(47,25,67,.24),inset 0 0 0 1px rgba(255,255,255,.16)!important;
+}
+.milk-match-home-card:before,.milk-match-home-card:after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+.milk-match-home-card:before{width:150px;height:150px;right:-42px;top:-88px;background:radial-gradient(circle,rgba(255,225,167,.48),rgba(255,255,255,0) 70%)}
+.milk-match-home-card:after{width:100px;height:100px;left:38%;bottom:-78px;background:radial-gradient(circle,rgba(255,145,196,.4),rgba(255,255,255,0) 72%)}
+.milk-match-home-open{position:relative;z-index:1;min-height:80px!important;padding:10px 12px!important;grid-template-columns:56px 1fr auto!important;gap:10px!important;color:#fff!important}
+.milk-match-home-mark{width:54px!important;height:54px!important;border-radius:16px!important;position:relative!important;display:grid!important;place-items:center!important;background:linear-gradient(145deg,#fff6ca,#ff95c7)!important;box-shadow:0 7px 18px rgba(22,9,42,.34),inset 0 0 0 2px rgba(255,255,255,.65)!important;transform:rotate(-4deg)}
+.milk-match-home-mark i{position:absolute;left:7px;top:4px;font-style:normal;font-size:13px;color:#fff}.milk-match-home-mark b{width:auto!important;height:auto!important;background:transparent!important;box-shadow:none!important;color:#50245f!important;font-size:26px!important;line-height:1!important}.milk-match-home-mark em{position:absolute;right:7px;bottom:4px;font-style:normal;font-size:13px;font-weight:1000;color:#fff}
+.milk-match-home-copy small{color:#ffdca2!important;font-size:8px!important;font-weight:900;letter-spacing:.18em!important}.milk-match-home-copy strong{font-size:20px!important;color:#fff;letter-spacing:.03em;text-shadow:0 2px 10px rgba(29,8,47,.4)}.milk-match-home-copy em{color:rgba(255,255,255,.78)!important;font-size:10px!important}
+.milk-match-home-play{display:grid!important;grid-template-columns:auto auto;align-items:center;gap:4px;padding:7px 9px!important;background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.23);box-shadow:inset 0 0 12px rgba(255,255,255,.08)!important}.milk-match-home-play small{grid-column:1/-1;font-size:8px;color:#ffe5a7}.milk-match-home-play span{font-size:10px}.milk-match-home-play i{font-size:14px!important}
+
+.milk-match-backdrop{background:rgba(13,8,25,.82)!important;backdrop-filter:blur(10px)!important}
+.milk-match-panel{background:linear-gradient(180deg,#171124 0%,#211631 38%,#311c3d 100%)!important;color:#fff!important;box-shadow:0 -24px 80px rgba(0,0,0,.42)!important}
+.milk-match-panel:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 20% 0,rgba(224,94,158,.22),transparent 32%),radial-gradient(circle at 90% 24%,rgba(126,88,255,.18),transparent 30%)}
+.milk-match-header{position:relative;z-index:1;margin-bottom:4px!important}.milk-match-header small{color:#eeb3d2!important;font-size:7px!important}.milk-match-header h2{color:#fff!important;font-size:17px!important;letter-spacing:.08em!important}.milk-match-close{background:rgba(255,255,255,.12)!important;color:#fff!important;width:31px!important;height:31px!important;font-size:21px!important}
+
+/* Compact mode selector: no oversized explanation cards */
+.milk-match-mode-tabs{position:relative;z-index:1;display:grid!important;grid-template-columns:1fr 1fr!important;gap:4px!important;padding:3px!important;margin:0 0 4px!important;border-radius:12px!important;background:rgba(0,0,0,.25)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)!important}
+.milk-match-mode-tabs button{min-height:34px!important;height:34px!important;padding:3px 8px!important;border:0!important;border-radius:9px!important;display:grid!important;grid-template-columns:auto 1fr!important;align-items:center!important;gap:6px!important;text-align:left!important;background:transparent!important;color:#bfb3cc!important;box-shadow:none!important}
+.milk-match-mode-tabs button b{font-size:10px!important;line-height:1!important;letter-spacing:.09em!important}.milk-match-mode-tabs button small{margin:0!important;font-size:7px!important;line-height:1!important;opacity:.72!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.milk-match-mode-tabs button.is-active{background:linear-gradient(135deg,#d84f91,#7654d8)!important;color:#fff!important;border:0!important;box-shadow:0 4px 12px rgba(199,65,145,.28)!important}
+
+.milk-match-stats{position:relative;z-index:1;grid-template-columns:repeat(4,1fr)!important;gap:4px!important;margin-bottom:4px!important}.milk-match-stats>div{padding:4px 2px!important;border-radius:9px!important;background:rgba(255,255,255,.075)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)!important}.milk-match-stats small{font-size:6px!important;color:#bbaec9!important}.milk-match-stats strong{font-size:13px!important;color:#fff!important}
+.milk-match-goal{position:relative;z-index:1;padding:5px 8px!important;margin-bottom:4px!important;border-radius:10px!important;background:linear-gradient(90deg,rgba(216,79,145,.86),rgba(115,76,208,.86))!important}.milk-match-goal span{font-size:7px!important}.milk-match-goal strong{font-size:9px!important}.milk-match-goal div{height:3px!important}
+.milk-match-fever{position:relative;z-index:1;margin:0 0 4px!important;padding:3px 6px!important;border-radius:9px!important;background:rgba(255,255,255,.07)!important}.milk-match-fever span,.milk-match-fever strong{font-size:7px!important;color:#ffdca1!important}.milk-match-fever>div{height:4px!important}
+.milk-match-board-wrap{position:relative;z-index:1}.milk-match-board{padding:5px!important;gap:3px!important;border-radius:16px!important;background:linear-gradient(145deg,#412454,#25182f)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),inset 0 6px 22px rgba(0,0,0,.32),0 10px 24px rgba(0,0,0,.28)!important}
+.milk-match-tile{border-radius:10px!important;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(235,220,242,.94))!important;box-shadow:0 3px 0 rgba(0,0,0,.22),inset 0 0 0 1px rgba(255,255,255,.65)!important}
+.milk-match-help{position:relative;z-index:1;margin:4px 0 3px!important;font-size:8px!important;color:#bdb0c7!important}
+.milk-match-actions{position:relative;z-index:1;grid-template-columns:1.25fr .75fr .9fr .8fr!important;gap:4px!important}.milk-match-actions button{min-width:0;padding:7px 3px!important;border-radius:9px!important;font-size:8px!important;white-space:nowrap!important;background:rgba(255,255,255,.1)!important;color:#fff!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)!important}.milk-match-actions button:first-child{background:linear-gradient(135deg,#d84f91,#7654d8)!important}
+.milk-match-volume{position:relative;z-index:1;grid-template-columns:28px 32px 1fr!important;gap:5px!important;margin-top:4px!important;padding:3px 5px!important;border-radius:9px!important;background:rgba(255,255,255,.075)!important}.milk-match-volume button{height:25px!important;background:rgba(255,255,255,.12)!important}.milk-match-volume label{font-size:7px!important;color:#c4b7cf!important}.milk-match-volume input{accent-color:#e45b9d!important}
+
+@media(max-height:720px){.milk-match-panel{padding-top:5px!important}.milk-match-header{margin-bottom:2px!important}.milk-match-mode-tabs{margin-bottom:2px!important}.milk-match-mode-tabs button{height:30px!important;min-height:30px!important}.milk-match-stats{margin-bottom:2px!important}.milk-match-goal{margin-bottom:2px!important}.milk-match-fever{margin-bottom:2px!important}.milk-match-help{display:none!important}.milk-match-actions button{padding:5px 2px!important}.milk-match-volume{margin-top:2px!important;padding:2px 4px!important}}
+
+/* Ver.3.8 compact game lobby */
+.milk-match-lobby{
+  padding:10px!important;
+  place-items:center!important;
+  background:rgba(12,7,27,.58)!important;
+  backdrop-filter:blur(3px)!important;
+  overflow:hidden!important;
+}
+.milk-match-lobby-card{
+  box-sizing:border-box!important;
+  width:min(92%,390px)!important;
+  max-height:calc(100% - 14px)!important;
+  padding:14px 15px 15px!important;
+  border-radius:18px!important;
+  text-align:left!important;
+  color:#fff!important;
+  background:linear-gradient(145deg,rgba(57,28,82,.97),rgba(28,17,55,.98))!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:0 14px 36px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.12)!important;
+  overflow:auto!important;
+}
+.milk-match-lobby-card.is-story{background:linear-gradient(145deg,rgba(132,43,112,.97),rgba(48,25,82,.98))!important}
+.milk-match-lobby-card.is-score{background:linear-gradient(145deg,rgba(50,64,142,.97),rgba(31,25,79,.98))!important}
+.milk-lobby-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.milk-lobby-head>span{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:rgba(255,255,255,.13);font-size:22px;flex:0 0 auto}
+.milk-lobby-head small{display:block;font-size:8px;letter-spacing:.16em;color:rgba(255,255,255,.62);font-weight:800}
+.milk-match-lobby-card .milk-lobby-head h3{margin:1px 0 0!important;font-size:18px!important;line-height:1.2;color:#fff!important}
+.milk-lobby-rule{display:grid;gap:3px;padding:9px 11px;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1)}
+.milk-lobby-rule strong{font-size:15px;color:#fff}
+.milk-lobby-rule span{font-size:10px;color:rgba(255,255,255,.72)}
+.milk-match-lobby-card p{margin:8px 2px 11px!important;font-size:10px!important;line-height:1.45!important;color:rgba(255,255,255,.7)!important}
+.milk-match-lobby-card button{display:block;width:100%;min-height:42px;padding:10px 16px!important;border-radius:13px!important;background:linear-gradient(90deg,#ef4fa5,#8e52f3)!important;color:#fff!important;font-size:14px;font-weight:900;box-shadow:0 8px 18px rgba(224,63,160,.25)}
+.milk-match-lobby-card button:disabled{background:rgba(255,255,255,.18)!important;box-shadow:none!important}
+@media(max-height:720px){
+ .milk-match-lobby-card{padding:10px 12px 11px!important;border-radius:15px!important}
+ .milk-lobby-head{margin-bottom:7px}.milk-lobby-head>span{width:34px;height:34px;font-size:19px}
+ .milk-match-lobby-card .milk-lobby-head h3{font-size:16px!important}
+ .milk-lobby-rule{padding:7px 9px}.milk-lobby-rule strong{font-size:13px}
+ .milk-match-lobby-card p{margin:6px 2px 8px!important}
+ .milk-match-lobby-card button{min-height:38px;padding:8px 14px!important}
+}
+
+/* VER.3.9: stable cascades + polished result screen */
+.milk-match-result{
+  padding:16px!important;
+  background:linear-gradient(180deg,rgba(15,8,35,.80),rgba(36,13,54,.94))!important;
+  backdrop-filter:blur(10px) saturate(1.25)!important;
+}
+.milk-match-result-card{
+  width:min(92%,360px)!important;
+  padding:18px!important;
+  border-radius:26px!important;
+  color:#fff!important;
+  text-align:left!important;
+  background:linear-gradient(155deg,rgba(75,34,105,.98),rgba(31,18,63,.98))!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.12)!important;
+  overflow:hidden;
+  position:relative;
+}
+.milk-match-result-card:before{content:"";position:absolute;inset:-35% 30% auto -15%;height:170px;background:radial-gradient(circle,rgba(242,87,180,.34),transparent 68%);pointer-events:none}
+.milk-match-result.is-clear .milk-match-result-card{background:linear-gradient(155deg,#7d286e,#33194f)!important}
+.milk-match-result.is-score .milk-match-result-card{background:linear-gradient(155deg,#343184,#191b4e)!important}
+.milk-match-result.is-fail .milk-match-result-card{background:linear-gradient(155deg,#55304f,#291d3d)!important}
+.milk-result-top{position:relative;display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.milk-result-top>span{display:grid;place-items:center;width:44px;height:44px;border-radius:15px;background:linear-gradient(145deg,#ff62b4,#8d56f5);font-size:23px;box-shadow:0 8px 20px rgba(233,69,174,.28)}
+.milk-result-top small{display:block;font:800 9px/1.2 system-ui;letter-spacing:.18em;color:rgba(255,255,255,.68)}
+.milk-result-top h3{margin:3px 0 0!important;color:#fff!important;font:900 20px/1.15 system-ui!important;letter-spacing:.03em}
+.milk-result-score{position:relative;display:grid;grid-template-columns:1fr auto;align-items:end;padding:13px 15px;border-radius:18px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.11)}
+.milk-result-score small{grid-column:1/-1;font:800 9px/1 system-ui;letter-spacing:.18em;color:rgba(255,255,255,.6)}
+.milk-result-score strong{font:950 36px/1.05 system-ui;color:#fff}
+.milk-result-score em{font:900 13px/1 system-ui;font-style:normal;color:#ffd3ef;padding-bottom:5px}
+.milk-result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:9px 0}
+.milk-result-grid>div{padding:9px 5px;border-radius:13px;text-align:center;background:rgba(255,255,255,.075)}
+.milk-result-grid small{display:block;font:750 7px/1.2 system-ui;letter-spacing:.08em;color:rgba(255,255,255,.55)}
+.milk-result-grid strong{display:block;margin-top:4px;font:900 18px/1 system-ui;color:#fff}
+.milk-result-reward,.milk-result-missing{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-top:9px;border-radius:15px;background:linear-gradient(90deg,rgba(255,84,175,.22),rgba(145,92,255,.18));border:1px solid rgba(255,255,255,.1)}
+.milk-result-reward>span{font-size:25px}.milk-result-reward small{display:block;font:800 8px/1 system-ui;letter-spacing:.15em;color:#ffc9e8}.milk-result-reward strong{display:block;margin-top:3px;font:850 13px/1.2 system-ui;color:#fff}
+.milk-result-missing{justify-content:space-between}.milk-result-missing span,.milk-result-missing small{font-size:10px;color:rgba(255,255,255,.65)}.milk-result-missing strong{font-size:16px;color:#fff}
+.milk-match-result-card .milk-title-progress{margin:10px 0 3px!important;gap:5px!important}
+.milk-match-result-card .milk-title-progress span{width:30px!important;height:32px!important;background:rgba(255,255,255,.12)!important;border:1px solid rgba(255,255,255,.12);color:#fff!important;box-shadow:none!important}
+.milk-result-note,.milk-result-test{margin:9px 2px 0!important;text-align:center!important;color:rgba(255,255,255,.72)!important;font:700 10px/1.35 system-ui!important}
+.milk-result-test{font-size:8px!important;letter-spacing:.08em;color:rgba(255,255,255,.43)!important}
+.milk-match-result-card button{display:block;width:100%;margin-top:12px;padding:13px!important;border-radius:15px!important;background:linear-gradient(90deg,#f047a3,#8d55f2)!important;color:#fff!important;font:900 14px/1 system-ui!important;box-shadow:0 10px 24px rgba(225,56,165,.28)!important}
+
+
+/* VER.3.10: compact result card + harder story balance */
+.milk-match-result{
+  padding:10px!important;
+  align-items:center!important;
+}
+.milk-match-result-card{
+  width:min(94%,390px)!important;
+  max-height:min(48dvh,335px)!important;
+  min-height:0!important;
+  padding:11px 12px!important;
+  border-radius:20px!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:6px!important;
+  overflow:hidden!important;
+}
+.milk-match-result-card:before{height:105px!important;opacity:.62}
+.milk-result-top{
+  margin:0!important;
+  gap:8px!important;
+  min-height:34px!important;
+}
+.milk-result-top>span{
+  width:34px!important;
+  height:34px!important;
+  border-radius:11px!important;
+  font-size:18px!important;
+}
+.milk-result-top small{font-size:7px!important;letter-spacing:.13em!important}
+.milk-result-top h3{font-size:15px!important;margin-top:1px!important}
+.milk-result-score{
+  padding:8px 10px!important;
+  border-radius:13px!important;
+  min-height:49px!important;
+}
+.milk-result-score small{font-size:7px!important}
+.milk-result-score strong{font-size:27px!important}
+.milk-result-score em{font-size:10px!important;padding-bottom:3px!important}
+.milk-result-grid{
+  margin:0!important;
+  gap:5px!important;
+}
+.milk-result-grid>div{
+  padding:5px 3px!important;
+  border-radius:10px!important;
+}
+.milk-result-grid small{font-size:6px!important}
+.milk-result-grid strong{font-size:14px!important;margin-top:2px!important}
+.milk-result-reward,.milk-result-missing{
+  margin:0!important;
+  padding:6px 9px!important;
+  border-radius:11px!important;
+  min-height:36px!important;
+}
+.milk-result-reward>span{font-size:19px!important}
+.milk-result-reward small{font-size:6px!important}
+.milk-result-reward strong{font-size:10px!important;margin-top:1px!important}
+.milk-result-missing span,.milk-result-missing small{font-size:8px!important}
+.milk-result-missing strong{font-size:13px!important}
+.milk-match-result-card .milk-title-progress{
+  margin:0!important;
+  gap:3px!important;
+}
+.milk-match-result-card .milk-title-progress span{
+  width:23px!important;
+  height:24px!important;
+  border-radius:7px!important;
+  font-size:11px!important;
+}
+.milk-result-note,.milk-result-test{
+  margin:0!important;
+  font-size:8px!important;
+  line-height:1.15!important;
+}
+.milk-result-test{font-size:6px!important}
+.milk-match-result-card button{
+  margin:0!important;
+  min-height:36px!important;
+  padding:8px 12px!important;
+  border-radius:12px!important;
+  font-size:12px!important;
+}
+@media(max-height:720px){
+  .milk-match-result-card{max-height:45dvh!important;padding:8px 10px!important;gap:4px!important}
+  .milk-result-top>span{width:30px!important;height:30px!important}
+  .milk-result-score{padding:6px 9px!important;min-height:43px!important}
+  .milk-result-score strong{font-size:23px!important}
+  .milk-result-grid>div{padding:4px 2px!important}
+  .milk-match-result-card .milk-title-progress{display:none!important}
+  .milk-result-test{display:none!important}
+}
+
+/* Milk Match Ver.3.12 — skill system, no fever */
+.milk-match-fever,.milk-match-fever-banner,.milk-fever-petal-layer{display:none!important}
+.milk-match-board.is-fever{box-shadow:inset 0 2px 9px rgba(57,34,28,.22)!important;animation:none!important}
+.milk-match-skill{display:grid;grid-template-columns:auto minmax(60px,1fr) auto auto auto;align-items:center;gap:5px;margin:0 0 4px;padding:4px 6px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,220,160,.15);flex:0 0 auto}
+.milk-match-skill>span,.milk-match-skill>strong{font-size:8px;font-weight:900;color:#ffe0a9;white-space:nowrap}.milk-match-skill>div{height:5px;border-radius:99px;background:rgba(255,255,255,.13);overflow:hidden}.milk-match-skill i{display:block;width:0;height:100%;background:linear-gradient(90deg,#fff0aa,#ffb9d2,#bfa7ff);transition:width .2s ease}.milk-match-skill.is-ready{box-shadow:0 0 14px rgba(255,202,111,.35);border-color:rgba(255,221,142,.55)}
+.milk-match-skill button{min-width:32px;height:24px;padding:0 5px;border:0;border-radius:7px;background:linear-gradient(135deg,#ffcf69,#f27ca8);color:#442238;font-size:10px;font-weight:950;box-shadow:0 3px 8px rgba(0,0,0,.18)}.milk-match-skill button:disabled{opacity:.28;filter:grayscale(.65);box-shadow:none}
+@media(max-height:720px){.milk-match-skill{margin-bottom:2px;padding:2px 5px}.milk-match-skill button{height:21px}.milk-match-skill>span{font-size:7px}}
+/* Ver.3.13: MILK SKILL usability */
+.milk-match-skill{display:block!important;padding:5px 6px!important}
+.milk-match-skill-meter{display:grid;grid-template-columns:auto minmax(70px,1fr) auto;align-items:center;gap:6px}
+.milk-match-skill-actions{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:5px}
+.milk-match-skill-actions button{height:34px!important;min-width:0!important;padding:3px 5px!important;border-radius:9px!important;display:flex;align-items:center;justify-content:center;gap:4px;flex-direction:column;line-height:1.05;position:relative;z-index:5;pointer-events:auto}
+.milk-match-skill-actions button b{font-size:10px}.milk-match-skill-actions button small{font-size:7px;opacity:.78}
+.milk-match-skill.is-ready .milk-match-skill-actions button:not(:disabled){animation:milkSkillReady 1.05s ease-in-out infinite;box-shadow:0 0 0 1px rgba(255,244,178,.8),0 0 14px rgba(255,205,91,.65)}
+@keyframes milkSkillReady{50%{filter:brightness(1.25);transform:translateY(-1px)}}
+@media(max-height:720px){.milk-match-skill-actions button{height:29px!important}.milk-match-skill-actions button small{display:none}}
+
+/* Ver.3.14: compact HUD and guaranteed MILK SKILL controls */
+.milk-match-phase-note{display:none!important}
+.milk-match-panel{gap:2px!important;padding-top:5px!important}
+.milk-match-header{min-height:28px!important;height:28px!important}
+.milk-match-header h2{font-size:15px!important;line-height:1!important}
+.milk-match-header small{display:none!important}
+.milk-match-close{width:27px!important;height:27px!important;font-size:18px!important}
+
+.milk-match-mode-tabs{height:30px!important;min-height:30px!important;gap:3px!important;padding:2px!important;margin:0!important}
+.milk-match-mode-tabs button{height:26px!important;min-height:26px!important;padding:2px 7px!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:5px!important;text-align:center!important}
+.milk-match-mode-tabs button b{font-size:9px!important}
+.milk-match-mode-tabs button small{font-size:6px!important;margin:0!important;display:inline!important}
+
+.milk-match-stats{grid-template-columns:repeat(3,1fr)!important;gap:3px!important;height:26px!important;min-height:26px!important;margin:0!important}
+.milk-match-stats>div{height:26px!important;min-height:26px!important;padding:2px 3px!important;border-radius:7px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:4px!important;overflow:hidden!important}
+.milk-match-stats>div:nth-child(4){display:none!important}
+.milk-match-stats small{display:inline!important;font-size:5.5px!important;line-height:1!important;letter-spacing:.04em!important;white-space:nowrap!important}
+.milk-match-stats strong{font-size:11px!important;line-height:1!important;white-space:nowrap!important}
+
+.milk-match-goal{height:24px!important;min-height:24px!important;padding:3px 6px!important;margin:0!important;grid-template-columns:auto 1fr!important;gap:1px 5px!important}
+.milk-match-goal span{font-size:6px!important}.milk-match-goal strong{font-size:8px!important}.milk-match-goal div{height:2px!important}
+
+.milk-match-skill{display:grid!important;grid-template-columns:minmax(0,.9fr) minmax(0,1.55fr)!important;align-items:stretch!important;gap:6px!important;min-height:50px!important;height:50px!important;padding:5px 6px!important;margin:1px 0 2px!important;border-radius:11px!important;overflow:visible!important;position:relative!important;z-index:10!important}
+.milk-match-skill-meter{display:grid!important;grid-template-columns:1fr auto!important;grid-template-rows:auto 1fr!important;gap:2px 5px!important;min-width:0!important;align-items:center!important}
+.milk-match-skill-meter>span{grid-column:1/2;font-size:7px!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.milk-match-skill-meter>strong{grid-column:2/3;grid-row:1;font-size:9px!important}
+.milk-match-skill-meter>div{grid-column:1/3;grid-row:2;height:8px!important;border-radius:999px!important;align-self:center!important}
+.milk-match-skill-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:5px!important;margin:0!important;min-width:0!important;height:40px!important;align-self:center!important}
+.milk-match-skill-actions button{display:grid!important;place-items:center!important;align-content:center!important;height:40px!important;min-height:40px!important;min-width:0!important;padding:3px 4px!important;border-radius:10px!important;overflow:hidden!important;white-space:normal!important}
+.milk-match-skill-actions button b{font-size:10px!important;line-height:1.05!important;white-space:nowrap!important}
+.milk-match-skill-actions button small{display:block!important;font-size:6px!important;line-height:1.05!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important}
+.milk-match-skill-actions button:not(:disabled){box-shadow:0 0 0 1px rgba(255,248,194,.85),0 0 16px rgba(255,194,81,.58)!important}
+
+.milk-match-board{width:min(100%,calc(100dvh - 270px))!important;max-height:calc(100dvh - 270px)!important}
+.milk-match-help{margin:1px 0!important}
+.milk-match-actions{height:28px!important;min-height:28px!important}
+.milk-match-actions button{height:28px!important;padding:3px 2px!important}
+.milk-match-volume{height:29px!important;min-height:29px!important;padding:2px 5px!important}
+
+@media(max-height:700px){
+  .milk-match-mode-tabs button small{display:none!important}
+  .milk-match-skill{height:46px!important;min-height:46px!important;padding:3px 5px!important}
+  .milk-match-skill-actions,.milk-match-skill-actions button{height:36px!important;min-height:36px!important}
+  .milk-match-skill-actions button small{display:none!important}
+  .milk-match-board{width:min(100%,calc(100dvh - 246px))!important;max-height:calc(100dvh - 246px)!important}
+}
+@media(max-height:610px){
+  .milk-match-goal span{display:none!important}
+  .milk-match-goal{grid-template-columns:1fr!important}
+  .milk-match-goal strong{text-align:center!important}
+  .milk-match-help{display:none!important}
+  .milk-match-board{width:min(100%,calc(100dvh - 226px))!important;max-height:calc(100dvh - 226px)!important}
+}
+
+
+/* Milk Match Ver.3.15 — visible skill gauge and lyrics shortcut */
+.milk-match-header-tools{display:flex;align-items:center;gap:5px;min-width:0}
+.milk-match-lyrics-shortcut{height:27px;padding:0 9px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:linear-gradient(135deg,rgba(216,79,145,.92),rgba(118,84,216,.92));color:#fff;font-size:9px;font-weight:900;white-space:nowrap;box-shadow:0 4px 12px rgba(86,46,140,.28)}
+
+.milk-match-skill{grid-template-columns:1fr!important;height:72px!important;min-height:72px!important;padding:6px 7px!important;gap:5px!important;background:linear-gradient(135deg,rgba(36,24,72,.96),rgba(75,35,91,.94))!important;border:1px solid rgba(255,215,132,.42)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 5px 15px rgba(14,8,35,.28)!important}
+.milk-match-skill-meter{display:grid!important;grid-template-columns:auto 1fr auto!important;grid-template-rows:18px 14px!important;gap:3px 7px!important;align-items:center!important}
+.milk-match-skill-meter>span{grid-column:1/3!important;grid-row:1!important;font-size:9px!important;color:#fff2c5!important;letter-spacing:.06em!important;overflow:visible!important}
+.milk-match-skill-meter>strong{grid-column:3!important;grid-row:1!important;font-size:10px!important;color:#fff!important;min-width:48px;text-align:right}
+.milk-match-skill-meter>div{grid-column:1/4!important;grid-row:2!important;height:12px!important;border-radius:999px!important;background:rgba(8,5,25,.7)!important;border:1px solid rgba(255,255,255,.18)!important;box-shadow:inset 0 2px 5px rgba(0,0,0,.4)!important;overflow:hidden!important}
+.milk-match-skill-meter i{height:100%!important;background:linear-gradient(90deg,#55e8ff 0%,#b29cff 42%,#ff86c8 72%,#ffe477 100%)!important;box-shadow:0 0 10px rgba(255,198,112,.9)!important;transition:width .18s ease!important}
+.milk-match-skill.is-ready .milk-match-skill-meter>div{border-color:#ffe98f!important;box-shadow:0 0 13px rgba(255,226,105,.75),inset 0 2px 5px rgba(0,0,0,.35)!important}
+.milk-match-skill-actions{height:32px!important;grid-template-columns:1fr 1fr!important;gap:6px!important}
+.milk-match-skill-actions button{height:32px!important;min-height:32px!important;padding:2px 5px!important}
+.milk-match-skill-actions button b{font-size:10px!important}.milk-match-skill-actions button small{font-size:6px!important}
+
+.milk-match-actions{grid-template-columns:1.25fr .75fr .8fr!important}
+.milk-match-actions button{font-size:9px!important}
+
+.milk-match-board{width:min(100%,calc(100dvh - 291px))!important;max-height:calc(100dvh - 291px)!important}
+@media(max-height:700px){
+  .milk-match-skill{height:65px!important;min-height:65px!important;padding:4px 6px!important}
+  .milk-match-skill-meter{grid-template-rows:16px 11px!important}
+  .milk-match-skill-meter>div{height:10px!important}
+  .milk-match-skill-actions,.milk-match-skill-actions button{height:29px!important;min-height:29px!important}
+  .milk-match-skill-actions button small{display:none!important}
+  .milk-match-board{width:min(100%,calc(100dvh - 271px))!important;max-height:calc(100dvh - 271px)!important}
+}
+@media(max-height:610px){
+  .milk-match-lyrics-shortcut{padding:0 6px;font-size:8px}
+  .milk-match-skill{height:60px!important;min-height:60px!important}
+  .milk-match-skill-actions,.milk-match-skill-actions button{height:27px!important;min-height:27px!important}
+  .milk-match-board{width:min(100%,calc(100dvh - 248px))!important;max-height:calc(100dvh - 248px)!important}
+}
+
+/* Milk Match Ver.3.16 — reliable skill meter and bottom controls */
+.milk-match-skill{
+  height:68px!important;
+  min-height:68px!important;
+  grid-template-columns:1fr!important;
+  padding:5px 7px!important;
+  overflow:visible!important;
+}
+.milk-match-skill-meter{
+  display:grid!important;
+  grid-template-columns:1fr auto!important;
+  grid-template-rows:16px 16px!important;
+  gap:3px 7px!important;
+  min-width:0!important;
+}
+.milk-match-skill-meter>span{
+  grid-column:1!important;
+  grid-row:1!important;
+  font-size:9px!important;
+  color:#fff4c9!important;
+  font-weight:950!important;
+}
+.milk-match-skill-meter>strong{
+  grid-column:2!important;
+  grid-row:1!important;
+  min-width:58px!important;
+  text-align:right!important;
+  font-size:10px!important;
+  color:#fff!important;
+}
+.milk-match-skill-track,
+.milk-match-skill-meter>div{
+  grid-column:1/3!important;
+  grid-row:2!important;
+  display:block!important;
+  width:100%!important;
+  height:16px!important;
+  min-height:16px!important;
+  border-radius:999px!important;
+  overflow:hidden!important;
+  background:#130d2f!important;
+  border:2px solid rgba(255,255,255,.3)!important;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.55),0 0 0 1px rgba(255,205,112,.18)!important;
+}
+.milk-match-skill-track>i,
+#milkMatchSkillBar{
+  display:block!important;
+  width:0;
+  height:100%!important;
+  min-height:100%!important;
+  transform:scaleX(0);
+  transform-origin:left center!important;
+  background:linear-gradient(90deg,#4ce7ff 0%,#9c8cff 38%,#ff6fbd 70%,#ffe45e 100%)!important;
+  box-shadow:0 0 14px rgba(255,221,99,.9)!important;
+  transition:width .18s ease,transform .18s ease!important;
+}
+.milk-match-skill.is-ready .milk-match-skill-track,
+.milk-match-skill.is-ready .milk-match-skill-meter>div{
+  border-color:#ffe76d!important;
+  box-shadow:0 0 14px rgba(255,224,87,.8),inset 0 2px 5px rgba(0,0,0,.45)!important;
+}
+.milk-match-skill-actions{
+  height:27px!important;
+  margin-top:3px!important;
+}
+.milk-match-skill-actions button{
+  height:27px!important;
+  min-height:27px!important;
+}
+.milk-match-skill-actions button small{display:none!important}
+
+/* Four bottom buttons stay above the volume row and never wrap under it. */
+.milk-match-actions{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:4px!important;
+  width:100%!important;
+  height:30px!important;
+  min-height:30px!important;
+  margin:2px 0 0!important;
+  position:relative!important;
+  z-index:4!important;
+}
+.milk-match-actions button{
+  min-width:0!important;
+  width:100%!important;
+  height:30px!important;
+  padding:3px 2px!important;
+  font-size:8px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.milk-match-volume{
+  position:relative!important;
+  z-index:3!important;
+  clear:both!important;
+  margin-top:3px!important;
+}
+
+/* Lyrics belongs with the bottom game controls, not the header. */
+.milk-match-lyrics-shortcut{display:none!important}
+
+.milk-match-board{width:min(100%,calc(100dvh - 292px))!important;max-height:calc(100dvh - 292px)!important}
+@media(max-height:700px){
+  .milk-match-skill{height:62px!important;min-height:62px!important}
+  .milk-match-skill-track,.milk-match-skill-meter>div{height:13px!important;min-height:13px!important}
+  .milk-match-skill-actions,.milk-match-skill-actions button{height:25px!important;min-height:25px!important}
+  .milk-match-actions,.milk-match-actions button{height:27px!important;min-height:27px!important}
+  .milk-match-actions button{font-size:7px!important}
+  .milk-match-board{width:min(100%,calc(100dvh - 272px))!important;max-height:calc(100dvh - 272px)!important}
+}
+
+
+/* Milk Match Ver.3.17 — visible skill gauge and collision-free footer */
+.milk-match-panel{
+  gap:3px!important;
+}
+.milk-match-skill{
+  display:flex!important;
+  flex-direction:column!important;
+  height:66px!important;
+  min-height:66px!important;
+  padding:5px 7px!important;
+  margin:1px 0 2px!important;
+  overflow:visible!important;
+  position:relative!important;
+  z-index:8!important;
+}
+.milk-match-skill-meter{
+  display:grid!important;
+  grid-template-columns:1fr auto!important;
+  grid-template-rows:15px 15px!important;
+  width:100%!important;
+  min-height:33px!important;
+  gap:3px 7px!important;
+  align-items:center!important;
+}
+.milk-match-skill-meter>span{
+  grid-column:1!important;
+  grid-row:1!important;
+  display:block!important;
+  color:#fff5c9!important;
+  font-size:9px!important;
+  font-weight:950!important;
+  line-height:1!important;
+}
+.milk-match-skill-meter>strong{
+  grid-column:2!important;
+  grid-row:1!important;
+  display:block!important;
+  color:#fff!important;
+  font-size:10px!important;
+  line-height:1!important;
+  min-width:56px!important;
+  text-align:right!important;
+}
+.milk-match-skill-track,
+.milk-match-skill-meter>div{
+  grid-column:1/3!important;
+  grid-row:2!important;
+  display:block!important;
+  position:relative!important;
+  width:100%!important;
+  height:15px!important;
+  min-height:15px!important;
+  padding:0!important;
+  border:2px solid rgba(255,255,255,.4)!important;
+  border-radius:999px!important;
+  overflow:hidden!important;
+  background:#0c0822!important;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.65),0 0 0 1px rgba(255,213,116,.22)!important;
+}
+#milkMatchSkillBar,
+.milk-match-skill-track>i{
+  position:absolute!important;
+  left:0!important;
+  top:0!important;
+  bottom:0!important;
+  display:block!important;
+  width:0;
+  height:100%!important;
+  min-height:100%!important;
+  transform:none!important;
+  transform-origin:left center!important;
+  border-radius:999px!important;
+  background:linear-gradient(90deg,#48e8ff 0%,#9d8dff 36%,#ff68bb 68%,#ffe25d 100%)!important;
+  box-shadow:0 0 13px rgba(255,220,94,.95)!important;
+  transition:width .18s ease!important;
+}
+.milk-match-skill-actions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:6px!important;
+  width:100%!important;
+  height:27px!important;
+  min-height:27px!important;
+  margin:2px 0 0!important;
+}
+.milk-match-skill-actions button{
+  height:27px!important;
+  min-height:27px!important;
+  padding:2px 5px!important;
+  border-radius:9px!important;
+}
+.milk-match-skill-actions button b{font-size:9px!important}
+.milk-match-skill-actions button small{display:none!important}
+
+/* Two dedicated rows: play controls, then library/records. */
+.milk-match-actions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  grid-template-rows:28px 28px!important;
+  gap:4px!important;
+  width:100%!important;
+  height:60px!important;
+  min-height:60px!important;
+  margin:2px 0 0!important;
+  position:relative!important;
+  z-index:6!important;
+  overflow:visible!important;
+}
+.milk-match-actions button{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  height:28px!important;
+  min-height:28px!important;
+  padding:3px 5px!important;
+  border-radius:9px!important;
+  font-size:8px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#milkMatchNewGame{grid-column:1;grid-row:1}
+#milkMatchHint{grid-column:2;grid-row:1}
+#openMilkLyricsFromGame{grid-column:1;grid-row:2}
+#milkMatchRecords{grid-column:2;grid-row:2}
+.milk-match-volume{
+  display:grid!important;
+  grid-template-columns:34px 42px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:5px!important;
+  width:100%!important;
+  height:31px!important;
+  min-height:31px!important;
+  margin:2px 0 0!important;
+  padding:3px 7px!important;
+  position:relative!important;
+  z-index:5!important;
+  clear:both!important;
+  overflow:hidden!important;
+}
+.milk-match-volume input{min-width:0!important;width:100%!important}
+.milk-match-board{
+  width:min(100%,calc(100dvh - 330px))!important;
+  max-height:calc(100dvh - 330px)!important;
+}
+@media(max-height:740px){
+  .milk-match-skill{height:61px!important;min-height:61px!important;padding:4px 6px!important}
+  .milk-match-skill-meter{grid-template-rows:14px 13px!important;min-height:30px!important}
+  .milk-match-skill-track,.milk-match-skill-meter>div{height:13px!important;min-height:13px!important}
+  .milk-match-skill-actions,.milk-match-skill-actions button{height:25px!important;min-height:25px!important}
+  .milk-match-actions{grid-template-rows:26px 26px!important;height:56px!important;min-height:56px!important}
+  .milk-match-actions button{height:26px!important;min-height:26px!important;font-size:7.5px!important}
+  .milk-match-volume{height:28px!important;min-height:28px!important}
+  .milk-match-board{width:min(100%,calc(100dvh - 304px))!important;max-height:calc(100dvh - 304px)!important}
+}
+@media(max-height:650px){
+  .milk-match-help{display:none!important}
+  .milk-match-board{width:min(100%,calc(100dvh - 282px))!important;max-height:calc(100dvh - 282px)!important}
+}
+
+
+/* Milk Match Ver.3.18 — clean skill UI, slower charge, visible hint */
+.milk-match-skill{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 112px!important;
+  align-items:stretch!important;
+  gap:8px!important;
+  height:58px!important;
+  min-height:58px!important;
+  padding:7px!important;
+  border:0!important;
+  border-radius:15px!important;
+  background:linear-gradient(135deg,rgba(40,24,76,.88),rgba(70,34,94,.88))!important;
+  box-shadow:0 6px 18px rgba(9,5,29,.28),inset 0 0 0 1px rgba(255,255,255,.08)!important;
+  overflow:visible!important;
+}
+.milk-match-skill-meter{
+  min-width:0!important;
+  display:grid!important;
+  grid-template-columns:1fr auto!important;
+  grid-template-rows:18px 18px!important;
+  gap:4px 8px!important;
+  align-content:center!important;
+}
+.milk-match-skill-meter>span{
+  grid-column:1!important;grid-row:1!important;
+  font-size:10px!important;font-weight:950!important;color:#fff0c7!important;
+  letter-spacing:.08em!important;white-space:nowrap!important;
+}
+.milk-match-skill-meter>strong{
+  grid-column:2!important;grid-row:1!important;
+  font-size:10px!important;color:#fff!important;min-width:54px!important;text-align:right!important;
+}
+.milk-match-skill-track,.milk-match-skill-meter>div{
+  grid-column:1/3!important;grid-row:2!important;
+  display:block!important;height:17px!important;min-height:17px!important;
+  border-radius:999px!important;overflow:hidden!important;
+  background:#17112e!important;border:1px solid rgba(255,255,255,.22)!important;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.5)!important;
+}
+.milk-match-skill-track>i,.milk-match-skill-meter i{
+  display:block!important;height:100%!important;width:0;
+  border-radius:inherit!important;
+  background:linear-gradient(90deg,#62e8ff,#a88dff 48%,#ff75bf 78%,#ffe16a)!important;
+  box-shadow:0 0 12px rgba(255,174,219,.8)!important;
+  transition:width .24s ease!important;
+}
+.milk-match-skill-actions{
+  display:block!important;margin:0!important;height:44px!important;align-self:center!important;
+}
+.milk-match-skill-actions #milkMatchSkillRainbow{
+  width:100%!important;height:44px!important;min-height:44px!important;
+  padding:4px 8px!important;border-radius:13px!important;
+  display:grid!important;grid-template-columns:30px 1fr!important;align-items:center!important;
+  background:linear-gradient(135deg,#6d5b90,#4a3d6c)!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  color:#d9d1e8!important;box-shadow:none!important;animation:none!important;
+}
+.milk-match-skill-actions #milkMatchSkillRainbow span{font-size:21px!important;filter:grayscale(.7);opacity:.65}
+.milk-match-skill-actions #milkMatchSkillRainbow b{font-size:11px!important;white-space:nowrap!important}
+.milk-match-skill.is-ready #milkMatchSkillRainbow:not(:disabled){
+  background:linear-gradient(135deg,#ffdc67,#ff7fbd 48%,#8d76ff)!important;
+  color:#271531!important;border-color:#fff4a8!important;
+  box-shadow:0 0 0 2px rgba(255,245,174,.3),0 0 18px rgba(255,117,193,.72)!important;
+  animation:milkRainbowReady 1.15s ease-in-out infinite!important;
+}
+.milk-match-skill.is-ready #milkMatchSkillRainbow span{filter:none;opacity:1}
+@keyframes milkRainbowReady{50%{transform:translateY(-1px);filter:brightness(1.18)}}
+.milk-match-skill-actions #milkMatchSkillShuffle{display:none!important}
+.milk-match-tile.is-hint{
+  z-index:8!important;
+  animation:milkHintStrong .72s ease-in-out 3!important;
+  outline:3px solid #fff58a!important;
+  box-shadow:0 0 0 5px rgba(255,245,138,.28),0 0 26px #fff58a!important;
+}
+@keyframes milkHintStrong{50%{transform:scale(.8);filter:brightness(1.5) saturate(1.3)}}
+@media(max-height:700px){
+  .milk-match-skill{grid-template-columns:minmax(0,1fr) 100px!important;height:54px!important;min-height:54px!important;padding:5px!important}
+  .milk-match-skill-actions #milkMatchSkillRainbow{height:40px!important;min-height:40px!important}
+}
+
+/* Milk Match Ver.3.19 — flat skill bar and best-move hint */
+.milk-match-skill{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 104px!important;
+  align-items:center!important;
+  gap:10px!important;
+  height:48px!important;
+  min-height:48px!important;
+  padding:0 2px!important;
+  margin:6px 0 8px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+.milk-match-skill-meter{
+  position:relative!important;
+  min-width:0!important;
+  height:46px!important;
+  display:grid!important;
+  grid-template-columns:1fr auto!important;
+  grid-template-rows:18px 18px!important;
+  gap:3px 8px!important;
+  align-content:center!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.milk-match-skill-meter>span,
+.milk-match-skill-meter>strong{
+  position:static!important;
+  align-self:end!important;
+  line-height:1!important;
+  text-shadow:0 1px 8px rgba(0,0,0,.55)!important;
+}
+.milk-match-skill-meter>span{
+  grid-column:1!important;grid-row:1!important;
+  font-size:11px!important;color:#fff1cb!important;
+}
+.milk-match-skill-meter>strong{
+  grid-column:2!important;grid-row:1!important;
+  min-width:48px!important;font-size:10px!important;color:#fff!important;text-align:right!important;
+}
+.milk-match-skill-track,
+.milk-match-skill-meter>div{
+  grid-column:1/3!important;grid-row:2!important;
+  width:100%!important;
+  height:15px!important;min-height:15px!important;
+  margin:0!important;
+  border-radius:5px!important;
+  overflow:hidden!important;
+  background:rgba(12,8,35,.82)!important;
+  border:1px solid rgba(255,255,255,.28)!important;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.16)!important;
+}
+.milk-match-skill-track>i,
+.milk-match-skill-meter i{
+  height:100%!important;
+  border-radius:3px!important;
+  background:linear-gradient(90deg,#52e7ff 0%,#9278ff 45%,#ff6fbe 75%,#ffe36b 100%)!important;
+  box-shadow:0 0 10px rgba(255,123,199,.58)!important;
+}
+.milk-match-skill-actions{
+  display:flex!important;
+  width:104px!important;
+  height:44px!important;
+  margin:0!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.milk-match-skill-actions #milkMatchSkillRainbow{
+  width:104px!important;
+  height:42px!important;
+  min-height:42px!important;
+  padding:5px 8px!important;
+  border-radius:9px!important;
+  display:grid!important;
+  grid-template-columns:28px 1fr!important;
+  align-items:center!important;
+  background:rgba(68,54,92,.86)!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+  color:#d8d0e5!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.22)!important;
+  transform:none!important;
+  overflow:hidden!important;
+}
+.milk-match-skill-actions #milkMatchSkillRainbow span{
+  font-size:21px!important;
+  line-height:1!important;
+  filter:grayscale(.75)!important;
+  opacity:.58!important;
+}
+.milk-match-skill-actions #milkMatchSkillRainbow b{
+  font-size:11px!important;
+  line-height:1.1!important;
+  white-space:nowrap!important;
+}
+.milk-match-skill.is-ready #milkMatchSkillRainbow:not(:disabled){
+  background:linear-gradient(135deg,#ffe36a,#ff79bd 48%,#9478ff)!important;
+  color:#27142f!important;
+  border-color:#fff4ae!important;
+  box-shadow:0 0 0 2px rgba(255,244,174,.22),0 0 16px rgba(255,112,190,.58)!important;
+}
+.milk-match-skill.is-ready #milkMatchSkillRainbow span{filter:none!important;opacity:1!important}
+.milk-match-skill-actions #milkMatchSkillShuffle{display:none!important}
+@media(max-height:700px){
+  .milk-match-skill{grid-template-columns:minmax(0,1fr) 94px!important;height:44px!important;min-height:44px!important;gap:7px!important}
+  .milk-match-skill-meter{height:42px!important;grid-template-rows:16px 15px!important}
+  .milk-match-skill-actions{width:94px!important;height:40px!important}
+  .milk-match-skill-actions #milkMatchSkillRainbow{width:94px!important;height:38px!important;min-height:38px!important}
+}
+
+/* Ver.4.0 Story stage progression */
+.milk-stage-map{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px;margin:8px 0 6px}
+.milk-stage-chip{min-width:0;padding:5px 2px;border:1px solid rgba(255,255,255,.18);border-radius:10px;background:rgba(255,255,255,.08);color:#fff;display:grid;gap:1px;text-align:center}
+.milk-stage-chip b{font-size:12px;line-height:1}.milk-stage-chip span{font-size:8px;letter-spacing:-1px;color:#ffd45e;white-space:nowrap}
+.milk-stage-chip.is-current{background:linear-gradient(135deg,#f14aa8,#8952ff);box-shadow:0 0 0 2px rgba(255,255,255,.18),0 5px 16px rgba(224,57,176,.3)}
+.milk-stage-chip.is-locked{opacity:.28;filter:grayscale(1)}
+.milk-result-stars{display:flex;align-items:center;justify-content:center;gap:3px;margin:-2px 0 5px}
+.milk-result-stars span{font-size:24px;line-height:1;color:rgba(255,255,255,.15);text-shadow:none}.milk-result-stars span.is-on{color:#ffd85e;text-shadow:0 0 10px rgba(255,216,94,.55)}
+.milk-result-stars small{margin-left:7px;color:rgba(255,255,255,.72);font-size:10px}
+@media(max-width:390px){.milk-stage-map{gap:2px}.milk-stage-chip{padding:4px 1px;border-radius:8px}.milk-stage-chip b{font-size:10px}.milk-stage-chip span{font-size:7px}}
+
+/* Ver.4.2 compact story lobby + clear 3x3 star map */
+.milk-match-lobby{
+  padding:8px!important;
+  align-items:center!important;
+  overflow:hidden!important;
+}
+.milk-match-lobby-card{
+  width:min(92%,380px)!important;
+  max-height:calc(100% - 10px)!important;
+  padding:11px 12px 12px!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:7px!important;
+}
+.milk-match-lobby-card .milk-lobby-head{margin:0!important;min-height:34px!important}
+.milk-match-lobby-card .milk-lobby-head>span{width:34px!important;height:34px!important;border-radius:11px!important;font-size:18px!important}
+.milk-match-lobby-card .milk-lobby-head small{font-size:7px!important}
+.milk-match-lobby-card .milk-lobby-head h3{font-size:16px!important;margin:0!important}
+.milk-stage-map{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+  margin:1px 0!important;
+}
+.milk-match-lobby-card .milk-stage-chip{
+  width:100%!important;
+  min-height:48px!important;
+  padding:5px 3px!important;
+  border-radius:12px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:3px!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06))!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
+  color:#fff!important;
+}
+.milk-match-lobby-card .milk-stage-chip b{
+  font-size:15px!important;
+  line-height:1!important;
+  font-weight:900!important;
+}
+.milk-match-lobby-card .milk-stage-chip span{
+  min-height:13px!important;
+  font-size:12px!important;
+  line-height:1!important;
+  letter-spacing:0!important;
+  color:#ffd75c!important;
+  white-space:nowrap!important;
+  text-shadow:0 0 8px rgba(255,211,73,.32)!important;
+}
+.milk-match-lobby-card .milk-stage-chip.is-current{
+  background:linear-gradient(135deg,#ee4ca6,#8954ef)!important;
+  border-color:rgba(255,255,255,.48)!important;
+  box-shadow:0 0 0 2px rgba(255,255,255,.15),0 7px 18px rgba(222,61,171,.32)!important;
+  transform:translateY(-1px)!important;
+}
+.milk-match-lobby-card .milk-stage-chip.is-locked{
+  opacity:.34!important;
+  filter:grayscale(.65)!important;
+}
+.milk-match-lobby-card .milk-lobby-rule{
+  padding:7px 10px!important;
+  border-radius:11px!important;
+  gap:2px!important;
+}
+.milk-match-lobby-card .milk-lobby-rule strong{font-size:14px!important}
+.milk-match-lobby-card .milk-lobby-rule span{font-size:9px!important}
+.milk-match-lobby-card>p{
+  margin:0 2px!important;
+  font-size:9px!important;
+  line-height:1.3!important;
+}
+.milk-match-lobby-card .milk-lobby-start{
+  flex:0 0 auto!important;
+  width:100%!important;
+  min-height:40px!important;
+  padding:8px 12px!important;
+  margin:0!important;
+  border-radius:12px!important;
+  font-size:14px!important;
+}
+@media(max-height:760px){
+  .milk-match-lobby-card{gap:5px!important;padding:9px 10px 10px!important}
+  .milk-match-lobby-card .milk-lobby-head{min-height:30px!important}
+  .milk-match-lobby-card .milk-lobby-head>span{width:30px!important;height:30px!important;font-size:16px!important}
+  .milk-match-lobby-card .milk-lobby-head h3{font-size:14px!important}
+  .milk-stage-map{gap:4px!important}
+  .milk-match-lobby-card .milk-stage-chip{min-height:40px!important;padding:3px 2px!important;border-radius:10px!important}
+  .milk-match-lobby-card .milk-stage-chip b{font-size:13px!important}
+  .milk-match-lobby-card .milk-stage-chip span{font-size:10px!important;min-height:11px!important}
+  .milk-match-lobby-card .milk-lobby-rule{padding:6px 8px!important}
+  .milk-match-lobby-card .milk-lobby-rule strong{font-size:12px!important}
+  .milk-match-lobby-card>p{font-size:8px!important}
+  .milk-match-lobby-card .milk-lobby-start{min-height:36px!important;padding:7px 10px!important;font-size:13px!important}
+}
+@media(max-height:660px){
+  .milk-match-lobby-card>p{display:none!important}
+  .milk-match-lobby-card .milk-stage-chip{min-height:36px!important}
+  .milk-match-lobby-card{gap:4px!important}
+}
+
+
+/* Ver.4.3 compact stage selector / standalone rainbow button */
+.milk-match-lobby-card{
+  width:min(90%,360px)!important;
+  max-height:calc(100% - 8px)!important;
+  padding:8px 10px 9px!important;
+  gap:4px!important;
+}
+.milk-match-lobby-card .milk-lobby-head{
+  min-height:28px!important;
+  gap:7px!important;
+}
+.milk-match-lobby-card .milk-lobby-head>span{
+  width:28px!important;height:28px!important;border-radius:8px!important;font-size:15px!important;
+}
+.milk-match-lobby-card .milk-lobby-head small{font-size:6px!important}
+.milk-match-lobby-card .milk-lobby-head h3{font-size:13px!important}
+.milk-stage-map{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:3px!important;
+  margin:0!important;
+}
+.milk-match-lobby-card .milk-stage-chip{
+  min-height:34px!important;
+  padding:2px!important;
+  border-radius:8px!important;
+  gap:1px!important;
+  touch-action:manipulation!important;
+  cursor:pointer!important;
+  position:relative!important;
+  z-index:4!important;
+}
+.milk-match-lobby-card .milk-stage-chip b{font-size:12px!important}
+.milk-match-lobby-card .milk-stage-chip span{font-size:9px!important;min-height:10px!important}
+.milk-match-lobby-card .milk-lobby-rule{padding:5px 8px!important;border-radius:9px!important}
+.milk-match-lobby-card .milk-lobby-rule strong{font-size:11px!important}
+.milk-match-lobby-card .milk-lobby-rule span{font-size:7px!important}
+.milk-match-lobby-card>p{display:none!important}
+.milk-match-lobby-card .milk-lobby-start{min-height:34px!important;padding:6px 10px!important;font-size:12px!important}
+
+/* スキル欄の外側の丸い箱を廃止し、虹ボタンだけ独立表示 */
+.milk-match-skill{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:0!important;
+  border-radius:0!important;
+  grid-template-columns:minmax(0,1fr) 88px!important;
+  gap:8px!important;
+}
+.milk-match-skill-meter{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:0!important;
+  border-radius:0!important;
+}
+.milk-match-skill-actions{
+  width:88px!important;
+  height:40px!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:0!important;
+}
+.milk-match-skill-actions #milkMatchSkillRainbow{
+  width:88px!important;
+  height:40px!important;
+  min-height:40px!important;
+  border-radius:8px!important;
+  padding:4px 6px!important;
+  background:rgba(53,38,77,.72)!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:0 4px 12px rgba(0,0,0,.2)!important;
+}
+.milk-match-skill.is-ready #milkMatchSkillRainbow:not(:disabled){
+  background:linear-gradient(135deg,#ffe36a,#ff79bd 52%,#9478ff)!important;
+  border-color:rgba(255,255,255,.8)!important;
+}
+@media(max-height:700px){
+  .milk-match-lobby-card{padding:6px 8px 7px!important;gap:3px!important}
+  .milk-match-lobby-card .milk-stage-chip{min-height:30px!important}
+  .milk-match-lobby-card .milk-lobby-start{min-height:31px!important}
+}
+
+/* Ver.4.4: milk fragments retired, special activation after landing */
+#milkMatchModal .milk-match-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#milkLyricsModal .milk-lyrics-summary{grid-template-columns:1fr!important}
+#milkLyricsModal .milk-lyrics-summary .milk-lyrics-progress{grid-column:1!important}
+.milk-match-tile.is-special-primed{animation:milkSpecialPrimed .18s ease-out both;z-index:7}
+@keyframes milkSpecialPrimed{0%{filter:brightness(1);transform:scale(1)}55%{filter:brightness(1.55) drop-shadow(0 0 12px rgba(255,255,255,.95));transform:scale(1.08)}100%{filter:brightness(1.2);transform:scale(1.02)}}
+
+
+/* Ver.4.6: remove legacy TAP badge and use visual-only special cues */
+.milk-match-tile.has-special::after{content:none!important;display:none!important}
+.milk-match-tile.has-special:not(.is-special-activating):not(.is-chain-special){
+  animation:milkSpecialIdleGlow 1.65s ease-in-out infinite!important;
+}
+.milk-match-tile[data-special="line-h"] .milk-match-special-mark b,
+.milk-match-tile[data-special="line-v"] .milk-match-special-mark b{
+  font-size:clamp(24px,6.7vw,33px)!important;
+}
+.milk-match-tile[data-special="rainbow"] .milk-match-special-mark{
+  animation:milkRainbowIdle 2.1s linear infinite!important;
+}
+@keyframes milkSpecialIdleGlow{
+  0%,100%{filter:brightness(1);box-shadow:0 0 0 3px #fff,0 0 10px rgba(255,185,67,.58),0 3px 0 rgba(97,63,50,.15)}
+  50%{filter:brightness(1.08);box-shadow:0 0 0 3px #fff,0 0 17px rgba(255,210,95,.9),0 3px 0 rgba(97,63,50,.15)}
+}
+@keyframes milkRainbowIdle{
+  0%{filter:hue-rotate(0deg) brightness(1)}
+  50%{filter:hue-rotate(18deg) brightness(1.14)}
+  100%{filter:hue-rotate(0deg) brightness(1)}
+}
+/* Ver.4.7 online leaderboard */
+.milk-online-ranking{margin-top:10px;padding-top:9px;border-top:1px solid rgba(255,255,255,.14)}
+.milk-online-head{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-bottom:6px}.milk-online-head strong{font-size:12px}.milk-online-head small{font-size:8px;opacity:.65}
+.milk-online-row{display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:7px;padding:6px 7px;margin:3px 0;border-radius:10px;background:rgba(255,255,255,.07)}
+.milk-online-row.is-me{background:linear-gradient(90deg,rgba(255,74,168,.25),rgba(139,82,255,.24));box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.milk-online-row>b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.12);font-size:10px}.milk-online-row span{min-width:0}.milk-online-row span strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}.milk-online-row span small{display:block;font-size:7px;opacity:.66}.milk-online-row em{font-style:normal;font-weight:900;font-size:11px}.milk-online-loading,.milk-online-empty{padding:10px 4px;text-align:center;font-size:9px;opacity:.7}
+
+/* =========================================================
+   MILK BLOOM VER.4.10: online strip / rules / special combos
+   ========================================================= */
+.milk-match-quickbar{
+  position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) auto;
+  gap:5px;margin:3px 0 4px;min-height:31px;
+}
+.milk-match-ranking-spot,.milk-match-rules-open{
+  border:1px solid rgba(255,255,255,.18)!important;background:rgba(19,10,42,.62)!important;
+  color:#fff!important;border-radius:10px!important;min-height:31px!important;height:31px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+.milk-match-ranking-spot{
+  display:flex!important;align-items:center;gap:8px;padding:3px 9px!important;text-align:left!important;overflow:hidden;
+}
+.milk-match-ranking-spot span{font-size:8px;font-weight:900;letter-spacing:.08em;color:#7ee9ff;white-space:nowrap}
+.milk-match-ranking-spot strong{font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:800}
+.milk-match-rules-open{padding:3px 10px!important;font-size:8px!important;font-weight:900!important;white-space:nowrap}
+.milk-match-ranking-spot:active,.milk-match-rules-open:active{transform:translateY(1px)}
+.milk-match-actions .is-online-ranking{
+  background:linear-gradient(135deg,rgba(51,198,231,.92),rgba(113,82,221,.95))!important;
+  color:#fff!important;font-weight:900!important;
+}
+
+.milk-match-rules-layer{display:grid!important;place-items:center!important;padding:12px!important}
+.milk-match-rules-card{
+  width:min(92%,430px);padding:14px;border-radius:20px;color:#fff;
+  background:linear-gradient(160deg,#2b1748,#17102d 70%);border:1px solid rgba(255,255,255,.17);
+  box-shadow:0 18px 50px rgba(0,0,0,.35);
+}
+.milk-match-rules-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.milk-match-rules-head small{font-size:8px;letter-spacing:.12em;color:#7ee9ff;font-weight:900}
+.milk-match-rules-head h3{margin:2px 0 0;font-size:18px}
+.milk-match-rules-head button{width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;font-size:20px}
+.milk-match-rules-list{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.milk-match-rules-list li{display:grid;grid-template-columns:25px 1fr;align-items:center;gap:8px;padding:8px;border-radius:11px;background:rgba(255,255,255,.07)}
+.milk-match-rules-list li>b{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:linear-gradient(135deg,#e94c9d,#7b59e7);font-size:11px}
+.milk-match-rules-list span{font-size:11px;line-height:1.45}.milk-match-rules-list strong{color:#ffe37b}
+.milk-match-combo-guide{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}
+.milk-match-combo-guide span{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:54px;padding:6px;border-radius:11px;background:rgba(126,233,255,.08);font-size:18px}
+.milk-match-combo-guide strong{font-size:8px;margin-top:3px;color:#fff}
+.milk-match-rules-ok{width:100%;margin-top:10px;padding:9px;border:0;border-radius:11px;background:linear-gradient(135deg,#ed4fa1,#7654df);color:#fff;font-weight:900}
+
+.milk-match-board.is-double-rainbow{box-shadow:0 0 0 2px rgba(255,255,255,.45),0 0 28px rgba(116,230,255,.62)!important}
+.milk-match-tile.is-special-combo-source{animation:milkComboSource .18s ease forwards}
+.milk-match-tile.is-special-combo-target{animation:milkComboTarget .22s ease forwards}
+.milk-match-tile.is-combo-created{animation:milkComboCreated .35s ease both}
+@keyframes milkComboSource{to{transform:scale(.55);opacity:.25}}
+@keyframes milkComboTarget{50%{transform:scale(1.13);filter:brightness(1.8)}100%{transform:scale(1)}}
+@keyframes milkComboCreated{0%{transform:scale(.35) rotate(-20deg);filter:brightness(2.4)}70%{transform:scale(1.18) rotate(5deg)}100%{transform:scale(1) rotate(0)}}
+
+@media(max-height:720px){
+  .milk-match-quickbar{min-height:27px;height:27px;margin:2px 0}
+  .milk-match-ranking-spot,.milk-match-rules-open{min-height:27px!important;height:27px!important}
+  .milk-match-ranking-spot span,.milk-match-ranking-spot strong,.milk-match-rules-open{font-size:7px!important}
+}
+
+/* =========================================================
+   MILK BLOOM VER.4.11: compact game-style online ranking
+   ========================================================= */
+.milk-match-records{
+  padding:8px!important;
+  background:rgba(9,5,24,.76)!important;
+}
+.milk-match-online-card{
+  width:min(94vw,390px)!important;
+  max-height:min(92dvh,640px)!important;
+  overflow:hidden!important;
+  padding:10px!important;
+  border-radius:17px!important;
+  color:#fff!important;
+  background:linear-gradient(160deg,#251347 0%,#17102f 58%,#101527 100%)!important;
+  border:1px solid rgba(255,255,255,.17)!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.42)!important;
+}
+.milk-match-online-card .milk-match-record-head{min-height:34px;margin:0 0 7px}
+.milk-match-online-card .milk-match-record-head small{font-size:7px!important;color:#7ee9ff!important;letter-spacing:.13em}
+.milk-match-online-card .milk-match-record-head h3{margin:1px 0 0!important;font-size:16px!important;color:#fff!important}
+.milk-match-online-card .milk-match-record-head button{
+  width:29px!important;height:29px!important;border-radius:9px!important;
+  color:#fff!important;background:rgba(255,255,255,.09)!important;
+  border:1px solid rgba(255,255,255,.15)!important;font-size:18px!important;
+}
+.milk-match-online-card .milk-match-record-tabs{gap:4px;margin-bottom:6px}
+.milk-match-online-card .milk-match-record-tabs button{
+  min-height:29px;padding:4px!important;border-radius:8px!important;
+  background:rgba(255,255,255,.08)!important;color:rgba(255,255,255,.72)!important;
+  border:1px solid rgba(255,255,255,.1)!important;font-size:9px!important;
+}
+.milk-match-online-card .milk-match-record-tabs button.is-active{
+  color:#fff!important;background:linear-gradient(135deg,#e84e9f,#7756e4)!important;
+  border-color:rgba(255,255,255,.34)!important;
+}
+.milk-online-ranking-main{
+  margin:0!important;padding:0!important;border:0!important;
+  display:block!important;
+}
+.milk-online-columns{
+  display:grid;grid-template-columns:34px minmax(0,1fr) 82px;gap:5px;
+  padding:0 6px 3px;color:rgba(255,255,255,.5);font-size:7px;font-weight:800;
+}
+.milk-online-columns span:last-child{text-align:right}
+.milk-online-ranking-main [data-online-ranking]{display:grid;gap:3px}
+.milk-online-ranking-main .milk-online-row{
+  display:grid!important;grid-template-columns:28px minmax(0,1fr) 82px!important;
+  min-height:34px!important;margin:0!important;padding:4px 7px!important;gap:5px!important;
+  border-radius:9px!important;background:rgba(255,255,255,.065)!important;
+  border:1px solid rgba(255,255,255,.07)!important;
+}
+.milk-online-ranking-main .milk-online-row:nth-child(-n+3){
+  background:linear-gradient(90deg,rgba(232,78,159,.17),rgba(119,86,228,.14))!important;
+}
+.milk-online-ranking-main .milk-online-row.is-me{
+  background:linear-gradient(90deg,rgba(55,205,233,.24),rgba(119,86,228,.26))!important;
+  border-color:rgba(126,233,255,.42)!important;
+}
+.milk-online-ranking-main .milk-online-row>b{
+  width:22px!important;height:22px!important;font-size:9px!important;
+  background:rgba(255,255,255,.12)!important;
+}
+.milk-online-ranking-main .milk-online-row>strong{
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:10px!important;color:#fff!important;
+}
+.milk-online-ranking-main .milk-online-row>em{
+  text-align:right;font-size:11px!important;color:#ffe678!important;font-style:normal;font-weight:900;
+}
+.milk-online-ranking-main .milk-online-loading,
+.milk-online-ranking-main .milk-online-empty{padding:22px 5px!important;font-size:9px!important;color:rgba(255,255,255,.7)!important}
+.milk-online-note{margin:5px 0 0!important;text-align:center;font-size:7px!important;color:rgba(255,255,255,.5)!important}
+
+@media(max-height:650px){
+  .milk-match-online-card{padding:8px!important;max-height:95dvh!important}
+  .milk-match-online-card .milk-match-record-head{min-height:29px;margin-bottom:4px}
+  .milk-match-online-card .milk-match-record-head h3{font-size:14px!important}
+  .milk-match-online-card .milk-match-record-tabs{margin-bottom:4px}
+  .milk-match-online-card .milk-match-record-tabs button{min-height:25px!important}
+  .milk-online-ranking-main [data-online-ranking]{gap:2px}
+  .milk-online-ranking-main .milk-online-row{min-height:28px!important;padding:2px 6px!important}
+  .milk-online-ranking-main .milk-online-row>b{width:19px!important;height:19px!important;font-size:8px!important}
+  .milk-online-ranking-main .milk-online-row>strong{font-size:9px!important}
+  .milk-online-ranking-main .milk-online-row>em{font-size:10px!important}
+  .milk-online-columns{padding-bottom:2px}
+}
+
+
+/* =========================================================
+   MILK BLOOM VER.4.12: dramatic all-clear celebration
+   ========================================================= */
+.milk-match-board.is-double-rainbow::before,
+.milk-match-board.is-double-rainbow::after{
+  content:"";position:absolute;inset:5%;z-index:18;pointer-events:none;border-radius:22px;
+}
+.milk-match-board.is-double-rainbow::before{
+  border:3px solid rgba(255,255,255,.92);
+  box-shadow:0 0 18px rgba(255,255,255,.95),0 0 42px rgba(255,91,191,.78),0 0 68px rgba(76,214,255,.72);
+  animation:milkAllClearRing .9s cubic-bezier(.15,.8,.2,1) both;
+}
+.milk-match-board.is-double-rainbow::after{
+  background:
+    radial-gradient(circle at 20% 25%,rgba(255,255,255,.95) 0 3px,transparent 4px),
+    radial-gradient(circle at 78% 22%,rgba(255,226,112,.95) 0 4px,transparent 5px),
+    radial-gradient(circle at 32% 72%,rgba(255,100,202,.95) 0 4px,transparent 5px),
+    radial-gradient(circle at 72% 72%,rgba(102,226,255,.95) 0 3px,transparent 4px),
+    radial-gradient(circle at 50% 48%,rgba(255,255,255,.25),transparent 56%);
+  background-size:84px 84px,112px 112px,96px 96px,128px 128px,100% 100%;
+  animation:milkAllClearSparkles .95s ease-out both;
+}
+.milk-match-combo.is-all-clear{
+  z-index:45!important;
+  padding:18px 24px;
+  color:#fff;
+  text-align:center;
+  border-radius:26px;
+  background:radial-gradient(circle,rgba(43,18,85,.84),rgba(19,8,45,.38) 62%,transparent 76%);
+  filter:drop-shadow(0 14px 18px rgba(10,3,32,.55));
+}
+.milk-match-combo.is-all-clear.show{animation:milkAllClearTitle 1.55s cubic-bezier(.12,.82,.18,1) both}
+.milk-match-combo.is-all-clear .milk-all-clear-crown{display:block;font-size:34px;line-height:1;animation:milkAllClearCrown .75s ease both}
+.milk-match-combo.is-all-clear strong{
+  display:block;font-size:clamp(42px,13vw,72px)!important;line-height:.95;letter-spacing:.08em;
+  color:#fff;-webkit-text-stroke:2px rgba(255,255,255,.48);
+  text-shadow:0 0 8px #fff,0 0 18px #ff65c5,0 0 34px #68ddff,0 7px 0 rgba(82,29,110,.55);
+}
+.milk-match-combo.is-all-clear b{
+  display:inline-block;margin-top:9px;padding:6px 16px;border-radius:999px;
+  font-size:clamp(17px,5vw,26px);letter-spacing:.08em;color:#3b174f;
+  background:linear-gradient(135deg,#fff3a5,#fff,#9eeeff);
+  box-shadow:0 0 16px rgba(255,255,255,.88),0 7px 18px rgba(0,0,0,.25);
+}
+.milk-match-combo.is-all-clear small{display:block;margin-top:8px!important;font-size:clamp(18px,5.5vw,30px)!important;color:#fff7b8!important;font-weight:900}
+@keyframes milkAllClearTitle{
+  0%{opacity:0;transform:scale(.18) rotate(-7deg)}
+  24%{opacity:1;transform:scale(1.18) rotate(2deg)}
+  42%{transform:scale(.96) rotate(0)}
+  72%{opacity:1;transform:scale(1.03)}
+  100%{opacity:0;transform:scale(1.22)}
+}
+@keyframes milkAllClearCrown{0%{transform:translateY(24px) scale(.3) rotate(-20deg);opacity:0}65%{transform:translateY(-8px) scale(1.25) rotate(8deg);opacity:1}100%{transform:translateY(0) scale(1) rotate(0)}}
+@keyframes milkAllClearRing{0%{opacity:0;transform:scale(.45) rotate(-8deg)}40%{opacity:1}100%{opacity:0;transform:scale(1.18) rotate(5deg)}}
+@keyframes milkAllClearSparkles{0%{opacity:0;transform:scale(.75) rotate(-5deg)}35%{opacity:1}100%{opacity:0;transform:scale(1.22) rotate(9deg)}}
+@media(max-height:720px){
+  .milk-match-combo.is-all-clear{padding:10px 15px}
+  .milk-match-combo.is-all-clear .milk-all-clear-crown{font-size:25px}
+  .milk-match-combo.is-all-clear strong{font-size:clamp(34px,10vw,52px)!important}
+  .milk-match-combo.is-all-clear b{margin-top:6px;padding:4px 12px;font-size:15px}
+  .milk-match-combo.is-all-clear small{margin-top:5px!important;font-size:17px!important}
+}
+
+
+/* =========================================================
+   MILK BLOOM VER.4.14: visible rainbow transformation + compact rules
+   ========================================================= */
+.milk-match-tile.is-combo-created{
+  animation:milkComboCreatedV414 .82s cubic-bezier(.18,.82,.2,1) both!important;
+  z-index:6!important;
+}
+.milk-match-tile.is-rainbow-forming::after{
+  content:"虹 完 成";
+  position:absolute;
+  left:50%;top:-19px;
+  transform:translateX(-50%);
+  min-width:58px;
+  padding:3px 6px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#55ddff,#ff77c8,#ffe06b);
+  color:#251136;
+  font-size:7px;
+  font-weight:1000;
+  letter-spacing:.08em;
+  white-space:nowrap;
+  box-shadow:0 0 12px rgba(255,255,255,.75);
+  animation:milkRainbowCaption .82s ease both;
+  pointer-events:none;
+}
+@keyframes milkComboCreatedV414{
+  0%{transform:scale(.28) rotate(-28deg);filter:brightness(2.8) saturate(1.7)}
+  36%{transform:scale(1.28) rotate(8deg);filter:brightness(2.2) saturate(1.5)}
+  70%{transform:scale(.94) rotate(-3deg);filter:brightness(1.5)}
+  100%{transform:scale(1) rotate(0);filter:brightness(1.15)}
+}
+@keyframes milkRainbowCaption{
+  0%{opacity:0;transform:translate(-50%,8px) scale(.7)}
+  28%,74%{opacity:1;transform:translate(-50%,0) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-5px) scale(.95)}
+}
+
+.milk-match-rules-layer{
+  place-items:center!important;
+  padding:8px!important;
+}
+.milk-match-rules-card{
+  width:min(94%,390px)!important;
+  max-height:min(72vh,470px)!important;
+  padding:10px!important;
+  border-radius:16px!important;
+  overflow:hidden!important;
+}
+.milk-match-rules-head{margin-bottom:6px!important}
+.milk-match-rules-head h3{font-size:15px!important;margin-top:0!important}
+.milk-match-rules-head small{font-size:6px!important}
+.milk-match-rules-head button{width:27px!important;height:27px!important;font-size:17px!important}
+.milk-match-rules-list{
+  grid-template-columns:1fr 1fr!important;
+  gap:5px!important;
+}
+.milk-match-rules-list li{
+  grid-template-columns:20px 1fr!important;
+  gap:5px!important;
+  min-height:42px!important;
+  padding:5px 6px!important;
+  border-radius:9px!important;
+}
+.milk-match-rules-list li>b{width:20px!important;height:20px!important;font-size:9px!important}
+.milk-match-rules-list span{font-size:8px!important;line-height:1.3!important}
+.milk-match-combo-guide{gap:5px!important;margin-top:6px!important}
+.milk-match-combo-guide span{min-height:37px!important;padding:4px!important;font-size:14px!important;border-radius:9px!important}
+.milk-match-combo-guide strong{font-size:6.5px!important;margin-top:1px!important}
+.milk-match-rules-ok{margin-top:6px!important;padding:7px!important;border-radius:9px!important;font-size:10px!important}
+@media(max-height:720px){
+  .milk-match-rules-card{max-height:64vh!important;padding:8px!important}
+  .milk-match-rules-list li{min-height:36px!important;padding:4px!important}
+  .milk-match-rules-list span{font-size:7px!important}
+  .milk-match-combo-guide span{min-height:31px!important;font-size:12px!important}
+}
+
+
+/* =========================================================
+   MILK BLOOM VER.4.17: protected created specials + deluxe clears
+   ========================================================= */
+.milk-match-tile.is-rainbow-ready{
+  z-index:12!important;
+  animation:milkRainbowReadyV417 .78s ease-in-out both!important;
+  box-shadow:0 0 0 3px rgba(255,255,255,.96),0 0 24px rgba(90,225,255,.95),0 0 44px rgba(255,93,205,.88)!important;
+}
+@keyframes milkRainbowReadyV417{
+  0%{transform:scale(.92);filter:brightness(1.15) saturate(1.1)}
+  42%{transform:scale(1.12);filter:brightness(1.8) saturate(1.7)}
+  100%{transform:scale(1);filter:brightness(1.35) saturate(1.4)}
+}
+.milk-match-tile.is-combo-created{
+  animation:milkComboCreatedV417 1.28s cubic-bezier(.16,.85,.2,1) both!important;
+}
+.milk-match-tile.is-rainbow-forming::after{
+  content:"虹アイテム完成！";
+  top:-24px;
+  min-width:86px;
+  padding:4px 8px;
+  font-size:8px;
+  animation:milkRainbowCaptionV417 1.28s ease both;
+}
+@keyframes milkComboCreatedV417{
+  0%{transform:scale(.18) rotate(-42deg);filter:brightness(3.2) saturate(2)}
+  28%{transform:scale(1.34) rotate(10deg);filter:brightness(2.35) saturate(1.8)}
+  52%{transform:scale(.93) rotate(-4deg);filter:brightness(1.75) saturate(1.55)}
+  78%{transform:scale(1.08) rotate(2deg);filter:brightness(1.55) saturate(1.45)}
+  100%{transform:scale(1) rotate(0);filter:brightness(1.28) saturate(1.35)}
+}
+@keyframes milkRainbowCaptionV417{
+  0%{opacity:0;transform:translateX(-50%) translateY(8px) scale(.55)}
+  24%,76%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+  100%{opacity:0;transform:translateX(-50%) translateY(-8px) scale(1.08)}
+}
+.milk-match-board.is-double-rainbow{
+  animation:milkLegendaryBoardV417 2.6s ease both;
+}
+.milk-match-board.is-double-rainbow::before{
+  inset:1%;border-width:4px;
+  box-shadow:0 0 22px rgba(255,255,255,1),0 0 58px rgba(255,72,195,.95),0 0 96px rgba(68,219,255,.88);
+  animation:milkAllClearRingV417 2.45s cubic-bezier(.12,.8,.2,1) both;
+}
+.milk-match-board.is-double-rainbow::after{
+  background-size:54px 54px,72px 72px,64px 64px,88px 88px,100% 100%;
+  animation:milkAllClearSparklesV417 2.5s ease-out both;
+}
+.milk-match-combo.is-all-clear{
+  padding:22px 28px;
+  background:radial-gradient(circle,rgba(59,14,105,.95),rgba(18,5,50,.78) 62%,rgba(8,2,28,.22) 82%,transparent 88%);
+  box-shadow:0 0 34px rgba(255,255,255,.32),0 0 72px rgba(255,71,193,.52);
+}
+.milk-match-combo.is-all-clear.show{animation:milkAllClearTitleV417 3.2s cubic-bezier(.12,.82,.18,1) both}
+.milk-match-combo.is-all-clear::before{
+  content:"LEGENDARY";display:block;margin-bottom:5px;color:#9feaff;font-size:12px;font-weight:1000;letter-spacing:.22em;
+  text-shadow:0 0 12px rgba(112,225,255,.95);
+}
+.milk-match-combo.is-all-clear .milk-all-clear-crown{font-size:42px;animation:milkAllClearCrownV417 1.2s ease both}
+.milk-match-combo.is-all-clear strong{font-size:clamp(48px,15vw,84px)!important}
+.milk-match-combo.is-all-clear b{font-size:clamp(20px,6vw,30px);padding:8px 20px}
+.milk-match-combo.is-all-clear small{font-size:clamp(22px,6.5vw,34px)!important}
+@keyframes milkAllClearTitleV417{
+  0%{opacity:0;transform:scale(.12) rotate(-10deg)}
+  14%{opacity:1;transform:scale(1.2) rotate(3deg)}
+  25%{transform:scale(.95) rotate(-1deg)}
+  38%{transform:scale(1.05) rotate(0)}
+  72%{opacity:1;transform:scale(1)}
+  88%{opacity:1;transform:scale(1.04)}
+  100%{opacity:0;transform:scale(1.28)}
+}
+@keyframes milkAllClearCrownV417{
+  0%{opacity:0;transform:translateY(30px) scale(.2) rotate(-30deg)}
+  42%{opacity:1;transform:translateY(-10px) scale(1.38) rotate(12deg)}
+  70%{transform:translateY(0) scale(.94) rotate(-3deg)}
+  100%{transform:translateY(0) scale(1) rotate(0)}
+}
+@keyframes milkLegendaryBoardV417{0%,100%{filter:none}18%{filter:saturate(1.7) brightness(1.2)}55%{filter:saturate(1.45) brightness(1.12)}}
+@keyframes milkAllClearRingV417{0%{opacity:0;transform:scale(.35) rotate(-14deg)}25%{opacity:1}70%{opacity:.9}100%{opacity:0;transform:scale(1.25) rotate(12deg)}}
+@keyframes milkAllClearSparklesV417{0%{opacity:0;transform:scale(.65) rotate(-9deg)}22%{opacity:1}72%{opacity:1}100%{opacity:0;transform:scale(1.35) rotate(18deg)}}
+@media(max-height:720px){
+  .milk-match-combo.is-all-clear{padding:13px 18px}
+  .milk-match-combo.is-all-clear::before{font-size:9px}
+  .milk-match-combo.is-all-clear .milk-all-clear-crown{font-size:30px}
+  .milk-match-combo.is-all-clear strong{font-size:clamp(38px,12vw,60px)!important}
+}
+
+/* =========================================================
+   MILK BLOOM VER.4.18: line combo rainbow visibility fix
+   ========================================================= */
+.milk-match-tile.is-combo-source-vacated{
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+.milk-match-tile.is-rainbow-forming.is-combo-created{
+  z-index:30!important;
+  opacity:1!important;
+  visibility:visible!important;
+  animation:milkRainbowVisibleV418 1.75s cubic-bezier(.16,.85,.2,1) both!important;
+}
+@keyframes milkRainbowVisibleV418{
+  0%{transform:scale(.2) rotate(-55deg);filter:brightness(3.2) saturate(2.2)}
+  24%{transform:scale(1.25) rotate(9deg);filter:brightness(2.35) saturate(1.9)}
+  45%{transform:scale(.96) rotate(-3deg);filter:brightness(1.7) saturate(1.6)}
+  68%{transform:scale(1.08) rotate(2deg);filter:brightness(1.55) saturate(1.5)}
+  100%{transform:scale(1) rotate(0);filter:brightness(1.35) saturate(1.45)}
+}
+
+
+/* Ver.4.21 STORY daily limit complete state */
+.milk-story-daily-finished{
+  display:grid;
+  gap:3px;
+  margin:2px 0 4px;
+  padding:8px 10px;
+  border:1px solid rgba(196,181,253,.45);
+  border-radius:11px;
+  background:linear-gradient(135deg,rgba(91,33,182,.32),rgba(30,41,59,.55));
+  color:#fff;
+  text-align:center;
+}
+.milk-story-daily-finished strong{font-size:13px;line-height:1.2}
+.milk-story-daily-finished span{font-size:10px;line-height:1.35;color:rgba(255,255,255,.88)}
+.milk-story-daily-finished small{font-size:8px;line-height:1.2;color:rgba(255,255,255,.6)}
+.milk-match-lobby-card .milk-lobby-start.is-daily-finished,
+.milk-match-lobby-card .milk-lobby-start.is-daily-finished:disabled{
+  opacity:1!important;
+  cursor:not-allowed!important;
+  color:rgba(255,255,255,.72)!important;
+  border-color:rgba(255,255,255,.13)!important;
+  background:linear-gradient(135deg,rgba(71,85,105,.78),rgba(51,65,85,.78))!important;
+  box-shadow:none!important;
+  filter:saturate(.55)!important;
+}
+@media (max-height:720px){
+  .milk-story-daily-finished{padding:6px 8px;gap:2px;margin:1px 0 3px}
+  .milk-story-daily-finished strong{font-size:11px}
+  .milk-story-daily-finished span{font-size:8px}
+  .milk-story-daily-finished small{font-size:7px}
+}
+
+/* Ver.4.22: MILK SKILL の任意配置モード */
+.milk-match-board.is-skill-placement{outline:2px solid rgba(255,225,105,.9);box-shadow:0 0 22px rgba(255,210,90,.45)!important}
+.milk-match-board.is-skill-placement .milk-match-tile{cursor:pointer;filter:brightness(.78) saturate(.9);transition:filter .15s ease,transform .15s ease,box-shadow .15s ease}
+.milk-match-board.is-skill-placement .milk-match-tile.is-skill-selectable,
+.milk-match-board.is-skill-placement .milk-match-tile:hover{filter:brightness(1.2) saturate(1.25);box-shadow:inset 0 0 0 2px rgba(255,255,255,.9),0 0 12px rgba(255,223,108,.85);transform:scale(.96)}
+.milk-match-tile.is-skill-created{animation:milkSkillRainbowCreate .65s cubic-bezier(.2,.85,.2,1) both!important;z-index:12!important}
+@keyframes milkSkillRainbowCreate{0%{transform:scale(.45) rotate(-35deg);filter:brightness(2)}55%{transform:scale(1.18) rotate(12deg);filter:brightness(1.55) saturate(1.6)}100%{transform:scale(1) rotate(0);filter:none}}
+
