@@ -54,8 +54,6 @@ function installUI(){
   if(release && !$('#songLikeButton')) release.insertAdjacentHTML('beforeend',`<div class="song-like-box"><button id="songLikeButton" type="button"><span id="songLikeIcon">♡</span><strong>この曲が好き</strong></button><p><b id="songLikeCount">0</b>人が好き</p></div>`);
   const compact=$('.compact-song');
   if(compact && !$('#compactSongLikes')) compact.insertAdjacentHTML('beforeend',`<div class="compact-song-likes" id="compactSongLikes">♡ <b>0</b>人</div>`);
-  const passGrid=$('.passport-detail-grid');
-  if(passGrid && !$('#detailFavoriteSongs')) passGrid.insertAdjacentHTML('beforeend',`<div class="passport-detail-wide"><dt>好きな曲</dt><dd id="detailFavoriteSongs">まだありません</dd></div><div><dt>エール</dt><dd id="detailCheerCount">♡ 0</dd></div><div><dt>応援レベル</dt><dd id="detailSupportLevel">🌱 はじめての応援</dd></div>`);
   if(!$('#notificationModal')) document.body.insertAdjacentHTML('beforeend',`
   <div aria-hidden="true" class="world-modal" id="notificationModal"><div class="world-modal-backdrop" data-close-notifications></div><section aria-modal="true" class="world-modal-panel notification-panel" role="dialog" aria-labelledby="notificationTitle"><button class="world-modal-close" data-close-notifications type="button">×</button><p class="eyebrow">NOTIFICATIONS</p><h2 id="notificationTitle">通知</h2><div class="notification-actions"><button id="markAllNotifications" type="button">すべて既読</button></div><div id="notificationList" class="notification-list"></div></section></div>`);
 }
