@@ -1,0 +1,42 @@
+/* Phase13.5.5 — UniPass heading: English above, Japanese below */
+#passportModal .passport-card-heading{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  gap:3px!important;
+  min-height:50px!important;
+  padding:3px 18px 10px 122px!important;
+  box-sizing:border-box!important;
+}
+#passportModal .passport-card-heading .eyebrow{
+  margin:0!important;
+  width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  font-size:7px!important;
+  line-height:1.25!important;
+  letter-spacing:.18em!important;
+  color:#826c91!important;
+}
+#passportModal .passport-card-heading h2{
+  margin:0!important;
+  width:100%!important;
+  white-space:nowrap!important;
+  font-size:19px!important;
+  line-height:1.1!important;
+  letter-spacing:.08em!important;
+  color:#493b55!important;
+  text-align:left!important;
+  writing-mode:horizontal-tb!important;
+  word-break:keep-all!important;
+}
+@media(max-width:390px){
+  #passportModal .passport-card-heading{
+    padding-left:112px!important;
+    padding-right:10px!important;
+  }
+  #passportModal .passport-card-heading .eyebrow{font-size:6.5px!important;letter-spacing:.14em!important}
+  #passportModal .passport-card-heading h2{font-size:18px!important}
+}
