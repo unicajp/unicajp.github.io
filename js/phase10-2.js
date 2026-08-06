@@ -43,11 +43,11 @@ function toast(text){ const el=$('#miniToast'); if(!el)return; el.textContent=te
 function openMemberGate(){ $('#memberGate')?.classList.add('is-open'); document.body.classList.add('member-gate-open'); }
 
 function installUI(){
-  const header = $('.site-header');
+  const header = $('#worldStatusBar') || $('.site-header');
   if (header && !$('#phase10Utilities')) {
     const tools=document.createElement('div');
     tools.id='phase10Utilities'; tools.className='phase10-utilities';
-    tools.innerHTML=`<button class="online-pill" id="phaseOnlineButton" type="button" aria-label="オンライン人数"><i></i><span><b id="phaseOnlineCount">0</b>人オンライン</span></button><button class="notification-button" id="notificationButton" type="button" aria-label="通知を開く">🔔<b id="notificationBadge" hidden>0</b></button>`;
+    tools.innerHTML=`<button class="online-pill" id="phaseOnlineButton" type="button" aria-label="オンライン人数"><i></i><b id="phaseOnlineCount">0</b></button><button class="notification-button" id="notificationButton" type="button" aria-label="通知を開く">🔔<b id="notificationBadge" hidden>0</b></button>`;
     header.appendChild(tools);
   }
   const release=$('.release-card .release-copy');
