@@ -26,6 +26,7 @@
 <!-- MILK BLOOM stable puzzle UI: load last to prevent old overrides -->
 <link href="css/passport-scroll-fix.css?v=1" rel="stylesheet"/><link href="css/phase12-3-puzzle-complete.css?v=phase12-3-complete-stable" rel="stylesheet"/><link href="css/phase13-2-milk-bloom-compact.css?v=13.2.0" rel="stylesheet"/>
 <link rel="stylesheet" href="css/phase13-5-common-navigation.css?v=13.5.1"/>
+<link rel="stylesheet" href="css/phase13-5-3-unipass-trigger.css?v=13.5.3"/>
 </head>
 <body>
 <div aria-hidden="true" class="scroll-progress" id="scrollProgress"></div>
@@ -61,6 +62,11 @@
 </button>
 <div class="status-chip status-community"><small>💌 応援</small><strong id="statusPosts">0</strong></div>
 <div class="status-chip status-reaction"><small>♥ いいね</small><strong id="statusReactions">0</strong></div>
+<button class="unipass-direct-button" data-world-nav="pass" id="openUniPassDirect" type="button" aria-label="うにパスを開く">
+<span class="unipass-direct-mark" aria-hidden="true">▣</span>
+<span><small>UNI PASS</small><strong>うにパスをひらく</strong></span>
+<b aria-hidden="true">›</b>
+</button>
 </div>
 <nav aria-label="メインナビゲーション" class="site-nav"><a href="#top">HOME</a><a href="#music">MUSIC</a><a href="#unico">うにこ</a><a href="#unika">うにか</a></nav>
 </header>
@@ -689,8 +695,8 @@
 <script src="js/phase12-4-5-dashboard.js?v=12.4.7"></script>
 <script src="js/youtube-latest-config.js?v=1.1"></script>
 <script src="js/youtube-latest.js?v=3.0"></script>
-<link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=13.5.1"/>
-<script src="js/phase13-4-unipass-card.js?v=13.5.1" type="module"></script>
+<link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=13.5.2"/>
+<script src="js/phase13-4-unipass-card.js?v=13.5.2" type="module"></script>
 <script src="js/phase13-5-common-navigation.js?v=13.5.1"></script>
 </body>
 </html>
