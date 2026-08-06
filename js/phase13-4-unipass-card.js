@@ -18,7 +18,7 @@ function openTitles(){const list=$('#passportTitlesList');const current=$('#deta
 
 // Remove legacy rows that may be injected after page load.
 function cleanLegacyRows(){['detailFavoriteSongs','detailCheerCount','detailSupportLevel','detailBirthdayWishCount'].forEach(id=>$('#'+id)?.closest('div')?.remove())}
-new MutationObserver(cleanLegacyRows).observe(document.documentElement,{childList:true,subtree:true});cleanLegacyRows();
+cleanLegacyRows();
 
 // Capture phase prevents older handlers from opening the legacy presentation.
 document.addEventListener('click',e=>{
