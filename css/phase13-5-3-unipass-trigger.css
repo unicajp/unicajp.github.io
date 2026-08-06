@@ -1,0 +1,44 @@
+/* Phase13.5.3 — dedicated UNI PASS trigger */
+.world-status-bar .unipass-direct-button{
+  grid-column:1 / -1;
+  width:100%;
+  min-height:28px;
+  display:grid;
+  grid-template-columns:22px minmax(0,1fr) 12px;
+  align-items:center;
+  gap:7px;
+  margin:1px 0 0;
+  padding:4px 8px;
+  border:1px solid rgba(121,84,168,.18);
+  border-radius:9px;
+  color:#4f356c;
+  text-align:left;
+  background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(244,235,255,.92));
+  box-shadow:0 3px 9px rgba(77,45,112,.09),inset 0 1px 0 rgba(255,255,255,.9);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.world-status-bar .unipass-direct-button:active{transform:scale(.985);filter:brightness(.98)}
+.unipass-direct-mark{
+  display:grid;
+  place-items:center;
+  width:22px;
+  height:18px;
+  border-radius:5px;
+  color:#fff;
+  font-size:11px;
+  background:linear-gradient(135deg,#7759cf,#e45fa8);
+  box-shadow:0 2px 5px rgba(91,57,151,.22);
+}
+.unipass-direct-button span:nth-child(2){min-width:0;display:flex;align-items:baseline;gap:6px}
+.unipass-direct-button small{font-size:7px;line-height:1;letter-spacing:.12em;color:#9b78b6;font-weight:900;white-space:nowrap}
+.unipass-direct-button strong{min-width:0;font-size:10px;line-height:1.1;color:#53366f;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.unipass-direct-button>b{font-size:16px;line-height:1;color:#9a75b8;text-align:right}
+
+/* The status row gains only one slim line, without crowding the header. */
+.site-header .world-status-bar{grid-auto-rows:auto!important;overflow:visible!important}
+@media(max-width:430px){
+  .world-status-bar .unipass-direct-button{min-height:26px;padding:3px 7px;border-radius:8px}
+  .unipass-direct-button strong{font-size:9px}
+  .unipass-direct-button small{font-size:6px}
+}

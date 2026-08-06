@@ -35,3 +35,29 @@ body.passport-modal-open{overflow:hidden!important}
 .passport-compact-actions{position:relative!important;z-index:3!important;background:transparent!important}
 .passport-title-list-button{position:relative!important;z-index:4!important}
 .passport-collectible-card{z-index:1!important}
+
+
+/* Phase13.5.2 — title collection must always appear above UniPass. */
+#passportTitlesModal{
+  position:fixed!important;
+  inset:0!important;
+  z-index:32000!important;
+  isolation:isolate!important;
+}
+#passportTitlesModal .world-modal-backdrop{
+  z-index:0!important;
+  pointer-events:auto!important;
+}
+#passportTitlesModal .passport-titles-panel{
+  position:relative!important;
+  z-index:2!important;
+  pointer-events:auto!important;
+  transform:none!important;
+}
+#passportTitlesModal.is-open{
+  pointer-events:auto!important;
+}
+#passportModal{z-index:1650!important;}
+body.passport-titles-open #passportModal .passport-card-shell{
+  pointer-events:none!important;
+}
