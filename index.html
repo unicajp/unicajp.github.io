@@ -425,23 +425,38 @@
 </div>
 <div aria-hidden="true" class="world-modal" id="passportModal">
 <div class="world-modal-backdrop" data-close-passport=""></div>
-<section aria-labelledby="passportModalTitle" aria-modal="true" class="world-modal-panel passport-detail-panel" role="dialog">
-<button aria-label="閉じる" class="world-modal-close" data-close-passport="" type="button">×</button>
-<p class="eyebrow">MY UNICA PASSPORT</p>
-<h2 id="passportModalTitle">あなたのうにパス</h2>
-<div class="passport-detail-card">
+<section aria-labelledby="passportModalTitle" aria-modal="true" class="world-modal-panel passport-detail-panel passport-card-shell" role="dialog">
+<button aria-label="閉じる" class="world-modal-close passport-card-close" data-close-passport="" type="button">×</button>
+<div class="passport-card-heading"><p class="eyebrow">UNICA WORLD MEMBER CARD</p><h2 id="passportModalTitle">うにパス</h2></div>
+<div class="passport-detail-card passport-collectible-card">
+<div class="passport-card-chip" aria-hidden="true"></div>
+<div class="passport-card-lines" aria-hidden="true"></div>
 <div class="passport-detail-head"><span id="detailAvatar">🌸</span><div><small>UNICA WORLD MEMBER</small><strong id="detailName">—</strong><em id="detailNumber">—</em></div></div>
-<dl class="passport-detail-grid">
+<dl class="passport-detail-grid passport-compact-grid">
 <div><dt>登録日</dt><dd id="detailJoined">—</dd></div>
 <div><dt>一緒に歩いた日数</dt><dd id="detailDays">0日</dd></div>
-<div><dt>送った応援</dt><dd id="detailPostCount">💌 0</dd></div>
-<div><dt>もらったいいね</dt><dd id="detailReactionCount">♥ 0</dd></div><div><dt>誕生日のお祝い</dt><dd id="detailBirthdayWishCount">🎂 0人</dd></div><div><dt>都道府県</dt><dd id="detailPrefecture">—</dd></div><div><dt>誕生日</dt><dd id="detailBirthday">—</dd></div>
-<div class="passport-detail-wide"><dt>現在の称号</dt><dd id="detailTitle">はじまりのうにメン</dd></div>
+<div><dt>応援コメント</dt><dd id="detailPostCount">💌 0</dd></div>
+<div><dt>もらったいいね</dt><dd id="detailReactionCount">♥ 0</dd></div>
+<div><dt>都道府県</dt><dd id="detailPrefecture">—</dd></div>
+<div><dt>誕生日</dt><dd id="detailBirthday">—</dd></div>
 <div class="passport-detail-wide passport-scent-row" hidden="" id="detailScentRow"><dt>うにかの匂い16診断</dt><dd><button class="passport-scent-button" id="detailScentButton" type="button"><span id="detailScentFlower">🌸</span><span><strong id="detailScentName">—</strong><small id="detailScentDate">—</small></span><em id="detailScentMatch"></em></button></dd></div>
 </dl>
+<div class="passport-card-footer"><span>MEMBER OF UNICA WORLD</span><b aria-hidden="true">|||| || ||| ||||</b></div>
 </div>
-<p class="passport-detail-note">送った応援コメントや、みんなから届いたいいねの記録がここに積み重なっていきます。</p>
-<button class="passport-detail-settings" id="detailOpenSettings" type="button">うにパス設定を開く</button>
+<div class="passport-compact-actions">
+<button class="passport-title-list-button" id="openPassportTitles" type="button"><span>🏷️</span><span><small>現在の称号</small><strong id="detailTitle">はじまりのうにメン</strong></span><b>一覧 ›</b></button>
+<button class="passport-detail-settings" id="detailOpenSettings" type="button">設定</button>
+</div>
+</section>
+</div>
+<div aria-hidden="true" class="world-modal" id="passportTitlesModal">
+<div class="world-modal-backdrop" data-close-passport-titles=""></div>
+<section aria-labelledby="passportTitlesTitle" aria-modal="true" class="world-modal-panel passport-titles-panel" role="dialog">
+<button aria-label="閉じる" class="world-modal-close" data-close-passport-titles="" type="button">×</button>
+<p class="eyebrow">TITLE COLLECTION</p>
+<h2 id="passportTitlesTitle">獲得した称号</h2>
+<p class="passport-titles-intro">これまでに獲得した称号を確認できます。</p>
+<div class="passport-titles-list" id="passportTitlesList"></div>
 </section>
 </div>
 <div aria-hidden="true" class="world-modal" id="prefectureDirectoryModal">
@@ -673,5 +688,7 @@
 <script src="js/phase12-4-5-dashboard.js?v=12.4.7"></script>
 <script src="js/youtube-latest-config.js?v=1.1"></script>
 <script src="js/youtube-latest.js?v=3.0"></script>
+<link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=13.4"/>
+<script src="js/phase13-4-unipass-card.js?v=13.4" type="module"></script>
 </body>
 </html>
