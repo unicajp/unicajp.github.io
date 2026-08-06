@@ -1,65 +1,44 @@
-/* Phase13.5 — mobile-first shared back navigation */
-:root{--uw-nav-ink:#51385f;--uw-nav-bg:rgba(255,255,255,.9);--uw-nav-line:rgba(95,65,118,.13)}
+/* Phase13.5.1 — stable mobile-first back navigation.
+   Swipe handles and drag animations are intentionally disabled. */
+:root{--uw-nav-ink:#51385f;--uw-nav-bg:rgba(255,255,255,.94);--uw-nav-line:rgba(95,65,118,.13)}
 
-/* Turn legacy close controls into visible, thumb-friendly back controls. */
 .uw-common-back,
 .settings-close,.world-modal-close,.scent16-close,.guest-lock-close,
 .birthday-experience-close,.admin-close,.milk-release-celebration-close,
 .milk-match-close,.milk-lyrics-close{
-  position:absolute!important;
-  z-index:30!important;
-  top:max(10px,env(safe-area-inset-top))!important;
-  left:10px!important;
-  right:auto!important;
-  width:auto!important;
-  min-width:72px!important;
-  height:36px!important;
-  min-height:36px!important;
-  padding:0 11px!important;
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:4px!important;
-  border:1px solid var(--uw-nav-line)!important;
-  border-radius:999px!important;
-  background:var(--uw-nav-bg)!important;
-  color:var(--uw-nav-ink)!important;
+  position:absolute!important;z-index:40!important;
+  top:max(10px,env(safe-area-inset-top))!important;left:10px!important;right:auto!important;
+  width:auto!important;min-width:68px!important;height:35px!important;min-height:35px!important;
+  padding:0 10px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  border:1px solid var(--uw-nav-line)!important;border-radius:999px!important;
+  background:var(--uw-nav-bg)!important;color:var(--uw-nav-ink)!important;
   box-shadow:0 4px 12px rgba(55,34,73,.10)!important;
-  backdrop-filter:blur(10px)!important;
-  -webkit-backdrop-filter:blur(10px)!important;
-  font:800 12px/1 system-ui,-apple-system,"Noto Sans JP",sans-serif!important;
-  letter-spacing:0!important;
-  transform:none!important;
+  font:800 11px/1 system-ui,-apple-system,"Noto Sans JP",sans-serif!important;
+  letter-spacing:0!important;transform:none!important;pointer-events:auto!important;
 }
 .uw-common-back:active,
 .settings-close:active,.world-modal-close:active,.scent16-close:active,.guest-lock-close:active,
 .birthday-experience-close:active,.admin-close:active,.milk-release-celebration-close:active,
 .milk-match-close:active,.milk-lyrics-close:active{transform:scale(.96)!important;background:#fff!important}
-.uw-common-back:focus-visible,
-.settings-close:focus-visible,.world-modal-close:focus-visible,.scent16-close:focus-visible,.guest-lock-close:focus-visible,
-.birthday-experience-close:focus-visible,.admin-close:focus-visible,.milk-release-celebration-close:focus-visible,
-.milk-match-close:focus-visible,.milk-lyrics-close:focus-visible{outline:3px solid rgba(132,88,190,.25)!important;outline-offset:2px!important}
 
-/* Give title areas enough room for the back control without increasing overall height too much. */
-.scent16-header,.milk-match-header,.milk-lyrics-header{padding-left:88px!important;min-height:48px!important}
+.scent16-header,.milk-match-header,.milk-lyrics-header{padding-left:80px!important;min-height:46px!important}
 .member-settings-panel,.world-modal-panel,.scent16-panel,.guest-lock-panel,
 .birthday-experience-panel,.admin-panel,.milk-release-celebration-panel,
 .milk-match-panel,.milk-lyrics-panel{position:relative!important}
 .member-settings-panel>p.eyebrow:first-of-type,
 .world-modal-panel>p.eyebrow:first-of-type,
 .guest-lock-panel>p.eyebrow:first-of-type,
-.admin-panel>p.eyebrow:first-of-type{padding-left:80px!important;min-height:25px!important}
-.passport-card-heading{padding-left:80px!important}
+.admin-panel>p.eyebrow:first-of-type{padding-left:74px!important;min-height:24px!important}
+.passport-card-heading{padding-left:74px!important}
 
-/* Small grab handle signals that the sheet can be swiped down. */
-.uw-sheet-handle{position:absolute;z-index:29;top:5px;left:50%;width:34px;height:4px;border-radius:999px;background:rgba(83,59,99,.22);transform:translateX(-50%);pointer-events:none}
-.uw-sheet-dragging{transition:none!important;will-change:transform}
-.uw-sheet-closing{transition:transform .18s ease,opacity .18s ease!important;transform:translateY(105%)!important;opacity:.45!important}
+/* Remove the unstable swipe affordances from the previous build. */
+.uw-sheet-handle{display:none!important}
+.uw-sheet-dragging,.uw-sheet-closing{transform:none!important;opacity:1!important;transition:none!important}
 
-@media(max-width:420px){
+@media(max-width:390px){
   .uw-common-back,.settings-close,.world-modal-close,.scent16-close,.guest-lock-close,
   .birthday-experience-close,.admin-close,.milk-release-celebration-close,
-  .milk-match-close,.milk-lyrics-close{min-width:66px!important;height:34px!important;min-height:34px!important;padding:0 9px!important;font-size:11px!important}
-  .scent16-header,.milk-match-header,.milk-lyrics-header{padding-left:78px!important}
-  .passport-card-heading{padding-left:72px!important}
+  .milk-match-close,.milk-lyrics-close{min-width:62px!important;height:33px!important;min-height:33px!important;padding:0 8px!important;font-size:10px!important}
+  .scent16-header,.milk-match-header,.milk-lyrics-header{padding-left:72px!important}
+  .passport-card-heading{padding-left:68px!important}
 }

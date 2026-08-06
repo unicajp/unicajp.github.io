@@ -30,3 +30,8 @@
 .passport-titles-panel{width:min(92vw,390px)!important;max-height:78dvh!important;padding:22px 18px!important;border-radius:24px!important;background:linear-gradient(160deg,#fff,#f6f0fa)!important}.passport-titles-panel h2{font-size:21px!important;margin:4px 0 6px!important}.passport-titles-intro{margin:0 0 12px;font-size:10px;color:#87778e}.passport-titles-list{display:grid;gap:7px}.passport-title-item{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:9px;padding:10px;border-radius:14px;background:#fff;border:1px solid rgba(91,62,102,.1)}.passport-title-item>span{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:linear-gradient(145deg,#f9edf5,#eee9fb);font-size:17px}.passport-title-item strong{font-size:11px;color:#4f3d58}.passport-title-item small{font-size:7px;color:#9a899f}.passport-title-item em{font-style:normal;font-size:7px;padding:4px 6px;border-radius:99px;background:#6a4f73;color:#fff}.passport-title-empty{padding:18px;text-align:center;border-radius:14px;background:#fff;font-size:10px;color:#8e7c95}
 body.passport-modal-open{overflow:hidden!important}
 @media(max-width:390px){.passport-detail-panel.passport-card-shell{padding:13px!important}.passport-collectible-card{padding:13px!important}.passport-compact-grid{gap:5px!important}.passport-compact-grid>div{padding:6px!important}.passport-compact-grid dd{font-size:9px!important}}
+
+/* Phase13.5.1 stability polish: keep title collection controls outside/above the card. */
+.passport-compact-actions{position:relative!important;z-index:3!important;background:transparent!important}
+.passport-title-list-button{position:relative!important;z-index:4!important}
+.passport-collectible-card{z-index:1!important}
