@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<meta content="#3f2d2c" name="theme-color"/>
+<meta content="何気ない今日を、忘れられない思い出に。うにか Official Site。" name="description"/>
+<link href="favicon.png" rel="icon" type="image/png"/>
+<link href="css/style.css?v=12.6" rel="stylesheet"/>
+<link href="css/youtube-latest-v2.css?v=13.3.0" rel="stylesheet"/>
+<link href="css/phase12-4-1-renewal.css?v=12.4.1" rel="stylesheet"/>
+<link href="css/phase12-4-2-feature-worlds.css?v=12.4.2" rel="stylesheet"/>
+<link href="css/phase12-4-4-final-polish.css?v=12.4.4" rel="stylesheet"/>
+<link href="css/phase12-4-5-visibility-dashboard.css?v=12.4.7" rel="stylesheet"/>
+<meta content="うにか Official" property="og:title"/>
+<meta content="何気ない今日を、忘れられない思い出に。" property="og:description"/>
+<meta content="https://unicajp.github.io/ogp.jpg" property="og:image"/>
+<meta content="website" property="og:type"/>
+<meta content="https://unicajp.github.io/" property="og:url"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="うにか Official" name="twitter:title"/>
+<meta content="何気ない今日を、忘れられない思い出に。" name="twitter:description"/>
+<meta content="https://unicajp.github.io/ogpx.jpg?v=3" name="twitter:image"/>
+<title>うにか Official</title>
+<!-- MILK BLOOM stable puzzle UI: load last to prevent old overrides -->
+<link href="css/passport-scroll-fix.css?v=1" rel="stylesheet"/><link href="css/phase12-3-puzzle-complete.css?v=phase12-3-complete-stable" rel="stylesheet"/><link href="css/phase13-2-milk-bloom-compact.css?v=13.2.0" rel="stylesheet"/>
+<link rel="stylesheet" href="css/phase13-5-common-navigation.css?v=13.5.1"/>
+<link rel="stylesheet" href="css/phase13-5-3-unipass-trigger.css?v=13.5.3"/>
+<link rel="stylesheet" href="css/phase13-5-4-header-icons.css?v=13.5.4"/>
+<link rel="stylesheet" href="css/phase13-5-5-unipass-heading.css?v=13.5.5"/>
+
+<style id="phase13-6-social-stable-inline">
+/* Phase13.5.6 — うにこSNSリンク整理 */
+#unicoLatestYouTube .youtube-support-links{display:grid!important;gap:8px!important}
+#unicoLatestYouTube .youtube-tiktok-links{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+#unicoLatestYouTube .youtube-support-tiktok{min-width:0!important;min-height:42px!important;padding:7px 10px!important;border-radius:13px!important;display:grid!important;grid-template-columns:20px minmax(0,1fr) 16px!important;grid-template-rows:auto auto!important;column-gap:7px!important;align-items:center!important;text-decoration:none!important;background:#242024!important;color:#fff!important;box-shadow:0 5px 13px rgba(35,27,31,.14)!important;white-space:normal!important}
+#unicoLatestYouTube .youtube-support-tiktok>span{grid-row:1/3;font-size:16px;opacity:.9}
+#unicoLatestYouTube .youtube-support-tiktok>strong{font-size:11px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#unicoLatestYouTube .youtube-support-tiktok>small{font-size:8px;line-height:1.15;opacity:.62;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#unicoLatestYouTube .youtube-support-tiktok>b{grid-column:3;grid-row:1/3;font-size:12px;opacity:.72}
+#unicoLatestYouTube .youtube-support-tiktok-sub{background:linear-gradient(135deg,#242024,#3d3138)!important}
+.social-pair-card{grid-template-columns:44px minmax(0,1fr)!important;gap:11px!important;padding:13px!important}
+.social-pair-card .follow-logo{background:linear-gradient(145deg,#fff0f4,#f4efff)!important;color:#b54f78!important}
+.social-pair-copy{min-width:0}
+.social-pair-copy strong,.social-pair-copy b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.social-pair-actions{grid-column:1/-1;display:grid!important;grid-template-columns:1fr 1fr;gap:7px;margin-top:1px}
+.social-pair-actions a{min-height:37px;padding:0 10px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:5px;text-decoration:none;font-size:11px;font-weight:900;color:#4a3440;background:#fff;box-shadow:inset 0 0 0 1px rgba(83,54,72,.10),0 4px 10px rgba(70,40,54,.06)}
+.social-pair-actions a:first-child{color:#a7446e;background:linear-gradient(145deg,#fff7fa,#fff)}
+.social-pair-actions a:last-child{color:#fff;background:#191919}
+.social-pair-actions i{font-style:normal;font-size:10px;opacity:.75}
+@media(max-width:370px){
+  #unicoLatestYouTube .youtube-tiktok-links{grid-template-columns:1fr}
+  .social-pair-actions a{font-size:10px}
+}
+
+</style>
+</head>
+<body data-social-stable="13.6">
+<div aria-hidden="true" class="scroll-progress" id="scrollProgress"></div>
+<audio id="tapSound" preload="auto" src="tap.mp3"></audio>
+<audio id="bgm" loop="" preload="auto" src="bgm.mp3"></audio>
+<section aria-label="サイトを開く" class="intro" id="intro">
+<button aria-label="うにかの世界を開く" class="intro-trigger" id="introTrigger" type="button">
+<span aria-hidden="true" class="door-panel door-panel-left"></span>
+<span aria-hidden="true" class="door-panel door-panel-right"></span>
+<span aria-hidden="true" class="door-line"></span>
+<span aria-hidden="true" class="intro-orb"></span>
+<span class="intro-label">OPEN</span>
+<span class="intro-sub">tap to enter</span>
+</button>
+</section>
+<div aria-hidden="true" class="ambient">
+<span class="ambient-light ambient-light-one" data-depth="0.035"></span>
+<span class="ambient-light ambient-light-two" data-depth="-0.025"></span>
+<span class="ambient-light ambient-light-three" data-depth="0.018"></span>
+<div class="light-particles" id="lightParticles"></div>
+<span class="petal petal-one"></span>
+<span class="petal petal-two"></span>
+<span class="petal petal-three"></span>
+<span class="petal petal-four"></span>
+</div>
+<header class="site-header" id="siteHeader">
+<a aria-label="ページ上部へ" class="site-logo" href="#top"><span>UNICA</span><span>OFFICIAL</span></a>
+<div class="world-status-bar reveal" id="worldStatusBar">
+<span class="firebase-status" data-state="connecting" id="firebaseStatus">Firebase 接続中</span>
+<button aria-label="うにパスを開く" class="status-profile" id="statusOpenPass" type="button">
+<span class="status-avatar" id="statusAvatar">🌸</span>
+<span class="status-identity"><strong id="statusName">未登録</strong><small hidden="" id="statusNumber"></small></span>
+</button>
+<div class="status-chip status-community" hidden><small>💌 応援</small><strong id="statusPosts">0</strong></div>
+<div class="status-chip status-reaction" hidden><small>♥ いいね</small><strong id="statusReactions">0</strong></div>
+<button class="unipass-direct-button" data-world-nav="pass" id="openUniPassDirect" type="button" aria-label="うにパスを開く">
+<span class="unipass-direct-mark" aria-hidden="true">💳</span>
+</button>
+</div>
+<nav aria-label="メインナビゲーション" class="site-nav"><a href="#top">HOME</a><a href="#music">MUSIC</a><a href="#unico">うにこ</a><a href="#unika">うにか</a></nav>
+</header>
+<main id="top">
+<section aria-label="うにか ホーム" class="hero section-shell">
+<figure aria-label="うにか アーティストビジュアル" class="hero-portrait reveal" data-depth="0.028">
+<span aria-hidden="true" class="portrait-halo"></span>
+<img alt="うにか アイコン" id="unikaAdminTrigger" src="icon.png"/>
+<button aria-label="うにかへエールを送る" aria-pressed="false" class="hero-cheer-button" id="heroCheerButton" type="button">♡</button>
+<div aria-hidden="true" class="heart-burst" id="heartBurst"></div>
+<div aria-live="polite" class="hero-cheer-counter" id="heroCheerCounter"><small>TODAY</small><strong id="heroCheerTotal">0</strong></div>
+<figcaption>うにか</figcaption>
+<div aria-atomic="true" aria-live="polite" class="support-comment-float-layer" id="supportCommentFloatLayer"></div>
+</figure>
+</section>
+<section aria-labelledby="unime-title" class="unime-section section-shell" id="unime">
+<div class="unime-heading reveal">
+<p class="eyebrow">UNICA WORLD</p>
+</div>
+<section aria-label="UNICA WORLDホーム" class="world-home reveal" id="worldHome">
+<div class="app-home-stack">
+<article class="release-card app-feature-card">
+<div aria-hidden="true" class="release-art"><span>♪</span></div>
+<div class="release-copy"><small>NEW RELEASE</small><h2>ミルクの匂い</h2><p>何気ない今日を、未来の宝物に。</p>
+<div class="app-card-actions"><a class="app-primary" href="https://linkco.re/qRn9AShM" rel="noopener noreferrer" target="_blank">音楽を聴く</a><a class="app-secondary" href="#movie">MVを見る</a></div>
+</div>
+</article>
+<article class="milk-match-home-card" id="milkMatchHomeCard">
+<button aria-label="ミルクの匂い MATCHを開く" class="milk-match-home-open" id="openMilkMatch" type="button">
+<span aria-hidden="true" class="milk-match-home-mark"><i>✦</i><b>3</b><em>+</em></span>
+<span class="milk-match-home-copy"><small>UNICA PUZZLE</small><strong>MILK BLOOM</strong><em>そろえて咲かせる、ミルクの物語。</em></span>
+<span class="milk-match-home-play"><small>🥛 <b id="milkMatchHomeFragments">0</b></small><span>PLAY</span><i>›</i></span>
+</button>
+</article>
+<button class="milk-lyrics-home-open member-only-surface" data-member-only="" id="openMilkLyrics" type="button">
+<span>📖</span><strong>ミルクの匂い 歌詞図鑑</strong><small><b id="milkLyricsHomeUnlocked">0</b> / 9 CHAPTER</small><i>›</i>
+</button>
+<article aria-live="polite" class="milk-release-countdown" id="milkReleaseCountdown">
+<div aria-hidden="true" class="milk-release-glow"></div>
+<div class="milk-release-head">
+<span aria-hidden="true" class="milk-release-bottle">🍼</span>
+<span class="milk-release-title"><small>2026.08.01 RELEASE EVENT</small><strong>ミルクの匂い</strong></span>
+<span class="milk-release-badge" id="milkReleaseBadge">COUNTDOWN</span>
+</div>
+<p class="milk-release-lead" id="milkReleaseLead">リリースまで</p>
+<div class="milk-release-main" id="milkReleaseMain">
+<strong id="milkReleaseDays">あと4日</strong>
+<span id="milkReleaseClock">00:00:00</span>
+</div>
+<div class="milk-release-progress"><i id="milkReleaseProgress"></i></div>
+<p class="milk-release-note" id="milkReleaseNote">8月1日、うにかの新しい物語が始まります。</p>
+<a class="milk-release-link" hidden="" href="https://linkco.re/qRn9AShM" id="milkReleaseLink" rel="noopener noreferrer" target="_blank">「ミルクの匂い」を聴く</a>
+</article>
+<article class="community-home-card support-home-card" id="communityHomeCard">
+<button aria-label="応援コメントランキングを開く" class="community-home-button" data-world-nav="community" type="button">
+<span class="community-home-icon">♥</span>
+<span class="community-home-main"><small>ALL-TIME LIKE RANKING</small><strong>応援コメントランキング</strong><em>累計いいね数の上位3名</em></span>
+<span class="community-home-stats"><b id="homeCommunityPosts">0</b><small>コメント</small><b id="homeCommunityMembers">0</b><small>いいね</small></span>
+<span class="community-home-arrow">›</span>
+</button>
+<div class="community-home-latest" id="communityHomeLatest"></div>
+</article>
+<article class="scent16-home-card member-only-surface" data-member-only="" id="scent16HomeCard">
+<button aria-label="うにかの匂い16診断を開く" class="scent16-home-open" id="openScent16" type="button">
+<span aria-hidden="true" class="scent16-home-flower" id="scent16HomeFlower">🌸</span>
+<span class="scent16-home-copy">
+<small>『ミルクの匂い』リリース記念</small>
+<strong>うにかの匂い16診断</strong>
+<em id="scent16HomeSummary">40問で、あなたの花・匂い・花言葉を見つけます。</em>
+</span>
+<span class="scent16-home-cta" id="scent16HomeCta">診断する</span>
+</button>
+</article>
+<article class="prefecture-home-card member-only-surface" data-member-only="" id="prefectureHomeCard">
+<div class="prefecture-home-head">
+<div><small>UNICA MEMBERS ACROSS JAPAN</small><strong>🌸 全国のうにメン</strong><em>全国から集まる応援を見てみよう。</em></div>
+<span id="prefectureTotalMembers">0人</span>
+</div>
+<div aria-live="polite" class="prefecture-home-ranking" id="prefectureHomeRanking">
+<p class="prefecture-empty">集計中です…</p>
+</div>
+<button class="prefecture-open-button" id="openPrefectureDirectory" type="button">全国を見る <span>›</span></button>
+</article>
+<div class="people-cards">
+<a class="person-card unico-card" href="#unico"><span class="person-icon">🎤</span><div><small>VOCAL</small><h3>うにこ <em>UNICA</em></h3><p>やさしい歌声で、うにかの世界を届けます。</p></div><b>›</b></a>
+<a class="person-card unika-card" href="#unika"><span class="person-icon">🎼</span><div><small>CREATOR</small><h3>うにか</h3><p>日常から生まれる歌と物語をつくっています。</p></div><b>›</b></a>
+</div>
+</div>
+</section>
+<section aria-labelledby="unico-title" class="profile-page unico-page section-shell" id="unico">
+<div class="profile-hero reveal">
+<div aria-hidden="true" class="profile-avatar unico-avatar"><span>🎤</span><i></i></div>
+<div class="profile-title"><p class="eyebrow">VOCAL</p><h2 id="unico-title">うにこ</h2><span class="official-name">UNICA</span><p class="profile-catch">うにかの楽曲を歌う、唯一のボーカル。</p></div>
+</div>
+<div class="profile-story reveal">
+<p>優しく寄り添う歌声で、日常に小さな癒しを届けています。</p>
+<div class="profile-note">「うにこ」は、ボーカル名UNICAの親しみを込めた愛称です。</div>
+</div>
+<div aria-label="うにこの公式SNS" class="social-follow-grid reveal">
+<article aria-live="polite" class="youtube-latest-card youtube-three-card" id="unicoLatestYouTube">
+<div class="youtube-latest-head">
+<div><span>YOUTUBE</span><strong>うにこの最新動画</strong></div>
+<small>横にスワイプして見られます</small>
+</div>
+<div aria-label="うにこの最新YouTube動画3件" class="youtube-latest-track" id="unicoLatestYouTubeTrack">
+<div class="youtube-latest-loading" id="unicoLatestYouTubePlaceholder"><span>▶</span><b>最新動画を取得中…</b></div>
+</div>
+<div class="youtube-support-links">
+<a class="youtube-support-main" href="https://www.youtube.com/@utachan_hikigatari" id="unicoLatestYouTubeChannel" rel="noopener noreferrer" target="_blank">▶ YouTubeで応援する <b>↗</b></a>
+<div class="youtube-tiktok-links" aria-label="うにこのTikTokアカウント">
+<a class="youtube-support-tiktok" href="https://www.tiktok.com/@uta_covers" rel="noopener noreferrer" target="_blank"><span>♪</span><strong>弾き語り</strong><small>@uta_covers</small><b>↗</b></a>
+<a class="youtube-support-tiktok youtube-support-tiktok-sub" href="https://www.tiktok.com/@komoriuttan" rel="noopener noreferrer" target="_blank"><span>♪</span><strong>こもりうったん</strong><small>@komoriuttan</small><b>↗</b></a>
+</div>
+</div>
+<p class="youtube-latest-note" hidden="" id="unicoLatestYouTubeNote"></p>
+</article>
+<article class="follow-card social-pair-card" aria-label="うた_chanのInstagramとX">
+<span class="follow-logo">◎</span>
+<div class="social-pair-copy"><small>SOCIAL</small><strong>うた_chan</strong><b>@uta_chan17</b></div>
+<div class="social-pair-actions">
+<a href="https://www.instagram.com/uta_chan17/" rel="noopener noreferrer" target="_blank" aria-label="Instagramでうた_chanを見る">Instagram <i>↗</i></a>
+<a href="https://x.com/Uta_chan17" rel="noopener noreferrer" target="_blank" aria-label="Xでうた_chanを見る">X <i>↗</i></a>
+</div>
+</article>
+</div>
+<a class="listen-unico reveal" href="https://linkco.re/qRn9AShM" rel="noopener noreferrer" target="_blank"><span>♪</span><div><small>LISTEN NOW</small><strong>うにこの歌を聴く</strong></div><b>›</b></a>
+</section>
+<section aria-labelledby="unika-title" class="profile-page unika-page section-shell" id="unika">
+<div class="profile-hero reveal">
+<div aria-hidden="true" class="profile-avatar unika-avatar"><span>🎼</span><i></i></div>
+<div class="profile-title"><p class="eyebrow">CREATOR</p><h2 id="unika-title">うにか</h2><p class="profile-catch">何気ない今日を、未来の宝物に。</p></div>
+</div>
+<div class="creator-message reveal"><p>何気ない毎日が、いつか大切な思い出になる。</p><p>その瞬間を音楽として残したい。</p><p>そんな想いから、「うにか」は生まれました。</p></div>
+<div class="creator-work reveal"><h3>制作</h3><div class="creator-tags"><span>作詞</span><span>作曲</span><span>企画</span><span>MV制作</span><span>デザイン</span><span>サイト制作</span></div></div>
+<div class="team-credit reveal"><span>Creator <strong>うにか</strong></span><i aria-hidden="true">×</i><span>Vocal <strong>うにこ（UNICA）</strong></span></div>
+</section>
+<div aria-hidden="true" class="legacy-world-controls">
+<button id="openTree" type="button"></button>
+<button id="openPassButton" type="button"></button>
+<button id="openMemberSettings" type="button"></button>
+<button id="passAvatar" type="button"></button>
+<span id="passName"></span><span id="passNumber"></span><span id="passDays"></span><span id="passPoints"></span>
+</div>
+<section aria-labelledby="story-title" class="story-section section-shell" id="music">
+<div class="compact-song reveal">
+<div><p class="eyebrow">MUSIC 01</p><h2 id="story-title">ミルクの匂い</h2><p>うにか</p></div>
+<a href="https://linkco.re/qRn9AShM" rel="noopener noreferrer" target="_blank">聴く <span>→</span></a>
+</div>
+</section>
+<section aria-labelledby="movie-title" class="movie-section section-shell" id="movie">
+<div class="movie-frame reveal">
+<video aria-label="ミルクの匂い 先行映像" autoplay="" class="promo-video" id="promoVideo" loop="" muted="" playsinline="" poster="promo-poster.jpg" preload="metadata" src="promo.mp4"></video>
+<div aria-hidden="true" class="movie-shade"></div>
+<div class="movie-caption">
+<p>「ミルクの匂い」</p>
+<span>Official Preview</span>
+</div>
+<button class="sound-button" id="promoSoundBtn" type="button">
+<span aria-hidden="true" class="sound-icon">♪</span>
+<span class="sound-label">音声をON</span>
+</button>
+</div>
+</section>
+<section aria-label="SNS" class="connect-section section-shell" id="connect">
+<div class="social-grid reveal">
+<a href="https://www.youtube.com/@unica_jpn" rel="noopener noreferrer" target="_blank">
+<span class="social-symbol">▶</span><span>YouTube</span><i>→</i>
+</a>
+<a href="https://x.com/unica_jpn" rel="noopener noreferrer" target="_blank">
+<span class="social-symbol">𝕏</span><span>X</span><i>→</i>
+</a>
+<a href="https://instagram.com/unica_jpn" rel="noopener noreferrer" target="_blank">
+<span class="social-symbol">◎</span><span>Instagram</span><i>→</i>
+</a>
+<a href="https://tiktok.com/@unica_jpn" rel="noopener noreferrer" target="_blank">
+<span class="social-symbol">♪</span><span>TikTok</span><i>→</i>
+</a>
+</div>
+</section>
+</section></main>
+<footer class="site-footer" id="ending"><p class="copyright reveal">© うにか</p></footer>
+<aside aria-label="BGMプレイヤー" class="music-player" id="musicPlayer">
+<button aria-label="BGMの再生と停止" class="player-toggle" id="playerToggle" type="button">
+<span id="playerIcon">Ⅱ</span>
+</button>
+<div class="player-meta">
+<span class="player-kicker">NOW PLAYING</span>
+<span class="track-title" id="trackTitle">Milk no Nioi — instrumental</span>
+</div>
+<select aria-label="BGMを選択" class="track-select" id="trackSelect">
+<option data-title="Milk no Nioi — instrumental" value="bgm.mp3">01</option>
+<option data-title="Milk no Nioi — ambient" value="bgm2.mp3">02</option>
+</select>
+<input aria-label="BGM音量" class="volume" id="volume" max="1" min="0" step="0.01" type="range" value="0.22"/>
+</aside>
+<div aria-hidden="true" class="member-gate" id="memberGate">
+<div class="member-gate-backdrop"></div>
+<section aria-labelledby="registerTitle" aria-modal="true" class="member-register" role="dialog">
+<div aria-hidden="true" class="register-light"></div>
+<p class="eyebrow">WELCOME TO UNICA WORLD</p>
+<div class="register-step" id="registerStepOne">
+<h2 id="registerTitle">UNICA WORLDへ<br/>ようこそ。</h2>
+<p class="register-lead">この世界を一緒に歩く「うにメン」になると、<br/>あなただけの「うにパス」が発行されます。</p>
+<div aria-label="うにメン無料登録のご案内" class="free-member-card">
+<div class="free-member-card-heading"><span aria-hidden="true">🌱</span><div><small>JOIN UNICA WORLD</small><strong>うにメン登録は完全無料です</strong></div></div>
+<p>登録料・月額料金はかかりません。うにかを応援しながら、UNICA WORLDの機能を楽しめます。</p>
+<ul>
+<li><span aria-hidden="true">❤️</span>エールを送る</li>
+<li><span aria-hidden="true">💬</span>応援コメントを書く</li>
+
+<li><span aria-hidden="true">🔔</span>お知らせを受け取る</li>
+</ul>
+</div>
+<div class="register-notice">
+<strong>大切なお知らせ</strong>
+<p>ニックネームは登録後に変更できません。<br/>アイコンは、あとから何度でも変更できます。</p>
+</div>
+<label class="register-label" for="memberNickname">ニックネーム</label>
+<input autocomplete="nickname" class="register-input" id="memberNickname" maxlength="16" placeholder="例：うにこ" type="text"/>
+<div class="register-profile-grid">
+<label><span class="register-label">都道府県</span><select class="register-input" id="memberPrefecture"><option value="">選択してください</option></select></label>
+<div><span class="register-label">誕生日（月・日）</span><div class="birthday-selects"><select class="register-input" id="memberBirthMonth"><option value="">月</option></select><select class="register-input" id="memberBirthDay"><option value="">日</option></select></div><small class="privacy-note">年は入力しません。うにパスのプロフィール表示に使用します。</small></div>
+</div>
+<div aria-labelledby="emojiBuilderTitle" class="emoji-builder">
+<div class="emoji-builder-copy">
+<span class="register-label" id="emojiBuilderTitle">アイコン</span>
+<small>好きな絵文字を1つ選べます</small>
+</div>
+<div aria-label="選択中のアイコン" class="emoji-preview" id="emojiPreview">🌸</div>
+<div class="emoji-inputs emoji-inputs-single">
+<label>絵文字<input aria-label="プロフィールアイコンの絵文字" class="emoji-input" id="memberEmojiOne" inputmode="text" maxlength="32" type="text" value="🌸"/></label>
+</div>
+<div aria-label="絵文字の候補" class="emoji-suggestions">
+<button data-emoji="🌸" type="button">🌸</button><button data-emoji="🍼" type="button">🍼</button><button data-emoji="🌈" type="button">🌈</button><button data-emoji="🎵" type="button">🎵</button><button data-emoji="⭐" type="button">⭐</button><button data-emoji="🌙" type="button">🌙</button><button data-emoji="🐻" type="button">🐻</button><button data-emoji="🐱" type="button">🐱</button><button data-emoji="🍀" type="button">🍀</button><button data-emoji="🎀" type="button">🎀</button><button data-emoji="☁️" type="button">☁️</button><button data-emoji="🫧" type="button">🫧</button>
+</div>
+<p class="emoji-help">候補以外も入力できます。スマホの絵文字キーボードから自由に選んでください。</p>
+</div>
+<p aria-live="polite" class="register-error" id="registerError"></p>
+<button class="register-primary" id="registerSubmit" type="button">無料登録の内容を確認する</button>
+<p class="register-free-note">登録・利用はすべて無料です。料金が発生することはありません。</p>
+<button class="register-skip" id="registerSkip" type="button">今は登録せず、公式サイトを見る</button>
+<div class="google-auth-separator"><span>または</span></div>
+<button class="google-auth-button google-auth-restore" id="googleRestoreButton" type="button">
+<span aria-hidden="true" class="google-g-mark">G</span>
+<span><b>Googleで引き継ぐ</b><small>別の端末で使っていたうにパスを開きます</small></span>
+</button>
+<p aria-live="polite" class="google-auth-message" id="googleRestoreMessage"></p>
+</div>
+<div class="register-step register-confirm" hidden="" id="registerStepConfirm">
+<p class="complete-small">CONFIRM YOUR UNICA PASS</p>
+<h2>この内容で<br/>うにメンになりますか？</h2>
+<div class="confirm-profile">
+<div class="confirm-avatar" id="confirmAvatar">🌸</div>
+<div><small>ニックネーム</small><strong id="confirmName">—</strong><em id="confirmLocationBirthday">—</em></div>
+</div>
+<div class="confirm-warning">
+<strong>ニックネームは登録後に変更できません。</strong>
+<p>アイコンは、うにパスからいつでも変更できます。</p>
+</div>
+<div class="confirm-actions">
+<button class="register-back" id="registerBack" type="button">戻って修正する</button>
+<button class="register-primary" id="registerConfirm" type="button">無料でうにメンになる</button>
+</div>
+</div>
+<div class="register-step register-complete" hidden="" id="registerStepComplete">
+<div class="complete-flower">🌸</div>
+<p class="complete-small">WELCOME, FOUNDING MEMBER</p>
+<h2>うにパスが<br/>発行されました。</h2>
+<div class="complete-pass">
+<span id="completeAvatar">🌸</span>
+<div><small>創設うにメン</small><strong id="completeName">—</strong><em id="completeNumber">No.0000</em><small id="completeRegion">—</small></div>
+</div>
+<p class="register-lead">今日から、この世界で生まれる思い出が<br/>あなたのうにパスに残っていきます。</p>
+<button class="register-primary" id="enterWorld" type="button">UNICA WORLDへ入る</button>
+</div>
+</section>
+</div>
+<div aria-hidden="true" class="member-settings" id="memberSettings">
+<div class="member-settings-backdrop" data-close-settings=""></div>
+<section aria-labelledby="memberSettingsTitle" aria-modal="true" class="member-settings-panel" role="dialog">
+<button aria-label="設定を閉じる" class="settings-close" data-close-settings="" type="button">×</button>
+<p class="eyebrow">UNICA PASS SETTINGS</p>
+<h2 id="memberSettingsTitle">うにパス設定</h2>
+<p class="settings-intro">登録情報や、UNICA WORLDでの過ごし方を管理できます。</p>
+<div class="settings-profile" id="settingsProfile">
+<span id="settingsAvatar">🌸</span>
+<div><small>ニックネーム</small><strong id="settingsName">—</strong><em id="settingsNumber">—</em></div>
+</div>
+<div class="settings-menu" id="settingsMenu">
+<button id="settingsEditIcon" type="button"><span>🌸</span><div><b>アイコンを変更</b><small>好きな絵文字を1つ選びます</small></div><i>›</i></button>
+<button class="google-settings-button" id="googleLinkButton" type="button"><span aria-hidden="true" class="google-g-mark">G</span><div><b id="googleLinkTitle">Googleアカウントと連携</b><small id="googleLinkDescription">機種変更後も同じうにパスを引き継げます</small></div><i>›</i></button>
+<button class="settings-danger-link" id="openWithdrawal" type="button"><span>↩</span><div><b>UNICA WORLDから退会</b><small>うにパスと保存データを削除します</small></div><i>›</i></button>
+</div>
+<p aria-live="polite" class="google-auth-message settings-google-message" id="googleLinkMessage"></p>
+<div class="withdrawal-step" hidden="" id="withdrawalStep">
+<button class="withdrawal-back" id="withdrawalBack" type="button">← 設定に戻る</button>
+<div class="withdrawal-symbol">🌙</div>
+<h3>本当に退会しますか？</h3>
+<p>退会すると、現在のうにパスは削除されます。もう一度登録する場合は、新しいうにメンとして始まります。</p>
+<ul>
+<li>ニックネームとアイコン</li>
+<li>投稿・返信・共感などのコミュニティ記録</li>
+<li>加入日・バッジ・今後の記録</li>
+</ul>
+<label for="withdrawalConfirmInput">確認のため「たいかい」と入力してください</label>
+<input autocomplete="off" id="withdrawalConfirmInput" placeholder="たいかい" type="text"/>
+<p aria-live="polite" class="withdrawal-error" id="withdrawalError"></p>
+<button class="withdrawal-confirm" disabled="" id="withdrawalConfirm" type="button">退会して登録情報を削除する</button>
+<button class="withdrawal-cancel" data-close-settings="" type="button">退会しない</button>
+</div>
+</section>
+</div>
+<div aria-hidden="true" class="world-modal" id="onlineModal">
+<div class="world-modal-backdrop" data-close-world-modal=""></div>
+<section aria-labelledby="onlineModalTitle" aria-modal="true" class="world-modal-panel" role="dialog">
+<button aria-label="閉じる" class="world-modal-close" data-close-world-modal="" type="button">×</button>
+<p class="eyebrow">ONLINE</p>
+<h2 id="onlineModalTitle">オンライン</h2>
+<div class="online-member-list" id="onlineMemberList"></div>
+</section>
+</div>
+<div aria-hidden="true" class="scent16-modal" id="scent16Modal">
+<div class="scent16-backdrop" data-close-scent16=""></div>
+<section aria-labelledby="scent16Title" aria-modal="true" class="scent16-panel" role="dialog">
+<header class="scent16-header">
+<div><small>UNICA SCENT 16</small><h2 id="scent16Title">うにかの匂い16診断</h2></div>
+<button aria-label="閉じる" class="scent16-close" data-close-scent16="" type="button">×</button>
+</header>
+<div aria-live="polite" class="scent16-screen" id="scent16Screen"></div>
+</section>
+</div>
+<div aria-hidden="true" class="world-modal" id="communityModal">
+<div class="world-modal-backdrop" data-close-community=""></div>
+<section aria-labelledby="communityTitle" aria-modal="true" class="world-modal-panel community-panel community-panel-plus support-panel" role="dialog">
+<button aria-label="閉じる" class="world-modal-close" data-close-community="" type="button">×</button>
+<div class="community-head support-head">
+<div><p class="eyebrow">MESSAGE FOR UNICA</p><h2 id="communityTitle">応援コメント</h2><p>うにかへ届けたい言葉を残す場所です。コメントには誰でも「いいね」を送れます。</p></div>
+<div class="community-live"><span>💌</span><strong id="communityOnlineCount">0</strong><small>コメント</small></div>
+</div>
+<section aria-live="polite" class="support-like-ranking" id="supportLikeRanking">
+<div class="support-like-ranking-head"><div><small>ALL-TIME LIKE RANKING</small><strong>累計いいねランキング</strong></div><span>TOP 3</span></div>
+<div class="support-like-ranking-list" id="supportLikeRankingList"><p class="support-ranking-empty">集計中です…</p></div>
+</section>
+<div class="community-compose community-compose-plus support-compose">
+<div class="community-compose-head"><span id="communityComposeAvatar">🌸</span><div><strong id="communityComposeName">あなた</strong><small>1日1件・80文字まで</small></div></div>
+<textarea id="communityComment" maxlength="80" placeholder="うにかへ応援コメントを送る（80文字まで）"></textarea>
+<div class="community-compose-meta"><span id="communityCount">0 / 80</span><button id="submitCommunityComment" type="button">応援を送る</button></div>
+<p aria-live="polite" id="communityStatus"></p>
+</div>
+<div class="community-tabs support-tabs" role="tablist">
+<button class="is-active" data-community-tab="new" type="button">🕒 新着順</button>
+<button data-community-tab="popular" type="button">🔥 人気順</button>
+<button data-community-tab="mine" type="button">📜 自分の履歴</button>
+</div>
+<div class="community-notice"><strong>応援が集まる場所</strong><span>返信機能はありません。うにかへの応援だけを、やさしく積み重ねていきます。</span></div>
+<div class="community-list community-feed support-feed" id="communityList"></div>
+</section>
+</div>
+<div aria-hidden="true" class="world-modal" id="passportModal">
+<div class="world-modal-backdrop" data-close-passport=""></div>
+<section aria-labelledby="passportModalTitle" aria-modal="true" class="world-modal-panel passport-detail-panel passport-card-shell" role="dialog">
+<button aria-label="閉じる" class="world-modal-close passport-card-close" data-close-passport="" type="button">×</button>
+<div class="passport-card-heading"><p class="eyebrow">UNICA WORLD MEMBER CARD</p><h2 id="passportModalTitle">うにパス</h2></div>
+<div class="passport-detail-card passport-collectible-card">
+<div class="passport-card-chip" aria-hidden="true"></div>
+<div class="passport-card-lines" aria-hidden="true"></div>
+<div class="passport-detail-head"><span id="detailAvatar">🌸</span><div><small>UNICA WORLD MEMBER</small><strong id="detailName">—</strong><em id="detailNumber">—</em></div></div>
+<dl class="passport-detail-grid passport-compact-grid">
+<div><dt>登録日</dt><dd id="detailJoined">—</dd></div>
+<div><dt>一緒に歩いた日数</dt><dd id="detailDays">0日</dd></div>
+<div><dt>応援コメント</dt><dd id="detailPostCount">💌 0</dd></div>
+<div><dt>もらったいいね</dt><dd id="detailReactionCount">♥ 0</dd></div>
+<div><dt>都道府県</dt><dd id="detailPrefecture">—</dd></div>
+<div><dt>誕生日</dt><dd id="detailBirthday">—</dd></div>
+<div class="passport-detail-wide passport-scent-row" hidden="" id="detailScentRow"><dt>うにかの匂い16診断</dt><dd><button class="passport-scent-button" id="detailScentButton" type="button"><span id="detailScentFlower">🌸</span><span><strong id="detailScentName">—</strong><small id="detailScentDate">—</small></span><em id="detailScentMatch"></em></button></dd></div>
+</dl>
+<div class="passport-card-footer"><span>MEMBER OF UNICA WORLD</span><b aria-hidden="true">|||| || ||| ||||</b></div>
+</div>
+<div class="passport-compact-actions">
+<button class="passport-title-list-button" id="openPassportTitles" type="button"><span>🏷️</span><span><small>現在の称号</small><strong id="detailTitle">はじまりのうにメン</strong></span><b>一覧 ›</b></button>
+<button class="passport-detail-settings" id="detailOpenSettings" type="button">設定</button>
+</div>
+</section>
+</div>
+<div aria-hidden="true" class="world-modal" id="passportTitlesModal">
+<div class="world-modal-backdrop" data-close-passport-titles=""></div>
+<section aria-labelledby="passportTitlesTitle" aria-modal="true" class="world-modal-panel passport-titles-panel" role="dialog">
+<button aria-label="閉じる" class="world-modal-close" data-close-passport-titles="" type="button">×</button>
+<p class="eyebrow">TITLE COLLECTION</p>
+<h2 id="passportTitlesTitle">獲得した称号</h2>
+<p class="passport-titles-intro">これまでに獲得した称号を確認できます。</p>
+<div class="passport-titles-list" id="passportTitlesList"></div>
+</section>
+</div>
+<div aria-hidden="true" class="world-modal" id="prefectureDirectoryModal">
+<div class="world-modal-backdrop" data-close-prefecture-directory=""></div>
+<section aria-labelledby="prefectureDirectoryTitle" aria-modal="true" class="world-modal-panel prefecture-directory-panel" role="dialog">
+<button aria-label="閉じる" class="world-modal-close" data-close-prefecture-directory="" type="button">×</button>
+<p class="eyebrow">UNICA MEMBERS ACROSS JAPAN</p>
+<h2 id="prefectureDirectoryTitle">🌸 全国のうにメン</h2>
+<p class="prefecture-directory-intro">都道府県ごとのうにメン人数です。都道府県をタップすると、公開設定にしているメンバーを確認できます。</p>
+<div class="prefecture-directory-summary"><strong id="prefectureDirectoryTotal">0</strong><span>人のうにメン</span></div>
+<div aria-live="polite" class="prefecture-directory-list" id="prefectureDirectoryList"></div>
+</section>
+</div>
+<div aria-hidden="true" class="world-modal" id="prefectureMembersModal">
+<div class="world-modal-backdrop" data-close-prefecture-members=""></div>
+<section aria-labelledby="prefectureMembersTitle" aria-modal="true" class="world-modal-panel prefecture-members-panel" role="dialog">
+<button aria-label="閉じる" class="world-modal-close" data-close-prefecture-members="" type="button">×</button>
+<button class="prefecture-back-button" id="backToPrefectureDirectory" type="button">‹ 全国一覧へ</button>
+<p class="eyebrow">UNICA MEMBERS</p>
+<h2 id="prefectureMembersTitle">都道府県</h2>
+<p class="prefecture-members-count" id="prefectureMembersCount">0人</p>
+<div class="prefecture-members-list" id="prefectureMembersList"></div>
+</section>
+</div>
+<div aria-hidden="true" class="guest-lock-modal" id="guestLockModal">
+<div class="guest-lock-backdrop" data-close-guest-lock=""></div>
+<section aria-labelledby="guestLockTitle" aria-modal="true" class="guest-lock-panel" role="dialog">
+<button aria-label="閉じる" class="guest-lock-close" data-close-guest-lock="" type="button">×</button>
+<div aria-hidden="true" class="guest-lock-icon">🔒</div>
+<p class="eyebrow">UNICA MEMBERS ONLY</p>
+<h2 id="guestLockTitle">この機能は<br/>うにメン限定です</h2>
+<p><strong class="guest-free-highlight">登録・利用は完全無料です。</strong><br/>うにメンになると、エール・応援コメント・今日のうに占いなど、UNICA WORLDのすべての機能を利用できます。</p>
+<button class="guest-lock-register" id="guestLockRegister" type="button">無料でうにメン登録へ</button>
+<button class="guest-lock-cancel" data-close-guest-lock="" type="button">公式サイトを見る</button>
+</section>
+</div>
+<div aria-hidden="true" class="admin-modal" id="adminPasswordModal">
+<div class="admin-modal-backdrop" data-close-admin=""></div>
+<section aria-labelledby="adminPasswordTitle" aria-modal="true" class="admin-panel admin-password-panel" role="dialog">
+<button aria-label="閉じる" class="admin-close" data-close-admin="" type="button">×</button>
+<div aria-hidden="true" class="admin-lock-icon">🔐</div>
+<p class="eyebrow">UNICA WORLD ADMIN</p>
+<h2 id="adminPasswordTitle">管理画面</h2>
+<p>管理パスワードを入力してください。</p>
+<input autocomplete="current-password" class="admin-password-input" id="adminPasswordInput" placeholder="パスワード" type="password"/>
+<p aria-live="polite" class="admin-message" id="adminPasswordMessage"></p>
+<button class="admin-primary" id="adminPasswordSubmit" type="button">管理画面を開く</button>
+</section>
+</div>
+<div aria-hidden="true" class="admin-modal" id="adminMembersModal">
+<div class="admin-modal-backdrop" data-close-admin-members=""></div>
+<section aria-labelledby="adminMembersTitle" aria-modal="true" class="admin-panel admin-members-panel" role="dialog">
+<button aria-label="閉じる" class="admin-close" data-close-admin-members="" type="button">×</button>
+<p class="eyebrow">UNICA WORLD ADMIN</p>
+<h2 id="adminMembersTitle">うにメン管理</h2>
+<div class="admin-members-summary"><strong id="adminMemberCount">0</strong><span>人のうにメン</span></div>
+<div class="admin-search-wrap"><input id="adminMemberSearch" placeholder="名前・会員番号・都道府県で検索" type="search"/></div>
+<p aria-live="polite" class="admin-message" id="adminMembersMessage"></p>
+<div class="admin-member-list" id="adminMemberList"></div>
+</section>
+</div>
+<div aria-hidden="true" class="admin-modal" id="adminDeleteModal">
+<div class="admin-modal-backdrop"></div>
+<section aria-labelledby="adminDeleteTitle" aria-modal="true" class="admin-panel admin-delete-panel" role="dialog">
+<div aria-hidden="true" class="admin-delete-icon">⚠️</div>
+<h2 id="adminDeleteTitle">このうにメンを削除しますか？</h2>
+<div class="admin-delete-target" id="adminDeleteTarget"></div>
+<p>削除後、この端末から同じアカウントで再アクセスしても、うにメン情報は復元されません。</p>
+<div class="admin-delete-actions"><button id="adminDeleteCancel" type="button">いいえ</button><button id="adminDeleteConfirm" type="button">はい、削除する</button></div>
+<p aria-live="polite" class="admin-message" id="adminDeleteMessage"></p>
+</section>
+</div>
+<div aria-hidden="true" class="milk-release-celebration" id="milkReleaseCelebration">
+<div aria-hidden="true" class="milk-release-confetti" id="milkReleaseConfetti"></div>
+<div aria-hidden="true" class="milk-release-celebration-light"></div>
+<section aria-labelledby="milkReleaseCelebrationTitle" aria-modal="true" class="milk-release-celebration-panel" role="dialog">
+<button aria-label="閉じる" class="milk-release-celebration-close" id="closeMilkReleaseCelebration" type="button">×</button>
+<div aria-hidden="true" class="milk-release-celebration-icon">🍼</div>
+<p>UNICA NEW RELEASE</p>
+<h2 id="milkReleaseCelebrationTitle">ミルクの匂い</h2>
+<strong>本日リリース！</strong>
+<span>何気ない今日を、未来の宝物に。</span>
+<a href="https://linkco.re/qRn9AShM" rel="noopener noreferrer" target="_blank">今すぐ聴く</a>
+</section>
+</div>
+<div aria-hidden="true" class="milk-match-modal" id="milkMatchModal">
+<div class="milk-match-backdrop" data-close-milk-match=""></div>
+<section aria-labelledby="milkMatchTitle" aria-modal="true" class="milk-match-panel" role="dialog">
+<header class="milk-match-header">
+<div><small>UNICA WORLD PUZZLE</small><h2 id="milkMatchTitle">MILK BLOOM</h2></div>
+<button aria-label="閉じる" class="milk-match-close" data-close-milk-match="" type="button">×</button>
+</header>
+<div aria-label="ゲームモード" class="milk-match-mode-tabs" role="tablist">
+<button class="is-active" id="milkMatchStoryMode" type="button"><b>STORY</b><small>歌詞を解放</small></button>
+<button id="milkMatchUnlimitedMode" type="button"><b>SCORE</b><small>何度でも挑戦</small></button>
+</div>
+<div class="milk-match-quickbar">
+<button class="milk-match-ranking-spot" id="milkMatchRankingSpot" type="button">
+<span>🌐 ONLINE</span><strong id="milkMatchRankingPreview">ランキングを確認</strong>
+</button>
+<button class="milk-match-rules-open" id="milkMatchRules" type="button">？ ルール</button>
+</div>
+<div class="milk-match-stats">
+<div><small>SCORE</small><strong id="milkMatchScore">0</strong></div>
+<div><small>残り手数</small><strong><span id="milkMatchMoves">20</span>手</strong></div>
+<div><small>MODE</small><strong id="milkMatchModeLabel">STORY</strong></div>
+</div>
+<div aria-live="polite" class="milk-match-goal" id="milkMatchGoal">
+<span>今回の目標</span><strong id="milkMatchGoalText">35手以内に 12,000点</strong>
+<div><i id="milkMatchGoalBar"></i></div>
+</div>
+<div aria-live="polite" class="milk-match-skill">
+<div aria-label="MILK SKILL" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="milk-match-skill-meter" id="milkMatchSkillMeter" role="progressbar">
+<span>🥛 MILK SKILL</span><strong id="milkMatchSkillText">0 / 100</strong>
+<div class="milk-match-skill-track"><i id="milkMatchSkillBar"></i></div>
+</div>
+<div class="milk-match-skill-actions">
+<button aria-label="MILK SKILLで虹アイテムを作る" disabled="" id="milkMatchSkillRainbow" type="button"><span>🌈</span><b>虹を作る</b></button>
+<button aria-hidden="true" disabled="" hidden="" id="milkMatchSkillShuffle" type="button">並べ直す</button>
+</div>
+</div>
+<div class="milk-match-challenge" hidden="" id="milkMatchChallenge">
+<span id="milkMatchChallengeText">本日の挑戦</span><div><i id="milkMatchChallengeBar"></i></div>
+</div>
+<div class="milk-match-board-wrap">
+<div aria-label="マッチ3ゲーム盤面" class="milk-match-board" id="milkMatchBoard" role="grid"></div>
+<div aria-live="polite" class="milk-match-combo" id="milkMatchCombo"></div>
+</div>
+<p class="milk-match-help">スワイプで3つ以上そろえる</p>
+<div class="milk-match-actions">
+<button id="milkMatchNewGame" type="button">次の挑戦</button>
+<button id="milkMatchHint" type="button">ヒント</button>
+<button id="openMilkLyricsFromGame" type="button">📖 歌詞図鑑</button>
+<button class="is-online-ranking" id="milkMatchRecords" type="button">🌐 オンラインランキング</button>
+</div>
+<div class="milk-match-volume">
+<button id="milkMatchSoundToggle" type="button">🔊</button>
+<label for="milkMatchVolume">効果音</label>
+<input aria-label="効果音の音量" id="milkMatchVolume" max="300" min="0" step="5" type="range" value="120"/>
+</div>
+<aside class="milk-match-phase-note">
+<span>VER.4.17</span>
+<p>新しく作った特殊アイテムを保護し、虹合体と全消し演出を強化しました。</p>
+</aside>
+</section>
+</div>
+<div aria-hidden="true" class="milk-lyrics-modal" id="milkLyricsModal">
+<div class="milk-lyrics-backdrop" data-close-milk-lyrics=""></div>
+<section aria-labelledby="milkLyricsTitle" aria-modal="true" class="milk-lyrics-panel" role="dialog">
+<header class="milk-lyrics-header">
+<div><small>LYRICS COLLECTION</small><h2 id="milkLyricsTitle">ミルクの匂い 歌詞図鑑</h2></div>
+<button aria-label="閉じる" class="milk-lyrics-close" data-close-milk-lyrics="" type="button">×</button>
+</header>
+<div class="milk-lyrics-summary">
+<div><small>図鑑</small><strong><span id="milkLyricsUnlocked">0</span> / 9</strong></div>
+<div class="milk-lyrics-progress"><i id="milkLyricsProgress"></i></div>
+</div>
+<p class="milk-lyrics-guide">ストーリーステージをクリアすると、対応する歌詞とフレーズ試聴が順番に解放されます。</p>
+<div class="milk-lyrics-list" id="milkLyricsList"></div>
+<p class="milk-lyrics-audio-note">解放済みChapterは、専用音源を追加するとこの画面からいつでも試聴できます。</p>
+</section>
+</div>
+<div aria-live="polite" class="mini-toast" id="miniToast" role="status"></div>
+<script src="js/firebase-init.js?v=4.18-progress-save-fix" type="module"></script>
+<script src="js/phase10-2.js?v=13.7" type="module"></script>
+<script src="js/script.js?v=13.7"></script>
+<script src="js/phase10-3.js?v=12.6"></script>
+<script src="js/phase10-7-prefectures.js" type="module"></script>
+<script src="js/phase10-5-guest.js?v=13.7"></script>
+<script src="js/phase10-11-scroll-only.js"></script>
+<script src="js/phase10-12-google.js"></script>
+<script src="js/phase10-14-admin.js" type="module"></script>
+<script src="js/phase10-18-release-countdown.js"></script>
+<script src="js/phase12-scent16.js?v=1.4" type="module"></script>
+<script src="js/phase11-1-milk-match.js?v=phase12-3-complete-stable"></script>
+<script src="js/phase11-3-lyrics-audio.js?v=phase12-3-complete-stable"></script>
+<script src="js/phase12-4-1-renewal.js?v=13.7.2"></script>
+<script src="js/phase12-4-2-feature-worlds.js?v=13.7.2"></script>
+<script src="js/phase12-4-4-final-polish.js?v=13.7.2"></script>
+<script src="js/phase12-4-5-dashboard.js?v=13.7.2"></script>
+<script src="js/youtube-latest-config.js?v=1.1"></script>
+<script src="js/youtube-latest.js?v=3.0"></script>
+<link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=13.5.2"/>
+<script src="js/phase13-4-unipass-card.js?v=13.5.2" type="module"></script>
+<script src="js/phase13-5-common-navigation.js?v=13.7"></script>
+<script src="js/phase13-5-4-header-icons.js?v=13.5.4" defer></script>
+<script id="phase13-7-2-birthday-removal">
+(()=>{
+  'use strict';
+  const selectors=[
+    '.fun-card.birthday','.birthday-album-shortcut','.birthday-banner','.birthday-today-celebration','.birthday-floating-message',
+    '#birthdayHomeCard','#birthdayCard','#birthdayMonthCard','#birthdayAlbumHomeCard','#openBirthdayCalendar','#openBirthdayAlbum',
+    '[data-feature-key="birthday"]','[data-sub-feature-key="birthday"]','[data-sub-feature-key="birthdayAlbum"]',
+    '.birthday-experience-modal','.birthday-calendar-modal','.birthday-comment-modal','.birthday-album-modal','.birthday-history-modal'
+  ];
+  const cleanup=()=>{
+    document.querySelectorAll(selectors.join(',')).forEach(el=>{
+      const stack=el.closest('.fun-feature-stack');
+      (stack||el).remove();
+    });
+    document.querySelectorAll('button,a,article,section,div').forEach(el=>{
+      if(el.closest('#passportDetailModal,.register-panel,.register-card,#memberRegistration')) return;
+      const text=(el.textContent||'').replace(/\s+/g,' ').trim();
+      if(text==='お祝いアルバム' || text.startsWith('お祝いアルバム ') || text.includes('お祝いアルバム0件の思い出')){
+        const stack=el.closest('.fun-feature-stack');
+        (stack||el).remove();
+      }
+    });
+    try{
+      const recent=JSON.parse(localStorage.getItem('unicaRecentFeature')||'null');
+      if(recent && /birthday|誕生日|お祝いアルバム/.test(`${recent.key||''} ${recent.label||''}`)){
+        localStorage.removeItem('unicaRecentFeature');
+        document.getElementById('renewalRecent')?.classList.remove('is-visible');
+      }
+    }catch(_){}
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',cleanup,{once:true});
+  else cleanup();
+  [250,800,1800].forEach(ms=>setTimeout(cleanup,ms));
+})();
+</script>
+</body>
+</html>
