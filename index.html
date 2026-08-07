@@ -55,7 +55,7 @@
 }
 
 </style>
-<link rel="stylesheet" href="css/phase13-7-birthday-removed.css?v=13.7"/>
+<link rel="stylesheet" href="css/phase13-7-birthday-removed.css?v=13.7.1"/>
 </head>
 <body data-social-stable="13.6">
 <div aria-hidden="true" class="scroll-progress" id="scrollProgress"></div>
@@ -662,7 +662,7 @@
 <script src="js/phase12-scent16.js?v=1.4" type="module"></script>
 <script src="js/phase11-1-milk-match.js?v=phase12-3-complete-stable"></script>
 <script src="js/phase11-3-lyrics-audio.js?v=phase12-3-complete-stable"></script>
-<script src="js/phase12-4-1-renewal.js?v=13.7"></script>
+<script src="js/phase12-4-1-renewal.js?v=13.7.1"></script>
 <script src="js/phase12-4-2-feature-worlds.js?v=13.7"></script>
 <script src="js/phase12-4-4-final-polish.js?v=13.7"></script>
 <script src="js/phase12-4-5-dashboard.js?v=13.7"></script>
@@ -672,5 +672,21 @@
 <script src="js/phase13-4-unipass-card.js?v=13.5.2" type="module"></script>
 <script src="js/phase13-5-common-navigation.js?v=13.7"></script>
 <script src="js/phase13-5-4-header-icons.js?v=13.5.4" defer></script>
+<script>
+(()=>{
+  const removeLegacyBirthdayUi=()=>{
+    const selectors=[
+      '.fun-card.birthday','.birthday-album-shortcut','.birthday-banner','.birthday-today-celebration','.birthday-floating-message',
+      '#birthdayHomeCard','#birthdayCard','#birthdayAlbumHomeCard','#openBirthdayCalendar','#openBirthdayAlbum',
+      '[data-feature-key="birthday"]','[data-sub-feature-key="birthday"]','[data-sub-feature-key="birthdayAlbum"]',
+      '.birthday-experience-modal','.birthday-calendar-modal','.birthday-comment-modal','.birthday-album-modal','.birthday-history-modal'
+    ];
+    document.querySelectorAll(selectors.join(',')).forEach(el=>el.remove());
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',removeLegacyBirthdayUi,{once:true});
+  else removeLegacyBirthdayUi();
+  setTimeout(removeLegacyBirthdayUi,700);
+})();
+</script>
 </body>
 </html>
