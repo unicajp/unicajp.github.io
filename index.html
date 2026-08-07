@@ -55,7 +55,6 @@
 }
 
 </style>
-<link rel="stylesheet" href="css/phase13-7-birthday-removed.css?v=13.7.1"/>
 </head>
 <body data-social-stable="13.6">
 <div aria-hidden="true" class="scroll-progress" id="scrollProgress"></div>
@@ -662,30 +661,49 @@
 <script src="js/phase12-scent16.js?v=1.4" type="module"></script>
 <script src="js/phase11-1-milk-match.js?v=phase12-3-complete-stable"></script>
 <script src="js/phase11-3-lyrics-audio.js?v=phase12-3-complete-stable"></script>
-<script src="js/phase12-4-1-renewal.js?v=13.7.1"></script>
-<script src="js/phase12-4-2-feature-worlds.js?v=13.7"></script>
-<script src="js/phase12-4-4-final-polish.js?v=13.7"></script>
-<script src="js/phase12-4-5-dashboard.js?v=13.7"></script>
+<script src="js/phase12-4-1-renewal.js?v=13.7.2"></script>
+<script src="js/phase12-4-2-feature-worlds.js?v=13.7.2"></script>
+<script src="js/phase12-4-4-final-polish.js?v=13.7.2"></script>
+<script src="js/phase12-4-5-dashboard.js?v=13.7.2"></script>
 <script src="js/youtube-latest-config.js?v=1.1"></script>
 <script src="js/youtube-latest.js?v=3.0"></script>
 <link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=13.5.2"/>
 <script src="js/phase13-4-unipass-card.js?v=13.5.2" type="module"></script>
 <script src="js/phase13-5-common-navigation.js?v=13.7"></script>
 <script src="js/phase13-5-4-header-icons.js?v=13.5.4" defer></script>
-<script>
+<script id="phase13-7-2-birthday-removal">
 (()=>{
-  const removeLegacyBirthdayUi=()=>{
-    const selectors=[
-      '.fun-card.birthday','.birthday-album-shortcut','.birthday-banner','.birthday-today-celebration','.birthday-floating-message',
-      '#birthdayHomeCard','#birthdayCard','#birthdayAlbumHomeCard','#openBirthdayCalendar','#openBirthdayAlbum',
-      '[data-feature-key="birthday"]','[data-sub-feature-key="birthday"]','[data-sub-feature-key="birthdayAlbum"]',
-      '.birthday-experience-modal','.birthday-calendar-modal','.birthday-comment-modal','.birthday-album-modal','.birthday-history-modal'
-    ];
-    document.querySelectorAll(selectors.join(',')).forEach(el=>el.remove());
+  'use strict';
+  const selectors=[
+    '.fun-card.birthday','.birthday-album-shortcut','.birthday-banner','.birthday-today-celebration','.birthday-floating-message',
+    '#birthdayHomeCard','#birthdayCard','#birthdayMonthCard','#birthdayAlbumHomeCard','#openBirthdayCalendar','#openBirthdayAlbum',
+    '[data-feature-key="birthday"]','[data-sub-feature-key="birthday"]','[data-sub-feature-key="birthdayAlbum"]',
+    '.birthday-experience-modal','.birthday-calendar-modal','.birthday-comment-modal','.birthday-album-modal','.birthday-history-modal'
+  ];
+  const cleanup=()=>{
+    document.querySelectorAll(selectors.join(',')).forEach(el=>{
+      const stack=el.closest('.fun-feature-stack');
+      (stack||el).remove();
+    });
+    document.querySelectorAll('button,a,article,section,div').forEach(el=>{
+      if(el.closest('#passportDetailModal,.register-panel,.register-card,#memberRegistration')) return;
+      const text=(el.textContent||'').replace(/\s+/g,' ').trim();
+      if(text==='お祝いアルバム' || text.startsWith('お祝いアルバム ') || text.includes('お祝いアルバム0件の思い出')){
+        const stack=el.closest('.fun-feature-stack');
+        (stack||el).remove();
+      }
+    });
+    try{
+      const recent=JSON.parse(localStorage.getItem('unicaRecentFeature')||'null');
+      if(recent && /birthday|誕生日|お祝いアルバム/.test(`${recent.key||''} ${recent.label||''}`)){
+        localStorage.removeItem('unicaRecentFeature');
+        document.getElementById('renewalRecent')?.classList.remove('is-visible');
+      }
+    }catch(_){}
   };
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',removeLegacyBirthdayUi,{once:true});
-  else removeLegacyBirthdayUi();
-  setTimeout(removeLegacyBirthdayUi,700);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',cleanup,{once:true});
+  else cleanup();
+  [250,800,1800].forEach(ms=>setTimeout(cleanup,ms));
 })();
 </script>
 </body>
