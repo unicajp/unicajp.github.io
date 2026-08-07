@@ -1,0 +1,3 @@
+/* Phase13.7 — birthday feature removed. Keep the remaining ENJOY grid balanced. */
+#phase1241Renewal .fun-grid > .fun-feature-stack:nth-child(3):last-child{grid-column:1/-1;}
+@media(max-width:420px){#phase1241Renewal .fun-grid > .fun-feature-stack:nth-child(3):last-child{grid-column:1/-1;}}
