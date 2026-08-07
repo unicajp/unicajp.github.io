@@ -55,6 +55,7 @@
 }
 
 </style>
+<link rel="stylesheet" href="css/phase13-7-birthday-removed.css?v=13.7"/>
 </head>
 <body data-social-stable="13.6">
 <div aria-hidden="true" class="scroll-progress" id="scrollProgress"></div>
@@ -145,21 +146,6 @@
 <div class="milk-release-progress"><i id="milkReleaseProgress"></i></div>
 <p class="milk-release-note" id="milkReleaseNote">8月1日、うにかの新しい物語が始まります。</p>
 <a class="milk-release-link" hidden="" href="https://linkco.re/qRn9AShM" id="milkReleaseLink" rel="noopener noreferrer" target="_blank">「ミルクの匂い」を聴く</a>
-</article>
-<div aria-live="polite" class="birthday-banner" hidden="" id="birthdayBanner"></div>
-<article class="birthday-month-card member-only-surface" data-member-only="" id="birthdayMonthCard">
-<button aria-label="うにメン誕生日カレンダーを開く" class="birthday-month-open" id="openBirthdayCalendar" type="button">
-<span aria-hidden="true" class="birthday-month-icon">🎂</span>
-<span class="birthday-month-copy">
-<small>UNICA MEMBER BIRTHDAYS</small>
-<strong><span id="birthdayMonthLabel">今月</span>のお誕生日</strong>
-<em id="birthdayMonthSummary">誕生日を確認しています…</em>
-</span>
-<span class="birthday-month-count" id="birthdayMonthCount">0人</span>
-<span aria-hidden="true" class="birthday-month-arrow">›</span>
-</button>
-<div aria-live="polite" class="birthday-month-list" id="birthdayMonthList"></div>
-<div aria-live="polite" class="birthday-today-celebration" hidden="" id="birthdayTodayCelebration"></div><div class="birthday-album-shortcut" id="birthdayAlbumShortcut"></div>
 </article>
 <article class="community-home-card support-home-card" id="communityHomeCard">
 <button aria-label="応援コメントランキングを開く" class="community-home-button" data-world-nav="community" type="button">
@@ -317,7 +303,7 @@
 <ul>
 <li><span aria-hidden="true">❤️</span>エールを送る</li>
 <li><span aria-hidden="true">💬</span>応援コメントを書く</li>
-<li><span aria-hidden="true">🎂</span>うにメンのお誕生日をお祝いする</li>
+
 <li><span aria-hidden="true">🔔</span>お知らせを受け取る</li>
 </ul>
 </div>
@@ -329,7 +315,7 @@
 <input autocomplete="nickname" class="register-input" id="memberNickname" maxlength="16" placeholder="例：うにこ" type="text"/>
 <div class="register-profile-grid">
 <label><span class="register-label">都道府県</span><select class="register-input" id="memberPrefecture"><option value="">選択してください</option></select></label>
-<div><span class="register-label">誕生日（月・日）</span><div class="birthday-selects"><select class="register-input" id="memberBirthMonth"><option value="">月</option></select><select class="register-input" id="memberBirthDay"><option value="">日</option></select></div><small class="privacy-note">年は入力しません。誕生日のお祝い表示にのみ使用します。</small></div>
+<div><span class="register-label">誕生日（月・日）</span><div class="birthday-selects"><select class="register-input" id="memberBirthMonth"><option value="">月</option></select><select class="register-input" id="memberBirthDay"><option value="">日</option></select></div><small class="privacy-note">年は入力しません。うにパスのプロフィール表示に使用します。</small></div>
 </div>
 <div aria-labelledby="emojiBuilderTitle" class="emoji-builder">
 <div class="emoji-builder-copy">
@@ -536,54 +522,6 @@
 <button class="guest-lock-cancel" data-close-guest-lock="" type="button">公式サイトを見る</button>
 </section>
 </div>
-<div aria-hidden="true" class="world-modal birthday-calendar-modal" id="birthdayCalendarModal">
-<div class="world-modal-backdrop" data-close-birthday-calendar=""></div>
-<section aria-labelledby="birthdayCalendarTitle" aria-modal="true" class="world-modal-panel birthday-calendar-panel" role="dialog">
-<button aria-label="閉じる" class="world-modal-close" data-close-birthday-calendar="" type="button">×</button>
-<p class="eyebrow">UNICA MEMBER BIRTHDAYS</p>
-<h2 id="birthdayCalendarTitle">🎂 うにメン誕生日カレンダー</h2>
-<div class="birthday-calendar-topline"><p class="birthday-calendar-intro">公開設定になっている誕生日を、月ごとに確認できます。</p><button data-open-birthday-album="" id="openBirthdayAlbum" type="button">🎂 お祝いアルバム</button></div>
-<div aria-label="月を選択" class="birthday-calendar-months" id="birthdayCalendarMonths" role="tablist"></div>
-<div class="birthday-calendar-heading"><strong id="birthdayCalendarMonthTitle">今月のお誕生日</strong><span id="birthdayCalendarMonthCount">0人</span></div>
-<div aria-live="polite" class="birthday-calendar-list" id="birthdayCalendarList"></div>
-</section>
-</div>
-<div aria-hidden="true" class="birthday-experience-modal" id="birthdayExperienceModal">
-<div class="birthday-experience-backdrop" data-close-birthday-experience=""></div>
-<div aria-hidden="true" class="birthday-celebration-particles"></div>
-<section aria-label="今日のお誕生日" aria-modal="true" class="birthday-experience-panel" role="dialog">
-<button aria-label="閉じる" class="birthday-experience-close" data-close-birthday-experience="" type="button">×</button>
-<div id="birthdayExperienceBody"></div>
-</section>
-</div>
-<div aria-hidden="true" class="world-modal birthday-comment-modal" id="birthdayCommentModal">
-<div class="world-modal-backdrop" data-close-birthday-comment=""></div>
-<section aria-labelledby="birthdayCommentTitle" aria-modal="true" class="world-modal-panel birthday-comment-panel" role="dialog">
-<button aria-label="閉じる" class="world-modal-close" data-close-birthday-comment="" type="button">×</button>
-<div class="birthday-comment-hero"><span id="birthdayGrowthIcon">🌱</span><div><small>HAPPY BIRTHDAY</small><h2 id="birthdayCommentTitle"><b id="birthdayCommentPerson">うにメンさん</b>へ</h2><p><span id="birthdayCommentDate"></span>・<b id="birthdayCommentCount">0件</b></p></div></div>
-<div class="birthday-growth-status"><span id="birthdayGrowthLabel">お祝いで育ちます</span><i><b></b></i></div>
-<div class="birthday-comment-composer" id="birthdayCommentComposer"><textarea id="birthdayCommentInput" maxlength="120" placeholder="お誕生日おめでとう！素敵な一年になりますように…" rows="3"></textarea><button id="birthdayCommentSubmit" type="button">💌 お祝いコメントを送る</button><small>コメントは当日だけ・1人につき1回送れます。みんなに公開されます。</small></div>
-<p class="birthday-comment-done" hidden="" id="birthdayCommentDone">✅ 今日はお祝い済みです</p>
-<p class="birthday-comment-own" hidden="" id="birthdayCommentOwnNotice">🎁 みんなから届いたお祝いコメントです</p>
-<div aria-live="polite" class="birthday-comment-list" id="birthdayCommentList"></div>
-</section>
-</div>
-<div aria-hidden="true" class="world-modal birthday-album-modal" id="birthdayAlbumModal">
-<div class="world-modal-backdrop" data-close-birthday-album=""></div>
-<section aria-labelledby="birthdayAlbumTitle" aria-modal="true" class="world-modal-panel birthday-album-panel" role="dialog">
-<button aria-label="閉じる" class="world-modal-close" data-close-birthday-album="" type="button">×</button>
-<p class="eyebrow">BIRTHDAY ALBUM</p><h2 id="birthdayAlbumTitle">🎂 お祝いコメントの思い出</h2><p class="birthday-calendar-intro">日付とお誕生日の人を選ぶと、いつでもコメントを読み返せます。</p>
-<div class="birthday-album-list" id="birthdayAlbumList"></div>
-</section>
-</div>
-<div aria-hidden="true" class="world-modal birthday-history-modal" id="birthdayHistoryModal">
-<div class="world-modal-backdrop" data-close-birthday-history=""></div>
-<section aria-labelledby="birthdayHistoryTitle" aria-modal="true" class="world-modal-panel birthday-history-panel" role="dialog">
-<button aria-label="閉じる" class="world-modal-close" data-close-birthday-history="" type="button">×</button>
-<p class="eyebrow" id="birthdayHistoryDate"></p><h2 id="birthdayHistoryTitle">お誕生日</h2><p class="birthday-history-count" id="birthdayHistoryCount">💌 0件</p><div id="birthdayOwnerReplyArea"></div>
-<div class="birthday-comment-list" id="birthdayHistoryList"></div>
-</section>
-</div>
 <div aria-hidden="true" class="admin-modal" id="adminPasswordModal">
 <div class="admin-modal-backdrop" data-close-admin=""></div>
 <section aria-labelledby="adminPasswordTitle" aria-modal="true" class="admin-panel admin-password-panel" role="dialog">
@@ -712,28 +650,27 @@
 </div>
 <div aria-live="polite" class="mini-toast" id="miniToast" role="status"></div>
 <script src="js/firebase-init.js?v=4.18-progress-save-fix" type="module"></script>
-<script src="js/phase10-2.js?v=12.6" type="module"></script>
-<script src="js/script.js"></script>
+<script src="js/phase10-2.js?v=13.7" type="module"></script>
+<script src="js/script.js?v=13.7"></script>
 <script src="js/phase10-3.js?v=12.6"></script>
 <script src="js/phase10-7-prefectures.js" type="module"></script>
-<script src="js/phase10-5-guest.js"></script>
+<script src="js/phase10-5-guest.js?v=13.7"></script>
 <script src="js/phase10-11-scroll-only.js"></script>
 <script src="js/phase10-12-google.js"></script>
 <script src="js/phase10-14-admin.js" type="module"></script>
-<script src="js/phase10-17-birthdays.js?v=12.3" type="module"></script>
 <script src="js/phase10-18-release-countdown.js"></script>
 <script src="js/phase12-scent16.js?v=1.4" type="module"></script>
 <script src="js/phase11-1-milk-match.js?v=phase12-3-complete-stable"></script>
 <script src="js/phase11-3-lyrics-audio.js?v=phase12-3-complete-stable"></script>
-<script src="js/phase12-4-1-renewal.js?v=12.4.7"></script>
-<script src="js/phase12-4-2-feature-worlds.js?v=12.4.2"></script>
-<script src="js/phase12-4-4-final-polish.js?v=12.4.4"></script>
-<script src="js/phase12-4-5-dashboard.js?v=12.4.7"></script>
+<script src="js/phase12-4-1-renewal.js?v=13.7"></script>
+<script src="js/phase12-4-2-feature-worlds.js?v=13.7"></script>
+<script src="js/phase12-4-4-final-polish.js?v=13.7"></script>
+<script src="js/phase12-4-5-dashboard.js?v=13.7"></script>
 <script src="js/youtube-latest-config.js?v=1.1"></script>
 <script src="js/youtube-latest.js?v=3.0"></script>
 <link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=13.5.2"/>
 <script src="js/phase13-4-unipass-card.js?v=13.5.2" type="module"></script>
-<script src="js/phase13-5-common-navigation.js?v=13.5.1"></script>
+<script src="js/phase13-5-common-navigation.js?v=13.7"></script>
 <script src="js/phase13-5-4-header-icons.js?v=13.5.4" defer></script>
 </body>
 </html>
