@@ -1,3 +1,34 @@
-/* Phase13.7 — birthday feature removed. Keep the remaining ENJOY grid balanced. */
+/* Phase13.7.1 — birthday feature fully removed from site UI.
+   Birthday input remains only for UniPass profile display. */
+
+/* Legacy ENJOY/home birthday surfaces */
+.fun-card.birthday,
+.birthday-album-shortcut,
+.birthday-banner,
+.birthday-today-celebration,
+.birthday-floating-message,
+#birthdayHomeCard,
+#birthdayCard,
+#birthdayAlbumHomeCard,
+#openBirthdayCalendar,
+#openBirthdayAlbum,
+[data-feature-key="birthday"],
+[data-sub-feature-key="birthday"],
+[data-sub-feature-key="birthdayAlbum"]{
+  display:none!important;
+}
+
+/* Legacy birthday modals / event UI. Keep .birthday-selects because registration + UniPass still use birthday data. */
+.birthday-experience-modal,
+.birthday-calendar-modal,
+.birthday-comment-modal,
+.birthday-album-modal,
+.birthday-history-modal{
+  display:none!important;
+}
+
+/* Remaining ENJOY cards: game, scent, prefecture. Keep the third card balanced. */
 #phase1241Renewal .fun-grid > .fun-feature-stack:nth-child(3):last-child{grid-column:1/-1;}
-@media(max-width:420px){#phase1241Renewal .fun-grid > .fun-feature-stack:nth-child(3):last-child{grid-column:1/-1;}}
+@media(max-width:420px){
+  #phase1241Renewal .fun-grid > .fun-feature-stack:nth-child(3):last-child{grid-column:1/-1;}
+}
