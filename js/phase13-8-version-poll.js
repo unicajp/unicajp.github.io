@@ -13,8 +13,8 @@ import {
     startAt: '2026-09-07T00:00:00+09:00',
     endAt: '2026-09-14T23:59:59+09:00',
     choices: [
-      { id: 'release', label: 'Release ver.', sub: 'RELEASE', icon: '💿', audio: 'assets/audio/milk_no_nioi_release.mp3' },
-      { id: 'acoustic', label: '弾き語り ver.', sub: 'ACOUSTIC', icon: '🎤', audio: 'assets/audio/milk_no_nioi_acoustic.mp3' }
+      { id: 'release', label: 'Release ver.', audio: 'assets/audio/milk_no_nioi_release.mp3' },
+      { id: 'acoustic', label: '弾き語り ver.', audio: 'assets/audio/milk_no_nioi_acoustic.mp3' }
     ]
   };
   const PAST_POLLS = [];
@@ -50,13 +50,12 @@ import {
       <div class="version-poll-list">
         ${CURRENT_POLL.choices.map(c => `
           <div class="version-poll-option" data-option="${c.id}">
-            <button type="button" class="version-poll-listen" data-audio="${c.audio}" aria-label="${c.label}を試聴">
-              <span>${c.icon}</span><b>▶</b><small>試聴</small>
-            </button>
-            <div class="version-poll-option-name"><small>${c.sub}</small><strong>${c.label}</strong></div>
+            <div class="version-poll-option-name"><strong>${c.label}</strong></div>
+            <button type="button" class="version-poll-listen" data-audio="${c.audio}" aria-label="${c.label}を試聴">▶ 試聴</button>
             <button type="button" class="version-poll-choice" data-choice="${c.id}" ${ended ? 'disabled' : ''}>${ended ? '終了' : '投票する'}</button>
           </div>`).join('')}
       </div>
+      <div class="version-poll-participants">参加者 <b id="versionPollParticipants">0</b>人</div>
       <div class="version-poll-result" id="versionPollResult" hidden>
         <div class="version-poll-result-row"><span>Release ver.</span><strong id="versionPollReleasePct">0%</strong></div>
         <div class="version-poll-bar"><i id="versionPollBar"></i></div>
@@ -109,10 +108,12 @@ import {
       const mySnap = await getDoc(myRef);
       const myChoice = mySnap.exists() ? String(mySnap.data().choice || '') : '';
       setChoiceState(myChoice);
-      const mustShow = pollEnded() || myChoice || showResults;
-      if (!mustShow) { $('#versionPollResult').hidden = true; return; }
       const counts = await countsFor(CURRENT_POLL.id);
       const release = counts.release || 0, acoustic = counts.acoustic || 0, total = release + acoustic;
+      const participants = $('#versionPollParticipants');
+      if (participants) participants.textContent = String(total);
+      const mustShow = pollEnded() || myChoice || showResults;
+      if (!mustShow) { $('#versionPollResult').hidden = true; return; }
       const releasePct = total ? Math.round((release / total) * 100) : 0;
       const acousticPct = total ? 100 - releasePct : 0;
       $('#versionPollReleasePct').textContent = `${releasePct}%`;
@@ -149,12 +150,12 @@ import {
 
   function listen(btn) {
     const src = btn.dataset.audio;
-    if (playingAudio) { playingAudio.pause(); playingAudio.currentTime = 0; if (playingButton) playingButton.classList.remove('is-playing'); }
-    if (playingButton === btn) { playingAudio = null; playingButton = null; return; }
+    if (playingAudio) { playingAudio.pause(); playingAudio.currentTime = 0; if (playingButton) { playingButton.classList.remove('is-playing'); playingButton.textContent = '▶ 試聴'; } }
+    if (playingButton === btn) { btn.textContent = '▶ 試聴'; playingAudio = null; playingButton = null; return; }
     const audio = new Audio(src);
-    playingAudio = audio; playingButton = btn; btn.classList.add('is-playing');
-    audio.play().catch(() => { btn.classList.remove('is-playing'); $('#versionPollNote').textContent = '音源ファイルをアップロードすると試聴できます。'; playingAudio = null; playingButton = null; });
-    audio.addEventListener('ended', () => { btn.classList.remove('is-playing'); playingAudio = null; playingButton = null; }, { once: true });
+    playingAudio = audio; playingButton = btn; btn.classList.add('is-playing'); btn.textContent = '■ 停止';
+    audio.play().catch(() => { btn.classList.remove('is-playing'); btn.textContent = '▶ 試聴'; $('#versionPollNote').textContent = '音源ファイルをアップロードすると試聴できます。'; playingAudio = null; playingButton = null; });
+    audio.addEventListener('ended', () => { btn.classList.remove('is-playing'); btn.textContent = '▶ 試聴'; playingAudio = null; playingButton = null; }, { once: true });
   }
 
   async function openHistory() {
