@@ -1,5 +1,5 @@
 import {
-  collection, doc, getDoc, getDocs, setDoc, serverTimestamp
+  collection, doc, getDoc, getDocs, setDoc, deleteDoc, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js';
 
 (() => {
@@ -21,6 +21,8 @@ import {
   let busy = false;
   let playingAudio = null;
   let playingButton = null;
+  let currentChoice = '';
+  let changeMode = false;
   const $ = (s, r = document) => r.querySelector(s);
 
   function memberExists() {
@@ -56,6 +58,10 @@ import {
           </div>`).join('')}
       </div>
       <div class="version-poll-participants">参加者 <b id="versionPollParticipants">0</b>人</div>
+      <div class="version-poll-actions" id="versionPollActions" hidden>
+        <button type="button" id="versionPollChange">投票を変更</button>
+        <button type="button" id="versionPollCancel">投票を取り消す</button>
+      </div>
       <div class="version-poll-result" id="versionPollResult" hidden>
         <div class="version-poll-result-row"><span>Release ver.</span><strong id="versionPollReleasePct">0%</strong></div>
         <div class="version-poll-bar"><i id="versionPollBar"></i></div>
@@ -69,12 +75,26 @@ import {
   }
 
   function setChoiceState(myChoice) {
+    currentChoice = myChoice || '';
+    const ended = pollEnded();
     document.querySelectorAll('#versionPollCard .version-poll-choice').forEach(btn => {
-      const selected = btn.dataset.choice === myChoice;
+      const selected = btn.dataset.choice === currentChoice;
       btn.classList.toggle('is-selected', selected);
       btn.setAttribute('aria-pressed', selected ? 'true' : 'false');
-      if (!pollEnded()) btn.textContent = selected ? '投票済み ✓' : (myChoice ? '変更する' : '投票する');
+      if (ended) { btn.textContent = '終了'; btn.disabled = true; return; }
+      if (!currentChoice) { btn.textContent = '投票する'; btn.disabled = false; return; }
+      if (changeMode) {
+        btn.textContent = selected ? '現在の投票 ✓' : 'こちらに変更';
+        btn.disabled = selected;
+      } else {
+        btn.textContent = selected ? '投票済み ✓' : '投票する';
+        btn.disabled = true;
+      }
     });
+    const actions = $('#versionPollActions');
+    if (actions) actions.hidden = ended || !currentChoice;
+    const change = $('#versionPollChange');
+    if (change) change.textContent = changeMode ? '変更をやめる' : '投票を変更';
   }
 
   async function waitFirebase() {
@@ -137,6 +157,7 @@ import {
       const fb = await waitFirebase();
       if (!memberExists()) { if (note) note.textContent = '投票は「うにメン」登録後に参加できます。'; return; }
       await setDoc(doc(fb.db, 'polls', CURRENT_POLL.id, 'votes', fb.uid), { uid: fb.uid, choice, updatedAt: serverTimestamp() }, { merge: true });
+      changeMode = false;
       setChoiceState(choice);
       await loadState(true);
     } catch (error) {
@@ -144,7 +165,38 @@ import {
       if (note) note.textContent = error?.code === 'permission-denied' ? '投票権限を確認できませんでした。Firestore Rulesを更新してください。' : '投票に失敗しました。もう一度お試しください。';
     } finally {
       busy = false;
-      if (!pollEnded()) document.querySelectorAll('#versionPollCard .version-poll-choice').forEach(b => b.disabled = false);
+      if (!pollEnded()) setChoiceState(currentChoice);
+    }
+  }
+
+  function toggleChange() {
+    if (busy || pollEnded() || !currentChoice) return;
+    changeMode = !changeMode;
+    setChoiceState(currentChoice);
+    const note = $('#versionPollNote');
+    if (note) note.textContent = changeMode ? '変更したい方の「こちらに変更」を押してください。' : '締切までは投票先を変更・取り消しできます。';
+  }
+
+  async function cancelVote() {
+    if (busy || pollEnded() || !currentChoice) return;
+    if (!window.confirm('投票を取り消しますか？')) return;
+    const note = $('#versionPollNote');
+    busy = true;
+    document.querySelectorAll('#versionPollCard .version-poll-choice').forEach(b => b.disabled = true);
+    try {
+      const fb = await waitFirebase();
+      await deleteDoc(doc(fb.db, 'polls', CURRENT_POLL.id, 'votes', fb.uid));
+      currentChoice = '';
+      changeMode = false;
+      setChoiceState('');
+      await loadState(true);
+      if (note) note.textContent = '投票を取り消しました。もう一度投票できます。';
+    } catch (error) {
+      console.warn('Version poll cancel:', error);
+      if (note) note.textContent = '投票の取り消しに失敗しました。もう一度お試しください。';
+    } finally {
+      busy = false;
+      if (!pollEnded()) setChoiceState(currentChoice);
     }
   }
 
@@ -192,6 +244,8 @@ import {
     root.insertBefore(card, artist);
     card.querySelectorAll('.version-poll-choice').forEach(btn => btn.addEventListener('click', () => vote(btn.dataset.choice)));
     card.querySelectorAll('.version-poll-listen').forEach(btn => btn.addEventListener('click', () => listen(btn)));
+    $('#versionPollChange').addEventListener('click', toggleChange);
+    $('#versionPollCancel').addEventListener('click', cancelVote);
     $('#versionPollHistory').addEventListener('click', openHistory);
     loadState(false);
     return true;
