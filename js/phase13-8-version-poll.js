@@ -9,12 +9,15 @@ import {
   const CURRENT_POLL = {
     id: 'milk-no-nioi-version-202609',
     song: 'ミルクの匂い',
-    title: 'あなたはどっち派？',
+    title: '今の気持ちに一票',
     startAt: '2026-09-07T00:00:00+09:00',
     endAt: '2026-09-14T23:59:59+09:00',
     choices: [
-      { id: 'release', label: 'Release ver.', audio: 'assets/audio/milk_no_nioi_release.mp3' },
-      { id: 'acoustic', label: '弾き語り ver.', audio: 'assets/audio/milk_no_nioi_acoustic.mp3' }
+      { id: 'release', label: 'Release ver.しか勝たん', audio: 'assets/audio/milk_no_nioi_release.mp3' },
+      { id: 'acoustic', label: '弾き語り ver.に心奪われた', audio: 'assets/audio/milk_no_nioi_acoustic.mp3' },
+      { id: 'depends_on_day', label: '聴きたいver.が日によって変わる' },
+      { id: 'unico_voice', label: '結局、うにこの歌声が好き' },
+      { id: 'piano_amazing', label: 'いや、ピアノうますぎ' }
     ]
   };
   const PAST_POLLS = [];
@@ -53,7 +56,7 @@ import {
         ${CURRENT_POLL.choices.map(c => `
           <div class="version-poll-option" data-option="${c.id}">
             <div class="version-poll-option-name"><strong>${c.label}</strong></div>
-            <button type="button" class="version-poll-listen" data-audio="${c.audio}" aria-label="${c.label}を試聴">▶ 試聴</button>
+            ${c.audio ? `<button type="button" class="version-poll-listen" data-audio="${c.audio}" aria-label="${c.label}を試聴">▶ 試聴</button>` : '<span class="version-poll-listen-spacer"></span>'}
             <button type="button" class="version-poll-choice" data-choice="${c.id}" ${ended ? 'disabled' : ''}>${ended ? '終了' : '投票する'}</button>
           </div>`).join('')}
       </div>
@@ -63,12 +66,10 @@ import {
         <button type="button" id="versionPollCancel">投票を取り消す</button>
       </div>
       <div class="version-poll-result" id="versionPollResult" hidden>
-        <div class="version-poll-result-row"><span>Release ver.</span><strong id="versionPollReleasePct">0%</strong></div>
-        <div class="version-poll-bar"><i id="versionPollBar"></i></div>
-        <div class="version-poll-result-row"><span>弾き語り ver.</span><strong id="versionPollAcousticPct">0%</strong></div>
+        <div id="versionPollResultChoices"></div>
         <p><b id="versionPollTotal">0</b>人が投票しました</p>
       </div>
-      <p class="version-poll-note" id="versionPollNote">${ended ? '最終結果を表示しています。' : '2つを聴き比べて、好きな方に投票してね。'}</p>
+      <p class="version-poll-note" id="versionPollNote">${ended ? '最終結果を表示しています。' : 'いちばん今の気持ちに近いものを選んでね。'}</p>
       <button type="button" class="version-poll-history" id="versionPollHistory">過去の投票結果を見る ›</button>
     `;
     return card;
@@ -129,17 +130,20 @@ import {
       const myChoice = mySnap.exists() ? String(mySnap.data().choice || '') : '';
       setChoiceState(myChoice);
       const counts = await countsFor(CURRENT_POLL.id);
-      const release = counts.release || 0, acoustic = counts.acoustic || 0, total = release + acoustic;
+      const total = Object.values(counts).reduce((sum, n) => sum + n, 0);
       const participants = $('#versionPollParticipants');
       if (participants) participants.textContent = String(total);
       const mustShow = pollEnded() || myChoice || showResults;
       if (!mustShow) { $('#versionPollResult').hidden = true; return; }
-      const releasePct = total ? Math.round((release / total) * 100) : 0;
-      const acousticPct = total ? 100 - releasePct : 0;
-      $('#versionPollReleasePct').textContent = `${releasePct}%`;
-      $('#versionPollAcousticPct').textContent = `${acousticPct}%`;
+      const resultChoices = $('#versionPollResultChoices');
+      if (resultChoices) {
+        resultChoices.innerHTML = CURRENT_POLL.choices.map(c => {
+          const n = counts[c.id] || 0;
+          const pct = total ? Math.round((n / total) * 100) : 0;
+          return `<div class="version-poll-result-item"><div class="version-poll-result-row"><span>${c.label}</span><strong>${pct}%</strong></div><div class="version-poll-result-mini-bar"><i style="width:${pct}%"></i></div></div>`;
+        }).join('');
+      }
       $('#versionPollTotal').textContent = String(total);
-      $('#versionPollBar').style.width = `${releasePct}%`;
       $('#versionPollResult').hidden = false;
       if (note) note.textContent = pollEnded() ? '投票は締め切りました。最新の最終結果です。' : (myChoice ? '投票ありがとうございます。締切までは投票先を変更できます。' : '');
     } catch (error) {
