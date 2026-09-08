@@ -6,3 +6,11 @@
 @media(max-width:420px){.version-poll-card{padding:16px 13px 14px;border-radius:21px}.version-poll-head h2{font-size:19px}.version-poll-option{grid-template-columns:minmax(0,1fr) 61px 68px;gap:6px}.version-poll-option-name strong{font-size:12px}}
 
 .version-poll-actions{display:flex;justify-content:center;gap:14px;margin:9px 0 0}.version-poll-actions[hidden]{display:none}.version-poll-actions button{border:0;background:transparent;padding:4px 2px;color:#8e6a65;font-size:9px;font-weight:800;text-decoration:underline;text-underline-offset:3px}.version-poll-actions button:last-child{color:#a1817a}
+
+/* Phase13.9.4: 5-choice feeling vote */
+.version-poll-listen-spacer{display:block;height:31px}
+.version-poll-result-item{margin-top:9px}
+.version-poll-result-item:first-child{margin-top:0}
+.version-poll-result-mini-bar{height:5px;margin-top:4px;border-radius:999px;overflow:hidden;background:rgba(124,87,84,.12)}
+.version-poll-result-mini-bar i{display:block;height:100%;border-radius:inherit;background:#7c5754;transition:width .4s ease}
+@media(max-width:420px){.version-poll-option-name strong{white-space:normal;line-height:1.3}.version-poll-option{grid-template-columns:minmax(0,1fr) 61px 68px}}
