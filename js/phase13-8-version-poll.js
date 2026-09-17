@@ -48,6 +48,7 @@ import {
 
     // 投票終了後は表側に結果や選択肢を並べず、アーカイブ入口だけを表示。
     if (ended) {
+      card.classList.add('version-poll-card-archive');
       card.innerHTML = `
         <button type="button" class="version-poll-archive-card-button" id="versionPollHistory">
           <span class="version-poll-archive-icon" aria-hidden="true">🎧</span>
