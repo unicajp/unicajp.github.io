@@ -25,3 +25,26 @@
 .version-poll-card-compact .version-poll-listen-spacer{height:27px}.version-poll-card-compact .version-poll-participants{margin-top:7px;font-size:8px}.version-poll-card-compact .version-poll-participants b{font-size:11px}
 .version-poll-card-compact .version-poll-note,.version-poll-card-compact .version-poll-history{font-size:7px}.version-poll-card-compact .version-poll-result-row{font-size:8px}.version-poll-card-compact .version-poll-result-row strong{font-size:9px}
 @media(max-width:420px){.version-poll-card-compact .version-poll-option{grid-template-columns:minmax(0,1fr) 48px 55px}}
+
+
+/* Phase13.10.2: archived poll card visually aligned with the other ENJOY cards */
+.version-poll-card.version-poll-card-compact.version-poll-card-archive{
+  position:relative;min-height:135px;padding:0;border:0;border-radius:22px;overflow:hidden;
+  background:linear-gradient(145deg,#8c5ac4,#d078c6);
+  box-shadow:0 11px 26px rgba(63,43,82,.16);
+}
+.version-poll-card-archive:before{
+  content:"";position:absolute;width:95px;height:95px;border-radius:50%;right:-30px;top:-35px;
+  background:rgba(255,255,255,.16);pointer-events:none;
+}
+.version-poll-archive-card-button{
+  position:relative;z-index:1;display:flex;width:100%;min-height:135px;align-items:flex-start;
+  gap:10px;padding:15px;border:0;background:transparent;color:#fff;text-align:left;font:inherit;
+}
+.version-poll-archive-icon{flex:none;font-size:29px;line-height:1}
+.version-poll-archive-copy{display:block;min-width:0;padding-top:1px}
+.version-poll-archive-copy small{display:block;font-size:9px;font-weight:900;letter-spacing:.12em;opacity:.82}
+.version-poll-archive-copy strong{display:block;margin-top:8px;font-size:15px;line-height:1.2;color:#fff}
+.version-poll-archive-copy em{display:inline-block;margin-top:9px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.18);font-size:10px;font-style:normal;font-weight:900;color:#fff}
+.version-poll-archive-arrow{margin-left:auto;align-self:center;font-size:24px;line-height:1;color:rgba(255,255,255,.9)}
+.version-poll-archive-card-button:active{transform:translateY(2px) scale(.985)}
