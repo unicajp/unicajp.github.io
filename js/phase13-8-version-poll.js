@@ -45,19 +45,35 @@ import {
     const card = document.createElement('section');
     card.className = 'version-poll-card';
     card.id = 'versionPollCard';
+
+    // 投票終了後は表側に結果や選択肢を並べず、アーカイブ入口だけを表示。
+    if (ended) {
+      card.innerHTML = `
+        <button type="button" class="version-poll-archive-card-button" id="versionPollHistory">
+          <span class="version-poll-archive-icon" aria-hidden="true">🎧</span>
+          <span class="version-poll-archive-copy">
+            <small>UNIMEN VOTE</small>
+            <strong>うにメン投票</strong>
+            <em>投票結果を見る</em>
+          </span>
+          <span class="version-poll-archive-arrow" aria-hidden="true">›</span>
+        </button>`;
+      return card;
+    }
+
     card.innerHTML = `
       <div class="version-poll-head">
-        <div><small>UNIMEN VOTE</small><h2>${ended ? '最新の投票結果' : CURRENT_POLL.title}</h2></div>
-        <span>${ended ? '投票終了' : '1人1票'}</span>
+        <div><small>UNIMEN VOTE</small><h2>${CURRENT_POLL.title}</h2></div>
+        <span>1人1票</span>
       </div>
       <p class="version-poll-song">「${CURRENT_POLL.song}」</p>
-      <div class="version-poll-period">${ended ? '投票は終了しました' : `投票期間　${dateLabel(CURRENT_POLL.startAt)}〜${dateLabel(CURRENT_POLL.endAt)}`}</div>
+      <div class="version-poll-period">投票期間　${dateLabel(CURRENT_POLL.startAt)}〜${dateLabel(CURRENT_POLL.endAt)}</div>
       <div class="version-poll-list">
         ${CURRENT_POLL.choices.map(c => `
           <div class="version-poll-option" data-option="${c.id}">
             <div class="version-poll-option-name"><strong>${c.label}</strong></div>
             ${c.audio ? `<button type="button" class="version-poll-listen" data-audio="${c.audio}" aria-label="${c.label}を試聴">▶ 試聴</button>` : '<span class="version-poll-listen-spacer"></span>'}
-            <button type="button" class="version-poll-choice" data-choice="${c.id}" ${ended ? 'disabled' : ''}>${ended ? '終了' : '投票する'}</button>
+            <button type="button" class="version-poll-choice" data-choice="${c.id}">投票する</button>
           </div>`).join('')}
       </div>
       <div class="version-poll-participants">参加者 <b id="versionPollParticipants">0</b>人</div>
@@ -69,7 +85,7 @@ import {
         <div id="versionPollResultChoices"></div>
         <p><b id="versionPollTotal">0</b>人が投票しました</p>
       </div>
-      <p class="version-poll-note" id="versionPollNote">${ended ? '最終結果を表示しています。' : 'いちばん今の気持ちに近いものを選んでね。'}</p>
+      <p class="version-poll-note" id="versionPollNote">いちばん今の気持ちに近いものを選んでね。</p>
       <button type="button" class="version-poll-history" id="versionPollHistory">過去の投票結果を見る ›</button>
     `;
     return card;
@@ -225,9 +241,10 @@ import {
     }
     modal.classList.add('is-open');
     const body = $('#versionPollHistoryBody');
-    if (!PAST_POLLS.length) { body.innerHTML = '<p class="version-poll-history-empty">まだ過去の投票結果はありません。<br>今回の次の投票が始まると、ここに保存されます。</p>'; return; }
+    const archivePolls = pollEnded() ? [{ ...CURRENT_POLL, closedLabel: '最新の投票結果' }, ...PAST_POLLS] : PAST_POLLS;
+    if (!archivePolls.length) { body.innerHTML = '<p class="version-poll-history-empty">まだ過去の投票結果はありません。</p>'; return; }
     body.innerHTML = '';
-    for (const p of PAST_POLLS) {
+    for (const p of archivePolls) {
       try {
         const counts = await countsFor(p.id); const total = Object.values(counts).reduce((a,b)=>a+b,0);
         const winner = p.choices.slice().sort((a,b)=>(counts[b.id]||0)-(counts[a.id]||0))[0];
@@ -251,10 +268,10 @@ import {
     scentStack.insertAdjacentElement('afterend', card);
     card.querySelectorAll('.version-poll-choice').forEach(btn => btn.addEventListener('click', () => vote(btn.dataset.choice)));
     card.querySelectorAll('.version-poll-listen').forEach(btn => btn.addEventListener('click', () => listen(btn)));
-    $('#versionPollChange').addEventListener('click', toggleChange);
-    $('#versionPollCancel').addEventListener('click', cancelVote);
-    $('#versionPollHistory').addEventListener('click', openHistory);
-    loadState(false);
+    $('#versionPollChange')?.addEventListener('click', toggleChange);
+    $('#versionPollCancel')?.addEventListener('click', cancelVote);
+    $('#versionPollHistory')?.addEventListener('click', openHistory);
+    if (!pollEnded()) loadState(false);
     return true;
   }
   function start() { if (mount()) return; let tries = 0; const timer = setInterval(() => { tries += 1; if (mount() || tries > 50) clearInterval(timer); }, 120); }
