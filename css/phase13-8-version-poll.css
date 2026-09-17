@@ -14,3 +14,14 @@
 .version-poll-result-mini-bar{height:5px;margin-top:4px;border-radius:999px;overflow:hidden;background:rgba(124,87,84,.12)}
 .version-poll-result-mini-bar i{display:block;height:100%;border-radius:inherit;background:#7c5754;transition:width .4s ease}
 @media(max-width:420px){.version-poll-option-name strong{white-space:normal;line-height:1.3}.version-poll-option{grid-template-columns:minmax(0,1fr) 61px 68px}}
+
+
+/* Phase13.10: poll moved under scent diagnosis as a quieter ENJOY card */
+.version-poll-card.version-poll-card-compact{margin:0;padding:13px 12px;border-radius:18px;box-shadow:none;background:rgba(255,250,248,.92);align-self:start}
+.version-poll-card-compact .version-poll-head h2{font-size:16px}.version-poll-card-compact .version-poll-head small{font-size:7px}.version-poll-card-compact .version-poll-head>span{font-size:7px;padding:4px 6px}
+.version-poll-card-compact .version-poll-song{font-size:10px;margin-top:5px}.version-poll-card-compact .version-poll-period{font-size:7px;margin-bottom:8px}
+.version-poll-card-compact .version-poll-list{gap:5px}.version-poll-card-compact .version-poll-option{grid-template-columns:minmax(0,1fr) 50px 57px;padding:7px 8px;border-radius:13px;gap:5px}
+.version-poll-card-compact .version-poll-option-name strong{font-size:9px;line-height:1.25}.version-poll-card-compact .version-poll-listen,.version-poll-card-compact .version-poll-choice{height:27px;font-size:7px;padding:0 4px}
+.version-poll-card-compact .version-poll-listen-spacer{height:27px}.version-poll-card-compact .version-poll-participants{margin-top:7px;font-size:8px}.version-poll-card-compact .version-poll-participants b{font-size:11px}
+.version-poll-card-compact .version-poll-note,.version-poll-card-compact .version-poll-history{font-size:7px}.version-poll-card-compact .version-poll-result-row{font-size:8px}.version-poll-card-compact .version-poll-result-row strong{font-size:9px}
+@media(max-width:420px){.version-poll-card-compact .version-poll-option{grid-template-columns:minmax(0,1fr) 48px 55px}}
