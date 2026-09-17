@@ -241,11 +241,14 @@ import {
   function mount() {
     if ($('#versionPollCard')) return true;
     const root = $('#phase1241Renewal');
-    const artist = root?.querySelector('.artist-renewal-zone');
-    if (!root || !artist) return false;
+    const funGrid = root?.querySelector('.fun-grid');
+    const scentCard = funGrid?.querySelector('[data-feature-key="scent"]');
+    const scentStack = scentCard?.closest('.fun-feature-stack');
+    if (!root || !funGrid || !scentStack) return false;
     const card = makeCard();
-    // 旧「アップデートお知らせ」枠があったトップ先頭位置に直接設置。
-    root.insertBefore(card, artist);
+    card.classList.add('version-poll-card-compact');
+    // 投票はトップ主役から外し、「楽しむ」の匂い診断のすぐ下へ移動。
+    scentStack.insertAdjacentElement('afterend', card);
     card.querySelectorAll('.version-poll-choice').forEach(btn => btn.addEventListener('click', () => vote(btn.dataset.choice)));
     card.querySelectorAll('.version-poll-listen').forEach(btn => btn.addEventListener('click', () => listen(btn)));
     $('#versionPollChange').addEventListener('click', toggleChange);
