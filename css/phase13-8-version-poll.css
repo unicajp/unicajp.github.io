@@ -48,3 +48,23 @@
 .version-poll-archive-copy em{display:inline-block;margin-top:9px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.18);font-size:10px;font-style:normal;font-weight:900;color:#fff}
 .version-poll-archive-arrow{margin-left:auto;align-self:center;font-size:24px;line-height:1;color:rgba(255,255,255,.9)}
 .version-poll-archive-card-button:active{transform:translateY(2px) scale(.985)}
+
+/* Phase13.10.3: archived poll typography/layout matched to standard ENJOY cards */
+.version-poll-card-archive .version-poll-archive-card-button{
+  display:block;position:relative;width:100%;min-height:135px;padding:15px;text-align:left;
+}
+.version-poll-card-archive .version-poll-archive-icon{display:block;font-size:29px;line-height:1}
+.version-poll-card-archive .version-poll-archive-copy{display:block;padding:0}
+.version-poll-card-archive .version-poll-archive-copy small{
+  display:none;
+}
+.version-poll-card-archive .version-poll-archive-copy strong{
+  display:block;margin-top:10px;font-size:15px;line-height:1.2;font-weight:700;color:#fff;
+}
+.version-poll-card-archive .version-poll-archive-copy em{
+  display:inline-block;margin-top:9px;padding:4px 8px;border-radius:999px;
+  background:rgba(255,255,255,.18);font-size:10px;line-height:1.35;font-style:normal;font-weight:900;color:#fff;
+}
+.version-poll-card-archive .version-poll-archive-arrow{
+  position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:24px;line-height:1;color:rgba(255,255,255,.9);
+}
