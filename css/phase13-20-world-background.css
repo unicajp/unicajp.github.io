@@ -1,15 +1,17 @@
-/* Phase 13.20 — UNICA WORLD crystal-light common background */
-html{background:#fbf8f7;}
+/* Phase 13.20.1 — UNICA WORLD crystal-light common background visibility fix */
+html{background:#f7f2f8!important;}
 body{
-  background-color:#fbf8f7!important;
-  background-image:
-    linear-gradient(rgba(255,255,255,.20),rgba(255,255,255,.20)),
-    url('../assets/unica-world-bg.webp')!important;
+  background-color:#f7f2f8!important;
+  background-image:url('../assets/unica-world-bg.webp')!important;
   background-position:center top!important;
   background-size:cover!important;
   background-repeat:no-repeat!important;
   background-attachment:scroll!important;
 }
+/* Old luxe/refined paper texture was sitting over/around the new world background. */
+body::before{display:none!important;content:none!important;}
+/* Keep the world shell transparent so the common image is actually visible. */
+#worldHome.world-home,.world-home{background:transparent!important;}
 @media (min-width:900px){
   body{background-position:center center!important;background-attachment:fixed!important;}
 }
