@@ -1,50 +1,31 @@
-/* Phase 13.20.2 — background layer cleanup
-   One world background only. Old page/paper/ambient layers are removed;
-   readable cards keep their own surfaces. */
+/* Phase 13.20.3 — UNICA WORLD background visibility fix
+   Root cause: the source artwork is intentionally bright in the center and the
+   previous `cover` sizing cropped away its coloured crystal edges on tall phones.
+   Keep the full artwork width visible instead of adding more white/transparent layers. */
 html{background:#eee8f5!important;}
 body{
-  background:#eee8f5 url('../assets/unica-world-bg.webp') center top/cover no-repeat scroll!important;
   background-color:#eee8f5!important;
+  background-image:url('../assets/unica-world-bg.webp')!important;
+  background-position:center top!important;
+  background-size:100% auto!important;
+  background-repeat:repeat-y!important;
+  background-attachment:scroll!important;
 }
-/* Remove historical full-page paper/noise/colour veils. */
-body::before,body::after{
-  display:none!important;
-  content:none!important;
-  background:none!important;
-  opacity:0!important;
-}
-/* Page/section shells must not paint over the common background. */
-main#top,
-.hero,.unime-section,.story-section,.movie-section,.connect-section,
-.profile-page,.section-shell{
-  background-color:transparent!important;
-  background-image:none!important;
-}
-/* Old decorative washes that occupied large areas. */
-.unime-section::before,.unime-section::after,
-.hero::after{
-  background:none!important;
-}
+body::before,body::after{display:none!important;content:none!important;background:none!important;opacity:0!important;}
+main#top,.hero,.unime-section,.story-section,.movie-section,.connect-section,
+.profile-page,.section-shell{background-color:transparent!important;background-image:none!important;}
+.unime-section::before,.unime-section::after,.hero::after{background:none!important;}
 .ambient-light,.ambient-light-one,.ambient-light-two{display:none!important;}
-/* The dashboard used to be one large translucent white sheet.
-   Individual cards remain readable, but the area between them now shows the world background. */
 #worldHome.world-home,.world-home{
-  background:transparent!important;
-  background-image:none!important;
-  border-color:transparent!important;
-  box-shadow:none!important;
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
+  background:transparent!important;background-image:none!important;border-color:transparent!important;
+  box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
-#worldHome.world-home::before,#worldHome.world-home::after,
-.world-home::before,.world-home::after{display:none!important;content:none!important;}
-/* Header stays readable but no longer becomes an opaque white slab. */
+#worldHome.world-home::before,#worldHome.world-home::after,.world-home::before,.world-home::after{display:none!important;content:none!important;}
 .site-header,.site-header.is-scrolled{
   background:rgba(255,255,255,.68)!important;
   backdrop-filter:blur(14px) saturate(1.05)!important;
   -webkit-backdrop-filter:blur(14px) saturate(1.05)!important;
 }
 @media (min-width:900px){
-  body{background-position:center center!important;background-attachment:fixed!important;}
+  body{background-size:960px auto!important;background-repeat:repeat-y!important;background-position:center top!important;}
 }
-@media (prefers-reduced-motion:reduce){body{background-attachment:scroll!important;}}
