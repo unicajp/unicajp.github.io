@@ -7,7 +7,7 @@
 <meta content="#3f2d2c" name="theme-color"/>
 <meta content="何気ない今日を、忘れられない思い出に。うにか Official Site。" name="description"/>
 <link href="favicon.png" rel="icon" type="image/png"/>
-<link href="css/style.css?v=12.6" rel="stylesheet"/>
+<link href="css/style.css?v=13.15" rel="stylesheet"/>
 <link href="css/youtube-latest-v2.css?v=13.3.0" rel="stylesheet"/>
 <link href="css/phase12-4-1-renewal.css?v=12.4.1" rel="stylesheet"/>
 <link href="css/phase12-4-2-feature-worlds.css?v=12.4.2" rel="stylesheet"/>
@@ -63,12 +63,10 @@
 <audio id="bgm" loop="" preload="auto" src="bgm.mp3"></audio>
 <section aria-label="サイトを開く" class="intro" id="intro">
 <button aria-label="うにかの世界を開く" class="intro-trigger" id="introTrigger" type="button">
-<span aria-hidden="true" class="door-panel door-panel-left"></span>
-<span aria-hidden="true" class="door-panel door-panel-right"></span>
-<span aria-hidden="true" class="door-line"></span>
-<span aria-hidden="true" class="intro-orb"></span>
-<span class="intro-label">OPEN</span>
-<span class="intro-sub">tap to enter</span>
+<span aria-hidden="true" class="intro-door intro-door-closed"></span>
+<span aria-hidden="true" class="intro-door intro-door-open"></span>
+<span aria-hidden="true" class="intro-enter-light"></span>
+<span class="intro-enter-hint">TOUCH TO ENTER</span>
 </button>
 </section>
 <div aria-hidden="true" class="ambient">
@@ -102,7 +100,7 @@
 <figure aria-label="うにか アーティストビジュアル" class="hero-portrait reveal" data-depth="0.028">
 <span aria-hidden="true" class="portrait-halo"></span>
 <img alt="うにか アイコン" id="unikaAdminTrigger" src="icon.png"/>
-<button aria-label="うにかへエールを送る" aria-pressed="false" class="hero-cheer-button" id="heroCheerButton" type="button">♡</button>
+
 <div aria-hidden="true" class="heart-burst" id="heartBurst"></div>
 <div aria-live="polite" class="hero-cheer-counter" id="heroCheerCounter"><small>TODAY</small><strong id="heroCheerTotal">0</strong></div>
 <figcaption>うにか</figcaption>
@@ -148,9 +146,9 @@
 <a class="milk-release-link" hidden="" href="https://linkco.re/qRn9AShM" id="milkReleaseLink" rel="noopener noreferrer" target="_blank">「ミルクの匂い」を聴く</a>
 </article>
 <article class="community-home-card support-home-card" id="communityHomeCard">
-<button aria-label="応援コメントランキングを開く" class="community-home-button" data-world-nav="community" type="button">
-<span class="community-home-icon">♥</span>
-<span class="community-home-main"><small>ALL-TIME LIKE RANKING</small><strong>応援コメントランキング</strong><em>累計いいね数の上位3名</em></span>
+<button aria-label="応援コメントを開く" class="community-home-button" data-world-nav="community" type="button">
+<span class="community-home-icon">💌</span>
+<span class="community-home-main"><small>MESSAGE FOR UNICA</small><strong>応援コメント</strong><em>うにかへ、ひとこと届けよう。</em></span>
 <span class="community-home-stats"><b id="homeCommunityPosts">0</b><small>コメント</small><b id="homeCommunityMembers">0</b><small>いいね</small></span>
 <span class="community-home-arrow">›</span>
 </button>
@@ -301,7 +299,6 @@
 <div class="free-member-card-heading"><span aria-hidden="true">🌱</span><div><small>JOIN UNICA WORLD</small><strong>うにメン登録は完全無料です</strong></div></div>
 <p>登録料・月額料金はかかりません。うにかを応援しながら、UNICA WORLDの機能を楽しめます。</p>
 <ul>
-<li><span aria-hidden="true">❤️</span>エールを送る</li>
 <li><span aria-hidden="true">💬</span>応援コメントを書く</li>
 
 <li><span aria-hidden="true">🔔</span>お知らせを受け取る</li>
@@ -517,7 +514,7 @@
 <div aria-hidden="true" class="guest-lock-icon">🔒</div>
 <p class="eyebrow">UNICA MEMBERS ONLY</p>
 <h2 id="guestLockTitle">この機能は<br/>うにメン限定です</h2>
-<p><strong class="guest-free-highlight">登録・利用は完全無料です。</strong><br/>うにメンになると、エール・応援コメント・今日のうに占いなど、UNICA WORLDのすべての機能を利用できます。</p>
+<p><strong class="guest-free-highlight">登録・利用は完全無料です。</strong><br/>うにメンになると、応援コメント・うにパス・お知らせなど、UNICA WORLDの会員機能を利用できます。</p>
 <button class="guest-lock-register" id="guestLockRegister" type="button">無料でうにメン登録へ</button>
 <button class="guest-lock-cancel" data-close-guest-lock="" type="button">公式サイトを見る</button>
 </section>
@@ -650,27 +647,29 @@
 </div>
 <div aria-live="polite" class="mini-toast" id="miniToast" role="status"></div>
 <script src="js/firebase-init.js?v=4.18-progress-save-fix" type="module"></script>
-<script src="js/phase10-2.js?v=13.7" type="module"></script>
-<script src="js/script.js?v=13.7"></script>
+<script src="js/phase10-2.js?v=13.12" type="module"></script>
+<script src="js/script.js?v=13.15"></script>
 <script src="js/phase10-3.js?v=12.6"></script>
 <script src="js/phase10-7-prefectures.js" type="module"></script>
-<script src="js/phase10-5-guest.js?v=13.7"></script>
+<script src="js/phase10-5-guest.js?v=13.10.5"></script>
 <script src="js/phase10-11-scroll-only.js"></script>
 <script src="js/phase10-12-google.js"></script>
 <script src="js/phase10-14-admin.js" type="module"></script>
 <script src="js/phase10-18-release-countdown.js"></script>
-<script src="js/phase12-scent16.js?v=1.4" type="module"></script>
+<link rel="stylesheet" href="css/phase13-11-scent-v2.css?v=13.12"/>
+<script src="js/phase12-scent16.js?v=13.16" type="module"></script>
 <script src="js/phase11-1-milk-match.js?v=phase12-3-complete-stable"></script>
 <script src="js/phase11-3-lyrics-audio.js?v=phase12-3-complete-stable"></script>
 <script src="js/phase12-4-1-renewal.js?v=13.8"></script>
 <script src="js/phase12-4-2-feature-worlds.js?v=13.7.2"></script>
 <script src="js/phase12-4-4-final-polish.js?v=13.7.2"></script>
 <script src="js/phase12-4-5-dashboard.js?v=13.7.2"></script>
-<script src="js/phase13-8-version-poll.js?v=13.10.3" type="module"></script>
+<script src="js/phase13-8-version-poll.js?v=13.10.6" type="module"></script>
 <script src="js/youtube-latest-config.js?v=1.1"></script>
 <script src="js/youtube-latest.js?v=3.0"></script>
-<link rel="stylesheet" href="css/phase13-8-version-poll.css?v=13.10.3"/>
+<link rel="stylesheet" href="css/phase13-8-version-poll.css?v=13.10.6"/>
 <link rel="stylesheet" href="css/phase13-10-scent-release-event.css?v=13.10"/>
+<link rel="stylesheet" href="css/phase13-10-4-home-compact.css?v=13.10.6"/>
 <script src="js/phase13-10-scent-release-event.js?v=13.10" defer></script>
 <link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=13.5.2"/>
 <script src="js/phase13-4-unipass-card.js?v=13.5.2" type="module"></script>
