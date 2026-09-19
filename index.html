@@ -105,6 +105,14 @@
 <div aria-live="polite" class="hero-cheer-counter" id="heroCheerCounter"><small>TODAY</small><strong id="heroCheerTotal">0</strong></div>
 <figcaption>うにか</figcaption>
 <div aria-atomic="true" aria-live="polite" class="support-comment-float-layer" id="supportCommentFloatLayer"></div>
+<div class="home-quick-comment" id="homeQuickComment">
+  <div class="home-quick-comment-inputwrap">
+    <textarea id="homeQuickCommentInput" maxlength="80" rows="1" placeholder="コメントを書く…"></textarea>
+    <small>1日1回</small>
+  </div>
+  <button class="home-quick-comment-send" id="homeQuickCommentSend" type="button">送る</button>
+  <button class="home-quick-comment-history" data-world-nav="community" id="homeQuickCommentHistory" type="button">履歴</button>
+</div>
 </figure>
 </section>
 <section aria-labelledby="unime-title" class="unime-section section-shell" id="unime">
@@ -145,15 +153,7 @@
 <p class="milk-release-note" id="milkReleaseNote">8月1日、うにかの新しい物語が始まります。</p>
 <a class="milk-release-link" hidden="" href="https://linkco.re/qRn9AShM" id="milkReleaseLink" rel="noopener noreferrer" target="_blank">「ミルクの匂い」を聴く</a>
 </article>
-<article class="community-home-card support-home-card" id="communityHomeCard">
-<button aria-label="応援コメントを開く" class="community-home-button" data-world-nav="community" type="button">
-<span class="community-home-icon">💌</span>
-<span class="community-home-main"><small>MESSAGE FOR UNICA</small><strong>応援コメント</strong><em>うにかへ、ひとこと届けよう。</em></span>
-<span class="community-home-stats"><b id="homeCommunityPosts">0</b><small>コメント</small><b id="homeCommunityMembers">0</b><small>いいね</small></span>
-<span class="community-home-arrow">›</span>
-</button>
-<div class="community-home-latest" id="communityHomeLatest"></div>
-</article>
+
 <article class="scent16-home-card member-only-surface" data-member-only="" id="scent16HomeCard">
 <button aria-label="うにかの匂い16診断を開く" class="scent16-home-open" id="openScent16" type="button">
 <span aria-hidden="true" class="scent16-home-flower" id="scent16HomeFlower">🌸</span>
@@ -647,7 +647,7 @@
 </div>
 <div aria-live="polite" class="mini-toast" id="miniToast" role="status"></div>
 <script src="js/firebase-init.js?v=4.18-progress-save-fix" type="module"></script>
-<script src="js/phase10-2.js?v=13.12" type="module"></script>
+<script src="js/phase10-2.js?v=13.21" type="module"></script>
 <script src="js/script.js?v=13.17"></script>
 <script src="js/phase10-3.js?v=12.6"></script>
 <script src="js/phase10-7-prefectures.js" type="module"></script>
@@ -674,6 +674,7 @@
 <link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=13.5.2"/>
 <link rel="stylesheet" href="css/phase13-18-scent-compact.css?v=13.18"/>
 <link rel="stylesheet" href="css/phase13-20-world-background.css?v=13.20.3"/>
+<link rel="stylesheet" href="css/phase13-21-home-quick-comment.css?v=13.21"/>
 <script src="js/phase13-4-unipass-card.js?v=13.5.2" type="module"></script>
 <script src="js/phase13-5-common-navigation.js?v=13.7"></script>
 <script src="js/phase13-5-4-header-icons.js?v=13.5.4" defer></script>
