@@ -1,0 +1,37 @@
+/* Phase 13.27 — compact the empty gap between the top UNICA profile and comments. */
+.hero.section-shell{
+  padding-bottom:10px!important;
+}
+.hero.section-shell > .hero-portrait{
+  padding-bottom:8px!important;
+}
+.hero.section-shell > .hero-portrait figcaption{
+  margin-bottom:0!important;
+}
+.hero.section-shell > .support-comment-float-layer,
+.hero.section-shell > .support-comment-float-layer.is-two-tier{
+  position:relative!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  width:min(350px,90vw)!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:2px auto 6px!important;
+  padding:0!important;
+  align-content:start!important;
+  overflow:visible!important;
+}
+@media(max-width:520px){
+  .hero.section-shell > .hero-portrait{
+    padding-bottom:6px!important;
+  }
+  .hero.section-shell > .support-comment-float-layer,
+  .hero.section-shell > .support-comment-float-layer.is-two-tier{
+    width:92vw!important;
+    min-height:0!important;
+    margin:0 auto 5px!important;
+  }
+}
