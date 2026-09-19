@@ -17,3 +17,6 @@
 .scentv2-compat,.scentv2-book{padding:16px 0!important}.scentv2-compat h3,.scentv2-book h3{font-size:20px!important;margin:5px 0!important}.scentv2-compat>p,.scentv2-book>p{font-size:11px!important;line-height:1.55!important}.scentv2-compat-list{gap:7px!important;margin:12px 0!important}.scentv2-compat-list button{grid-template-columns:34px 1fr 42px!important;gap:8px!important;border-radius:14px!important;padding:9px!important}.scentv2-compat-list button>span{font-size:23px!important}.scentv2-compat-list p{margin:3px 0!important}
 @media(max-width:520px){.scent16-header{padding:11px 16px 9px!important}.scent16-header h2{font-size:15px!important}.scent16-screen{height:calc(100% - 52px)!important;padding:0 16px 16px!important}.scentv2-hero{padding-top:14px!important}.scentv2-bloom{font-size:42px!important}.scentv2-hero h3{font-size:21px!important}.scentv2-two{grid-template-columns:1fr 1fr!important}}
 @media(max-width:360px){.scentv2-two{grid-template-columns:1fr!important}.scentv2-hero h3{font-size:20px!important}.scentv2-meta span{padding:4px 6px!important}}
+
+/* Phase13.18.1: restore once-per-day re-diagnosis UI */
+.scentv2-daily-done{margin:10px auto 0;font-size:11px;line-height:1.5;color:#9a8290;text-align:center}.scentv2-hero>.scentv2-redo{margin-top:10px!important}
