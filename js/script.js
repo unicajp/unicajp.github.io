@@ -59,15 +59,15 @@
     body.classList.add('opened');
     // UNICA WORLDの固定メニューを、扉を開いた後に表示する。
     // 以前の版では site-entered が一度も付かず、追加機能へ移動できない状態だった。
-    window.setTimeout(() => body.classList.add('site-entered'), 1650);
-    window.setTimeout(fadeInBgm, 620);
-    window.setTimeout(() => intro?.classList.add('is-hidden'), 2100);
+    window.setTimeout(() => body.classList.add('site-entered'), 1900);
+    window.setTimeout(fadeInBgm, 760);
+    window.setTimeout(() => intro?.classList.add('is-hidden'), 2450);
     window.setTimeout(() => {
       document.querySelectorAll('.hero .reveal').forEach((element, index) => {
         window.setTimeout(() => element.classList.add('is-visible'), index * 180);
       });
-    }, 1450);
-    window.setTimeout(() => { if (!readMember()) openMemberGate(); }, 2250);
+    }, 2050);
+    window.setTimeout(() => { if (!readMember()) openMemberGate(); }, 2600);
   }
 
   introTrigger?.addEventListener('click', openSite);
@@ -565,7 +565,7 @@
     if (!readMember()) { openMemberGate(true); return; }
     if (type === 'gacha') toast('うにガチャは「ミルクの匂い」リリース日に開放されます。');
     if (type === 'fortune') openFortuneModal();
-    if (type === 'cheer') toast('うにエールは次の段階で実装予定です。');
+    if (type === 'cheer') toast('この機能は現在利用できません。');
   }));
 
 
@@ -579,13 +579,13 @@
     heroCheerButton.classList.toggle('is-done', done);
     heroCheerButton.textContent = done ? '♥' : '♡';
     heroCheerButton.setAttribute('aria-pressed', done ? 'true' : 'false');
-    heroCheerButton.setAttribute('aria-label', done ? '今日のエールは送信済みです' : 'うにかへ今日のエールを送る');
+    heroCheerButton.setAttribute('aria-label', done ? '本日の送信は完了しています' : 'うにかへ応援を送る');
   }
   heroCheerButton?.addEventListener('click', () => {
     const current = readMember();
     if (!current) { openMemberGate(true); return; }
     if (hasCheeredToday(current)) {
-      toast('今日のエールは送信済みです。また明日送れます。');
+      toast('本日の送信は完了しています。また明日送れます。');
       return;
     }
 
@@ -598,7 +598,7 @@
     heroCheerButton.classList.remove('is-cheered');
     void heroCheerButton.offsetWidth;
     heroCheerButton.classList.add('is-cheered');
-    heroCheerButton.setAttribute('aria-label', '今日のエールは送信済みです');
+    heroCheerButton.setAttribute('aria-label', '本日の送信は完了しています');
     heroCheerButton.setAttribute('aria-pressed', 'true');
     if (heartBurst) {
       heartBurst.innerHTML = '';
@@ -616,7 +616,7 @@
     void document.getElementById('heroCheerCounter')?.offsetWidth;
     document.getElementById('heroCheerCounter')?.classList.add('is-updated');
     updateDailyCheerButton();
-    toast('今日のエールを送りました。');
+    toast('送信しました。');
   });
 
   // UNICA WORLD ホーム
@@ -641,7 +641,7 @@
     const messages = [
       '今日も小さな幸せがありますように。',
       '花は今日も、少しだけ大きくなりました。',
-      '誰かのエールが、この世界を育てています。',
+      'みんなの応援が、この世界を育てています。',
       'あなたが来てくれて、今日も世界が少し賑やかになりました。',
       '何でもない今日も、いつか宝物になります。',
       'ここでは、急がずゆっくり歩いてください。',
@@ -1053,9 +1053,6 @@
     }
   });
   renderDailyMessage();
-
-  function renderBirthdayGreeting(){ const current=readMember(); const banner=document.getElementById('birthdayBanner'); if(!banner||!current)return; const now=new Date(); const isBirthday=Number(current.birthMonth)===now.getMonth()+1&&Number(current.birthDay)===now.getDate(); banner.hidden=!isBirthday; if(isBirthday){banner.innerHTML=`<span>🎂</span><div><small>HAPPY BIRTHDAY</small><strong>${safeText(current.name)}さん、お誕生日おめでとう！</strong><p>うにコミュのみんなと過ごす、特別な一日になりますように。</p></div><em>今日の主役</em>`;document.body.classList.add('is-birthday');} }
-  renderBirthdayGreeting();
 
   // Phase 7: detailed passport and persistent world navigation
   const passportModal = document.getElementById('passportModal');

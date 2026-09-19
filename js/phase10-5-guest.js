@@ -13,10 +13,12 @@
   const isMember = () => Boolean(readMember());
 
   const gatedSelectors = [
-    '#heroCheerButton', '#statusOpenPass', '#openPassButton', '#openMemberSettings', '#passAvatar',
-    '#openDailyMessage', '[data-world-nav="community"]', '#notificationButton', '#songLikeButton',
-    '#submitCommunityComment', '#drawFortune', '#openTree', '#communityHomeLatest', '#supportCommentFloatLayer',
-    '#birthdayBanner', '#openPrefectureDirectory', '#prefectureHomeCard', '[data-member-only]'
+    '#statusOpenPass', '#openPassButton', '#openMemberSettings', '#passAvatar',
+    '[data-world-nav="community"]', '#notificationButton', '#songLikeButton',
+    '#submitCommunityComment', '#openTree', '#communityHomeLatest', '#supportCommentFloatLayer',
+    '#openPrefectureDirectory', '#prefectureHomeCard',
+    '#openMilkMatch', '#milkMatchHomeCard', '[data-feature-key="game"]',
+    '#versionPollCard', '#versionPollHistory', '[data-member-only]'
   ];
 
   function openLock() {
@@ -43,14 +45,10 @@
     const guest = !isMember();
     document.body.classList.toggle('is-guest', guest);
     document.body.classList.toggle('is-unica-member', !guest);
-    ['#communityHomeCard','#dailyMessageCard'].forEach(sel => $(sel)?.classList.toggle('member-only-surface', guest));
+    ['#communityHomeCard'].forEach(sel => $(sel)?.classList.toggle('member-only-surface', guest));
     if (guest) {
       const name = $('#statusName'); if (name && !name.textContent.trim()) name.textContent = '未登録';
-      $('#heroCheerButton')?.setAttribute('aria-label','うにメン登録後にエールを送れます');
-      $('#openDailyMessage')?.setAttribute('aria-label','うにメン登録後に今日のうに占いを利用できます');
     } else {
-      $('#heroCheerButton')?.setAttribute('aria-label','うにかへエールを送る');
-      $('#openDailyMessage')?.setAttribute('aria-label','今日のうに占いを開く');
       closeLock();
     }
   }

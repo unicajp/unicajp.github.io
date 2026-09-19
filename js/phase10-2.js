@@ -97,7 +97,7 @@ function listenSongLike(){
 }
 
 function commentDate(row){ const date=row.date||''; return `${date===todayKey()?'今日':date}${row.time?' '+row.time:''}`; }
-function scentMiniBadge(ownerUid){ const profile=memberDirectory.get(String(ownerUid||''))||{}; const scent=profile.scentDiagnosis; if(!scent?.typeId)return ''; const type=window.UNICA_SCENT16?.typeById?.(scent.typeId); const flower=type?.flower||scent.flower||'🌸'; const name=scent.scentName||type?.name||'診断済み'; return `<span class="scent-mini-badge" title="${esc(name)}" aria-label="${esc(name)}">${esc(flower)}</span>`; }
+function scentMiniBadge(ownerUid){ const profile=memberDirectory.get(String(ownerUid||''))||{}; const scent=profile.scentDiagnosis; if(!scent?.typeId)return ''; const type=window.UNICA_SCENT16?.typeById?.(scent.typeId); const flower=type?.flower||scent.flower||'🌸'; const name=scent.scentName||type?.name||'診断済み'; const src=window.UNICA_SCENT16?.scentIconUrl?.(scent.typeId); return src?`<span class="scent-mini-badge scent-mini-badge-image" title="${esc(name)}" aria-label="${esc(name)}"><img src="${esc(src)}" alt="" loading="lazy"></span>`:`<span class="scent-mini-badge" title="${esc(name)}" aria-label="${esc(name)}">${esc(flower)}</span>`; }
 function filteredComments(){ let rows=[...comments]; if(activeTab==='mine')rows=rows.filter(x=>x.ownerUid===uid); if(activeTab==='popular')rows.sort((a,b)=>Number(b.likeCount||0)-Number(a.likeCount||0)); else rows.sort((a,b)=>Number(b.createdAt?.seconds||0)-Number(a.createdAt?.seconds||0)); return rows; }
 
 function cumulativeLikeRanking(){
@@ -321,7 +321,6 @@ async function openMemberPass(targetUid){
   $('#detailDays') && ($('#detailDays').textContent='—');
   $('#detailPostCount') && ($('#detailPostCount').textContent='💌 —');
   $('#detailReactionCount') && ($('#detailReactionCount').textContent='♥ —');
-  $('#detailBirthdayWishCount') && ($('#detailBirthdayWishCount').textContent='🎂 —');
   $('#detailPrefecture') && ($('#detailPrefecture').textContent='—');
   $('#detailBirthday') && ($('#detailBirthday').textContent='—');
   $('#detailOpenSettings')?.toggleAttribute('hidden',true); $('#detailScentRow')?.toggleAttribute('hidden',true);
@@ -341,8 +340,6 @@ async function openMemberPass(targetUid){
     $('#detailDays') && ($('#detailDays').textContent=memberJoinedDays(joinedValue));
     $('#detailPostCount') && ($('#detailPostCount').textContent=`💌 ${ownComments.length}`);
     $('#detailReactionCount') && ($('#detailReactionCount').textContent=`♥ ${totalLikes}`);
-    const birthdayWishes=Number(window.UNICA_BIRTHDAY_WISH_COUNTS?.[targetUid]||0);
-    $('#detailBirthdayWishCount') && ($('#detailBirthdayWishCount').textContent=`🎂 ${birthdayWishes}人`);
     $('#detailPrefecture') && ($('#detailPrefecture').textContent=u.prefecturePublic===false?'非公開':(u.prefecture||'—'));
     $('#detailBirthday') && ($('#detailBirthday').textContent=u.birthdayPublic===false?'非公開':(u.birthMonth&&u.birthDay?`${u.birthMonth}月${u.birthDay}日`:'—'));
     $('#detailTitle') && ($('#detailTitle').textContent=u.title||'はじまりのうにメン');
@@ -350,7 +347,7 @@ async function openMemberPass(targetUid){
     if(scent?.typeId){
       const scentType=window.UNICA_SCENT16?.typeById?.(scent.typeId);
       scentRow?.toggleAttribute('hidden',false);
-      $('#detailScentFlower') && ($('#detailScentFlower').textContent=scentType?.flower||scent.flower||'🌸');
+      if($('#detailScentFlower')){ const el=$('#detailScentFlower'); const src=window.UNICA_SCENT16?.scentIconUrl?.(scent.typeId); if(src) el.innerHTML=`<img class="passport-scent-icon" src="${esc(src)}" alt="${esc(scent.scentName||scentType?.name||'MY SCENT')}">`; else el.textContent=scentType?.flower||scent.flower||'🌸'; }
       $('#detailScentName') && ($('#detailScentName').textContent=scent.scentName||scentType?.name||'診断済み');
       $('#detailScentDate') && ($('#detailScentDate').textContent=`診断日：${String(scent.diagnosedDate||'—').replaceAll('-','/')}`);
       const mine=window.UNICA_SCENT16?.getMyResult?.();
@@ -370,7 +367,7 @@ window.addEventListener('unica:open-member-pass',event=>openMemberPass(event.det
 function renderNotifications(){
   const unread=notificationRows.filter(n=>!n.read).length, badge=$('#notificationBadge'); if(badge){badge.hidden=unread===0;badge.textContent=String(unread);}
   const list=$('#notificationList'); if(!list)return;
-  list.innerHTML=notificationRows.map(n=>`<article class="notification-row${n.read?'':' is-unread'}"><span>${n.type==='commentLike'?'♥':(n.type==='birthdayWish'?'🎂':'🔔')}</span><div><p>${esc(n.text||'新しい通知があります')}</p><small>${n.createdAt?.toDate?new Intl.DateTimeFormat('ja-JP',{dateStyle:'short',timeStyle:'short'}).format(n.createdAt.toDate()):'たった今'}</small></div></article>`).join('')||'<div class="notification-empty">通知はまだありません。</div>';
+  list.innerHTML=notificationRows.map(n=>`<article class="notification-row${n.read?'':' is-unread'}"><span>${n.type==='commentLike'?'♥':'🔔'}</span><div><p>${esc(n.text||'新しい通知があります')}</p><small>${n.createdAt?.toDate?new Intl.DateTimeFormat('ja-JP',{dateStyle:'short',timeStyle:'short'}).format(n.createdAt.toDate()):'たった今'}</small></div></article>`).join('')||'<div class="notification-empty">通知はまだありません。</div>';
 }
 async function markAllRead(){ await Promise.all(notificationRows.filter(n=>!n.read).map(n=>setDoc(doc(db,'users',uid,'notifications',n.id),{read:true},{merge:true}))); }
 function listenNotifications(){ onSnapshot(query(collection(db,'users',uid,'notifications'),orderBy('createdAt','desc'),limit(50)),snap=>{notificationRows=snap.docs.map(d=>({id:d.id,...d.data()}));renderNotifications();}); }

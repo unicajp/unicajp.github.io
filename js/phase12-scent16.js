@@ -13,6 +13,11 @@ const waitFirebase = async () => {
   return window.UNICA_FIREBASE;
 };
 
+
+const SCENT_ICON_BASE = 'assets/scent-icons/';
+const scentIconUrl = id => `${SCENT_ICON_BASE}${String(id||'sakura')}.webp?v=13.16`;
+const scentIconHtml = (id, alt='', cls='scent-flower-icon') => `<img class="${safe(cls)}" src="${safe(scentIconUrl(id))}" alt="${safe(alt)}" loading="lazy" decoding="async">`;
+
 const DIMENSIONS = [
   ['kindness','💗 やさしさ'],['positivity','🌈 前向きさ'],['action','🌼 行動力'],['sensitivity','🌙 感受性'],['sociability','☀️ 社交性']
 ];
@@ -47,11 +52,12 @@ const TYPES = [
 
 // 16タイプ×16タイプの基本相性表。端末ごとに計算結果が変わらないよう、タイプ定義から一度だけ生成します。
 const TYPE_INDEX = new Map(TYPES.map((t,i)=>[t.id,i]));
-const COMPATIBILITY_MATRIX = TYPES.map((a, ai)=>TYPES.map((b, bi)=>{
-  if(ai===bi) return 88;
-  const distance=Math.sqrt(a.centroid.reduce((sum,v,i)=>sum+(v-b.centroid[i])**2,0));
-  const complement=a.centroid.reduce((sum,v,i)=>sum+(6-Math.abs(v-b.centroid[i])),0)/5;
-  return clamp(Math.round(95-distance*4.2+(complement-4)*1.5),68,97);
+const COMPATIBILITY_MATRIX = TYPES.map((a,ai)=>TYPES.map((b,bi)=>{
+ if(ai===bi) return 84;
+ const d=Math.sqrt(a.centroid.reduce((sum,v,i)=>sum+(v-b.centroid[i])**2,0));
+ const complement=a.centroid.reduce((sum,v,i)=>sum+Math.abs((a.centroid[i]-3)+(b.centroid[i]-3)),0);
+ const chemistry=((ai*17+bi*11+Math.min(ai,bi)*7)%19)-9;
+ return clamp(Math.round(91-d*7+Math.min(complement,8)*1.2+chemistry),48,96);
 }));
 
 const QUESTIONS = [
@@ -111,27 +117,23 @@ function readResult(){ try{return JSON.parse(localStorage.getItem(LOCAL_RESULT_K
 function saveLocal(result){ localStorage.setItem(LOCAL_RESULT_KEY,JSON.stringify(result)); const m=member(); if(m){m.scentDiagnosis=result;localStorage.setItem(MEMBER_KEY,JSON.stringify(m));} }
 function canDiagnoseToday(){ return readResult()?.diagnosedDate !== JST_DATE(); }
 function typeById(id){ return TYPES.find(x=>x.id===id); }
-function updateHome(){ const r=readResult()||member()?.scentDiagnosis; const f=$('#scent16HomeFlower'), s=$('#scent16HomeSummary'), c=$('#scent16HomeCta'); if(r){const t=typeById(r.typeId); if(f)f.textContent=t?.flower||'🌸'; if(s)s.textContent=`最新結果：${r.scentName||t?.name||'診断済み'}・${r.flowerMeaning||t?.meaning||''}`; if(c)c.textContent=canDiagnoseToday()?'再診断':'結果を見る';} }
+function updateHome(){ const r=readResult()||member()?.scentDiagnosis; const f=$('#scent16HomeFlower'), s=$('#scent16HomeSummary'), c=$('#scent16HomeCta'); if(r){const t=typeById(r.typeId); if(f)f.textContent=t?.flower||'🌸'; if(s)s.textContent=`MY SCENT：${r.scentName||t?.name||'診断済み'}`; if(c)c.textContent='MY SCENTを見る';} else {if(s)s.textContent='一度見つけた香りを、あなたのMY SCENTに。'; if(c)c.textContent='診断する';} }
 function open(){ if(!member()){document.getElementById('openMemberGate')?.click();return;} modal?.classList.add('is-open');modal?.setAttribute('aria-hidden','false');document.body.classList.add('member-gate-open');showIntro(); }
 function close(){modal?.classList.remove('is-open');modal?.setAttribute('aria-hidden','true');document.body.classList.remove('member-gate-open');}
 
-function showIntro(){ const r=readResult()||member()?.scentDiagnosis; const todayOk=canDiagnoseToday(); screen.innerHTML=`<div class="scent16-intro"><div class="scent16-intro-flower">${r?(typeById(r.typeId)?.flower||'🌸'):'💐'}</div><small>『ミルクの匂い』リリース記念</small><h3>うにかの匂い16診断</h3><p>40問から、あなたの花・匂い・花言葉・5つの個性を見つけます。<br>結果は最新の1件だけ保存されます。</p><div class="scent16-count" id="scent16DiagnosisCount">診断済み人数を確認中…</div>${r?`<button class="scent16-primary" id="viewScentResult">${typeById(r.typeId)?.flower||'🌸'} 最新結果を見る</button><button class="scent16-secondary" id="viewCompatibility">❤️ 自分との相性ランキング</button>`:''}<button class="scent16-primary" id="startScent16" ${todayOk?'':'disabled'}>${todayOk?(r?'今日の診断を始める':'診断を始める'):'今日は診断済みです'}</button><button class="scent16-secondary" id="viewFlowerBook">🌼 16種類の花図鑑</button><p class="scent16-daily-note">1日1回まで。日本時間0時に再診断できます。</p></div>`;
+function showIntro(){ const r=readResult()||member()?.scentDiagnosis; const t=r?typeById(r.typeId):null; screen.innerHTML=`<div class="scentv2-hero"><div class="scentv2-kicker">UNICA SCENT</div><div class="scentv2-bloom">${t?.flower||'✿'}</div><h3>${r?'あなたの香りは、ここに。':'あなたの中にある<br>ひとつの香りを見つけよう。'}</h3><p>${r?`一度見つけた <b>${safe(t?.name||r.scentName)}</b> を、UNICA WORLDでのあなたらしさとして大切にします。`:'16の花の中から、行動や感じ方をもとに、あなたらしい香りを見つけます。'}</p><div class="scentv2-meta"><span>16 SCENTS</span><span>約3分</span><span>MY SCENT</span></div>${r?`<button class="scent16-primary" id="viewScentResult">${t?.flower||'🌸'} MY SCENTを見る</button><div class="scentv2-shortcuts"><button id="viewCompatibility">♡ 相性を見る</button><button id="viewFlowerBook">✿ みんなの花を見る</button></div>`:`<button class="scent16-primary" id="startScent16">診断をはじめる</button><button class="scent16-secondary" id="viewFlowerBook">✿ 16種類の香りを見る</button>`}<div class="scent16-count" id="scent16DiagnosisCount">みんなの香りを読み込み中…</div></div>`;
  $('#startScent16')?.addEventListener('click',startDiagnosis); $('#viewScentResult')?.addEventListener('click',()=>showResult(r)); $('#viewCompatibility')?.addEventListener('click',showCompatibility); $('#viewFlowerBook')?.addEventListener('click',showFlowerBook); refreshDiagnosisCount();
 }
-function startDiagnosis(){answers=[];questionIndex=0;showCategoryIntro(QUESTIONS[0].dim);}
+function startDiagnosis(){answers=[];questionIndex=0;showQuestion();}
 function showCategoryIntro(dim){
  const info=CATEGORY_INFO[dim]; const step=DIMENSIONS.findIndex(x=>x[0]===dim)+1;
  screen.innerHTML=`<div class="scent16-category-intro"><div class="scent16-category-icon">${info.icon}</div><small>STEP ${step} / 5</small><h3>${info.title}</h3><p>${info.copy}</p><button class="scent16-primary" id="beginCategory">${step===1?'診断を始める':'次のカテゴリーへ'}</button></div>`;
  $('#beginCategory')?.addEventListener('click',showQuestion);
 }
 function showQuestion(){
- const q=QUESTIONS[questionIndex], step=Math.floor(questionIndex/8)+1, progress=Math.round(((questionIndex+1)/QUESTIONS.length)*100);
- screen.innerHTML=`<div class="scent16-step-head"><span>STEP ${step} / 5</span><strong>${CATEGORY_INFO[q.dim].icon} ${CATEGORY_INFO[q.dim].title}</strong></div><div class="scent16-progress"><div><i style="width:${progress}%"></i></div><small>${questionIndex+1} / ${QUESTIONS.length}</small></div><div class="scent16-question"><small>この文章が、今の自分にどのくらい当てはまりますか？</small><h3>${safe(q.text)}</h3><div class="scent16-options">${OPTIONS.map(o=>`<button class="scent16-option" data-value="${o[1]}">${safe(o[0])}</button>`).join('')}</div></div>${questionIndex>0?'<button class="scent16-back-question" id="backQuestion">← ひとつ前の質問へ</button>':''}<p class="scent16-daily-note">どの答えにも正解・不正解はありません。今の気持ちに近いものを選んでください。</p>`;
- screen.querySelectorAll('[data-value]').forEach(b=>b.addEventListener('click',()=>{
-   answers[questionIndex]={dim:q.dim,value:Number(b.dataset.value)}; questionIndex++;
-   if(questionIndex>=QUESTIONS.length) return finishDiagnosis();
-   const next=QUESTIONS[questionIndex]; if(next.dim!==q.dim) showCategoryIntro(next.dim); else showQuestion();
- }));
+ const q=QUESTIONS[questionIndex], progress=Math.round(((questionIndex+1)/QUESTIONS.length)*100);
+ screen.innerHTML=`<div class="scentv2-question-page"><div class="scentv2-qtop"><span>${String(questionIndex+1).padStart(2,'0')} / ${QUESTIONS.length}</span><div><i style="width:${progress}%"></i></div></div><div class="scentv2-qflower">${CATEGORY_INFO[q.dim].icon}</div><small>考えすぎず、普段の自分に近いものを。</small><h3>${safe(q.text)}</h3><div class="scent16-options">${OPTIONS.map(o=>`<button class="scent16-option" data-value="${o[1]}">${safe(o[0].replace('⭐ ',''))}</button>`).join('')}</div>${questionIndex>0?'<button class="scent16-back-question" id="backQuestion">← ひとつ前へ</button>':''}</div>`;
+ screen.querySelectorAll('[data-value]').forEach(b=>b.addEventListener('click',()=>{answers[questionIndex]={dim:q.dim,value:Number(b.dataset.value)};questionIndex++;if(questionIndex>=QUESTIONS.length)return finishDiagnosis();showQuestion();}));
  $('#backQuestion')?.addEventListener('click',()=>{questionIndex=Math.max(0,questionIndex-1);showQuestion();});
 }
 function calculate(){
@@ -167,20 +169,18 @@ async function finishDiagnosis(){
  await new Promise(r=>setTimeout(r,1800)); showResult(currentResult,true);
 }
 function star(v){return clamp(Math.round(v/20),1,5)}
-function showResult(result, fresh=false){ if(!result)return showIntro(); const t=typeById(result.typeId)||result; currentResult={...t,...result}; screen.innerHTML=`<div class="scent16-result"><div class="scent16-result-bloom">${t.flower}</div>${fresh?'<small>あなたの匂いは…</small>':''}<h3>${safe(t.name)}</h3><span class="scent16-meaning">花言葉：${safe(t.meaning)}</span><small class="scent16-diagnosed-date">診断日：${safe((result.diagnosedDate||'').replaceAll('-','/'))}${result.confidence?` ・ 香りの一致度 ${clamp(result.confidence,0,100)}%`:''}</small><div class="scent16-copy"><h4>性格</h4><p>${safe(t.personality)}</p></div><div class="scent16-traits"><div><strong>長所</strong><span>${safe(t.strength)}</span></div><div><strong>苦手になりやすいこと</strong><span>${safe(t.weakness)}</span></div></div><div class="scent16-stats">${DIMENSIONS.map(([k,label])=>`<div class="scent16-stat"><span>${label}</span><div class="scent16-stat-track"><i style="width:${clamp(result.stats?.[k]||60,0,100)}%"></i></div><b>${'★'.repeat(star(result.stats?.[k]||60))}</b></div>`).join('')}</div><div class="scent16-copy"><h4>今日のあなたへの一言</h4><p>${safe(result.message||'あなたらしい香りを大切に。')}</p></div><div class="scent16-actions"><button class="scent16-primary" id="shareScent16">📤 シェア</button><button class="scent16-secondary" id="compatScent16">❤️ 相性</button></div><button class="scent16-secondary" id="backScent16">戻る</button></div>`;
- $('#shareScent16')?.addEventListener('click',()=>showShare(result));$('#compatScent16')?.addEventListener('click',showCompatibility);$('#backScent16')?.addEventListener('click',showIntro);
+function profileNotes(t){const c=t.centroid;return {social:c[4]>=4?'人とのつながりから元気をもらうタイプ':'少人数や自分の時間で心を整えるタイプ',love:c[0]>=5?'好きな人をよく見て、さりげなく支える':'気持ちは自分らしい方法でまっすぐ伝える',down:c[3]>=5?'気持ちを深く受け取りやすいので、一人で静かに整える時間が大切':'動いたり誰かと話したりすると切り替えやすい',hidden:c[2]>=4?'穏やかに見えても、決めた時の一歩は意外と速い':'急がないからこそ、見落とさないものがある'};}
+function showResult(result,fresh=false){ if(!result)return showIntro(); const t=typeById(result.typeId)||result,n=profileNotes(t); currentResult={...t,...result}; screen.innerHTML=`<div class="scentv2-result"><section class="scentv2-result-cover"><small>YOUR SCENT</small><div>${t.flower}</div><h3>${safe(t.name)}</h3><p>「${safe(t.meaning)}」</p><span>MY SCENT</span></section><section class="scentv2-story"><h4>あなたらしさ</h4><p>${safe(t.personality)}</p></section><div class="scentv2-two"><section><small>STRENGTH</small><h4>あなたの強み</h4><p>${safe(t.strength)}</p></section><section><small>CAREFUL</small><h4>気をつけたいこと</h4><p>${safe(t.weakness)}</p></section></div><section class="scentv2-guide"><h4>もう少し、自分を知る</h4><div><b>人との距離感</b><p>${safe(n.social)}</p></div><div><b>好きな人には</b><p>${safe(n.love)}</p></div><div><b>落ち込んだとき</b><p>${safe(n.down)}</p></div><div><b>実はこんな一面</b><p>${safe(n.hidden)}</p></div></section><section class="scentv2-stats"><h4>5つの個性</h4>${DIMENSIONS.map(([k,label])=>`<div><span>${label}</span><i><em style="width:${clamp(result.stats?.[k]||60,0,100)}%"></em></i><b>${clamp(result.stats?.[k]||60,0,100)}</b></div>`).join('')}</section><div class="scentv2-actions"><button class="scent16-primary" id="compatScent16">♡ ほかの香りとの相性を見る</button><button class="scent16-secondary" id="shareScent16">シェアカードを作る</button><button class="scent16-secondary" id="backScent16">UNICA SCENTへ戻る</button></div><button class="scentv2-redo" id="redoScent16">診断結果を見直したい場合</button></div>`;
+ $('#shareScent16')?.addEventListener('click',()=>showShare(result));$('#compatScent16')?.addEventListener('click',showCompatibility);$('#backScent16')?.addEventListener('click',showIntro);$('#redoScent16')?.addEventListener('click',()=>{if(confirm('MY SCENTを診断し直しますか？\n今の結果は新しい結果に置き換わります。'))startDiagnosis();});
 }
 function hashPair(a,b){return [...[a,b].sort().join('|')].reduce((h,c)=>(h*33+c.charCodeAt(0))>>>0,5381)}
-function compatibility(a,b,uidA='',uidB=''){ const ta=typeById(a.typeId),tb=typeById(b.typeId); if(!ta||!tb)return 68; const ai=TYPE_INDEX.get(ta.id),bi=TYPE_INDEX.get(tb.id); const base=COMPATIBILITY_MATRIX[ai][bi]; const statA=a.stats||{},statB=b.stats||{}; const statDistance=DIMENSIONS.reduce((sum,[k])=>sum+Math.abs((statA[k]??60)-(statB[k]??60)),0)/500; const statBonus=Math.round((1-statDistance)*4)-2; const jitter=(hashPair(uidA||ta.id,uidB||tb.id)%5)-2; return clamp(base+statBonus+jitter,65,99); }
-async function showCompatibility(){ const mine=readResult()||member()?.scentDiagnosis;if(!mine){showIntro();return;} screen.innerHTML='<div class="scent16-rank-empty">相性ランキングを読み込んでいます…</div>'; try{membersCache=await (await waitFirebase()).loadScentMembers();}catch(e){console.warn(e);membersCache=[];} const myUid=window.UNICA_FIREBASE?.uid||''; const rows=membersCache.filter(x=>x.uid!==myUid).map(x=>({...x,score:compatibility(mine,x.scentDiagnosis,myUid,x.uid)})).sort((a,b)=>b.score-a.score||a.number-b.number); screen.innerHTML=`<div class="scent16-ranking-head"><div><small>あなたを中心にした専用表示</small><h3>❤️ 相性ランキング</h3></div><small>${rows.length}人</small></div>${rows.length?`<div class="scent16-rank-list">${rows.map((r,i)=>`<button class="scent16-rank-row${i<3?' is-top':''}" data-member-uid="${safe(r.uid)}"><b>${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</b><span class="avatar">${safe(r.avatar)}</span><span><strong>${safe(r.name)}</strong><small>${safe(r.scentDiagnosis.scentName||typeById(r.scentDiagnosis.typeId)?.name||'診断済み')}</small></span><em>${r.score}%<small>${r.score>=95?'🌈 運命の香り':r.score>=90?'💖 ベストマッチ':''}</small></em></button>`).join('')}</div>`:'<div class="scent16-rank-empty">診断済みのうにメンがまだいません。</div>'}<button class="scent16-secondary" id="backFromCompat">結果へ戻る</button>`;
- screen.querySelectorAll('[data-member-uid]').forEach(b=>b.addEventListener('click',()=>{close();window.dispatchEvent(new CustomEvent('unica:open-member-pass',{detail:{uid:b.dataset.memberUid}}));}));$('#backFromCompat')?.addEventListener('click',()=>showResult(mine));
-}
+function compatibility(a,b,uidA='',uidB=''){const ta=typeById(a.typeId),tb=typeById(b.typeId);if(!ta||!tb)return 70;const ai=TYPE_INDEX.get(ta.id),bi=TYPE_INDEX.get(tb.id);const base=COMPATIBILITY_MATRIX[ai][bi];const jitter=(hashPair(uidA||ta.id,uidB||tb.id)%7)-3;return clamp(base+jitter,45,98);}
+function relationBreakdown(a,b){const ai=TYPE_INDEX.get(a.id),bi=TYPE_INDEX.get(b.id),base=COMPATIBILITY_MATRIX[ai][bi];const seed=hashPair(a.id,b.id);return {friend:clamp(base+((seed%17)-8),42,98),talk:clamp(base+(((seed>>3)%19)-9),42,98),support:clamp(base+(((seed>>5)%15)-7),42,98),love:clamp(base+(((seed>>7)%21)-10),42,98)};}
+function relationCopy(score){if(score>=90)return '違いまで自然に受け止めやすい、特別に噛み合うふたり。';if(score>=78)return '無理をしなくても歩幅を合わせやすいふたり。';if(score>=65)return '似ているところと違うところ、その両方を楽しめるふたり。';if(score>=52)return '距離の縮め方に少しコツがいるぶん、知るほど面白いふたり。';return 'かなり違うからこそ、新しい景色を見せ合えるふたり。';}
+async function showCompatibility(){const mine=readResult()||member()?.scentDiagnosis;if(!mine)return showIntro();screen.innerHTML='<div class="scent16-rank-empty">みんなの香りを読み込んでいます…</div>';try{membersCache=await (await waitFirebase()).loadScentMembers();}catch(e){membersCache=[];}const mt=typeById(mine.typeId),myUid=window.UNICA_FIREBASE?.uid||'';const rows=membersCache.filter(x=>x.uid!==myUid).map(x=>({...x,score:compatibility(mine,x.scentDiagnosis,myUid,x.uid)})).sort((a,b)=>b.score-a.score);screen.innerHTML=`<div class="scentv2-compat"><small>SCENT RELATIONSHIP</small><h3>${mt.flower} ${safe(mt.name)}から見た相性</h3><p>相性は「似ているほど高い」だけではありません。違い・補い合い・会話のテンポから関係性を見ます。</p>${rows.length?`<div class="scentv2-compat-list">${rows.map(r=>{const rt=typeById(r.scentDiagnosis.typeId),d=relationBreakdown(mt,rt);return `<button data-member-uid="${safe(r.uid)}"><span>${rt?.flower||'✿'}</span><div><strong>${safe(r.name)}</strong><small>${safe(rt?.name||'診断済み')}</small><p>${relationCopy(r.score)}</p><em>友 ${d.friend} ・ 会話 ${d.talk} ・ 支え ${d.support} ・ 恋 ${d.love}</em></div><b>${r.score}%</b></button>`}).join('')}</div>`:'<div class="scent16-rank-empty">診断済みのうにメンがまだいません。</div>'}<button class="scent16-secondary" id="backFromCompat">MY SCENTへ戻る</button></div>`;screen.querySelectorAll('[data-member-uid]').forEach(b=>b.addEventListener('click',()=>{close();window.dispatchEvent(new CustomEvent('unica:open-member-pass',{detail:{uid:b.dataset.memberUid}}));}));$('#backFromCompat')?.addEventListener('click',()=>showResult(mine));}
 
-function showFlowerBook(){
- screen.innerHTML=`<div class="scent16-ranking-head"><div><small>16種類の香り</small><h3>🌼 花図鑑</h3></div></div><div class="scent16-flower-grid">${TYPES.map(t=>`<button class="scent16-flower-card" data-flower-id="${t.id}"><span>${t.flower}</span><strong>${safe(t.name)}</strong><small>${safe(t.meaning)}</small></button>`).join('')}</div><button class="scent16-secondary" id="backFromFlowerBook">戻る</button>`;
- screen.querySelectorAll('[data-flower-id]').forEach(b=>b.addEventListener('click',()=>showFlowerDetail(b.dataset.flowerId)));
- $('#backFromFlowerBook')?.addEventListener('click',showIntro);
-}
+
+async function showFlowerBook(){screen.innerHTML='<div class="scent16-rank-empty">みんなの花を集めています…</div>';try{membersCache=await (await waitFirebase()).loadScentMembers();}catch(e){membersCache=[];}const counts=Object.fromEntries(TYPES.map(t=>[t.id,0]));membersCache.forEach(x=>{if(counts[x.scentDiagnosis?.typeId]!=null)counts[x.scentDiagnosis.typeId]++});const found=Object.values(counts).filter(Boolean).length;screen.innerHTML=`<div class="scentv2-book"><small>UNICA WORLD SCENTS</small><h3>みんなの花</h3><p><b>${found} / 16</b> 種類の香りが見つかっています。<br>自分の花はひとつ。みんなで16種類を集めます。</p><div class="scent16-flower-grid">${TYPES.map(t=>`<button class="scent16-flower-card ${counts[t.id]?'is-found':'is-missing'}" data-flower-id="${t.id}"><span>${counts[t.id]?t.flower:'？'}</span><strong>${counts[t.id]?safe(t.name):'まだ見つかっていない香り'}</strong><small>${counts[t.id]?`${counts[t.id]}人`:'NEW SCENTを待っています'}</small></button>`).join('')}</div><button class="scent16-secondary" id="backFromFlowerBook">戻る</button></div>`;screen.querySelectorAll('[data-flower-id].is-found').forEach(b=>b.addEventListener('click',()=>showFlowerDetail(b.dataset.flowerId)));$('#backFromFlowerBook')?.addEventListener('click',showIntro);}
 function showFlowerDetail(id){
  const t=typeById(id); if(!t)return showFlowerBook();
  const mine=readResult()||member()?.scentDiagnosis; const current=mine?.typeId===id;
@@ -189,7 +189,7 @@ function showFlowerDetail(id){
 }
 async function refreshDiagnosisCount(){
  const countEl=$('#scent16DiagnosisCount'); if(!countEl)return;
- try{const rows=await (await waitFirebase()).loadScentMembers(); countEl.textContent=`診断済み ${rows.length}人`;}
+ try{const rows=await (await waitFirebase()).loadScentMembers(); countEl.textContent=`UNICA WORLDに ${rows.length}人のMY SCENT`;}
  catch{countEl.textContent='みんなの診断結果と相性をチェック';}
 }
 
@@ -204,4 +204,4 @@ function toast(text){const el=$('#miniToast');if(!el)return;el.textContent=text;
 
 $('#openScent16')?.addEventListener('click',open);document.querySelectorAll('[data-close-scent16]').forEach(x=>x.addEventListener('click',close));window.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal?.classList.contains('is-open'))close();});window.addEventListener('unica:firebase-member-restored',updateHome);window.addEventListener('unica:scent-diagnosis-saved',updateHome);updateHome();
 
-window.UNICA_SCENT16={typeById,compatibility,compatibilityMatrix:COMPATIBILITY_MATRIX,getMyResult:()=>readResult()||member()?.scentDiagnosis};
+window.UNICA_SCENT16={typeById,compatibility,compatibilityMatrix:COMPATIBILITY_MATRIX,scentIconUrl,scentIconHtml,getMyResult:()=>readResult()||member()?.scentDiagnosis};

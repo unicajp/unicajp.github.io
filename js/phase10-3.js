@@ -304,7 +304,7 @@
     if (!button) return;
     button.addEventListener('click', () => {
       window.setTimeout(() => {
-        if (button.classList.contains('is-done')) button.title = '今日のエール完了！';
+        if (button.classList.contains('is-done')) button.title = '本日の送信完了！';
       }, 0);
     });
   }
