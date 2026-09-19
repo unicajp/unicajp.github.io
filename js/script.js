@@ -30,6 +30,63 @@
     tapSound.play().catch(() => {});
   }
 
+  // Phase13.17 — entrance soundscape. Synthesized with Web Audio so no SE image/audio asset is required.
+  // Loudness is based on the Milk Bloom puzzle SE scale (default 1.2), not the old quiet tap sound.
+  function playIntroEnterSound() {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      const ctx = new AC();
+      const master = ctx.createGain();
+      master.gain.value = 0.82;
+      master.connect(ctx.destination);
+      const now = ctx.currentTime;
+
+      const chime = (freq, at, dur, vol, endFreq = freq) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + at);
+        osc.frequency.exponentialRampToValueAtTime(endFreq, now + at + dur);
+        gain.gain.setValueAtTime(0.0001, now + at);
+        gain.gain.exponentialRampToValueAtTime(vol, now + at + 0.018);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + at + dur);
+        osc.connect(gain); gain.connect(master);
+        osc.start(now + at); osc.stop(now + at + dur + 0.03);
+      };
+
+      // Crystal latch: a small glassy "kacha", not the generic UI tap.
+      chime(1180, 0.00, 0.09, 0.12, 820);
+      chime(1760, 0.035, 0.11, 0.075, 1320);
+
+      // Door shimmer.
+      chime(740, 0.22, 0.72, 0.055, 1240);
+      chime(1110, 0.29, 0.88, 0.038, 1880);
+
+      // Soft rising "fwaa" as the light expands and the camera enters.
+      const len = Math.floor(ctx.sampleRate * 1.85);
+      const buffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * (0.55 + 0.45 * Math.sin(Math.PI * i / len));
+      const src = ctx.createBufferSource(); src.buffer = buffer;
+      const filter = ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.Q.value = 0.7;
+      filter.frequency.setValueAtTime(430, now + 0.28);
+      filter.frequency.exponentialRampToValueAtTime(2300, now + 2.0);
+      const air = ctx.createGain();
+      air.gain.setValueAtTime(0.0001, now + 0.25);
+      air.gain.exponentialRampToValueAtTime(0.15, now + 0.72);
+      air.gain.setValueAtTime(0.15, now + 1.35);
+      air.gain.exponentialRampToValueAtTime(0.0001, now + 2.12);
+      src.connect(filter); filter.connect(air); air.connect(master);
+      src.start(now + 0.25); src.stop(now + 2.15);
+
+      // Passing-through sparkle just before the site appears.
+      chime(1560, 1.45, 0.48, 0.045, 2460);
+      chime(2340, 1.55, 0.40, 0.028, 3120);
+      window.setTimeout(() => ctx.close().catch(() => {}), 2800);
+    } catch (_) {}
+  }
+
   function setPlayerState(isPlaying) {
     if (!playerIcon || !playerToggle) return;
     playerIcon.textContent = isPlaying ? 'Ⅱ' : '▶';
@@ -55,7 +112,7 @@
   function openSite() {
     if (opened) return;
     opened = true;
-    playTap();
+    playIntroEnterSound();
     body.classList.add('opened');
     // UNICA WORLDの固定メニューを、扉を開いた後に表示する。
     // 以前の版では site-entered が一度も付かず、追加機能へ移動できない状態だった。
