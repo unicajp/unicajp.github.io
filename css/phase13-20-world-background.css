@@ -1,17 +1,49 @@
-/* Phase 13.20.1 — UNICA WORLD crystal-light common background visibility fix */
-html{background:#f7f2f8!important;}
+/* Phase 13.20.2 — background layer cleanup
+   One world background only. Old page/paper/ambient layers are removed;
+   readable cards keep their own surfaces. */
+html{background:#eee8f5!important;}
 body{
-  background-color:#f7f2f8!important;
-  background-image:url('../assets/unica-world-bg.webp')!important;
-  background-position:center top!important;
-  background-size:cover!important;
-  background-repeat:no-repeat!important;
-  background-attachment:scroll!important;
+  background:#eee8f5 url('../assets/unica-world-bg.webp') center top/cover no-repeat scroll!important;
+  background-color:#eee8f5!important;
 }
-/* Old luxe/refined paper texture was sitting over/around the new world background. */
-body::before{display:none!important;content:none!important;}
-/* Keep the world shell transparent so the common image is actually visible. */
-#worldHome.world-home,.world-home{background:transparent!important;}
+/* Remove historical full-page paper/noise/colour veils. */
+body::before,body::after{
+  display:none!important;
+  content:none!important;
+  background:none!important;
+  opacity:0!important;
+}
+/* Page/section shells must not paint over the common background. */
+main#top,
+.hero,.unime-section,.story-section,.movie-section,.connect-section,
+.profile-page,.section-shell{
+  background-color:transparent!important;
+  background-image:none!important;
+}
+/* Old decorative washes that occupied large areas. */
+.unime-section::before,.unime-section::after,
+.hero::after{
+  background:none!important;
+}
+.ambient-light,.ambient-light-one,.ambient-light-two{display:none!important;}
+/* The dashboard used to be one large translucent white sheet.
+   Individual cards remain readable, but the area between them now shows the world background. */
+#worldHome.world-home,.world-home{
+  background:transparent!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#worldHome.world-home::before,#worldHome.world-home::after,
+.world-home::before,.world-home::after{display:none!important;content:none!important;}
+/* Header stays readable but no longer becomes an opaque white slab. */
+.site-header,.site-header.is-scrolled{
+  background:rgba(255,255,255,.68)!important;
+  backdrop-filter:blur(14px) saturate(1.05)!important;
+  -webkit-backdrop-filter:blur(14px) saturate(1.05)!important;
+}
 @media (min-width:900px){
   body{background-position:center center!important;background-attachment:fixed!important;}
 }
