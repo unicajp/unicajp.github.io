@@ -170,9 +170,23 @@ function renderComments(){
   updateComposer(); updatePassport();
 }
 function updateComposer(){
-  const m=member(), btn=$('#submitCommunityComment'), ta=$('#communityComment'); if(!btn||!ta)return;
-  const posted=comments.some(c=>c.ownerUid===uid&&c.date===todayKey());
-  ta.disabled=posted; btn.disabled=posted; btn.textContent=posted?'今日は送信済み':'応援を送る（あと1件）';
+  const m=member(), btn=$('#submitCommunityComment'), ta=$('#communityComment');
+  const posted=Boolean(uid) && comments.some(c=>c.ownerUid===uid&&c.date===todayKey());
+  if(ta) ta.disabled=posted;
+  if(btn){ btn.disabled=posted; btn.textContent=posted?'今日は送信済み':'応援を送る（あと1件）'; }
+
+  const quickTa=$('#homeQuickCommentInput'), quickBtn=$('#homeQuickCommentSend');
+  if(quickTa){
+    quickTa.disabled=posted;
+    quickTa.placeholder=posted?'今日のコメントを送りました':'コメントを書く…';
+    if(posted) quickTa.value='';
+  }
+  if(quickBtn){
+    quickBtn.disabled=posted;
+    quickBtn.textContent=posted?'済':'送る';
+    quickBtn.classList.toggle('is-done',posted);
+  }
+
   $('#communityOnlineCount') && ($('#communityOnlineCount').textContent=String(comments.length));
   if(m){ $('#communityComposeAvatar') && ($('#communityComposeAvatar').textContent=m.avatar||'🌸'); $('#communityComposeName') && ($('#communityComposeName').textContent=m.name||'あなた'); }
 }
@@ -184,6 +198,21 @@ async function submitRemoteComment(event){
   await setDoc(ref,{ownerUid:uid,name:m.name||'うにメン',avatar:m.avatar||'🌸',prefecture:m.prefecture||'',text:text.slice(0,80),date:todayKey(),time:nowTime(),likeCount:0,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
   ta.value=''; $('#communityCount') && ($('#communityCount').textContent='0 / 80'); toast('うにかへ応援コメントを送りました。');
 }
+async function submitHomeQuickComment(event){
+  event.preventDefault(); event.stopImmediatePropagation();
+  const m=member();
+  if(!m || !uid){ openMemberGate(); return; }
+  if(comments.some(c=>c.ownerUid===uid&&c.date===todayKey())){ updateComposer(); toast('今日はすでに送信済みです。'); return; }
+  const ta=$('#homeQuickCommentInput');
+  const text=ta?.value.trim();
+  if(!text){ toast('コメントを入力してください。'); ta?.focus(); return; }
+  const ref=doc(collection(db,'supportComments'));
+  await setDoc(ref,{ownerUid:uid,name:m.name||'うにメン',avatar:m.avatar||'🌸',prefecture:m.prefecture||'',text:text.slice(0,80),date:todayKey(),time:nowTime(),likeCount:0,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+  if(ta) ta.value='';
+  updateComposer();
+  toast('うにかへ応援コメントを送りました。');
+}
+
 async function toggleCommentLike(id){
   if(!uid || !id) return null;
   const likeRef=doc(db,'supportComments',id,'likes',uid), commentRef=doc(db,'supportComments',id);
@@ -380,6 +409,7 @@ function bindUI(){
   $$('[data-close-notifications]').forEach(x=>x.addEventListener('click',closeNotifications));
   $('#markAllNotifications')?.addEventListener('click',markAllRead);
   $('#submitCommunityComment')?.addEventListener('click',submitRemoteComment,true);
+  $('#homeQuickCommentSend')?.addEventListener('click',submitHomeQuickComment,true);
   $$('[data-community-tab]').forEach(btn=>btn.addEventListener('click',e=>{e.stopImmediatePropagation();activeTab=btn.dataset.communityTab;$$('[data-community-tab]').forEach(x=>x.classList.toggle('is-active',x===btn));renderComments();},true));
   $('#phaseOnlineButton')?.addEventListener('click',()=>toast(`${$('#phaseOnlineCount')?.textContent||0}人が現在オンラインです。`));
   window.addEventListener('unica:online-count',e=>{ $('#phaseOnlineCount') && ($('#phaseOnlineCount').textContent=String(e.detail.count)); });
