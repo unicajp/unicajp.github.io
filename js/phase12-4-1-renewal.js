@@ -7,7 +7,7 @@ function remember(key,label,icon){try{localStorage.setItem('unicaRecentFeature',
 function renderRecent(){const box=$('#renewalRecent');if(!box)return;let r=null;try{r=JSON.parse(localStorage.getItem('unicaRecentFeature')||'null')}catch(_){}if(!r){box.classList.remove('is-visible');return}box.classList.add('is-visible');box.innerHTML=`<span class="recent-icon">${r.icon||'✨'}</span><div><small>最近利用した機能</small><strong>${r.label||''}</strong><b>続きから開く ›</b></div>`;box.onclick=()=>{const b=document.querySelector(`[data-feature-key="${r.key}"]`);if(b)b.click()};}
 function statusText(key){
  if(key==='game'){const n=$('#milkLyricsHomeUnlocked')?.textContent||'0';return `歌詞 ${n}/9`}
- if(key==='scent'){return $('#scent16HomeCta')?.textContent?.includes('結果')?'診断済み':'1日1回診断'}
+ if(key==='scent'){return $('#scent16HomeCta')?.textContent?.includes('結果')?'診断済み':'何度でも診断'}
  if(key==='prefecture'){return $('#prefectureTotalMembers')?.textContent||'全国を見る'}
  if(key==='flowers')return '16種類公開';
  if(key==='lyrics'){const n=$('#milkLyricsHomeUnlocked')?.textContent||'0';return `${n}/9 CHAPTER`}
