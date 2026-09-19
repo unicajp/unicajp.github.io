@@ -12,3 +12,17 @@
 /* Classic 40-question diagnosis also uses the compact diagnosis language */
 .scentv2-hero,.scentv2-question-page,.scentv2-result{background:linear-gradient(180deg,#fff4f7,rgba(255,255,255,.2) 58%);border-radius:22px;padding-top:8px!important}.scentv2-hero .scentv2-bloom{margin:4px auto!important}.scentv2-hero h3{margin-top:5px!important;margin-bottom:5px!important}.scentv2-question-page .scentv2-qtop{margin-bottom:10px!important}.scentv2-question-page .scentv2-qflower{margin:5px auto!important}.scentv2-question-page h3{margin:8px 4px 12px!important;line-height:1.45!important}.scentv2-question-page .scent16-options{gap:5px!important}.scentv2-question-page .scent16-option{padding:9px 8px!important;min-height:0!important}
 @media(max-width:420px){.mind-flower-svg{width:104px;height:104px}.mind-hub h3{font-size:19px}}
+
+/* phase13_28: result-DNA heart flower — 16 × 6 × 4 × 5 × 5 combinations */
+.mind-flower-svg{fill:none!important}
+.mind-flower-svg .mind-petal{transform-box:fill-box;transform-origin:center;transition:filter .35s ease,opacity .35s ease}
+.mind-flower-svg .mind-petal.is-waiting{opacity:.20;filter:grayscale(.5)}
+.mind-flower-svg .mind-petal.is-bloomed{opacity:.96;filter:drop-shadow(0 3px 4px rgba(121,75,91,.16))}
+.mind-flower-svg .mind-petal.is-bloomed path:first-of-type{stroke:rgba(255,255,255,.5);stroke-width:.7}
+.mind-flower-svg .petal-vein{fill:none;stroke:rgba(255,255,255,.48);stroke-width:1;stroke-linecap:round}
+.mind-flower-svg .petal-glow{fill:rgba(255,255,255,.52);filter:blur(.35px)}
+.mind-flower-svg .mind-flower-core{fill:#fff0bd;stroke:rgba(255,255,255,.8);stroke-width:2;filter:drop-shadow(0 2px 4px rgba(154,112,65,.15))}
+.mind-flower-svg .mind-flower-core-dot{fill:#f8d981;opacity:.72}
+.mind-flower-svg text{font-size:13px;dominant-baseline:middle}
+.mind-flower-svg.is-full-bloom .mind-petal.is-bloomed{filter:drop-shadow(0 4px 5px rgba(121,75,91,.2)) drop-shadow(0 0 5px rgba(255,225,180,.25))}
+.mind-flower-stage.is-complete{background:radial-gradient(circle at 50% 38%,#fffdf5 0,#fff7ef 43%,#f7edf0 100%)}
