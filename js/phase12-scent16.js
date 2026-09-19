@@ -204,4 +204,4 @@ function toast(text){const el=$('#miniToast');if(!el)return;el.textContent=text;
 
 $('#openScent16')?.addEventListener('click',open);document.querySelectorAll('[data-close-scent16]').forEach(x=>x.addEventListener('click',close));window.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal?.classList.contains('is-open'))close();});window.addEventListener('unica:firebase-member-restored',updateHome);window.addEventListener('unica:scent-diagnosis-saved',updateHome);updateHome();
 
-window.UNICA_SCENT16={typeById,compatibility,compatibilityMatrix:COMPATIBILITY_MATRIX,scentIconUrl,scentIconHtml,getMyResult:()=>readResult()||member()?.scentDiagnosis};
+window.UNICA_SCENT16={typeById,compatibility,compatibilityMatrix:COMPATIBILITY_MATRIX,scentIconUrl,scentIconHtml,getMyResult:()=>readResult()||member()?.scentDiagnosis,showIntro,startDiagnosis,showResult};

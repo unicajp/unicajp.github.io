@@ -330,6 +330,20 @@ async function saveScentDiagnosis(result) {
   return payload;
 }
 
+async function saveMindGarden(data) {
+  await authReady;
+  const member = localMember();
+  if (!uid || !member) throw new Error('うにメン情報を確認できません。');
+  await setDoc(doc(db, 'users', uid), { mindGarden: data || {}, updatedAt: serverTimestamp() }, { merge: true });
+  return data || {};
+}
+async function loadMindGarden() {
+  await authReady;
+  if (!uid) return null;
+  const snap = await getDoc(doc(db, 'users', uid));
+  return snap.exists() ? (snap.data().mindGarden || null) : null;
+}
+
 async function loadScentMembers() {
   await authReady;
   const snap = await getDocs(collection(db, 'users'));
@@ -388,6 +402,8 @@ window.UNICA_FIREBASE = {
   loadMilkMatchLeaderboard,
   saveScentDiagnosis,
   loadScentMembers,
+  saveMindGarden,
+  loadMindGarden,
   heartbeat: () => heartbeat().catch(console.error),
   authInfo,
   linkGoogleAccount,
