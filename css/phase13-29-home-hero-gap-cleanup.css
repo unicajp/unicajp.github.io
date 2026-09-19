@@ -1,0 +1,45 @@
+/* Phase 13.29 — remove legacy reserved gap for the old absolutely-positioned support comment. */
+.hero.section-shell{
+  min-height:0!important;
+  padding-bottom:10px!important;
+  gap:0!important;
+}
+.hero.section-shell > .hero-portrait{
+  /* Old Phase 10 rules reserve ~196–214px here. The comment is now in normal flow. */
+  margin:0 auto!important;
+  padding-bottom:8px!important;
+}
+.hero.section-shell > .hero-portrait figcaption{
+  margin-bottom:0!important;
+}
+.hero.section-shell > .support-comment-float-layer,
+.hero.section-shell > .support-comment-float-layer.is-two-tier{
+  position:relative!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  width:min(350px,90vw)!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:10px auto 6px!important;
+  padding:0!important;
+  align-content:start!important;
+  overflow:visible!important;
+}
+.hero.section-shell > .home-quick-comment{
+  margin-top:4px!important;
+}
+@media(max-width:520px){
+  .hero.section-shell > .hero-portrait{
+    margin:0 auto!important;
+    padding-bottom:6px!important;
+  }
+  .hero.section-shell > .support-comment-float-layer,
+  .hero.section-shell > .support-comment-float-layer.is-two-tier{
+    width:92vw!important;
+    min-height:0!important;
+    margin:8px auto 5px!important;
+  }
+}

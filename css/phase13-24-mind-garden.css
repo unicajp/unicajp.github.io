@@ -26,3 +26,9 @@
 .mind-flower-svg text{font-size:13px;dominant-baseline:middle}
 .mind-flower-svg.is-full-bloom .mind-petal.is-bloomed{filter:drop-shadow(0 4px 5px rgba(121,75,91,.2)) drop-shadow(0 0 5px rgba(255,225,180,.25))}
 .mind-flower-stage.is-complete{background:radial-gradient(circle at 50% 38%,#fffdf5 0,#fff7ef 43%,#f7edf0 100%)}
+
+/* Phase13.30 diagnosis resume */
+.mind-resume-count{display:block!important;margin-top:3px!important;font-size:10px!important;font-weight:800!important;color:#a36b78!important;opacity:1!important}
+.mind-resume-box{display:flex;flex-direction:column;gap:2px;margin:8px auto 10px;padding:8px 12px;max-width:260px;border-radius:14px;background:rgba(255,255,255,.72);border:1px solid rgba(164,125,132,.18);text-align:center}
+.mind-resume-box b{font-size:12px}.mind-resume-box small{font-size:10px;opacity:.66}
+.mind-diag.has-progress em{color:#a36b78}
