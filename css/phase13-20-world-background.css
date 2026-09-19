@@ -1,0 +1,16 @@
+/* Phase 13.20 — UNICA WORLD crystal-light common background */
+html{background:#fbf8f7;}
+body{
+  background-color:#fbf8f7!important;
+  background-image:
+    linear-gradient(rgba(255,255,255,.20),rgba(255,255,255,.20)),
+    url('../assets/unica-world-bg.webp')!important;
+  background-position:center top!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-attachment:scroll!important;
+}
+@media (min-width:900px){
+  body{background-position:center center!important;background-attachment:fixed!important;}
+}
+@media (prefers-reduced-motion:reduce){body{background-attachment:scroll!important;}}
