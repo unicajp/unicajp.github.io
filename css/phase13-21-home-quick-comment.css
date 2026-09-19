@@ -1,10 +1,19 @@
-/* Phase 13.21 — top quick support comment */
+/* Phase 13.22 — quick support form directly below top comment area */
 #communityHomeCard{display:none!important}
-.hero-portrait{padding-bottom:64px!important}
+
+/* Keep this in normal document flow. The two floating comment cards live at
+   the bottom of .hero; placing this block after .hero guarantees it follows them. */
 .home-quick-comment{
-  position:absolute;left:50%;bottom:116px;z-index:8;
-  width:min(340px,88vw);transform:translateX(-50%);
-  display:grid;grid-template-columns:minmax(0,1fr) 48px 48px;gap:6px;align-items:stretch;
+  position:relative!important;
+  left:auto!important;right:auto!important;bottom:auto!important;top:auto!important;
+  z-index:8;
+  width:min(350px,90vw);
+  margin:-8px auto 12px;
+  transform:none!important;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 48px 48px;
+  gap:6px;
+  align-items:stretch;
   pointer-events:auto;
 }
 .home-quick-comment-inputwrap{position:relative;min-width:0}
@@ -22,7 +31,7 @@
 .home-quick-comment-history{border:1px solid rgba(118,84,93,.16);background:rgba(255,255,255,.88);color:#76545d}
 .home-quick-comment textarea:disabled{color:#9a898d;background:rgba(255,255,255,.78)}
 @media(max-width:520px){
-  .home-quick-comment{bottom:112px;width:86vw;grid-template-columns:minmax(0,1fr) 44px 44px;gap:5px}
+  .home-quick-comment{width:92vw;grid-template-columns:minmax(0,1fr) 44px 44px;gap:5px;margin:-6px auto 10px}
   .home-quick-comment button,.home-quick-comment textarea{height:36px;min-height:36px;max-height:36px}
   .home-quick-comment textarea{padding-top:9px;font-size:10px}
 }
