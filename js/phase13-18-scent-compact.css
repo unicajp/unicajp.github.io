@@ -1,0 +1,22 @@
+/* Phase13.18 — UNICA SCENT compact mobile-first pass */
+.scent16-screen{padding-bottom:18px!important}
+.scentv2-hero{min-height:0!important;padding:18px 4px 10px!important}
+.scentv2-kicker{font-size:10px!important}
+.scentv2-bloom{font-size:46px!important;margin:12px 0 8px!important;line-height:1!important}
+.scentv2-hero h3{font-size:22px!important;line-height:1.35!important;margin:0!important}
+.scentv2-hero p{font-size:12px!important;line-height:1.65!important;margin:10px auto 0!important;max-width:360px!important}
+.scentv2-meta{gap:6px!important;margin:14px 0 10px!important}
+.scentv2-meta span{font-size:9px!important;padding:5px 8px!important}
+.scent16-primary,.scent16-secondary{min-height:42px!important;border-radius:14px!important;font-size:13px!important}
+.scentv2-shortcuts{gap:7px!important;margin-top:7px!important}.scentv2-shortcuts button{padding:9px 6px!important;font-size:11px!important}
+.scent16-count{margin-top:10px!important;font-size:10px!important}
+.scent16-category-intro{padding:20px 8px 12px!important}.scent16-category-icon{font-size:42px!important;margin-bottom:6px!important}.scent16-category-intro h3{font-size:22px!important;margin:4px 0!important}.scent16-category-intro p{font-size:12px!important;line-height:1.55!important;margin:8px 0 14px!important}
+.scentv2-question-page{min-height:0!important;padding:14px 0 6px!important}.scentv2-qtop{gap:10px!important}.scentv2-qflower{font-size:30px!important;margin:20px 0 8px!important}.scentv2-question-page>small{font-size:10px!important}.scentv2-question-page h3{font-size:19px!important;line-height:1.45!important;margin:8px auto 16px!important}.scent16-options{gap:7px!important}.scent16-option{min-height:43px!important;border-radius:13px!important;padding:9px 12px!important;font-size:12px!important}.scent16-back-question{margin-top:10px!important;font-size:11px!important}
+.scent16-analyzing,.scent16-reveal{padding:26px 10px!important}.scent16-reveal-flower{font-size:58px!important;margin:10px 0!important}
+.scentv2-result{padding:12px 0 6px!important}.scentv2-result-cover{padding:18px 14px 16px!important;border-radius:20px!important}.scentv2-result-cover>div{font-size:62px!important;margin:10px 0 2px!important}.scentv2-result-cover h3{font-size:23px!important}.scentv2-result-cover p{font-size:12px!important;margin:6px 0 10px!important}.scentv2-result-cover span{font-size:9px!important;padding:5px 8px!important}.scentv2-story,.scentv2-guide,.scentv2-stats{margin-top:9px!important;padding:14px!important;border-radius:16px!important}.scentv2-story h4,.scentv2-guide h4,.scentv2-stats h4,.scentv2-two h4{font-size:13px!important;margin-bottom:5px!important}.scentv2-story p,.scentv2-guide p,.scentv2-two p{font-size:11px!important;line-height:1.6!important}.scentv2-two{gap:7px!important;margin-top:7px!important}.scentv2-two section{padding:12px!important;border-radius:15px!important}.scentv2-guide>div{padding:8px 0!important}.scentv2-guide b{font-size:11px!important}.scentv2-stats>div{grid-template-columns:74px 1fr 24px!important;gap:6px!important;margin:8px 0!important;font-size:10px!important}.scentv2-actions{gap:7px!important;margin-top:10px!important}.scentv2-redo{margin-top:12px!important;font-size:10px!important}
+.scentv2-compat,.scentv2-book{padding:16px 0!important}.scentv2-compat h3,.scentv2-book h3{font-size:20px!important;margin:5px 0!important}.scentv2-compat>p,.scentv2-book>p{font-size:11px!important;line-height:1.55!important}.scentv2-compat-list{gap:7px!important;margin:12px 0!important}.scentv2-compat-list button{grid-template-columns:34px 1fr 42px!important;gap:8px!important;border-radius:14px!important;padding:9px!important}.scentv2-compat-list button>span{font-size:23px!important}.scentv2-compat-list p{margin:3px 0!important}
+@media(max-width:520px){.scent16-header{padding:11px 16px 9px!important}.scent16-header h2{font-size:15px!important}.scent16-screen{height:calc(100% - 52px)!important;padding:0 16px 16px!important}.scentv2-hero{padding-top:14px!important}.scentv2-bloom{font-size:42px!important}.scentv2-hero h3{font-size:21px!important}.scentv2-two{grid-template-columns:1fr 1fr!important}}
+@media(max-width:360px){.scentv2-two{grid-template-columns:1fr!important}.scentv2-hero h3{font-size:20px!important}.scentv2-meta span{padding:4px 6px!important}}
+
+/* Phase13.18.1: restore once-per-day re-diagnosis UI */
+.scentv2-daily-done{margin:10px auto 0;font-size:11px;line-height:1.5;color:#9a8290;text-align:center}.scentv2-hero>.scentv2-redo{margin-top:10px!important}
