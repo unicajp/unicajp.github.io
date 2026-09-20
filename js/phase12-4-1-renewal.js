@@ -21,20 +21,18 @@ function build(){
  const root=make('div','phase1241-renewal');root.id='phase1241Renewal';
  const artist=make('section','renewal-section artist-renewal-zone','<div class="renewal-section-head"><div><small>ARTIST & MUSIC</small><h2>うにかの音楽</h2></div><p>聴く・知る</p></div>');
  const release=$('.release-card',stack),people=$('.people-cards',stack);if(release)artist.append(release);if(people)artist.append(people);root.append(artist);
- const support=make('section','renewal-section support-renewal-zone','<div class="renewal-section-head"><div><small>SUPPORT MESSAGE</small><h2>応援コメント</h2></div><p>みんなの声</p></div>');const community=$('#communityHomeCard');if(community)support.append(community);root.append(support);
+ // 応援コメント機能廃止: トップの旧見出し/空セクションも生成しない。
  const recent=make('button','recent-feature-card');recent.type='button';recent.id='renewalRecent';root.append(recent);
- const fun=make('section','renewal-section','<div class="renewal-section-head"><div><small>ENJOY UNICA WORLD</small><h2>楽しむ</h2></div><p>機能を選ぶ</p></div>');const grid=make('div','fun-grid');
+ const fun=make('section','renewal-section','<div class="renewal-section-head"><div><small>ENJOY UNICA WORLD</small><h2>楽しむ</h2></div></div>');const grid=make('div','fun-grid fun-grid-simple');
  grid.append(
   featureStack(
-   card({key:'game',cls:'game',icon:'🎮',title:'MILK BLOOM',desc:'歌詞を集めながら遊ぼう！',badge:'UPDATE',open:()=>clickTarget('openMilkMatch')}),
-   subLink({key:'lyrics',icon:'📖',title:'歌詞図鑑',status:`解放 ${statusText('lyrics')}`,open:()=>clickTarget('openMilkLyrics')})
+   card({key:'game',cls:'game',icon:'🎮',title:'MILK BLOOM',desc:'歌詞を集めて遊ぶ',open:()=>clickTarget('openMilkMatch')})
   ),
   featureStack(
-   card({key:'scent',cls:'scent',icon:'🌸',title:'うにかの匂い16診断',desc:'あなただけの花と香りを見つけよう！',badge:'NEW',open:()=>clickTarget('openScent16')}),
-   subLink({key:'flowers',icon:'🌼',title:'花図鑑',status:'全16種類',open:()=>{clickTarget('openScent16');setTimeout(()=>clickTarget('viewFlowerBook'),180)}})
+   card({key:'scent',cls:'scent',icon:'🌸',title:'うにメン診断',desc:'自分のこころを見つける',open:()=>clickTarget('openScent16')})
   ),
   featureStack(
-   card({key:'prefecture',cls:'prefecture',icon:'🗾',title:'全国のうにメン',desc:'全国にいる仲間を見てみよう！',open:()=>clickTarget('openPrefectureDirectory')})
+   card({key:'prefecture',cls:'prefecture',icon:'🗾',title:'全国のうにメン',desc:'全国の仲間を見てみる',open:()=>clickTarget('openPrefectureDirectory')})
   )
  );fun.append(grid);root.append(fun);
  root.append(make('section','renewal-contact','<small>SUPPORT</small><h3>お問い合わせ</h3><p>不具合・ご要望・その他のお問い合わせは<br>X（旧Twitter）のDMからお気軽にご連絡ください。</p><a href="https://x.com/unica_jpn" target="_blank" rel="noopener noreferrer">𝕏 DMを開く ↗</a>'));
