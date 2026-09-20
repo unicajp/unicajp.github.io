@@ -32,3 +32,12 @@
 .mind-resume-box{display:flex;flex-direction:column;gap:2px;margin:8px auto 10px;padding:8px 12px;max-width:260px;border-radius:14px;background:rgba(255,255,255,.72);border:1px solid rgba(164,125,132,.18);text-align:center}
 .mind-resume-box b{font-size:12px}.mind-resume-box small{font-size:10px;opacity:.66}
 .mind-diag.has-progress em{color:#a36b78}
+
+/* phase13_33: separated radial petals + dedicated flower view */
+.mind-flower-svg .mind-petal{transform-box:view-box;transform-origin:0 0}
+.mind-flower-svg .mind-petal.is-bloomed{opacity:1}
+.mind-flower-svg .mind-petal.is-waiting{opacity:.13}
+.mind-view-flower{margin:5px auto 0;border:0;background:transparent;color:#9b7380;font-size:9px;font-weight:900;text-decoration:underline;text-underline-offset:3px;padding:4px 8px}
+.mind-flower-view{padding:8px 4px 18px;text-align:center;color:#54443f;background:radial-gradient(circle at 50% 25%,#fffaf0 0,#fff7f7 42%,transparent 72%);border-radius:24px}
+.mind-flower-view>small{font-size:9px;font-weight:900;letter-spacing:.18em;color:#a17a82}.mind-flower-view>h3{font-family:serif;font-size:22px;margin:5px 0 2px}.mind-flower-hero{margin:4px auto 9px;padding:4px 8px 10px;max-width:280px}.mind-flower-svg.is-large{width:210px!important;height:210px!important}.mind-flower-hero>b{display:block;font-family:serif;font-size:17px;margin-top:-5px}.mind-flower-hero>p{font-size:9px;line-height:1.55;color:#907a73;margin:3px 0}.mind-petal-status{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:8px 0 12px}.mind-petal-status button{min-width:0;border:1px solid rgba(111,80,70,.08);border-radius:13px;background:#fff;padding:7px 2px 6px;color:#604d47}.mind-petal-status span,.mind-petal-status b,.mind-petal-status em{display:block}.mind-petal-status span{font-size:18px}.mind-petal-status b{font-size:8px;margin-top:2px;white-space:nowrap}.mind-petal-status em{font-style:normal;font-size:7px;margin-top:2px;color:#a27b83}.mind-petal-status .is-closed{opacity:.48;filter:grayscale(.35)}
+@media(max-width:420px){.mind-flower-svg.is-large{width:190px!important;height:190px!important}}
