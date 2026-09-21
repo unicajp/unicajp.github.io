@@ -35,7 +35,7 @@ function saveRoot(s){localStorage.setItem(KEY,JSON.stringify(s));try{window.UNIC
 function state(){const s=load();s[V]=s[V]||{version:2,answers:[],scores:Object.fromEntries(AXES.map(k=>[k,50])),confidence:Object.fromEntries(AXES.map(k=>[k,0])),stage:'new',createdAt:Date.now(),checkins:[]};return[s,s[V]]}
 function save(v){const s=load();s[V]=v;saveRoot(s)}
 function setBack(fn){window.__UNICA_DIAG_BACK=typeof fn==='function'?fn:null}
-function header(title='KOKORO BLOOM',kick='NEW KOKORO EXPERIENCE'){const h=$('#scent16Title'),k=$('.scent16-header small');if(h)h.textContent=title;if(k)k.textContent=kick;document.body.classList.add('kokoro-bloom-active')}
+function header(title='KOKORO BLOOM',kick='NEW KOKORO EXPERIENCE'){const h=$('#scent16Title'),k=$('.scent16-header small');if(h)h.textContent=title;if(k)k.textContent=kick;document.body.classList.add('kokoro-bloom-active');requestAnimationFrame(syncBloomViewport)}
 function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function hash(v){let h=2166136261;for(const c of String(v)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
 function avg(v){return AXES.reduce((a,k)=>a+v.scores[k],0)/5}
@@ -65,6 +65,29 @@ function record(){const [s,v]=state();header('BLOOM LOG','YOUR JOURNEY');setBack
 function pair(){header('TWO BLOOMS','CONNECT HEARTS');setBack(home);const [s,v]=state(),code=shortCode(v);screen().innerHTML=`<div class="kb-pair"><div class="kb-pair-mark">${flowerSvg(v)}<span>＋</span><div class="kb-mystery">?</div></div><small>TWO HEART FLOWERS</small><h3>誰かの花と<br>重ねてみる。</h3><p>良い・悪いを点数にせず、似ているところと違うところを見つけます。</p><div class="kb-code"><small>あなたのBLOOM CODE</small><b>${code}</b><button id="copyCode">コピー</button></div><label><span>相手のコード</span><input id="pairCode" maxlength="6" placeholder="例：B7K2"></label><button class="kb-main" id="pairGo">ふたりの花を見る</button></div>`;$('#copyCode').onclick=async()=>{try{await navigator.clipboard.writeText(code);$('#copyCode').textContent='コピー済み'}catch{}};$('#pairGo').onclick=()=>pairResult($('#pairCode').value)}
 function shortCode(v){let n=0;AXES.forEach((k,i)=>n+=Math.round(v.scores[k]/4)*Math.pow(26,i));const chars='23456789ABCDEFGHJKLMNPQRSTUVWXYZ';let out='';do{out=chars[n%chars.length]+out;n=Math.floor(n/chars.length)}while(n);return ('B'+out).slice(0,6)}
 function pairResult(code){if(!/^B[23456789A-Z]{2,5}$/i.test(code)){ $('#pairCode').classList.add('is-error');return }const [s,v]=state(),seed=hash(code.toUpperCase()),mine=AXES.map(k=>v.scores[k]),other=AXES.map((k,i)=>25+((seed>>(i*5))%51)),diff=mine.map((x,i)=>Math.abs(x-other[i])),similar=AXES[diff.indexOf(Math.min(...diff))],different=AXES[diff.indexOf(Math.max(...diff))];setBack(pair);screen().innerHTML=`<div class="kb-pair-result"><div class="kb-pair-title">✿ × ✿</div><small>TWO BLOOMS DISCOVERY</small><h3>違う色が<br>響きあう花</h3><section><b>自然に重なるところ</b><p>「${META[similar].name}」は感覚が近く、説明しすぎなくても分かり合える場面がありそうです。</p></section><section><b>違うから見えるところ</b><p>「${META[different].name}」には違いがあります。どちらかを正解にせず、相手の方法を知ることが関係のヒントになります。</p></section><section><b>ふたりへのヒント</b><p>似ている部分は安心に、違う部分は新しい視点に。相手を自分と同じにしないことが、ふたりの花を長く咲かせます。</p></section><button class="kb-main" id="pairAgain">もう一度見る</button></div>`;$('#pairAgain').onclick=pair}
-function install(){const open=$('#openScent16');if(open){open.setAttribute('aria-label','KOKORO BLOOMを開く');open.addEventListener('click',()=>setTimeout(home,30));const c=open.querySelector('.scent16-home-copy');if(c)c.innerHTML='<small>NEW KOKORO EXPERIENCE</small><strong>KOKORO BLOOM</strong><em id="scent16HomeSummary">ゲームみたいに答えて、自分だけの花を咲かせよう。</em>';const b=$('#scent16HomeCta');if(b)b.textContent='START'}window.addEventListener('unica:firebase-member-restored',async()=>{try{const remote=await window.UNICA_FIREBASE?.loadMindGarden?.();if(remote?.[V]){const local=load();local[V]=remote[V];localStorage.setItem(KEY,JSON.stringify(local))}}catch{}})}
+function syncBloomViewport(){
+  const modal=$('#scent16Modal'), scr=screen();
+  if(!modal||!scr)return;
+  const vv=window.visualViewport;
+  const visibleH=Math.round(vv?.height||window.innerHeight||document.documentElement.clientHeight);
+  const visibleTop=Math.round(vv?.offsetTop||0);
+  modal.style.setProperty('--kb-visible-height',visibleH+'px');
+  modal.style.setProperty('--kb-visible-top',visibleTop+'px');
+  requestAnimationFrame(()=>{
+    const r=scr.getBoundingClientRect();
+    const available=Math.max(280,Math.floor(visibleTop+visibleH-r.top));
+    scr.style.setProperty('--kb-screen-height',available+'px');
+  });
+}
+function installBloomViewportFix(){
+  let raf=0;
+  const update=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(syncBloomViewport)};
+  window.addEventListener('resize',update,{passive:true});
+  window.addEventListener('orientationchange',update,{passive:true});
+  window.visualViewport?.addEventListener('resize',update,{passive:true});
+  window.visualViewport?.addEventListener('scroll',update,{passive:true});
+  update();
+}
+function install(){installBloomViewportFix();const open=$('#openScent16');if(open){open.setAttribute('aria-label','KOKORO BLOOMを開く');open.addEventListener('click',()=>setTimeout(home,30));const c=open.querySelector('.scent16-home-copy');if(c)c.innerHTML='<small>NEW KOKORO EXPERIENCE</small><strong>KOKORO BLOOM</strong><em id="scent16HomeSummary">ゲームみたいに答えて、自分だけの花を咲かせよう。</em>';const b=$('#scent16HomeCta');if(b)b.textContent='START'}window.addEventListener('unica:firebase-member-restored',async()=>{try{const remote=await window.UNICA_FIREBASE?.loadMindGarden?.();if(remote?.[V]){const local=load();local[V]=remote[V];localStorage.setItem(KEY,JSON.stringify(local))}}catch{}})}
 window.UNICA_MIND_GARDEN={open:home,v2:true};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
 })();
