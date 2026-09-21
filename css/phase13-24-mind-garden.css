@@ -25,3 +25,43 @@ body.kokoro-bloom-active #scent16Screen{padding:0!important;background:transpare
 .kb-pair-mark{height:165px;display:flex;align-items:center;justify-content:center;gap:5px}.kb-pair-mark .kb-flower{width:120px;height:120px}.kb-pair-mark>span{font-size:28px;color:white;font-weight:1000}.kb-mystery{width:95px;height:95px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.88);border:4px dashed #b29ce6;color:#7567ce;font-size:38px;font-weight:1000}.kb-code{background:rgba(255,255,255,.9);border-radius:20px;padding:14px;margin:18px 0;display:grid;grid-template-columns:1fr auto;align-items:center;text-align:left}.kb-code small{grid-column:1/3;font-size:9px;color:#89839c}.kb-code b{font-size:27px;letter-spacing:.13em;color:#494587}.kb-code button{border:0;border-radius:12px;padding:9px 12px;background:#625bd1;color:white;font-weight:900}.kb-pair label{display:block;text-align:left;background:rgba(255,255,255,.9);padding:12px;border-radius:18px;margin-bottom:14px}.kb-pair label span{display:block;font-size:10px;font-weight:900;color:#77718d;margin-bottom:5px}.kb-pair input{width:100%;box-sizing:border-box;border:2px solid #d7ccec;border-radius:12px;padding:12px;font-size:18px;font-weight:1000;text-transform:uppercase;outline:none}.kb-pair input.is-error{border-color:#ff5b8f;background:#fff1f5}.kb-pair-title{font-size:55px;color:white;margin-top:24px}.kb-pair-result section{margin:10px 0}.kb-pair-result section b{color:#655bc1}.kb-pair-result section p{margin:6px 0 0}
 @media(max-width:380px){.kb-home,.kb-quest,.kb-reward,.kb-bloom-result,.kb-insight,.kb-detail,.kb-feedback,.kb-record,.kb-pair,.kb-pair-result{padding-left:14px;padding-right:14px}.kb-logo b{font-size:35px}.kb-world{height:225px}.kb-quest h3{font-size:21px}.kb-choices button{min-height:68px}.kb-menu button{min-height:102px}}
 @media(prefers-reduced-motion:reduce){.kb-seed.hero,.kb-world>.kb-flower,.kb-rays,.kb-burst i,body.kokoro-bloom-active #scent16Modal:before{animation:none!important}}
+
+/* phase14_01: exact mobile visible-viewport fit (browser bars / safe areas) */
+body.kokoro-bloom-active #scent16Modal{
+  top:var(--kb-visible-top,0px)!important;
+  bottom:auto!important;
+  height:var(--kb-visible-height,100dvh)!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+body.kokoro-bloom-active #scent16Screen{
+  height:var(--kb-screen-height,calc(100dvh - 72px))!important;
+  min-height:0!important;
+  max-height:var(--kb-screen-height,calc(100dvh - 72px))!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  scrollbar-width:none;
+  padding-bottom:env(safe-area-inset-bottom)!important;
+  box-sizing:border-box!important;
+}
+body.kokoro-bloom-active #scent16Screen::-webkit-scrollbar{display:none}
+body.kokoro-bloom-active #scent16Screen>.kb-home,
+body.kokoro-bloom-active #scent16Screen>.kb-quest,
+body.kokoro-bloom-active #scent16Screen>.kb-reward,
+body.kokoro-bloom-active #scent16Screen>.kb-bloom-result,
+body.kokoro-bloom-active #scent16Screen>.kb-insight,
+body.kokoro-bloom-active #scent16Screen>.kb-detail,
+body.kokoro-bloom-active #scent16Screen>.kb-feedback,
+body.kokoro-bloom-active #scent16Screen>.kb-record,
+body.kokoro-bloom-active #scent16Screen>.kb-pair,
+body.kokoro-bloom-active #scent16Screen>.kb-pair-result{
+  min-height:100%!important;
+  height:auto!important;
+  padding-bottom:max(18px,env(safe-area-inset-bottom))!important;
+}
+@supports(height:100dvh){
+  body.kokoro-bloom-active #scent16Modal{height:var(--kb-visible-height,100dvh)!important}
+}
