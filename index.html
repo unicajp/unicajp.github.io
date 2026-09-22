@@ -307,27 +307,13 @@
 </div>
 <div class="register-notice">
 <strong>大切なお知らせ</strong>
-<p>ニックネームは登録後に変更できません。<br/>アイコンは、あとから何度でも変更できます。</p>
+<p>ニックネームは登録後に変更できません。<br/>花のアイコンは誕生日とKOKORO BLOOMから自動で育ちます。</p>
 </div>
 <label class="register-label" for="memberNickname">ニックネーム</label>
 <input autocomplete="nickname" class="register-input" id="memberNickname" maxlength="16" placeholder="例：うにこ" type="text"/>
 <div class="register-profile-grid">
 <label><span class="register-label">都道府県</span><select class="register-input" id="memberPrefecture"><option value="">選択してください</option></select></label>
 <div><span class="register-label">誕生日（月・日）</span><div class="birthday-selects"><select class="register-input" id="memberBirthMonth"><option value="">月</option></select><select class="register-input" id="memberBirthDay"><option value="">日</option></select></div><small class="privacy-note">年は入力しません。うにパスのプロフィール表示に使用します。</small></div>
-</div>
-<div aria-labelledby="emojiBuilderTitle" class="emoji-builder">
-<div class="emoji-builder-copy">
-<span class="register-label" id="emojiBuilderTitle">アイコン</span>
-<small>好きな絵文字を1つ選べます</small>
-</div>
-<div aria-label="選択中のアイコン" class="emoji-preview" id="emojiPreview">🌸</div>
-<div class="emoji-inputs emoji-inputs-single">
-<label>絵文字<input aria-label="プロフィールアイコンの絵文字" class="emoji-input" id="memberEmojiOne" inputmode="text" maxlength="32" type="text" value="🌸"/></label>
-</div>
-<div aria-label="絵文字の候補" class="emoji-suggestions">
-<button data-emoji="🌸" type="button">🌸</button><button data-emoji="🍼" type="button">🍼</button><button data-emoji="🌈" type="button">🌈</button><button data-emoji="🎵" type="button">🎵</button><button data-emoji="⭐" type="button">⭐</button><button data-emoji="🌙" type="button">🌙</button><button data-emoji="🐻" type="button">🐻</button><button data-emoji="🐱" type="button">🐱</button><button data-emoji="🍀" type="button">🍀</button><button data-emoji="🎀" type="button">🎀</button><button data-emoji="☁️" type="button">☁️</button><button data-emoji="🫧" type="button">🫧</button>
-</div>
-<p class="emoji-help">候補以外も入力できます。スマホの絵文字キーボードから自由に選んでください。</p>
 </div>
 <p aria-live="polite" class="register-error" id="registerError"></p>
 <button class="register-primary" id="registerSubmit" type="button">無料登録の内容を確認する</button>
@@ -344,12 +330,12 @@
 <p class="complete-small">CONFIRM YOUR UNICA PASS</p>
 <h2>この内容で<br/>うにメンになりますか？</h2>
 <div class="confirm-profile">
-<div class="confirm-avatar" id="confirmAvatar">🌸</div>
+<div class="confirm-avatar" id="confirmAvatar"></div>
 <div><small>ニックネーム</small><strong id="confirmName">—</strong><em id="confirmLocationBirthday">—</em></div>
 </div>
 <div class="confirm-warning">
 <strong>ニックネームは登録後に変更できません。</strong>
-<p>アイコンは、うにパスからいつでも変更できます。</p>
+<p>花のアイコンは誕生日とKOKORO BLOOMから自動で育ちます。</p>
 </div>
 <div class="confirm-actions">
 <button class="register-back" id="registerBack" type="button">戻って修正する</button>
@@ -361,7 +347,7 @@
 <p class="complete-small">WELCOME, FOUNDING MEMBER</p>
 <h2>うにパスが<br/>発行されました。</h2>
 <div class="complete-pass">
-<span id="completeAvatar">🌸</span>
+<span id="completeAvatar"></span>
 <div><small>創設うにメン</small><strong id="completeName">—</strong><em id="completeNumber">No.0000</em><small id="completeRegion">—</small></div>
 </div>
 <p class="register-lead">今日から、この世界で生まれる思い出が<br/>あなたのうにパスに残っていきます。</p>
@@ -381,7 +367,6 @@
 <div><small>ニックネーム</small><strong id="settingsName">—</strong><em id="settingsNumber">—</em></div>
 </div>
 <div class="settings-menu" id="settingsMenu">
-<button id="settingsEditIcon" type="button"><span>🌸</span><div><b>アイコンを変更</b><small>好きな絵文字を1つ選びます</small></div><i>›</i></button>
 <button class="google-settings-button" id="googleLinkButton" type="button"><span aria-hidden="true" class="google-g-mark">G</span><div><b id="googleLinkTitle">Googleアカウントと連携</b><small id="googleLinkDescription">機種変更後も同じうにパスを引き継げます</small></div><i>›</i></button>
 <button class="settings-danger-link" id="openWithdrawal" type="button"><span>↩</span><div><b>UNICA WORLDから退会</b><small>うにパスと保存データを削除します</small></div><i>›</i></button>
 </div>
@@ -392,7 +377,7 @@
 <h3>本当に退会しますか？</h3>
 <p>退会すると、現在のうにパスは削除されます。もう一度登録する場合は、新しいうにメンとして始まります。</p>
 <ul>
-<li>ニックネームとアイコン</li>
+<li>ニックネームとBLOOMアイコン</li>
 <li>投稿・返信・共感などのコミュニティ記録</li>
 <li>加入日・バッジ・今後の記録</li>
 </ul>
@@ -648,7 +633,7 @@
 </div>
 <div aria-live="polite" class="mini-toast" id="miniToast" role="status"></div>
 <script src="js/firebase-init.js?v=4.18-progress-save-fix" type="module"></script>
-<script src="js/phase10-2.js?v=13.36" type="module"></script>
+<script src="js/phase10-2.js?v=13.21" type="module"></script>
 <script src="js/script.js?v=13.17"></script>
 <script src="js/phase10-3.js?v=12.6"></script>
 <script src="js/phase10-7-prefectures.js" type="module"></script>
@@ -672,11 +657,9 @@
 <link rel="stylesheet" href="css/phase13-10-scent-release-event.css?v=13.10"/>
 <link rel="stylesheet" href="css/phase13-10-4-home-compact.css?v=13.17"/>
 <script src="js/phase13-10-scent-release-event.js?v=13.10" defer></script>
-<link rel="stylesheet" href="css/phase13-24-mind-garden.css?v=13.36"/>
-<link rel="stylesheet" href="css/phase14-06-bloom-badge.css?v=14.06"/>
+<link rel="stylesheet" href="css/phase13-24-mind-garden.css?v=13.35"/>
 <link rel="stylesheet" href="css/phase13-31-diagnosis-header-nav.css?v=13.31"/>
-<script src="js/phase13-24-mind-garden.js?v=14.06" defer></script>
-<script src="js/phase14-06-bloom-badge.js?v=14.06" defer></script>
+<script src="js/phase13-24-mind-garden.js?v=13.35" defer></script>
 <link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=13.5.2"/>
 <link rel="stylesheet" href="css/phase13-18-scent-compact.css?v=13.18"/>
 <link rel="stylesheet" href="css/phase13-20-world-background.css?v=13.20.3"/>
