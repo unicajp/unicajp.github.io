@@ -7,7 +7,7 @@ function remember(key,label,icon){try{localStorage.setItem('unicaRecentFeature',
 function renderRecent(){const box=$('#renewalRecent');if(!box)return;let r=null;try{r=JSON.parse(localStorage.getItem('unicaRecentFeature')||'null')}catch(_){}if(!r){box.classList.remove('is-visible');return}box.classList.add('is-visible');box.innerHTML=`<span class="recent-icon">${r.icon||'✨'}</span><div><small>最近利用した機能</small><strong>${r.label||''}</strong><b>続きから開く ›</b></div>`;box.onclick=()=>{const b=document.querySelector(`[data-feature-key="${r.key}"]`);if(b)b.click()};}
 function statusText(key){
  if(key==='game'){const n=$('#milkLyricsHomeUnlocked')?.textContent||'0';return `歌詞 ${n}/9`}
- if(key==='scent'){return $('#scent16HomeCta')?.textContent?.includes('結果')?'診断済み':'何度でも診断'}
+ if(key==='scent')return 'メンテナンス中';
  if(key==='prefecture'){return $('#prefectureTotalMembers')?.textContent||'全国を見る'}
  if(key==='flowers')return '16種類公開';
  if(key==='lyrics'){const n=$('#milkLyricsHomeUnlocked')?.textContent||'0';return `${n}/9 CHAPTER`}
@@ -23,16 +23,17 @@ function build(){
  const release=$('.release-card',stack),people=$('.people-cards',stack);if(release)artist.append(release);if(people)artist.append(people);root.append(artist);
  // 応援コメント機能廃止: トップの旧見出し/空セクションも生成しない。
  const recent=make('button','recent-feature-card');recent.type='button';recent.id='renewalRecent';root.append(recent);
- const fun=make('section','renewal-section','<div class="renewal-section-head"><div><small>ENJOY UNICA WORLD</small><h2>楽しむ</h2></div></div>');const grid=make('div','fun-grid fun-grid-simple');
+ const fun=make('section','renewal-section','<div class="renewal-section-head"><div><small>ENJOY UNICA WORLD</small><h2>楽しむ</h2></div><p>機能を選ぶ</p></div>');const grid=make('div','fun-grid');
  grid.append(
   featureStack(
-   card({key:'game',cls:'game',icon:'🎮',title:'MILK BLOOM',desc:'歌詞を集めて遊ぶ',open:()=>clickTarget('openMilkMatch')})
+   card({key:'game',cls:'game',icon:'🎮',title:'MILK BLOOM',desc:'歌詞を集めながら遊ぼう！',badge:'UPDATE',open:()=>clickTarget('openMilkMatch')}),
+   subLink({key:'lyrics',icon:'📖',title:'歌詞図鑑',status:`解放 ${statusText('lyrics')}`,open:()=>clickTarget('openMilkLyrics')})
   ),
   featureStack(
-   card({key:'scent',cls:'scent',icon:'🌸',title:'うにメン診断',desc:'自分のこころを見つける',open:()=>clickTarget('openScent16')})
+   card({key:'scent',cls:'scent',icon:'✦',title:'KOKORO BLOOM',desc:'新しい診断体験を準備中です',badge:'準備中',open:()=>clickTarget('openScent16')})
   ),
   featureStack(
-   card({key:'prefecture',cls:'prefecture',icon:'🗾',title:'全国のうにメン',desc:'全国の仲間を見てみる',open:()=>clickTarget('openPrefectureDirectory')})
+   card({key:'prefecture',cls:'prefecture',icon:'🗾',title:'全国のうにメン',desc:'全国にいる仲間を見てみよう！',open:()=>clickTarget('openPrefectureDirectory')})
   )
  );fun.append(grid);root.append(fun);
  root.append(make('section','renewal-contact','<small>SUPPORT</small><h3>お問い合わせ</h3><p>不具合・ご要望・その他のお問い合わせは<br>X（旧Twitter）のDMからお気軽にご連絡ください。</p><a href="https://x.com/unica_jpn" target="_blank" rel="noopener noreferrer">𝕏 DMを開く ↗</a>'));

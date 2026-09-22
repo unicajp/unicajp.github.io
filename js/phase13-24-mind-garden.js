@@ -1,164 +1,30 @@
-(()=>{'use strict';
-const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
-const screen=()=>$('#scent16Screen'), KEY='unicaMindGardenV1', V='kokoroV2', TODAY=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo'}).format(new Date());
-const AXES=['self','bond','inner','rest','future'];
-const META={self:{name:'わたしらしさ',icon:'⚡'},bond:{name:'人との距離',icon:'🤝'},inner:{name:'心の奥',icon:'✦'},rest:{name:'心の休め方',icon:'💧'},future:{name:'これから',icon:'🚀'}};
-const AUDIO_KEY='unicaKokoroBloomAudioV2', AUDIO_MIGRATION_KEY='unicaKokoroBloomAudioScaleV3';
-const AudioGame=(()=>{let ctx=null,master=null,bgmGain=null,sfxGain=null,timer=0,step=0,shouldPlay=false;
- function pref(){try{const raw=JSON.parse(localStorage.getItem(AUDIO_KEY)||'{}'),p=Object.assign({bgm:true,sfx:true,bgmVolume:2,sfxVolume:2},raw);if(!localStorage.getItem(AUDIO_MIGRATION_KEY)){if(raw.sfxVolume==null||Math.abs(Number(raw.sfxVolume)-1.2)<.001)p.sfxVolume=2;localStorage.setItem(AUDIO_MIGRATION_KEY,'1');localStorage.setItem(AUDIO_KEY,JSON.stringify(p))}if(!localStorage.getItem('unica_kokoro_bgm_power_v1')){if(raw.bgmVolume==null||Math.abs(Number(raw.bgmVolume)-1)<.001)p.bgmVolume=2;localStorage.setItem('unica_kokoro_bgm_power_v1','1');localStorage.setItem(AUDIO_KEY,JSON.stringify(p))}return p}catch{return{bgm:true,sfx:true,bgmVolume:2,sfxVolume:2}}}
- function store(x){localStorage.setItem(AUDIO_KEY,JSON.stringify(x));apply()}
- function boot(){if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();bgmGain=ctx.createGain();sfxGain=ctx.createGain();bgmGain.connect(master);sfxGain.connect(master);master.connect(ctx.destination)}if(ctx.state==='suspended')ctx.resume().catch(()=>{});apply();return ctx}
- function apply(){if(!ctx)return;const p=pref();/* Keep the full 0-300% range audible: no early clamp at 120%. */bgmGain.gain.cancelScheduledValues(ctx.currentTime);sfxGain.gain.cancelScheduledValues(ctx.currentTime);bgmGain.gain.setTargetAtTime(p.bgm?p.bgmVolume*2.25:0,ctx.currentTime,.025);/* Match MILK BLOOM-style perceived SFX level: amplify the SFX bus itself, not just the UI percentage. */sfxGain.gain.setTargetAtTime(p.sfx?p.sfxVolume*2.6:0,ctx.currentTime,.012)}
- function tone(freq,dur=.12,vol=.14,type='sine',when=0,dest=sfxGain){if(!boot())return;const t=ctx.currentTime+when,o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.001,vol),t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(dest);o.start(t);o.stop(t+dur+.03)}
- function sfx(name){const p=pref();if(!p.sfx)return;boot();if(name==='tap'){tone(660,.08,.08,'sine');tone(990,.09,.045,'sine',.035)}else if(name==='back'){tone(440,.08,.06,'triangle');tone(330,.09,.04,'triangle',.04)}else if(name==='grow'){[523,659,784].forEach((f,i)=>tone(f,.2,.08,'sine',i*.07))}else if(name==='seed'){[392,523,659,784,1047].forEach((f,i)=>tone(f,.32,.11,'triangle',i*.09))}else if(name==='bloom'){[262,330,392,523,659,784,1047].forEach((f,i)=>tone(f,.55,.11,'triangle',i*.075));setTimeout(()=>[523,659,784,1047,1319].forEach((f,i)=>tone(f,.7,.075,'sine',i*.055)),430)}else if(name==='water'){tone(880,.16,.07,'sine');tone(1175,.22,.055,'sine',.07)}}
- function bgmVoice(freq,dur=.5,vol=.018,when=0,kind='bell'){
-  if(!boot())return;const t=ctx.currentTime+when;
-  const out=ctx.createGain(),filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.setValueAtTime(kind==='pad'?1800:4200,t);filter.Q.value=.45;
-  out.gain.setValueAtTime(.0001,t);
-  if(kind==='pad'){out.gain.exponentialRampToValueAtTime(vol,t+.12);out.gain.exponentialRampToValueAtTime(.0001,t+dur)}
-  else{out.gain.exponentialRampToValueAtTime(vol,t+.012);out.gain.exponentialRampToValueAtTime(.0001,t+dur)}
-  filter.connect(out);out.connect(bgmGain);
-  const partials=kind==='bell'?[[1,'sine',1],[2.01,'sine',.28],[3.99,'sine',.08]]:kind==='pluck'?[[1,'triangle',1],[2,'sine',.14]]:[[1,'sine',1],[2,'sine',.08]];
-  partials.forEach(([mul,type,level],j)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(freq*mul,t);if(kind==='bell'&&j) o.detune.value=(j===1?5:-4);g.gain.value=level;o.connect(g);g.connect(filter);o.start(t);o.stop(t+dur+.06)});
- }
- function bgmNote(){if(!ctx||!pref().bgm)return;
-  // Browser-synth "garden soundtrack": 64-step phrase with melody, harmony,
-  // soft pads, bass movement and sparse sparkles. No external audio assets.
-  const N={C4:261.63,D4:293.66,E4:329.63,G4:392,A4:440,B4:493.88,C5:523.25,D5:587.33,E5:659.25,G5:783.99,A5:880,B5:987.77,C6:1046.5,D6:1174.66,E6:1318.51};
-  const melody=[
-   'E5',null,'G5','A5','G5',null,'E5','D5', 'E5',null,'G5','C6','B5','G5','E5',null,
-   'D5',null,'E5','G5','A5',null,'G5','E5', 'D5','E5','G5',null,'E5','D5','C5',null,
-   'E5',null,'G5','A5','C6',null,'B5','G5', 'E5','G5','A5',null,'G5','E5','D5',null,
-   'G5',null,'A5','C6','D6','C6','A5','G5', 'E5','G5','C6',null,'B5','G5','E5','C5'
-  ];
-  const chords=[
-   [N.C4,N.E4,N.G4],[N.A4/2,N.C4,N.E4],[N.G4/2,N.B4/2,N.D4],[N.C4,N.E4,N.G4],
-   [N.A4/2,N.C4,N.E4],[N.D4,N.G4,N.B4/2],[N.C4,N.E4,N.G4],[N.G4/2,N.B4/2,N.D4]
-  ];
-  const bass=[N.C4/2,N.A4/4,N.G4/2,N.C4/2,N.A4/4,N.D4/2,N.C4/2,N.G4/2];
-  const i=step++%64,n=melody[i],bar=Math.floor(i/8)%8;
-  if(n)bgmVoice(N[n],.48,.020,0,'bell');
-  // off-beat wooden/plucked answer creates motion without 8-bit square-wave character
-  if(i%4===2){const arp=chords[bar][(Math.floor(i/2)+bar)%3]*2;bgmVoice(arp,.28,.008,0,'pluck')}
-  // warm chord bed every bar
-  if(i%8===0){chords[bar].forEach((f,j)=>bgmVoice(f,.98,.0065,j*.018,'pad'));bgmVoice(bass[bar],.62,.008,0,'pad')}
-  // restrained high garden sparkle at phrase turns
-  if([15,31,47,61].includes(i)){bgmVoice(i===61?N.E6:N.C6,.72,.007,.04,'bell');bgmVoice(i===61?N.C6:N.E6,.58,.004,.13,'bell')}
- }
- function start(){shouldPlay=true;if(document.hidden)return;boot();if(timer)return;bgmNote();timer=setInterval(bgmNote,310)}
- function stop(permanent=false){clearInterval(timer);timer=0;if(permanent)shouldPlay=false}
- function suspend(){stop(false);if(ctx&&ctx.state==='running')ctx.suspend().catch(()=>{})}
- function resume(){if(!shouldPlay||document.hidden)return;boot();if(pref().bgm)start()}
- function toggle(kind){const p=pref();p[kind]=!p[kind];store(p);if(kind==='bgm'&&p.bgm)start();return p[kind]}
- function setVolume(kind,value){const p=pref(),key=kind==='bgm'?'bgmVolume':'sfxVolume';p[key]=Math.max(0,Math.min(3,Number(value)||0));store(p);if(kind==='bgm'){if(p.bgm&&p[key]>0)start()}else if(p.sfx&&p[key]>0)sfx('tap');return p[key]}
- function settingsButton(){return `<button type="button" class="kb-audio-btn" id="kbAudioBtn" aria-label="サウンド設定">♫</button>`}
- function mount(){if(!$('.kb-audio-btn')){const m=$('#scent16Modal');if(m)m.insertAdjacentHTML('beforeend',settingsButton())}const b=$('#kbAudioBtn');if(b)b.onclick=()=>{boot();sfx('tap');audioPanel()}}
- function audioPanel(){let panel=$('#kbAudioPanel');if(panel){panel.remove();return}const p=pref(),m=$('#scent16Modal');if(!m)return;const pct=n=>Math.round(n*100);m.insertAdjacentHTML('beforeend',`<div class="kb-audio-panel" id="kbAudioPanel"><b>SOUND</b><div class="kb-audio-row"><button data-audio="bgm">${p.bgm?'🔊':'🔇'} BGM</button><strong id="kbBgmPct">${pct(p.bgmVolume)}%</strong></div><input class="kb-volume" id="kbBgmVolume" type="range" min="0" max="300" step="5" value="${pct(p.bgmVolume)}" aria-label="BGM音量"><div class="kb-audio-row"><button data-audio="sfx">${p.sfx?'✨':'—'} 効果音</button><strong id="kbSfxPct">${pct(p.sfxVolume)}%</strong></div><input class="kb-volume" id="kbSfxVolume" type="range" min="0" max="300" step="5" value="${pct(p.sfxVolume)}" aria-label="効果音音量"><small>BGM・効果音とも初期値は200%。基準出力を強化し、0〜300%でリアルタイム調整できます。</small></div>`);$$('[data-audio]',$('#kbAudioPanel')).forEach(x=>x.onclick=()=>{toggle(x.dataset.audio);$('#kbAudioPanel').remove();audioPanel()});const bg=$('#kbBgmVolume'),sf=$('#kbSfxVolume');if(bg)bg.oninput=()=>{setVolume('bgm',+bg.value/100);$('#kbBgmPct').textContent=bg.value+'%'};if(sf){let t=0;sf.oninput=()=>{const p=pref();p.sfxVolume=Math.max(0,Math.min(3,+sf.value/100));store(p);$('#kbSfxPct').textContent=sf.value+'%';clearTimeout(t);t=setTimeout(()=>sfx('tap'),90)}}}
- return{boot,start,stop,suspend,resume,sfx,mount,pref};})();
-const Q=[
- ['予定のない休日。最初にしたいのは？','self',['ひとりで好きなこと','誰かと出かける'],[-2,2]],
- ['誰かが落ち込んでいたら？','bond',['そっとそばにいる','まず言葉をかける'],[-1,2]],
- ['気持ちが揺れたときは？','inner',['自分の中で整理する','誰かに話して整理する'],[2,-1]],
- ['疲れた日に欲しいのは？','rest',['静かな時間','楽しい刺激'],[-2,2]],
- ['新しいことを始めるなら？','future',['じっくり準備してから','まずやってみる'],[-1,2]],
- ['褒められたときは？','self',['うれしいけど少し照れる','素直にうれしいと言える'],[-1,2]],
- ['大切な人との連絡は？','bond',['必要なときで十分','小さなことも共有したい'],[-2,2]],
- ['映画や音楽で泣くことは？','inner',['あまりない','けっこうある'],[-2,2]],
- ['嫌なことがあった夜は？','rest',['眠って切り替えたい','何かして気分を変えたい'],[-1,2]],
- ['一年後の自分に期待するのは？','future',['安心できる毎日','まだ知らない景色'],[-1,2]],
- ['人に合わせすぎたと感じることは？','self',['あまりない','ときどきある'],[1,-2]],
- ['親しい人にも一人の時間は必要？','bond',['かなり必要','一緒にいる方が落ち着く'],[-2,2]],
- ['言葉にされていない気持ちに気づく？','inner',['あまり気づかない','よく気づく'],[-2,2]],
- ['回復するとき一番効くのは？','rest',['休む・静かにする','動く・誰かと過ごす'],[-2,2]],
- ['迷ったとき最後に信じるのは？','future',['確実さ','自分の直感'],[-1,2]],
- ['自分の本音を後から気づくことは？','self',['少ない','よくある'],[1,-2]],
- ['すれ違ったらどうしたい？','bond',['少し時間を置く','早めに話したい'],[-2,2]],
- ['思い出を何度も振り返る？','inner',['あまりない','よくある'],[-2,2]],
- ['心がいっぱいの時は？','rest',['何もしない時間が必要','小さな予定があると楽'],[-2,2]],
- ['未来に一つ増やすなら？','future',['守りたい居場所','挑戦したいこと'],[-2,2]],
- ['自分の良さは自分で分かる方？','self',['まだ探している','わりと分かっている'],[-1,2]],
- ['人との距離が近すぎると？','bond',['少し疲れる','むしろ安心する'],[-2,2]],
- ['小さな変化に心が動く？','inner',['普通だと思う','かなり動く'],[-1,2]],
- ['落ち込んだ自分への声かけは？','rest',['今日は休もう','次にできることを探そう'],[-2,2]],
- ['周りと違っても選べる？','future',['少し迷う','自分で決めたい'],[-1,2]]
-];
-function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch{return{}}}
-function saveRoot(s){localStorage.setItem(KEY,JSON.stringify(s));try{window.UNICA_FIREBASE?.saveMindGarden?.(s)}catch{}}
-function state(){const s=load();s[V]=s[V]||{version:2,answers:[],scores:Object.fromEntries(AXES.map(k=>[k,50])),confidence:Object.fromEntries(AXES.map(k=>[k,0])),stage:'new',createdAt:Date.now(),checkins:[]};return[s,s[V]]}
-function syncBloomBadge(v){try{const k='unicaWorldMemberV4',m=JSON.parse(localStorage.getItem(k)||'null');if(!m)return;m.bloomBadge={stage:v.stage||'new',seedComplete:!!v.seedComplete,scores:v.stage==='bloomed'?v.scores:null,name:v.stage==='bloomed'?(v.name||flowerName(v)):null,bloomDate:v.bloomDate||null,updatedAt:Date.now()};localStorage.setItem(k,JSON.stringify(m));window.UNICA_FIREBASE?.saveMember?.(m);window.dispatchEvent(new CustomEvent('unica:kokoro-bloom-updated',{detail:m.bloomBadge}))}catch(e){console.warn('bloom badge sync',e)}}
-function save(v){v.lastSavedAt=Date.now();const s=load();s[V]=v;saveRoot(s);if(v.seedComplete||v.stage==='bloomed')syncBloomBadge(v)}
-function setBack(fn){window.__UNICA_DIAG_BACK=typeof fn==='function'?fn:null}
-function header(title='KOKORO BLOOM',kick='NEW KOKORO EXPERIENCE'){AudioGame.mount();const h=$('#scent16Title'),k=$('.scent16-header small');if(h)h.textContent=title;if(k)k.textContent=kick;document.body.classList.add('kokoro-bloom-active');requestAnimationFrame(syncBloomViewport)}
-function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function hash(v){let h=2166136261;for(const c of String(v)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
-function avg(v){return AXES.reduce((a,k)=>a+v.scores[k],0)/5}
-function flowerName(v){const s=v.scores,hi=AXES.slice().sort((a,b)=>s[b]-s[a]);const A={self:['きらめき','木漏れ日'],bond:['よりそい','結び'],inner:['月影','星雫'],rest:['凪','雨あがり'],future:['朝空','はじまり']};const a=A[hi[0]][hash(JSON.stringify(v.answers))%2],b=A[hi[1]][hash(v.createdAt)>>2&1];return `${a}を抱く${b}の花`}
-function flowerSvg(v,large=false){const s=v.scores,h=hash(JSON.stringify(v.answers)),colors=['#ff75bd','#6b8cff','#9c6cff','#4ee2c0','#ffd35c'];const petals=AXES.map((k,i)=>{const val=s[k],rot=i*72-90,len=40+(val-50)*.18,w=18+((h>>(i*3))&5),c=colors[i];return `<g transform="translate(100 100) rotate(${rot})"><path d="M0 0 C-${w} -18 -${w} -${len*.72} 0 -${len} C${w} -${len*.72} ${w} -18 0 0Z" fill="${c}" opacity="${.78+val/500}"/><path d="M0 -5 L0 -${len*.72}" stroke="rgba(255,255,255,.48)" stroke-width="2"/></g>`}).join('');return `<svg class="kb-flower ${large?'is-large':''}" viewBox="0 0 200 200"><defs><filter id="kbGlow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g filter="url(#kbGlow)">${petals}<circle cx="100" cy="100" r="19" fill="#fff1a8"/><circle cx="100" cy="100" r="10" fill="#ff9e65"/></g></svg>`}
-function progress(v){const n=v.answers.length,total=v.stage==='seed'?10:Math.max(18,v.target||18);return Math.min(100,Math.round(n/total*100))}
-function start(){const [s,v]=state();if(v.stage!=='new'&&v.answers.length)return home();v.answers=[];v.scores=Object.fromEntries(AXES.map(k=>[k,50]));v.confidence=Object.fromEntries(AXES.map(k=>[k,0]));v.stage='seed';v.target=18;save(v);question()}
-function answer(qi,choice){const [s,v]=state(),q=Q[qi],axis=q[1],delta=q[3][choice];v.answers[qi]={q:qi,c:choice,axis,delta};v.scores[axis]=Math.max(8,Math.min(92,50+(v.answers.filter(Boolean).filter(a=>a.axis===axis).reduce((a,b)=>a+b.delta,0)*8)));v.confidence[axis]=(v.answers.filter(Boolean).filter(a=>a.axis===axis).length);save(v);if(v.answers.filter(Boolean).length===10&&!v.seedComplete)return seedComplete();if(v.answers.filter(Boolean).length>=adaptiveTarget(v))return bloom();question()}
-function adaptiveTarget(v){const low=AXES.filter(k=>(v.confidence[k]||0)<3).length;return Math.min(25,18+Math.max(0,low-2))}
-function nextQ(v){const done=new Set(v.answers.filter(Boolean).map(a=>a.q));if(done.size<10)return [...Array(10).keys()].find(i=>!done.has(i));const need=AXES.slice().sort((a,b)=>(v.confidence[a]||0)-(v.confidence[b]||0));for(const axis of need){const i=Q.findIndex((q,idx)=>idx>=10&&q[1]===axis&&!done.has(idx));if(i>=0)return i}return Q.findIndex((q,i)=>!done.has(i))}
-function question(){header('KOKORO BLOOM','BLOOM QUEST');const [s,v]=state(),qi=nextQ(v);if(qi<0)return bloom();const q=Q[qi],n=v.answers.filter(Boolean).length+1,p=Math.min(96,Math.round((n-1)/(v.seedComplete?adaptiveTarget(v):10)*100));setBack(()=>{const ids=v.answers.map((a,i)=>a?i:-1).filter(i=>i>=0);if(!ids.length)return home();v.answers[ids.at(-1)]=null;recalc(v);save(v);question()});screen().innerHTML=`<div class="kb-quest"><div class="kb-level"><span>BLOOM ${v.seedComplete?'Lv.2':'Lv.1'}</span><b>${v.seedComplete?'花を育てる':'心の種をつくる'}</b><em>${n}</em></div><div class="kb-progress"><i style="width:${p}%"></i><span>🌱</span></div><div class="kb-orb">${v.seedComplete?flowerSvg(v):'<div class="kb-seed">✦</div>'}</div><small>QUESTION ${String(n).padStart(2,'0')}</small><h3>${safe(q[0])}</h3><div class="kb-choices">${q[2].map((x,i)=>`<button data-choice="${i}"><span>${i?'B':'A'}</span><b>${safe(x)}</b><i>›</i></button>`).join('')}</div><p class="kb-quiet">考えすぎず、今の自分に近い方を。</p></div>`;$$('[data-choice]',screen()).forEach(b=>b.onclick=()=>{AudioGame.boot();AudioGame.start();AudioGame.sfx('tap');b.classList.add('is-picked');setTimeout(()=>answer(qi,+b.dataset.choice),180)})}
-function recalc(v){v.scores=Object.fromEntries(AXES.map(k=>[k,50]));v.confidence=Object.fromEntries(AXES.map(k=>[k,0]));for(const a of v.answers.filter(Boolean)){v.confidence[a.axis]++;v.scores[a.axis]=Math.max(8,Math.min(92,v.scores[a.axis]+a.delta*8))}}
-async function seedComplete(){AudioGame.sfx('seed');const [s,v]=state();v.seedComplete=true;v.seedDate=v.seedDate||TODAY();v.stage='growing';save(v);try{await window.UNICA_FIREBASE?.saveKokoroSeedParticipation?.({seedDate:v.seedDate,version:2})}catch(e){console.warn('seed participation',e)}window.dispatchEvent(new CustomEvent('unica:kokoro-seed-complete'));header('SEED COMPLETE!','50 SCENTS PROJECT');setBack(home);screen().innerHTML=`<div class="kb-reward"><div class="kb-burst"><i></i><i></i><i></i><div class="kb-seed big">✦</div></div><small>10 QUEST CLEAR!</small><h3>心の種が<br>生まれました！</h3><p>あなたの心が、UNICA WORLDに届きました。<br><b>50 SCENTS PROJECT に参加完了。</b></p><div class="kb-reward-chip">🌱 1 ACCOUNT = 1 SCENT</div><button class="kb-main" id="growNow">このまま花を咲かせる <i>›</i></button><button class="kb-sub" id="seedHome">今日はここまで</button></div>`;$('#growNow').onclick=question;$('#seedHome').onclick=home}
-function bloom(){AudioGame.sfx('bloom');const [s,v]=state();v.stage='bloomed';v.bloomDate=v.bloomDate||TODAY();v.name=flowerName(v);save(v);header('FULL BLOOM!','YOUR HEART FLOWER');setBack(home);screen().innerHTML=`<div class="kb-bloom-result"><div class="kb-full-label">✦ FULL BLOOM ✦</div><div class="kb-flower-stage">${flowerSvg(v,true)}<div class="kb-rays"></div></div><small>あなたの心に咲いた花</small><h2>${safe(v.name)}</h2><p>${safe(summary(v))}</p><div class="kb-result-actions"><button class="kb-main" id="knowFlower">この花を知る <i>›</i></button><button class="kb-share" id="pairFlower">🌼 誰かと重ねる</button></div></div>`;$('#knowFlower').onclick=insight;$('#pairFlower').onclick=pair}
-function summary(v){const hi=AXES.slice().sort((a,b)=>v.scores[b]-v.scores[a]);const T={self:'自分の感覚を大切にしながら',bond:'人とのつながりを大切にしながら',inner:'小さな心の動きを受け取りながら',rest:'自分に合う休み方を知りながら',future:'これからの可能性へ目を向けながら'};return `${T[hi[0]]}、${T[hi[1]]}咲いていく、今のあなたの花です。`}
-function home(){header();const [s,v]=state();setBack(()=>window.UNICA_SCENT16?.close?.());const bloomed=v.stage==='bloomed',seed=v.seedComplete;screen().innerHTML=`<div class="kb-home"><div class="kb-logo"><span>KOKORO</span><b>BLOOM</b><em>こころを咲かせる、新しい体験。</em></div><div class="kb-world"><div class="kb-cloud c1"></div><div class="kb-cloud c2"></div>${bloomed?flowerSvg(v,true):seed?flowerSvg(v,true):'<div class="kb-seed hero">✦</div>'}<div class="kb-ground"></div></div>${bloomed?`<div class="kb-myflower"><small>MY HEART FLOWER</small><h3>${safe(v.name||flowerName(v))}</h3><span>今日も、あなたの花はここに。</span></div><div class="kb-menu"><button data-go="insight"><span>🔍</span><b>花を調べる</b><small>自分をもっと知る</small></button><button data-go="daily"><span>💧</span><b>花を育てる</b><small>今日の3問</small></button><button data-go="pair"><span>🌼</span><b>ふたりの花</b><small>誰かと重ねる</small></button><button data-go="record"><span>📖</span><b>花の記録</b><small>変化を見る</small></button></div>`:`<div class="kb-start-copy"><small>${seed?'SEED FOUND':'NEW EXPERIENCE'}</small><h3>${seed?'心の種を、咲かせよう。':'まだ知らない、<br>わたしを咲かせよう。'}</h3><p>${seed?'あと少しの質問で、あなただけの花が咲きます。':'最初は10問。ゲームみたいに答えるだけ。'}</p></div><button class="kb-main kb-start" id="kbStart">${seed?'つづきから育てる':'▶ START'} <i>›</i></button>`}<div class="kb-version">KOKORO BLOOM v2 · UNICA WORLD</div></div>`;$('#kbStart')?.addEventListener('click',()=>v.stage==='new'?start():question());$$('[data-go]',screen()).forEach(b=>b.onclick=()=>({insight,pair,daily,record}[b.dataset.go]?.()))}
-function insight(){header('MY FLOWER','DISCOVERY');const [s,v]=state();setBack(home);const cards=AXES.map(k=>`<button data-axis="${k}"><span>${META[k].icon}</span><div><b>${META[k].name}</b><small>${axisLine(k,v.scores[k])}</small></div><em>${v.scores[k]}<i>%</i></em></button>`).join('');screen().innerHTML=`<div class="kb-insight"><div class="kb-mini-flower">${flowerSvg(v)}</div><small>TOUCH YOUR PETALS</small><h3>この花を知る</h3><p>気になる花びらから見てみよう。</p><div class="kb-axis-list">${cards}</div><button class="kb-deep" id="feedback">🎯 結果をもっと自分に近づける</button></div>`;$$('[data-axis]',screen()).forEach(b=>b.onclick=()=>axisDetail(b.dataset.axis));$('#feedback').onclick=feedback}
-function axisLine(k,n){const low=n<42,high=n>58;const t={self:low?'周りをよく見ながら自分を探す':'自分の感覚を選択に乗せやすい',bond:low?'心地よい距離を大切にする':'つながりを力に変えやすい',inner:low?'気持ちをシンプルに捉えやすい':'小さな変化を深く感じ取りやすい',rest:low?'静けさの中で整えやすい':'動きながら気持ちを戻しやすい',future:low?'安心できる土台を大切にする':'新しい景色へ進む力が強い'};return t[k]}
-function axisDetail(k){const [s,v]=state(),n=v.scores[k];header(META[k].name,'PETAL DETAIL');setBack(insight);screen().innerHTML=`<div class="kb-detail"><div class="kb-detail-icon">${META[k].icon}</div><small>${n}% · PETAL SIGNAL</small><h3>${safe(axisLine(k,n))}</h3><p>${safe(detailCopy(k,n))}</p><div class="kb-tip"><b>この花びらからのヒント</b><p>${safe(tipCopy(k,n))}</p></div><button class="kb-main" id="detailBack">ほかの花びらを見る</button></div>`;$('#detailBack').onclick=insight}
-function detailCopy(k,n){const h=n>=50;const m={self:h?'周りの声を聞きながらも、最後には「自分はどう感じる？」へ戻れる傾向があります。':'相手や場の空気をよく見られるぶん、自分の気持ちが少し後から見えてくることがあります。',bond:h?'誰かと気持ちを共有することで、安心や前向きさを得やすい傾向があります。':'近さだけを求めず、自分の時間や距離があることで関係を大切にしやすい傾向があります。',inner:h?'言葉になる前の感情や、小さな表情・空気の変化を受け取りやすい傾向があります。':'出来事を必要以上に抱え込まず、気持ちを整理して前へ進みやすい傾向があります。',rest:h?'人や行動、小さな予定が心を動かし、回復のきっかけになりやすい傾向があります。':'刺激を減らし、静かな時間を持つことで本来のペースへ戻りやすい傾向があります。',future:h?'まだ知らないものに心が動きやすく、試しながら道を作っていく傾向があります。':'安心できる場所や続けられる形を整えてから、次へ進むことを大切にする傾向があります。'};return m[k]}
-function tipCopy(k,n){return n>=50?'強さを使い続けるだけでなく、ときどき反対側の選び方も試すと花に余白が生まれます。':'これは弱さではなく、あなたが心地よくいられる方法のひとつ。無理に反対へ寄せる必要はありません。'}
-function feedback(){const [s,v]=state();header('FLOWER TUNING','MAKE IT YOURS');setBack(insight);screen().innerHTML=`<div class="kb-feedback"><span>🎯</span><small>FLOWER TUNING</small><h3>この結果、近い？</h3><p>診断に決めてもらうのではなく、あなた自身の感覚で花を仕上げます。</p><button class="kb-main" id="yesFit">かなり近い</button><button class="kb-choice2" id="noFit">少し違うところがある</button></div>`;$('#yesFit').onclick=()=>{v.feedback={fit:true,date:TODAY()};save(v);home()};$('#noFit').onclick=()=>tunePick()}
-function tunePick(){const [s,v]=state();setBack(feedback);screen().innerHTML=`<div class="kb-insight"><small>どこが少し違う？</small><h3>花びらを選んでください</h3><div class="kb-axis-list">${AXES.map(k=>`<button data-tune="${k}"><span>${META[k].icon}</span><div><b>${META[k].name}</b><small>${axisLine(k,v.scores[k])}</small></div><em>›</em></button>`).join('')}</div></div>`;$$('[data-tune]',screen()).forEach(b=>b.onclick=()=>tuneAxis(b.dataset.tune))}
-function tuneAxis(k){const [s,v]=state();header('FLOWER TUNING','2 QUICK QUESTIONS');setBack(tunePick);const reverse=v.scores[k]>=50;screen().innerHTML=`<div class="kb-quest kb-tune"><div class="kb-orb">${flowerSvg(v)}</div><small>JUST 2 QUESTIONS</small><h3>${META[k].name}を<br>もう少し教えて。</h3><div class="kb-choices"><button id="tuneA"><span>A</span><b>${reverse?'今の結果より、もう少し反対側に近い':'今の結果より、もう少し強く当てはまる'}</b><i>›</i></button><button id="tuneB"><span>B</span><b>今の結果でだいたい合っている</b><i>›</i></button></div></div>`;$('#tuneA').onclick=()=>{v.scores[k]=Math.max(8,Math.min(92,v.scores[k]+(reverse?-10:10)));v.name=flowerName(v);v.feedback={fit:false,tuned:k,date:TODAY()};save(v);bloom()};$('#tuneB').onclick=insight}
-function daily(){const [s,v]=state();header("TODAY'S BLOOM",'DAILY WATER');setBack(home);const done=v.checkins?.find(x=>x.date===TODAY());if(done){screen().innerHTML=`<div class="kb-reward"><div class="kb-water">💧</div><small>TODAY COMPLETE</small><h3>今日の水やりは<br>終わっています。</h3><p>${safe(done.label)}。明日また、今のあなたを3問だけ教えてください。</p><button class="kb-main" id="dailyBack">花へ戻る</button></div>`;$('#dailyBack').onclick=home;return}let a=[];const qs=[['今日のエネルギーは？',['ゆっくり','元気']],['人と話したい気分？',['ひとりがいい','話したい']],['明日に向けて？',['休みたい','少し進みたい']]];const render=()=>{const i=a.length;if(i===3){const sum=a.reduce((x,y)=>x+y,0),label=sum<=1?'静かな雨の日':sum>=5?'きらめく晴れの日':'やわらかな木漏れ日';v.checkins=v.checkins||[];v.checkins.unshift({date:TODAY(),answers:a,label});v.checkins=v.checkins.slice(0,60);save(v);return daily()}screen().innerHTML=`<div class="kb-quest"><div class="kb-water">💧</div><small>WATER ${i+1}/3</small><h3>${qs[i][0]}</h3><div class="kb-choices">${qs[i][1].map((x,j)=>`<button data-daily="${j*2}"><span>${j?'B':'A'}</span><b>${x}</b><i>›</i></button>`).join('')}</div></div>`;$$('[data-daily]',screen()).forEach(b=>b.onclick=()=>{AudioGame.boot();AudioGame.start();AudioGame.sfx('water');a.push(+b.dataset.daily);render()})};render()}
-function record(){const [s,v]=state();header('BLOOM LOG','YOUR JOURNEY');setBack(home);const rows=(v.checkins||[]);screen().innerHTML=`<div class="kb-record"><small>FLOWER MEMORY</small><h3>花の記録</h3><div class="kb-record-hero">${flowerSvg(v)}<div><b>${safe(v.name||flowerName(v))}</b><span>開花 ${v.bloomDate||'-'}</span></div></div>${rows.length?`<div class="kb-timeline">${rows.map(x=>`<div><i>💧</i><b>${safe(x.label)}</b><span>${x.date.replaceAll('-','.')}</span></div>`).join('')}</div>`:'<div class="kb-empty">「花を育てる」を続けると、ここに今のあなたの変化が残ります。</div>'}</div>`}
-function pair(){header('TWO BLOOMS','CONNECT HEARTS');setBack(home);const [s,v]=state(),code=shortCode(v);screen().innerHTML=`<div class="kb-pair"><div class="kb-pair-mark">${flowerSvg(v)}<span>＋</span><div class="kb-mystery">?</div></div><small>TWO HEART FLOWERS</small><h3>誰かの花と<br>重ねてみる。</h3><p>良い・悪いを点数にせず、似ているところと違うところを見つけます。</p><div class="kb-code"><small>あなたのBLOOM CODE</small><b>${code}</b><button id="copyCode">コピー</button></div><label><span>相手のコード</span><input id="pairCode" maxlength="6" placeholder="例：B7K2"></label><button class="kb-main" id="pairGo">ふたりの花を見る</button></div>`;$('#copyCode').onclick=async()=>{try{await navigator.clipboard.writeText(code);$('#copyCode').textContent='コピー済み'}catch{}};$('#pairGo').onclick=()=>pairResult($('#pairCode').value)}
-function shortCode(v){let n=0;AXES.forEach((k,i)=>n+=Math.round(v.scores[k]/4)*Math.pow(26,i));const chars='23456789ABCDEFGHJKLMNPQRSTUVWXYZ';let out='';do{out=chars[n%chars.length]+out;n=Math.floor(n/chars.length)}while(n);return ('B'+out).slice(0,6)}
-function pairResult(code){if(!/^B[23456789A-Z]{2,5}$/i.test(code)){ $('#pairCode').classList.add('is-error');return }const [s,v]=state(),seed=hash(code.toUpperCase()),mine=AXES.map(k=>v.scores[k]),other=AXES.map((k,i)=>25+((seed>>(i*5))%51)),diff=mine.map((x,i)=>Math.abs(x-other[i])),similar=AXES[diff.indexOf(Math.min(...diff))],different=AXES[diff.indexOf(Math.max(...diff))];setBack(pair);screen().innerHTML=`<div class="kb-pair-result"><div class="kb-pair-title">✿ × ✿</div><small>TWO BLOOMS DISCOVERY</small><h3>違う色が<br>響きあう花</h3><section><b>自然に重なるところ</b><p>「${META[similar].name}」は感覚が近く、説明しすぎなくても分かり合える場面がありそうです。</p></section><section><b>違うから見えるところ</b><p>「${META[different].name}」には違いがあります。どちらかを正解にせず、相手の方法を知ることが関係のヒントになります。</p></section><section><b>ふたりへのヒント</b><p>似ている部分は安心に、違う部分は新しい視点に。相手を自分と同じにしないことが、ふたりの花を長く咲かせます。</p></section><button class="kb-main" id="pairAgain">もう一度見る</button></div>`;$('#pairAgain').onclick=pair}
-function syncBloomViewport(){
-  const modal=$('#scent16Modal'), scr=screen();
-  if(!modal||!scr)return;
-  const vv=window.visualViewport;
-  const visibleH=Math.round(vv?.height||window.innerHeight||document.documentElement.clientHeight);
-  const visibleTop=Math.round(vv?.offsetTop||0);
-  modal.style.setProperty('--kb-visible-height',visibleH+'px');
-  modal.style.setProperty('--kb-visible-top',visibleTop+'px');
-  requestAnimationFrame(()=>{
-    const r=scr.getBoundingClientRect();
-    const available=Math.max(280,Math.floor(visibleTop+visibleH-r.top));
-    scr.style.setProperty('--kb-screen-height',available+'px');
-  });
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s);
+function installNeutralAvatar(){
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function html(profile={},size='normal'){
+    const label=profile?.name?`${profile.name}のBLOOM AVATAR`:'BLOOM AVATAR';
+    return `<span class="unica-bloom-avatar ${size==='tiny'?'is-tiny':''}" title="${esc(label)}" aria-label="${esc(label)}"><span class="ub-placeholder" aria-hidden="true">✦</span></span>`;
+  }
+  window.UNICA_BLOOM_BADGE={html,render:(el,p,size)=>{if(el)el.innerHTML=html(p,size)}};
+  let st=$('#unicaBloomBadgeStyle'); if(!st){st=document.createElement('style');st.id='unicaBloomBadgeStyle';document.head.appendChild(st)}
+  st.textContent=`.unica-bloom-avatar{position:relative;display:inline-grid;place-items:center;width:30px;height:30px;flex:0 0 30px;border-radius:50%;box-sizing:border-box;background:linear-gradient(145deg,#fff,#f1f4f8);border:1.5px solid #cbd4df;box-shadow:0 2px 7px rgba(42,55,88,.12);vertical-align:middle;overflow:hidden}.unica-bloom-avatar.is-tiny{width:24px;height:24px;flex-basis:24px}.unica-bloom-avatar .ub-placeholder{display:grid;place-items:center;width:100%;height:100%;font:800 12px/1 system-ui,sans-serif;color:#8291a4}.unica-bloom-avatar.is-tiny .ub-placeholder{font-size:10px}.unica-bloom-avatar small,.unica-bloom-avatar [class*=birth]{display:none!important}.emoji-builder,#settingsEditIcon{display:none!important}`;
 }
-function installBloomViewportFix(){
-  let raf=0;
-  const update=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(syncBloomViewport)};
-  window.addEventListener('resize',update,{passive:true});
-  window.addEventListener('orientationchange',update,{passive:true});
-  window.visualViewport?.addEventListener('resize',update,{passive:true});
-  window.visualViewport?.addEventListener('scroll',update,{passive:true});
-  update();
+function maintenance(){
+  const modal=$('#scent16Modal'),screen=$('#scent16Screen');
+  if(!modal||!screen)return;
+  modal.classList.add('is-open'); modal.setAttribute('aria-hidden','false'); document.body.classList.add('modal-open');
+  const title=$('#scent16Title'); if(title)title.textContent='KOKORO BLOOM';
+  screen.innerHTML=`<div class="kokoro-maintenance"><span aria-hidden="true">✦</span><small>KOKORO BLOOM</small><h3>ただいまメンテナンス中です</h3><p>新しい診断体験へ向けて準備しています。<br>公開までしばらくお待ちください。</p></div>`;
 }
-function installBloomBadgeSystem(){
- const colors=['#86b7ff','#c8a0ff','#ff9fbd','#ffb88c','#82d8a0','#64c9bd','#67b8f3','#8b8de8','#d79ad7','#d9a05e','#9a83cf','#8cb9d8'];
- const esc=v=>String(v??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
- function miniFlower(profile){const b=profile?.bloomBadge||{},scores=b.scores;if(b.stage==='bloomed'&&scores){const vals=['self','bond','inner','rest','future'].map(k=>Number(scores[k]||50)), cs=['#ff75bd','#6b8cff','#9c6cff','#4ee2c0','#ffd35c'];return `<svg viewBox="0 0 100 100" aria-hidden="true">${vals.map((v,i)=>{const a=i*72-90,l=25+(v-50)*.08,w=12;return `<g transform="translate(50 50) rotate(${a})"><path d="M0 0 C-${w} -9 -${w} -${l*.72} 0 -${l} C${w} -${l*.72} ${w} -9 0 0Z" fill="${cs[i]}"/></g>`}).join('')}<circle cx="50" cy="50" r="10" fill="#fff0a8"/><circle cx="50" cy="50" r="5" fill="#ff9e65"/></svg>`}if(b.seedComplete||b.stage==='seed')return '<span class="ub-seed"><i></i><i></i></span>';return '<span class="ub-seed is-dormant"><i></i></span>'}
- function html(profile={},size='normal'){const m=Math.max(0,Math.min(12,Number(profile.birthMonth||0))),d=Math.max(0,Math.min(31,Number(profile.birthDay||0))),ring=colors[m?m-1:0],date=m&&d?`${m}.${d}`:'',today=new Date(),birthday=m===today.getMonth()+1&&d===today.getDate();return `<span class="unica-bloom-avatar ${size==='tiny'?'is-tiny':''}${birthday?' is-birthday':''}" style="--ub-ring:${ring}" title="${date?`誕生日 ${m}月${d}日`:'BLOOM'}"><span class="ub-flower">${miniFlower(profile)}</span>${date?`<small>${date}</small>`:''}</span>`}
- window.UNICA_BLOOM_BADGE={html,render:(el,p,size)=>{if(el)el.innerHTML=html(p,size)}};
- if(!document.getElementById('unicaBloomBadgeStyle')){const st=document.createElement('style');st.id='unicaBloomBadgeStyle';st.textContent=`.unica-bloom-avatar{--ub-ring:#9fb8d8;position:relative;display:inline-grid;place-items:center;width:30px;height:30px;flex:0 0 30px;border-radius:50%;box-sizing:border-box;background:linear-gradient(#fff,#f8fbff) padding-box,conic-gradient(from 25deg,var(--ub-ring),color-mix(in srgb,var(--ub-ring) 58%,white),var(--ub-ring)) border-box;border:2px solid transparent;box-shadow:0 2px 7px rgba(42,55,88,.14);vertical-align:middle;overflow:hidden}.unica-bloom-avatar.is-tiny{width:24px;height:24px;flex-basis:24px;border-width:1.5px}.unica-bloom-avatar .ub-flower{display:grid;place-items:center;width:82%;height:82%;border-radius:50%;overflow:hidden}.unica-bloom-avatar svg{width:100%;height:100%;display:block}.unica-bloom-avatar small{position:absolute;right:-1px;bottom:-2px;min-width:14px;padding:0 2px;border-radius:5px;background:rgba(255,255,255,.88);box-shadow:0 1px 3px rgba(0,0,0,.12);font:700 6.5px/9px system-ui,sans-serif;letter-spacing:-.04em;color:#536070;text-align:center}.unica-bloom-avatar.is-tiny small{font-size:5.5px;line-height:8px;bottom:-2px}.ub-seed{position:relative;width:11px;height:13px;border-radius:55% 45% 55% 45%;background:linear-gradient(145deg,#8b6546,#c99867);transform:rotate(18deg);display:block}.ub-seed i{position:absolute;width:7px;height:4px;border-radius:100% 0 100% 0;background:#76c987;top:-4px;left:7px;transform:rotate(-22deg)}.ub-seed i+ i{left:-3px;transform:scaleX(-1) rotate(-22deg)}.ub-seed.is-dormant i{display:none}.unica-bloom-avatar.is-birthday{animation:ubBirthday 2.2s ease-in-out infinite;box-shadow:0 0 0 2px rgba(255,220,112,.24),0 0 10px rgba(255,194,74,.35)}@keyframes ubBirthday{50%{transform:translateY(-1px);filter:brightness(1.08)}}.community-post-avatar .unica-bloom-avatar,.status-avatar .unica-bloom-avatar,.unipass-avatar .unica-bloom-avatar{margin:auto}.emoji-builder,#settingsEditIcon{display:none!important}`;document.head.appendChild(st)}
- function current(){try{return JSON.parse(localStorage.getItem('unicaWorldMemberV4')||'null')||{}}catch{return{}}}
- function replaceLocal(){const p=current();['passAvatar','statusAvatar','settingsAvatar','detailAvatar','communityComposeAvatar','confirmAvatar','completeAvatar'].forEach(id=>{const el=document.getElementById(id);if(el&&!el.dataset.ubDone){el.dataset.ubDone='1';el.innerHTML=html(p,id==='statusAvatar'?'tiny':'normal')}})}
- replaceLocal();new MutationObserver(replaceLocal).observe(document.body,{childList:true,subtree:true});window.addEventListener('unica:kokoro-bloom-updated',()=>{document.querySelectorAll('[data-ub-done]').forEach(x=>delete x.dataset.ubDone);replaceLocal()});
+function install(){
+  installNeutralAvatar();
+  document.addEventListener('click',e=>{const open=e.target.closest('#openScent16,[data-feature-key="scent"]');if(!open)return;e.preventDefault();e.stopImmediatePropagation();maintenance();},true);
+  const open=$('#openScent16'); if(open){open.setAttribute('aria-label','KOKORO BLOOM（メンテナンス中）');const c=open.querySelector('.scent16-home-copy');if(c)c.innerHTML='<small>NEW KOKORO EXPERIENCE</small><strong>KOKORO BLOOM</strong><em id="scent16HomeSummary">新しい診断体験を準備中です。</em>';const b=$('#scent16HomeCta');if(b)b.textContent='メンテナンス中'}
+  const cleanup=()=>{document.querySelectorAll('[data-sub-feature-key="flowers"],.name-flower-button,.mind-flower-view,.flower-memory').forEach(x=>x.remove())};
+  cleanup(); new MutationObserver(cleanup).observe(document.body,{childList:true,subtree:true});
 }
-function install(){installBloomBadgeSystem();installBloomViewportFix();
-  const modal=$('#scent16Modal'), siteBgm=$('#bgm'); let siteBgmWasPlaying=false, bloomOpen=false;
-  const isOpen=()=>!!modal && getComputedStyle(modal).display!=='none' && !modal.hidden && modal.getAttribute('aria-hidden')!=='true';
-  const syncAudioScope=()=>{const now=isOpen();if(now&&!bloomOpen){bloomOpen=true;if(siteBgm){siteBgmWasPlaying=!siteBgm.paused;siteBgm.pause()}if(!document.hidden)AudioGame.resume()}else if(!now&&bloomOpen){bloomOpen=false;AudioGame.stop(true);if(siteBgm&&siteBgmWasPlaying&&!document.hidden)siteBgm.play().catch(()=>{});siteBgmWasPlaying=false}};
-  if(modal)new MutationObserver(syncAudioScope).observe(modal,{attributes:true,attributeFilter:['class','style','hidden','aria-hidden']});
-  document.addEventListener('visibilitychange',()=>{if(document.hidden){AudioGame.suspend();if(siteBgm&&!siteBgm.paused)siteBgm.pause()}else if(isOpen()){AudioGame.resume()}else if(siteBgm&&siteBgmWasPlaying){siteBgm.play().catch(()=>{})}});
-  window.addEventListener('pagehide',()=>AudioGame.suspend(),{passive:true});
-  document.addEventListener('pointerdown',e=>{if(e.target.closest('#scent16Modal')){syncAudioScope();AudioGame.boot();AudioGame.start()}},{passive:true});const open=$('#openScent16');if(open){open.setAttribute('aria-label','KOKORO BLOOMを開く');open.addEventListener('click',()=>setTimeout(home,30));const c=open.querySelector('.scent16-home-copy');if(c)c.innerHTML='<small>NEW KOKORO EXPERIENCE</small><strong>KOKORO BLOOM</strong><em id="scent16HomeSummary">ゲームみたいに答えて、自分だけの花を咲かせよう。</em>';const b=$('#scent16HomeCta');if(b)b.textContent='START'}window.addEventListener('unica:firebase-member-restored',async()=>{try{const remote=await window.UNICA_FIREBASE?.loadMindGarden?.();if(remote?.[V]){const local=load();local[V]=remote[V];localStorage.setItem(KEY,JSON.stringify(local))}}catch{}})}
-window.UNICA_MIND_GARDEN={open:home,v2:true};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+window.UNICA_MIND_GARDEN={open:maintenance,v2:false,maintenance:true};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();

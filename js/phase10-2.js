@@ -97,7 +97,7 @@ function listenSongLike(){
 }
 
 function commentDate(row){ const date=row.date||''; return `${date===todayKey()?'今日':date}${row.time?' '+row.time:''}`; }
-function scentMiniBadge(ownerUid){ const profile=memberDirectory.get(String(ownerUid||''))||{}; return window.UNICA_BLOOM_BADGE?.html?.(profile,'tiny')||''; }
+function scentMiniBadge(){ return ''; }
 function filteredComments(){ let rows=[...comments]; if(activeTab==='mine')rows=rows.filter(x=>x.ownerUid===uid); if(activeTab==='popular')rows.sort((a,b)=>Number(b.likeCount||0)-Number(a.likeCount||0)); else rows.sort((a,b)=>Number(b.createdAt?.seconds||0)-Number(a.createdAt?.seconds||0)); return rows; }
 
 function cumulativeLikeRanking(){
