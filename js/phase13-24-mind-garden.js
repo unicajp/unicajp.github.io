@@ -66,7 +66,8 @@ const Q=[
 function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch{return{}}}
 function saveRoot(s){localStorage.setItem(KEY,JSON.stringify(s));try{window.UNICA_FIREBASE?.saveMindGarden?.(s)}catch{}}
 function state(){const s=load();s[V]=s[V]||{version:2,answers:[],scores:Object.fromEntries(AXES.map(k=>[k,50])),confidence:Object.fromEntries(AXES.map(k=>[k,0])),stage:'new',createdAt:Date.now(),checkins:[]};return[s,s[V]]}
-function save(v){v.lastSavedAt=Date.now();const s=load();s[V]=v;saveRoot(s)}
+function syncBloomBadge(v){try{const k='unicaWorldMemberV4',m=JSON.parse(localStorage.getItem(k)||'null');if(!m)return;m.bloomBadge={stage:v.stage||'new',seedComplete:!!v.seedComplete,scores:v.stage==='bloomed'?v.scores:null,name:v.stage==='bloomed'?(v.name||flowerName(v)):null,bloomDate:v.bloomDate||null,updatedAt:Date.now()};localStorage.setItem(k,JSON.stringify(m));window.UNICA_FIREBASE?.saveMember?.(m);window.dispatchEvent(new CustomEvent('unica:kokoro-bloom-updated',{detail:m.bloomBadge}))}catch(e){console.warn('bloom badge sync',e)}}
+function save(v){v.lastSavedAt=Date.now();const s=load();s[V]=v;saveRoot(s);if(v.seedComplete||v.stage==='bloomed')syncBloomBadge(v)}
 function setBack(fn){window.__UNICA_DIAG_BACK=typeof fn==='function'?fn:null}
 function header(title='KOKORO BLOOM',kick='NEW KOKORO EXPERIENCE'){AudioGame.mount();const h=$('#scent16Title'),k=$('.scent16-header small');if(h)h.textContent=title;if(k)k.textContent=kick;document.body.classList.add('kokoro-bloom-active');requestAnimationFrame(syncBloomViewport)}
 function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}

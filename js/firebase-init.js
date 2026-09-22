@@ -330,30 +330,6 @@ async function saveScentDiagnosis(result) {
   return payload;
 }
 
-
-async function saveKokoroSeedParticipation(data = {}) {
-  await authReady;
-  const member = localMember();
-  if (!uid || !member) throw new Error('うにメン情報を確認できません。');
-  const current = await getDoc(doc(db, 'users', uid));
-  const already = current.exists() && current.data()?.kokoroBloomSeed?.completed;
-  const payload = { completed: true, version: 2, seedDate: String(data.seedDate || ''), completedAt: serverTimestamp() };
-  if (!already) await setDoc(doc(db, 'users', uid), { kokoroBloomSeed: payload, updatedAt: serverTimestamp() }, { merge: true });
-  return { ...payload, already };
-}
-
-async function loadKokoroParticipants() {
-  await authReady;
-  const snap = await getDocs(collection(db, 'users'));
-  return snap.docs.map(row => {
-    const data = row.data();
-    const seed = data.kokoroBloomSeed;
-    const legacy = data.scentDiagnosis && data.scentDiagnosis.typeId;
-    if (!seed?.completed && !legacy) return null;
-    return { uid: row.id, name: String(data.name || 'うにメン'), number: Number(data.number || 0), kokoroBloomSeed: seed || null, legacyScent: Boolean(legacy) };
-  }).filter(Boolean);
-}
-
 async function saveMindGarden(data) {
   await authReady;
   const member = localMember();
@@ -366,6 +342,15 @@ async function loadMindGarden() {
   if (!uid) return null;
   const snap = await getDoc(doc(db, 'users', uid));
   return snap.exists() ? (snap.data().mindGarden || null) : null;
+}
+
+async function loadBloomBadgeMembers() {
+  await authReady;
+  const snap = await getDocs(collection(db, 'users'));
+  return snap.docs.map(row => {
+    const data = row.data();
+    return { uid: row.id, name: String(data.name || 'うにメン'), birthMonth: Number(data.birthMonth || 0), birthDay: Number(data.birthDay || 0), bloomBadge: data.bloomBadge || null };
+  });
 }
 
 async function loadScentMembers() {
@@ -426,8 +411,7 @@ window.UNICA_FIREBASE = {
   loadMilkMatchLeaderboard,
   saveScentDiagnosis,
   loadScentMembers,
-  saveKokoroSeedParticipation,
-  loadKokoroParticipants,
+  loadBloomBadgeMembers,
   saveMindGarden,
   loadMindGarden,
   heartbeat: () => heartbeat().catch(console.error),
