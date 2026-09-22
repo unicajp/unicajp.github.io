@@ -303,8 +303,6 @@
   const registerStepConfirm = document.getElementById('registerStepConfirm');
   const registerStepComplete = document.getElementById('registerStepComplete');
   const memberNickname = document.getElementById('memberNickname');
-  const memberEmojiOne = document.getElementById('memberEmojiOne');
-  const emojiPreview = document.getElementById('emojiPreview');
   const registerError = document.getElementById('registerError');
   const registerSubmit = document.getElementById('registerSubmit');
   const registerConfirm = document.getElementById('registerConfirm');
@@ -323,7 +321,6 @@
   const miniToast = document.getElementById('miniToast');
   let member = null;
   let pendingRegistration = null;
-  let editIconMode = false;
 
   function readMember() {
     try {
@@ -335,11 +332,7 @@
         if (legacy) break;
       }
       if (!legacy) return null;
-      const migrated = {
-        ...legacy,
-        emojiOne: legacy.emojiOne || firstGrapheme(legacy.avatar) || '🌸',
-        avatar: firstGrapheme(legacy.avatar) || legacy.emojiOne || '🌸'
-      };
+      const migrated = { ...legacy };
       writeMember(migrated);
       return migrated;
     } catch (_) { return null; }
@@ -360,9 +353,6 @@
   }
 
   function firstGrapheme(value) { return splitGraphemes(value)[0] || ''; }
-  function normalizeEmoji(value, fallback) { return firstGrapheme(value) || fallback; }
-  function combinedAvatar(one) { return normalizeEmoji(one, '🌸'); }
-
   function memberDays(dateText) {
     const started = new Date(`${dateText}T00:00:00+09:00`);
     return Math.max(1, Math.floor((Date.now() - started.getTime()) / 86400000) + 1);
@@ -370,14 +360,6 @@
 
   function safeText(value) { return String(value ?? ''); }
 
-  function updateEmojiPreview(commit = false) {
-    const raw = memberEmojiOne?.value || '';
-    const one = normalizeEmoji(raw, '🌸');
-    // スマホの絵文字入力中は値を書き戻さない。
-    // ZWJ・肌色・旗など複数コードポイントの絵文字が途中で切れるのを防ぐ。
-    if (commit && memberEmojiOne) memberEmojiOne.value = one;
-    if (emojiPreview) emojiPreview.textContent = one;
-  }
 
   function showRegisterStep(step) {
     registerStepOne.hidden = step !== 'one';
@@ -431,44 +413,30 @@
     renderCheerSummary();
   }
 
-  function openMemberGate(force = false, options = {}) {
+  function openMemberGate(force = false) {
     member = readMember();
-    editIconMode = Boolean(options.editIcon);
-    if (member && !force && !editIconMode) return;
-
-    if (editIconMode && member) {
-      memberNickname.value = member.name;
-      memberNickname.disabled = true;
-      memberEmojiOne.value = member.emojiOne || firstGrapheme(member.avatar) || '🌸';
-      registerSubmit.textContent = '新しいアイコンを確認する';
-      document.querySelector('.register-notice strong').textContent = 'アイコン変更';
-      document.querySelector('.register-notice p').innerHTML = 'ニックネームは変更できません。<br>プロフィールの絵文字だけを変更します。';
-      registerSkip.textContent = '変更せず戻る';
-    } else {
-      memberNickname.disabled = false;
-      memberNickname.value = '';
-      memberEmojiOne.value = '🌸';
-      registerSubmit.textContent = '登録内容を確認する';
-      document.querySelector('.register-notice strong').textContent = '大切なお知らせ';
-      document.querySelector('.register-notice p').innerHTML = 'ニックネームは登録後に変更できません。<br>アイコンは、あとから何度でも変更できます。';
-      registerSkip.textContent = '今は登録せず、公式サイトを見る';
-    }
-
+    if (member && !force) return;
+    memberNickname.disabled = false;
+    memberNickname.value = '';
+    registerSubmit.textContent = '登録内容を確認する';
+    const noticeStrong = document.querySelector('.register-notice strong');
+    const noticeText = document.querySelector('.register-notice p');
+    if (noticeStrong) noticeStrong.textContent = '大切なお知らせ';
+    if (noticeText) noticeText.innerHTML = 'ニックネームは登録後に変更できません。<br>花のアイコンは誕生日とKOKORO BLOOMから自動で育ちます。';
+    registerSkip.textContent = '今は登録せず、公式サイトを見る';
     pendingRegistration = null;
     registerError.textContent = '';
-    updateEmojiPreview();
     showRegisterStep('one');
     memberGate.classList.add('is-open');
     memberGate.setAttribute('aria-hidden', 'false');
     body.classList.add('member-gate-open');
-    window.setTimeout(() => (editIconMode ? memberEmojiOne : memberNickname)?.focus(), 450);
+    window.setTimeout(() => memberNickname?.focus(), 450);
   }
 
   function closeMemberGate() {
     memberGate.classList.remove('is-open');
     memberGate.setAttribute('aria-hidden', 'true');
     body.classList.remove('member-gate-open');
-    editIconMode = false;
   }
 
   function toast(message) {
@@ -479,20 +447,6 @@
     toast.timer = window.setTimeout(() => miniToast.classList.remove('is-show'), 2300);
   }
 
-  let emojiComposing = false;
-  memberEmojiOne?.addEventListener('compositionstart', () => { emojiComposing = true; });
-  memberEmojiOne?.addEventListener('compositionend', () => { emojiComposing = false; updateEmojiPreview(false); });
-  memberEmojiOne?.addEventListener('input', () => { if (!emojiComposing) updateEmojiPreview(false); });
-  memberEmojiOne?.addEventListener('blur', () => updateEmojiPreview(true));
-
-  document.querySelectorAll('[data-emoji]').forEach(button => {
-    button.addEventListener('click', () => {
-      if (!memberEmojiOne) return;
-      memberEmojiOne.value = button.dataset.emoji || '';
-      updateEmojiPreview(true);
-      memberEmojiOne.focus();
-    });
-  });
 
   registerSubmit?.addEventListener('click', () => {
     const name = memberNickname.value.trim();
@@ -506,25 +460,25 @@
       return;
     }
 
-    const emojiOne = normalizeEmoji(memberEmojiOne.value, '🌸');
     const prefecture = memberPrefecture?.value || '';
     const birthMonth = Number(memberBirthMonth?.value || 0);
     const birthDay = Number(memberBirthDay?.value || 0);
-    if (!editIconMode && !prefecture) {
+    if (!prefecture) {
       registerError.textContent = '都道府県を選択してください。';
       memberPrefecture?.focus();
       return;
     }
-    if (!editIconMode && (!birthMonth || !birthDay)) {
+    if (!birthMonth || !birthDay) {
       registerError.textContent = '誕生日の月と日を選択してください。';
       memberBirthMonth?.focus();
       return;
     }
-    pendingRegistration = { name, emojiOne:'', avatar:'', prefecture, birthMonth, birthDay };
-    document.getElementById('confirmAvatar').textContent = pendingRegistration.avatar;
+    pendingRegistration = { name, prefecture, birthMonth, birthDay };
+    const confirmAvatar = document.getElementById('confirmAvatar');
+    if (confirmAvatar) confirmAvatar.innerHTML = window.UNICA_BLOOM_BADGE?.html?.(pendingRegistration,'normal') || '';
     document.getElementById('confirmName').textContent = pendingRegistration.name;
     const locationBirthday = document.getElementById('confirmLocationBirthday');
-    if (locationBirthday) locationBirthday.textContent = editIconMode ? 'アイコンのみ変更' : `${prefecture}・${birthMonth}月${birthDay}日`;
+    if (locationBirthday) locationBirthday.textContent = `${prefecture}・${birthMonth}月${birthDay}日`;
     registerError.textContent = '';
     showRegisterStep('confirm');
   });
@@ -543,22 +497,11 @@
   registerConfirm?.addEventListener('click', async () => {
     if (!pendingRegistration) return;
 
-    if (editIconMode && member) {
-      member = { ...member, emojiOne: pendingRegistration.emojiOne, avatar: pendingRegistration.avatar };
-      delete member.emojiTwo;
-      writeMember(member);
-      updateMemberView();
-      closeMemberGate();
-      toast('うにパスのアイコンを変更しました。');
-      return;
-    }
 
     const now = new Date();
     const joined = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Tokyo' }).format(now);
     member = {
       name: pendingRegistration.name,
-      emojiOne: pendingRegistration.emojiOne,
-      avatar: pendingRegistration.avatar,
       number: null,
       memberNumberVersion: 3,
       joined,
@@ -591,7 +534,8 @@
       registerConfirm.textContent = 'この内容で登録する';
     }
 
-    document.getElementById('completeAvatar').textContent = member.avatar;
+    const completeAvatar = document.getElementById('completeAvatar');
+    if (completeAvatar) completeAvatar.innerHTML = window.UNICA_BLOOM_BADGE?.html?.(member,'normal') || '';
     document.getElementById('completeName').textContent = member.name;
     document.getElementById('completeNumber').textContent = `No.${String(member.number).padStart(4, '0')}`;
     const completeRegion = document.getElementById('completeRegion');
@@ -614,7 +558,7 @@
 
   passAvatarButton?.addEventListener('click', () => {
     if (!readMember()) { openMemberGate(true); return; }
-    openMemberGate(true, { editIcon: true });
+    openPassportDetail();
   });
 
   document.querySelectorAll('[data-mini]').forEach(button => button.addEventListener('click', () => {
@@ -796,7 +740,8 @@
   function openSettings() {
     member = readMember();
     if (!member) { openMemberGate(true); return; }
-    document.getElementById('settingsAvatar').textContent = member.avatar;
+    const settingsAvatar = document.getElementById('settingsAvatar');
+    if (settingsAvatar) settingsAvatar.innerHTML = window.UNICA_BLOOM_BADGE?.html?.(member,'normal') || '';
     document.getElementById('settingsName').textContent = member.name;
     document.getElementById('settingsNumber').textContent = `No.${String(member.number).padStart(4, '0')}`;
     showSettingsMenu();
@@ -815,10 +760,6 @@
   openMemberSettingsButton?.addEventListener('click', openSettings);
   document.querySelectorAll('[data-close-settings]').forEach(button => button.addEventListener('click', closeSettings));
 
-  document.getElementById('settingsEditIcon_DISABLED')?.addEventListener('click', () => {
-    closeSettings();
-    openMemberGate(true, { editIcon: true });
-  });
 
   document.getElementById('openWithdrawal')?.addEventListener('click', () => {
     if (settingsMenu) settingsMenu.hidden = true;
