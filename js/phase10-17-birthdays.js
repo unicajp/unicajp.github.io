@@ -35,7 +35,7 @@ function hasLikedReply(eventKey){return birthdayReplyLikes.some(x=>x.eventKey===
 function daysSince(key){const [y,m,d]=String(key).split('-').map(Number);const event=Date.UTC(y,m-1,d);const n=todayParts();const today=Date.UTC(n.year,n.month-1,n.day);return Math.floor((today-event)/86400000)}
 function likeButton(kind,id,count,liked){return `<button type="button" class="birthday-like-button${liked?' is-liked':''}" data-birthday-like="${kind}" data-like-id="${esc(id)}" aria-pressed="${liked}"><span>♥</span><b>${count}</b></button>`}
 function memberNo(row){return `うにメンNo.${String(Number(row.number||0)).padStart(4,'0')}`}
-function memberName(row){return `<button type="button" class="birthday-member-name" data-member-uid="${esc(row.uid||'')}">${esc(row.name||'うにメン')}</button>`}
+function memberName(row){return `<button type="button" class="birthday-member-name" data-member-uid="${esc(row.uid||'')}">${esc(row.name||'うにメン')}${window.UNICA_BLOOM_BADGE?.html?.(row,'tiny')||''}</button>`}
 function stageForCount(count){if(count>=50)return {icon:'🌸',label:'満開',level:4};if(count>=30)return {icon:'🌺',label:'花が咲きました',level:3};if(count>=10)return {icon:'🌿',label:'すくすく成長中',level:2};return {icon:'🌱',label:'お祝いで育ちます',level:1}}
 function wishButton(row,compact=false){
   if(!isToday(row))return '';

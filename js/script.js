@@ -416,7 +416,7 @@
     }
 
     if (passNumber) passNumber.textContent = `No.${String(member.number).padStart(4, '0')}`;
-    if (passAvatarButton) passAvatarButton.textContent = member.avatar;
+    if (passAvatarButton) passAvatarButton.innerHTML = window.UNICA_BLOOM_BADGE?.html?.(member,'normal') || '';
     if (passWelcome) passWelcome.textContent = `おかえりなさい、${safeText(member.name)}さん。`;
     if (passName) passName.textContent = safeText(member.name);
     if (passStatus) passStatus.textContent = '創設うにメン';
@@ -425,7 +425,7 @@
     if (passCheers) passCheers.textContent = String(member.cheers ?? 0);
     if (passTitle) passTitle.textContent = member.title || 'はじまりのうにメン';
     if (openPassButton) openPassButton.textContent = 'うにパスをひらく';
-    if (memberMessage) memberMessage.textContent = 'あなたがこの世界に来た日から、時間は少しずつ積み重なっています。アイコンは、うにパスの丸いマークからいつでも変更できます。';
+    if (memberMessage) memberMessage.textContent = 'あなたがこの世界に来た日から、時間は少しずつ積み重なっています。花のアイコンは誕生日とKOKORO BLOOMから育っていきます。';
     if (openMemberSettingsButton) openMemberSettingsButton.hidden = false;
     updateWorldHome();
     renderCheerSummary();
@@ -520,7 +520,7 @@
       memberBirthMonth?.focus();
       return;
     }
-    pendingRegistration = { name, emojiOne, avatar: combinedAvatar(emojiOne), prefecture, birthMonth, birthDay };
+    pendingRegistration = { name, emojiOne:'', avatar:'', prefecture, birthMonth, birthDay };
     document.getElementById('confirmAvatar').textContent = pendingRegistration.avatar;
     document.getElementById('confirmName').textContent = pendingRegistration.name;
     const locationBirthday = document.getElementById('confirmLocationBirthday');
@@ -815,7 +815,7 @@
   openMemberSettingsButton?.addEventListener('click', openSettings);
   document.querySelectorAll('[data-close-settings]').forEach(button => button.addEventListener('click', closeSettings));
 
-  document.getElementById('settingsEditIcon')?.addEventListener('click', () => {
+  document.getElementById('settingsEditIcon_DISABLED')?.addEventListener('click', () => {
     closeSettings();
     openMemberGate(true, { editIcon: true });
   });
