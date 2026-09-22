@@ -60,7 +60,7 @@ function renderMembers() {
   $('#adminMemberCount').textContent = String(members.length);
   list.innerHTML = rows.length ? rows.map(member => `
     <article class="admin-member-row">
-      <span class="admin-member-avatar">${escapeHtml(member.avatar || member.emojiOne || '🌸')}</span>
+      <span class="admin-member-avatar">${window.UNICA_BLOOM_BADGE?.html?.(member,'normal') || ''}</span>
       <span class="admin-member-info">
         <strong>${escapeHtml(member.name || '名前未設定')}</strong>
         <small>${escapeHtml(formatNumber(member.number))}${member.prefecture ? ` ・ ${escapeHtml(member.prefecture)}` : ''}</small>
@@ -72,7 +72,7 @@ function renderMembers() {
     button.addEventListener('click', () => {
       pendingDelete = members.find(member => member.uid === button.dataset.adminDelete);
       if (!pendingDelete) return;
-      $('#adminDeleteTarget').textContent = `${pendingDelete.avatar || '🌸'} ${pendingDelete.name || '名前未設定'}（${formatNumber(pendingDelete.number)}）`;
+      $('#adminDeleteTarget').textContent = `${pendingDelete.name || '名前未設定'}（${formatNumber(pendingDelete.number)}）`;
       $('#adminDeleteMessage').textContent = '';
       setOpen(deleteModal, true);
     });

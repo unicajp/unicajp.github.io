@@ -73,7 +73,7 @@
     return {
       id: card.dataset.postId || likeButton?.dataset.likeRemote || likeButton?.dataset.likePost || '',
       name: $('.member-name-text, header strong', card)?.textContent?.replace('（あなた）', '')?.trim() || 'うにメン',
-      avatar: $('.community-post-avatar', card)?.textContent?.trim() || '🌸',
+      profile: {},
       text: $('p', card)?.textContent?.trim() || '',
       count: Number(likeButton?.querySelector('b')?.textContent || 0),
       liked: Boolean(likeButton?.classList.contains('is-liked')),
@@ -185,7 +185,7 @@
       card.setAttribute('aria-label', `${kind === 'featured' ? '注目' : '新着'}コメント。${data.name}さんからの応援`);
       card.innerHTML = '<span class="support-float-label"></span><span class="support-float-avatar"></span><div class="support-float-copy"><p></p><small></small></div><span class="support-float-controls"><button type="button" class="support-float-like-button" aria-label="このコメントにいいね"><b class="support-float-like"></b></button><span class="support-float-pager"><button type="button" class="support-float-prev" aria-label="前のコメントを表示">‹</button><span class="support-float-count" aria-hidden="true"></span><button type="button" class="support-float-next" aria-label="次のコメントを表示">›</button></span></span>';
       $('.support-float-label', card).textContent = kind === 'featured' ? '注目' : '新着';
-      $('.support-float-avatar', card).textContent = data.avatar || '🌸';
+      $('.support-float-avatar', card).innerHTML = window.UNICA_BLOOM_BADGE?.html?.(data.profile||{},'tiny') || '';
       $('p', card).textContent = data.text;
       $('small', card).textContent = `${data.name}さん`;
       $('.support-float-like', card).textContent = `${data.liked ? '♥' : '♡'} ${Number(data.count||0)}`;

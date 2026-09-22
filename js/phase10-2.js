@@ -129,7 +129,7 @@ function renderComments(){
     id:String(row.id||''),
     ownerUid:String(row.ownerUid||''),
     name:String(row.name||'うにメン'),
-    avatar:String(row.avatar||'🌸'),
+    profile:memberDirectory.get(String(row.ownerUid||''))||{},
     text:String(row.text||''),
     count:Number(row.likeCount||0),
     liked:myLikedCommentIds.has(row.id),
@@ -188,7 +188,7 @@ function updateComposer(){
   }
 
   $('#communityOnlineCount') && ($('#communityOnlineCount').textContent=String(comments.length));
-  if(m){ $('#communityComposeAvatar') && ($('#communityComposeAvatar').textContent=m.avatar||'🌸'); $('#communityComposeName') && ($('#communityComposeName').textContent=m.name||'あなた'); }
+  if(m){ $('#communityComposeAvatar') && ($('#communityComposeAvatar').innerHTML=window.UNICA_BLOOM_BADGE?.html?.(m,'normal')||''); $('#communityComposeName') && ($('#communityComposeName').textContent=m.name||'あなた'); }
 }
 async function submitRemoteComment(event){
   event.preventDefault(); event.stopImmediatePropagation();
@@ -362,7 +362,7 @@ async function openMemberPass(targetUid){
     const ownComments=comments.filter(row=>row.ownerUid===targetUid);
     const totalLikes=ownComments.reduce((sum,row)=>sum+Math.max(0,Number(row.likeCount||0)),0);
     const joinedValue=u.joined||u.joinedAt||u.registeredAt||u.createdAt||u.created;
-    $('#detailAvatar') && ($('#detailAvatar').textContent=u.avatar||'🌸');
+    $('#detailAvatar') && ($('#detailAvatar').innerHTML=window.UNICA_BLOOM_BADGE?.html?.(u,'normal')||'');
     $('#detailName') && ($('#detailName').textContent=u.name||'うにメン');
     $('#detailNumber') && ($('#detailNumber').textContent=u.number?`うにメンNo.${String(u.number).padStart(4,'0')}`:'うにメンNo.----');
     $('#detailJoined') && ($('#detailJoined').textContent=formatMemberJoined(joinedValue));

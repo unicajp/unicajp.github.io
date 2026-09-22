@@ -367,6 +367,16 @@
     registerStepComplete.hidden = step !== 'complete';
   }
 
+  function bloomBadgeHtml(profile, size='normal') {
+    return window.UNICA_BLOOM_BADGE?.html?.(profile || {}, size) || '';
+  }
+  function bloomProfileForRow(row) {
+    const current = readMember() || {};
+    if (!row) return current;
+    const sameNumber = row.number && current.number && String(row.number) === String(current.number);
+    const sameName = row.name && current.name && String(row.name) === String(current.name);
+    return (sameNumber || sameName) ? {...row, ...current} : row;
+  }
   function updateMemberView() {
     member = readMember();
     const passNumber = document.getElementById('passNumber');
@@ -676,7 +686,7 @@
     const statusNumber = document.getElementById('statusNumber');
     const statusPosts = document.getElementById('statusPosts');
     const statusReactions = document.getElementById('statusReactions');
-    if (statusAvatar) statusAvatar.textContent = current ? (current.emojiOne || firstGrapheme(current.avatar) || '🌸') : '🌸';
+    if (statusAvatar) statusAvatar.innerHTML = current ? bloomBadgeHtml(current,'tiny') : '';
     if (statusName) statusName.textContent = current ? (current.name || '未登録') : '未登録';
     if (statusNumber) statusNumber.textContent = current ? (current.memberNumber || 'MEMBER') : 'NOT ISSUED';
     const myPosts = current ? readCommunityPosts().filter(x => x.number === current.number) : [];
@@ -704,7 +714,7 @@
     const list = document.getElementById('onlineMemberList');
     if (list) {
       list.innerHTML = current
-        ? `<div class="online-member-item"><span>${safeText(current.avatar)}</span><div><strong>${safeText(current.name)}</strong></div></div>`
+        ? `<div class="online-member-item"><span>${bloomBadgeHtml(current,'normal')}</span><div><strong>${safeText(current.name)}</strong></div></div>`
         : '<div class="online-member-item"><span>🌙</span><div><strong>オンラインなし</strong></div></div>';
     }
   }
@@ -815,7 +825,7 @@
   function hasCheeredToday(current) { return Boolean(readCheerData().users[cheerMemberId(current)]); }
   function addCheerForToday(current) { const data=readCheerData(); const id=cheerMemberId(current); if (!id || data.users[id]) return false; data.users[id]={name:current.name,avatar:current.avatar,count:1}; localStorage.setItem(CHEER_KEY,JSON.stringify(data)); window.UNICA_FIREBASE?.syncCheer(data); renderCheerSummary(); return true; }
   function cheerRows() { const current=readMember(); const rows=Object.values(readCheerData().users); return rows.sort((a,b)=>b.count-a.count).map((x,i)=>({...x,rank:i+1,isMe:current&&x.name===current.name})); }
-  function renderCheerSummary() { const rows=cheerRows(); const total=rows.reduce((s,x)=>s+Number(x.count||0),0); const home=document.getElementById('todayCheerTotal'); const near=document.getElementById('heroCheerTotal'); const modal=document.getElementById('cheerModalTotal'); if(home)home.textContent=String(total); if(near)near.textContent=String(total); if(modal)modal.textContent=String(total); const list=document.getElementById('cheerRankingList'); if(list) list.innerHTML=rows.slice(0,10).map(x=>`<div class="cheer-rank-row${x.isMe?' is-me':''}"><b>${x.rank}</b><span class="rank-avatar">${x.avatar}</span><strong>${safeText(x.name)}${x.isMe?'（あなた）':''}</strong><em>${x.count}</em></div>`).join(''); }
+  function renderCheerSummary() { const rows=cheerRows(); const total=rows.reduce((s,x)=>s+Number(x.count||0),0); const home=document.getElementById('todayCheerTotal'); const near=document.getElementById('heroCheerTotal'); const modal=document.getElementById('cheerModalTotal'); if(home)home.textContent=String(total); if(near)near.textContent=String(total); if(modal)modal.textContent=String(total); const list=document.getElementById('cheerRankingList'); if(list) list.innerHTML=rows.slice(0,10).map(x=>`<div class="cheer-rank-row${x.isMe?' is-me':''}"><b>${x.rank}</b><span class="rank-avatar">${bloomBadgeHtml(bloomProfileForRow(x),'tiny')}</span><strong>${safeText(x.name)}${x.isMe?'（あなた）':''}</strong><em>${x.count}</em></div>`).join(''); }
   function openCheerRanking(){ renderCheerSummary(); cheerRankingModal?.classList.add('is-open'); cheerRankingModal?.setAttribute('aria-hidden','false'); body.classList.add('member-gate-open'); }
   function closeCheerRanking(){ cheerRankingModal?.classList.remove('is-open'); cheerRankingModal?.setAttribute('aria-hidden','true'); body.classList.remove('member-gate-open'); }
 
@@ -840,7 +850,7 @@
   function todayMine(){ const current=readMember(); return readFortuneHistory().find(x=>x.date===todayKey()&&current&&x.number===current.number); }
   function renderFortune(){ const current=readMember(); const mine=todayMine(); const result=document.getElementById('fortuneResult'); const draw=document.getElementById('drawFortune'); if(result){ if(mine){ result.classList.add('is-drawn'); result.innerHTML=`<small>今日の運勢・${mine.rarity||'N'}</small><strong>${mine.icon} ${mine.fortune}</strong><p>${mine.text}<br><b>今日のしるし：${mine.reward}</b></p>`; } else { result.classList.remove('is-drawn'); result.innerHTML='<small>今日の運勢</small><strong>まだ引いていません</strong><p>一日一回、うにみくじを引けます。</p>'; } } if(draw){ draw.disabled=Boolean(mine); draw.textContent=mine?'今日は引きました':'うにみくじを引く'; }
     const all=readFortuneHistory().map(x=>({...x,isMe:current&&x.number===current.number}));
-    const history=document.getElementById('fortuneHistoryList'); if(history)history.innerHTML=all.slice(0,20).map(x=>`<div class="fortune-history-row"><span class="history-avatar">${x.avatar}</span><div><strong>${safeText(x.name)}${x.isMe?'（あなた）':''}</strong><small>${x.date===todayKey()?'今日':x.date} ${x.time||''}</small></div><em><b>${x.fortune}${x.rarity?`・${x.rarity}`:''}</b>${x.reward}</em></div>`).join('');
+    const history=document.getElementById('fortuneHistoryList'); if(history)history.innerHTML=all.slice(0,20).map(x=>`<div class="fortune-history-row"><span class="history-avatar">${bloomBadgeHtml(bloomProfileForRow(x),'tiny')}</span><div><strong>${safeText(x.name)}${x.isMe?'（あなた）':''}</strong><small>${x.date===todayKey()?'今日':x.date} ${x.time||''}</small></div><em><b>${x.fortune}${x.rarity?`・${x.rarity}`:''}</b>${x.reward}</em></div>`).join('');
     const myHistory=readFortuneHistory().filter(x=>current&&x.number===current.number);
     const collection=fortunePool.map(item=>{const owned=myHistory.filter(x=>x.reward===item.reward);return {...item,count:owned.length,unlocked:owned.length>0};});
     const unlockedCount=collection.filter(x=>x.unlocked).length;
@@ -887,7 +897,7 @@
     const hm=document.getElementById('homeCommunityMembers'); if(hm)hm.textContent=String(stats.totalLikes);
     const latest=document.getElementById('communityHomeLatest');
     const newest=[...all].sort((a,b)=>`${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`))[0];
-    if(latest) latest.innerHTML=newest?`<span>${newest.avatar}</span><div><strong>${safeText(newest.name)}</strong><p>${safeText(newest.text)}</p></div><em>♥ ${Number(newest.likes||0)}</em>`:'<div><strong>まだ応援コメントはありません</strong><p>最初の言葉を届けてみよう。</p></div>';
+    if(latest) latest.innerHTML=newest?`<span>${bloomBadgeHtml(bloomProfileForRow(newest),'tiny')}</span><div><strong>${safeText(newest.name)}</strong><p>${safeText(newest.text)}</p></div><em>♥ ${Number(newest.likes||0)}</em>`:'<div><strong>まだ応援コメントはありません</strong><p>最初の言葉を届けてみよう。</p></div>';
     startSupportFloat();
   }
   function sortedCommunityPosts(current){
@@ -900,7 +910,7 @@
     const current=readMember(); if(!current)return;
     const used=postsTodayBy(current), left=Math.max(0,COMMUNITY_POST_LIMIT-used);
     const submit=document.getElementById('submitCommunityComment'); const status=document.getElementById('communityStatus');
-    const avatar=document.getElementById('communityComposeAvatar'); if(avatar)avatar.textContent=current.avatar||'🌸';
+    const avatar=document.getElementById('communityComposeAvatar'); if(avatar)avatar.innerHTML=bloomBadgeHtml(current,'normal');
     const name=document.getElementById('communityComposeName'); if(name)name.textContent=current.name||'あなた';
     if(communityComment) communityComment.disabled=left===0;
     if(submit){submit.disabled=left===0;submit.textContent=left===0?'今日は送信済み':`応援を送る（あと${left}件）`;}
@@ -911,7 +921,7 @@
     if(list)list.innerHTML=posts.map(x=>{
       const mine=String(x.number)===String(current.number); const liked=(x.likedBy||[]).map(String).includes(String(current.number));
       return `<article class="community-post-plus support-comment-card${mine?' is-me':''}" data-post-id="${x.id}">
-        <header><span class="community-post-avatar">${x.avatar}</span><div><strong>${safeText(x.name)}${mine?'（あなた）':''}</strong><small>${safeText(x.prefecture||'')}${x.prefecture?'・':''}${formatSupportDate(x)}</small></div>${mine?`<button class="community-more" data-delete-post="${x.id}" aria-label="自分の応援コメントを削除" type="button">×</button>`:'<span></span>'}</header>
+        <header><span class="community-post-avatar">${bloomBadgeHtml(bloomProfileForRow(x),'normal')}</span><div><strong>${safeText(x.name)}${mine?'（あなた）':''}</strong><small>${safeText(x.prefecture||'')}${x.prefecture?'・':''}${formatSupportDate(x)}</small></div>${mine?`<button class="community-more" data-delete-post="${x.id}" aria-label="自分の応援コメントを削除" type="button">×</button>`:'<span></span>'}</header>
         <p>${safeText(x.text)}</p>
         <div class="community-post-actions support-actions"><button class="${liked?'is-liked':''}" data-like-post="${x.id}" type="button" aria-label="この応援コメントにいいね">${liked?'♥':'♡'} いいね <b>${Number(x.likes||0)}</b></button></div>
       </article>`;
@@ -936,7 +946,7 @@
   function showNextSupportFloat(){
     if(!floatLayer)return; const rows=todayFloatComments(); if(!rows.length){floatLayer.innerHTML='';return;}
     const x=rows[floatIndex%rows.length]; floatIndex++;
-    const bubble=document.createElement('div'); bubble.className='support-floating-comment'; bubble.innerHTML=`<span>${x.avatar}</span><div><p>${safeText(x.text)}</p><small>${safeText(x.name)}　♥ ${Number(x.likes||0)}</small></div>`;
+    const bubble=document.createElement('div'); bubble.className='support-floating-comment'; bubble.innerHTML=`<span>${bloomBadgeHtml(bloomProfileForRow(x),'tiny')}</span><div><p>${safeText(x.text)}</p><small>${safeText(x.name)}　♥ ${Number(x.likes||0)}</small></div>`;
     floatLayer.innerHTML=''; floatLayer.appendChild(bubble); setTimeout(()=>bubble.remove(),6500);
   }
   function startSupportFloat(){
@@ -1058,7 +1068,7 @@
   function fillPassportDetail() {
     const current = readMember();
     if (!current) return false;
-    document.getElementById('detailAvatar').textContent = firstGrapheme(current.avatar) || '🌸';
+    document.getElementById('detailAvatar').innerHTML = bloomBadgeHtml(current,'normal');
     document.getElementById('detailName').textContent = current.name || '—';
     document.getElementById('detailNumber').textContent = `No.${String(current.number).padStart(4, '0')}`;
     document.getElementById('detailJoined').textContent = String(current.joined || '—').replaceAll('-', '.');
