@@ -11,22 +11,41 @@ const AudioGame=(()=>{let ctx=null,master=null,bgmGain=null,sfxGain=null,timer=0
  function apply(){if(!ctx)return;const p=pref();/* Keep the full 0-300% range audible: no early clamp at 120%. */bgmGain.gain.cancelScheduledValues(ctx.currentTime);sfxGain.gain.cancelScheduledValues(ctx.currentTime);bgmGain.gain.setTargetAtTime(p.bgm?p.bgmVolume*1.05:0,ctx.currentTime,.025);/* Match MILK BLOOM-style perceived SFX level: amplify the SFX bus itself, not just the UI percentage. */sfxGain.gain.setTargetAtTime(p.sfx?p.sfxVolume*2.6:0,ctx.currentTime,.012)}
  function tone(freq,dur=.12,vol=.14,type='sine',when=0,dest=sfxGain){if(!boot())return;const t=ctx.currentTime+when,o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.001,vol),t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(dest);o.start(t);o.stop(t+dur+.03)}
  function sfx(name){const p=pref();if(!p.sfx)return;boot();if(name==='tap'){tone(660,.08,.08,'sine');tone(990,.09,.045,'sine',.035)}else if(name==='back'){tone(440,.08,.06,'triangle');tone(330,.09,.04,'triangle',.04)}else if(name==='grow'){[523,659,784].forEach((f,i)=>tone(f,.2,.08,'sine',i*.07))}else if(name==='seed'){[392,523,659,784,1047].forEach((f,i)=>tone(f,.32,.11,'triangle',i*.09))}else if(name==='bloom'){[262,330,392,523,659,784,1047].forEach((f,i)=>tone(f,.55,.11,'triangle',i*.075));setTimeout(()=>[523,659,784,1047,1319].forEach((f,i)=>tone(f,.7,.075,'sine',i*.055)),430)}else if(name==='water'){tone(880,.16,.07,'sine');tone(1175,.22,.055,'sine',.07)}}
- function bgmNote(){if(!ctx||!pref().bgm)return;
-  // Bright garden-game loop: C-major / A-minor pentatonic colours, kept above middle C.
-  // No octave-down drone: the previous low layer was what made the loop feel eerie.
-  const melody=[
-   659.25,783.99,880.00,783.99,659.25,523.25,587.33,659.25,
-   783.99,880.00,1046.50,880.00,783.99,659.25,587.33,659.25,
-   523.25,659.25,783.99,659.25,587.33,523.25,440.00,523.25,
-   587.33,659.25,783.99,880.00,783.99,659.25,587.33,523.25
-  ];
-  const roots=[261.63,261.63,349.23,349.23,220.00,220.00,392.00,392.00];
-  const i=step++%melody.length,f=melody[i];
-  tone(f,.34,.030,'triangle',0,bgmGain);
-  tone(f*2,.16,.010,'sine',.015,bgmGain); // tiny bell sparkle
-  if(i%4===0)tone(roots[Math.floor(i/4)%roots.length],.28,.009,'sine',0,bgmGain);
+ function bgmVoice(freq,dur=.5,vol=.018,when=0,kind='bell'){
+  if(!boot())return;const t=ctx.currentTime+when;
+  const out=ctx.createGain(),filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.setValueAtTime(kind==='pad'?1800:4200,t);filter.Q.value=.45;
+  out.gain.setValueAtTime(.0001,t);
+  if(kind==='pad'){out.gain.exponentialRampToValueAtTime(vol,t+.12);out.gain.exponentialRampToValueAtTime(.0001,t+dur)}
+  else{out.gain.exponentialRampToValueAtTime(vol,t+.012);out.gain.exponentialRampToValueAtTime(.0001,t+dur)}
+  filter.connect(out);out.connect(bgmGain);
+  const partials=kind==='bell'?[[1,'sine',1],[2.01,'sine',.28],[3.99,'sine',.08]]:kind==='pluck'?[[1,'triangle',1],[2,'sine',.14]]:[[1,'sine',1],[2,'sine',.08]];
+  partials.forEach(([mul,type,level],j)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(freq*mul,t);if(kind==='bell'&&j) o.detune.value=(j===1?5:-4);g.gain.value=level;o.connect(g);g.connect(filter);o.start(t);o.stop(t+dur+.06)});
  }
- function start(){shouldPlay=true;if(document.hidden)return;boot();if(timer)return;bgmNote();timer=setInterval(bgmNote,520)}
+ function bgmNote(){if(!ctx||!pref().bgm)return;
+  // Browser-synth "garden soundtrack": 64-step phrase with melody, harmony,
+  // soft pads, bass movement and sparse sparkles. No external audio assets.
+  const N={C4:261.63,D4:293.66,E4:329.63,G4:392,A4:440,B4:493.88,C5:523.25,D5:587.33,E5:659.25,G5:783.99,A5:880,B5:987.77,C6:1046.5,D6:1174.66,E6:1318.51};
+  const melody=[
+   'E5',null,'G5','A5','G5',null,'E5','D5', 'E5',null,'G5','C6','B5','G5','E5',null,
+   'D5',null,'E5','G5','A5',null,'G5','E5', 'D5','E5','G5',null,'E5','D5','C5',null,
+   'E5',null,'G5','A5','C6',null,'B5','G5', 'E5','G5','A5',null,'G5','E5','D5',null,
+   'G5',null,'A5','C6','D6','C6','A5','G5', 'E5','G5','C6',null,'B5','G5','E5','C5'
+  ];
+  const chords=[
+   [N.C4,N.E4,N.G4],[N.A4/2,N.C4,N.E4],[N.G4/2,N.B4/2,N.D4],[N.C4,N.E4,N.G4],
+   [N.A4/2,N.C4,N.E4],[N.D4,N.G4,N.B4/2],[N.C4,N.E4,N.G4],[N.G4/2,N.B4/2,N.D4]
+  ];
+  const bass=[N.C4/2,N.A4/4,N.G4/2,N.C4/2,N.A4/4,N.D4/2,N.C4/2,N.G4/2];
+  const i=step++%64,n=melody[i],bar=Math.floor(i/8)%8;
+  if(n)bgmVoice(N[n],.48,.020,0,'bell');
+  // off-beat wooden/plucked answer creates motion without 8-bit square-wave character
+  if(i%4===2){const arp=chords[bar][(Math.floor(i/2)+bar)%3]*2;bgmVoice(arp,.28,.008,0,'pluck')}
+  // warm chord bed every bar
+  if(i%8===0){chords[bar].forEach((f,j)=>bgmVoice(f,.98,.0065,j*.018,'pad'));bgmVoice(bass[bar],.62,.008,0,'pad')}
+  // restrained high garden sparkle at phrase turns
+  if([15,31,47,61].includes(i)){bgmVoice(i===61?N.E6:N.C6,.72,.007,.04,'bell');bgmVoice(i===61?N.C6:N.E6,.58,.004,.13,'bell')}
+ }
+ function start(){shouldPlay=true;if(document.hidden)return;boot();if(timer)return;bgmNote();timer=setInterval(bgmNote,310)}
  function stop(permanent=false){clearInterval(timer);timer=0;if(permanent)shouldPlay=false}
  function suspend(){stop(false);if(ctx&&ctx.state==='running')ctx.suspend().catch(()=>{})}
  function resume(){if(!shouldPlay||document.hidden)return;boot();if(pref().bgm)start()}
