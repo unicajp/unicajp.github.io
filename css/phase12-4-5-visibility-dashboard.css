@@ -1,0 +1,223 @@
+/* Phase12.4.5 — readability restoration and compact live dashboards */
+.fun-card{min-height:176px!important;align-content:start!important;overflow:hidden!important}
+.fun-card>strong{font-size:15px!important;line-height:1.25!important}.fun-card>small{min-height:32px!important;font-size:10px!important;line-height:1.5!important}
+.fun-mini-dashboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;width:100%;margin-top:9px;padding-top:8px;border-top:1px solid rgba(73,47,96,.12)}
+.fun-mini-dashboard span{display:flex;min-width:0;flex-direction:column;justify-content:center;padding:6px 4px;border-radius:10px;background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1px rgba(85,52,116,.08)}
+.fun-mini-dashboard small{font-size:7px;line-height:1.2;color:#8b7191}.fun-mini-dashboard b{margin-top:2px;font-size:9px;line-height:1.25;color:#49334e;white-space:normal;overflow-wrap:anywhere}
+.fun-mini-dashboard .mini-wide{grid-column:span 2}.fun-card.album{grid-column:1/-1;min-height:150px!important;background:linear-gradient(145deg,#fff4f7,#fffaf0)!important;border-color:rgba(222,119,145,.28)!important}.fun-card.album .fun-icon{background:linear-gradient(145deg,#ff7fa6,#ffb85d)!important}.fun-card.album .feature-badge{background:#e85c8b!important}.album-dashboard{grid-template-columns:2fr 1fr 1fr}
+.prefecture-dashboard{grid-template-columns:minmax(0,1fr) 56px}.mini-ranking{display:grid!important;grid-column:auto!important;gap:3px!important;padding:4px!important}.mini-ranking i{display:grid;grid-template-columns:20px minmax(0,1fr) auto;align-items:center;gap:3px;font-style:normal}.mini-ranking i b{margin:0;font-size:9px}.mini-ranking i em{overflow:hidden;font-size:8px;font-style:normal;color:#5e4d63;text-overflow:ellipsis;white-space:nowrap}.mini-ranking i strong{font-size:8px;color:#6f4f8e}.mini-total{grid-column:auto!important}
+/* Restore high contrast inside MILK BLOOM after the visual renewal. */
+#milkMatchModal,.milk-match-shell{--mb-readable:#fff;--mb-muted:#eadff7}
+.milk-match-title,.milk-match-title h2,.milk-match-tabs button,.milk-match-stat strong,.milk-match-stat b,.milk-match-goal strong,.milk-match-goal b,.milk-match-skill-head,.milk-match-skill-head strong,.milk-match-skill-head b,.milk-match-ranking-spot,.milk-match-rules-open{color:#fff!important;text-shadow:0 1px 2px rgba(17,6,36,.75)!important}
+.milk-match-stat small,.milk-match-goal small,.milk-match-ranking-spot small,.milk-match-skill-head small{color:#f0e8f8!important;opacity:1!important}
+.milk-match-stat,.milk-match-goal{background:rgba(42,20,65,.78)!important;border:1px solid rgba(255,255,255,.22)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important}
+.milk-match-stat strong,.milk-match-stat b{font-size:clamp(15px,4.3vw,21px)!important;font-weight:1000!important}.milk-match-stat small{font-size:8px!important}
+.milk-match-goal{min-height:45px!important}.milk-match-goal strong,.milk-match-goal b{font-size:clamp(12px,3.5vw,17px)!important;font-weight:1000!important}
+.milk-match-skill{background:rgba(36,17,58,.9)!important;border:1px solid rgba(255,255,255,.22)!important}.milk-match-skill-head{font-size:15px!important;font-weight:1000!important}.milk-match-skill-head b{font-size:14px!important}
+#milkMatchSkillRainbow{color:#4a265f!important;background:linear-gradient(135deg,#fff4a9,#ff8ed3)!important;font-size:14px!important;font-weight:1000!important;text-shadow:none!important;box-shadow:0 7px 18px rgba(249,103,190,.32)!important}#milkMatchSkillRainbow:disabled{color:#9d8da3!important;background:rgba(225,217,231,.64)!important;box-shadow:none!important}
+.milk-match-actions button{min-height:45px!important;font-size:12px!important;font-weight:1000!important;color:#47304f!important}.milk-match-actions button.is-online-ranking{color:#fff!important}
+.milk-match-ranking-spot,.milk-match-rules-open{min-height:42px!important;background:rgba(35,17,61,.83)!important;border-color:rgba(255,255,255,.22)!important;font-size:11px!important;font-weight:900!important}
+.milk-match-rules-list li{font-size:11px!important;line-height:1.45!important;color:#3f3046!important}.milk-match-rules-head h3{font-size:21px!important;color:#3b2948!important}.milk-match-combo-guide span{font-size:11px!important;color:#3e2c47!important}
+.milk-online-columns{font-size:10px!important}.milk-online-row strong,.milk-online-row em{font-size:13px!important}.milk-online-row b{font-size:11px!important}
+@media(max-width:380px){.fun-card{min-height:165px!important;padding:12px!important}.fun-mini-dashboard b{font-size:8px!important}.fun-mini-dashboard small{font-size:6.5px!important}.milk-match-stat strong,.milk-match-stat b{font-size:16px!important}}
+
+/* Phase12.4.6 — compact smart cards / birthday and album repair */
+.fun-grid{gap:8px!important}
+.fun-card{
+  min-height:142px!important;
+  padding:12px 11px 10px!important;
+  border-radius:19px!important;
+}
+.fun-card .fun-icon{font-size:24px!important}
+.fun-card>strong{
+  margin-top:7px!important;
+  font-size:13px!important;
+  line-height:1.18!important;
+}
+.fun-card>small{
+  min-height:0!important;
+  margin-top:4px!important;
+  font-size:8.5px!important;
+  line-height:1.32!important;
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:2!important;
+  overflow:hidden!important;
+}
+.fun-card .feature-badge{
+  top:8px!important;
+  right:8px!important;
+  bottom:auto!important;
+  max-width:62px!important;
+  padding:3px 6px!important;
+  font-size:7px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+.fun-mini-dashboard{
+  gap:4px!important;
+  margin-top:7px!important;
+  padding-top:6px!important;
+}
+.fun-mini-dashboard span{
+  min-height:34px!important;
+  padding:4px 4px!important;
+  border-radius:9px!important;
+}
+.fun-mini-dashboard small{font-size:6.5px!important;line-height:1.12!important}
+.fun-mini-dashboard b{font-size:8px!important;line-height:1.2!important}
+
+/* Birthday: keep the countdown unobstructed and readable. */
+.fun-card.birthday{padding-top:12px!important}
+.fun-card.birthday .feature-badge{background:rgba(255,255,255,.92)!important;color:#d45578!important}
+.fun-card.birthday .fun-mini-dashboard{grid-template-columns:minmax(0,1fr) 48px!important}
+.fun-card.birthday .fun-mini-dashboard .mini-wide{grid-column:auto!important}
+.fun-card.birthday .fun-mini-dashboard span:last-child b{font-size:9px!important;white-space:nowrap!important}
+
+/* Celebration album: repair the pale-on-pale text and make the entry compact. */
+.fun-card.album{
+  grid-column:1/-1!important;
+  min-height:116px!important;
+  padding:12px 13px 10px!important;
+  color:#5b3545!important;
+  background:linear-gradient(135deg,#fff0f5 0%,#fff8f0 55%,#fff2dc 100%)!important;
+  box-shadow:0 9px 22px rgba(119,70,91,.12)!important;
+}
+.fun-card.album:before{width:120px!important;height:120px!important;background:rgba(247,141,164,.10)!important}
+.fun-card.album .fun-icon{display:inline-block!important;font-size:22px!important}
+.fun-card.album>strong{display:inline-block!important;margin:0 0 0 7px!important;color:#8c3f5b!important;vertical-align:3px!important}
+.fun-card.album>small{margin-top:4px!important;color:#986c78!important;opacity:1!important;-webkit-line-clamp:1!important}
+.fun-card.album .feature-badge{display:none!important}
+.fun-card.album .fun-mini-dashboard{margin-top:7px!important}
+.fun-card.album .fun-mini-dashboard span{background:rgba(255,255,255,.78)!important}
+.fun-card.album .fun-mini-dashboard small{color:#9b7380!important}
+.fun-card.album .fun-mini-dashboard b{color:#5b3545!important}
+.album-dashboard{grid-template-columns:minmax(0,1.7fr) minmax(55px,.65fr) minmax(45px,.55fr)!important}
+
+/* Prefecture ranking: full prefecture names in a small, legible list. */
+.prefecture-dashboard{grid-template-columns:1fr!important;gap:4px!important}
+.prefecture-dashboard .mini-ranking{display:grid!important;grid-column:1!important;gap:2px!important;padding:4px 5px!important}
+.prefecture-dashboard .mini-ranking i{
+  display:grid!important;
+  grid-template-columns:17px minmax(0,1fr) auto!important;
+  gap:3px!important;
+  min-height:16px!important;
+}
+.prefecture-dashboard .mini-ranking i b{font-size:8px!important}
+.prefecture-dashboard .mini-ranking i em{
+  min-width:0!important;
+  overflow:visible!important;
+  font-size:8px!important;
+  line-height:1.1!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+}
+.prefecture-dashboard .mini-ranking i strong{font-size:8px!important;white-space:nowrap!important}
+.prefecture-dashboard .mini-total{
+  grid-column:1!important;
+  min-height:22px!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  padding:3px 7px!important;
+}
+.prefecture-dashboard .mini-total b{margin:0!important;font-size:8px!important}
+
+@media(max-width:380px){
+  .fun-grid{gap:7px!important}
+  .fun-card{min-height:134px!important;padding:10px 9px 9px!important}
+  .fun-card .fun-icon{font-size:22px!important}
+  .fun-card>strong{font-size:12px!important}
+  .fun-card>small{font-size:8px!important}
+  .fun-mini-dashboard{margin-top:6px!important;padding-top:5px!important}
+  .fun-mini-dashboard span{min-height:31px!important;padding:3px!important}
+  .fun-mini-dashboard b{font-size:7.5px!important}
+  .fun-card.album{min-height:108px!important}
+  .album-dashboard{grid-template-columns:minmax(0,1.5fr) 54px 44px!important}
+  .prefecture-dashboard .mini-ranking i em,
+  .prefecture-dashboard .mini-ranking i strong{font-size:7.5px!important}
+}
+
+/* Phase12.4.7 — four main features + one-line related links */
+.fun-grid{align-items:start!important;gap:10px!important}
+.fun-feature-stack{display:grid;min-width:0;gap:5px}
+.fun-feature-stack>.fun-card{width:100%;min-height:132px!important}
+.fun-card>strong{font-size:12.5px!important}
+.fun-card>small{font-size:8px!important;line-height:1.25!important}
+.fun-card .fun-icon{font-size:22px!important}
+.fun-card .feature-badge{font-size:6.5px!important;padding:3px 5px!important}
+.fun-mini-dashboard{margin-top:6px!important;padding-top:5px!important}
+.fun-mini-dashboard span{min-height:30px!important;padding:3px!important}
+.fun-mini-dashboard small{font-size:6px!important}
+.fun-mini-dashboard b{font-size:7.5px!important}
+.fun-sub-link{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:5px;width:100%;min-height:31px;padding:5px 8px;border:1px solid rgba(89,59,109,.1);border-radius:11px;background:rgba(255,255,255,.78);box-shadow:0 4px 10px rgba(65,43,77,.06);color:#523e59;text-align:left}
+.fun-sub-link>span{font-size:13px}.fun-sub-link>strong{overflow:hidden;font-size:9px;line-height:1.1;white-space:nowrap;text-overflow:ellipsis}.fun-sub-link>em{overflow:hidden;font-size:7px;font-style:normal;color:#8b758e;white-space:nowrap;text-overflow:ellipsis}.fun-sub-link>b{font-size:15px;font-weight:500;color:#9d78aa}
+.fun-sub-link:active{transform:scale(.985)}
+/* album is no longer a large standalone card */
+.fun-card.album{display:none!important}
+/* cleaner prefecture ranking without duplicate total */
+.prefecture-dashboard{grid-template-columns:1fr!important;margin-top:5px!important}
+.prefecture-dashboard .mini-ranking{gap:1px!important;padding:3px 5px!important}
+.prefecture-dashboard .mini-ranking i{grid-template-columns:14px minmax(0,1fr) auto!important;min-height:14px!important}
+.prefecture-dashboard .mini-ranking i b{display:grid;place-items:center;width:13px;height:13px;margin:0!important;border-radius:50%;background:rgba(255,255,255,.7);font-size:6.5px!important;color:#6b5272}
+.prefecture-dashboard .mini-ranking i em{font-size:7.5px!important;font-weight:700;color:#4f4352}
+.prefecture-dashboard .mini-ranking i strong{font-size:7.5px!important;color:#5f4a68}
+.prefecture-dashboard .mini-total{display:none!important}
+@media(max-width:380px){.fun-grid{gap:8px!important}.fun-feature-stack>.fun-card{min-height:126px!important}.fun-card>strong{font-size:11.5px!important}.fun-card>small{font-size:7.5px!important}.fun-sub-link{min-height:29px;padding:4px 6px}.fun-sub-link>strong{font-size:8.5px}.fun-sub-link>em{font-size:6.5px}}
+
+/* Phase13.38 — ENJOY UNICA WORLD: four clean entrances only */
+#phase1241Renewal .renewal-section:has(.fun-grid-simple){margin-top:18px!important}
+#phase1241Renewal .renewal-section:has(.fun-grid-simple) .renewal-section-head{margin:0 5px 10px!important;align-items:end!important}
+#phase1241Renewal .renewal-section:has(.fun-grid-simple) .renewal-section-head p{display:none!important}
+.fun-grid.fun-grid-simple{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:1px!important;padding:1px!important;border:1px solid rgba(91,67,101,.10)!important;
+  border-radius:23px!important;overflow:hidden!important;background:rgba(255,255,255,.58)!important;
+  box-shadow:0 10px 28px rgba(72,51,82,.07)!important;backdrop-filter:blur(10px)!important;
+}
+.fun-grid-simple .fun-feature-stack{display:contents!important}
+.fun-grid-simple .fun-card{
+  min-height:94px!important;width:100%!important;padding:14px 13px 12px!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;background:rgba(255,255,255,.56)!important;color:#46374a!important;
+  overflow:hidden!important;text-align:left!important;
+}
+.fun-grid-simple .fun-card:before{display:none!important}
+.fun-grid-simple .fun-card:nth-of-type(1){background:linear-gradient(145deg,rgba(247,241,255,.72),rgba(255,245,251,.66))!important}
+.fun-grid-simple .fun-card .fun-icon{display:block!important;font-size:24px!important;line-height:1!important}
+.fun-grid-simple .fun-card>strong{display:block!important;margin-top:8px!important;font-size:13px!important;line-height:1.2!important;color:#443647!important;white-space:nowrap!important}
+.fun-grid-simple .fun-card>small{display:block!important;min-height:0!important;margin-top:4px!important;font-size:8px!important;line-height:1.3!important;color:#8b788d!important;opacity:1!important;white-space:nowrap!important}
+.fun-grid-simple .fun-card>em,
+.fun-grid-simple .fun-card>.feature-badge,
+.fun-grid-simple .fun-card>.fun-mini-dashboard,
+.fun-grid-simple .fun-sub-link{display:none!important}
+
+/* Poll is mounted between diagnosis and nationwide members: make it the same compact tile. */
+.fun-grid-simple>.version-poll-card.version-poll-card-compact.version-poll-card-archive{
+  min-height:94px!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;background:linear-gradient(145deg,rgba(250,241,255,.72),rgba(255,244,250,.70))!important;color:#46374a!important;
+}
+.fun-grid-simple>.version-poll-card-archive:before{display:none!important}
+.fun-grid-simple .version-poll-card-archive .version-poll-archive-card-button{min-height:94px!important;padding:14px 13px 12px!important;color:#46374a!important}
+.fun-grid-simple .version-poll-card-archive .version-poll-archive-icon{font-size:24px!important}
+.fun-grid-simple .version-poll-card-archive .version-poll-archive-copy strong{margin-top:8px!important;font-size:13px!important;color:#443647!important}
+.fun-grid-simple .version-poll-card-archive .version-poll-archive-copy em{margin-top:4px!important;padding:0!important;background:transparent!important;font-size:8px!important;color:#8b788d!important;font-weight:700!important}
+.fun-grid-simple .version-poll-card-archive .version-poll-archive-arrow{display:none!important}
+
+/* Active poll also stays visually quiet on the home screen; details open inside its own flow. */
+.fun-grid-simple>.version-poll-card.version-poll-card-compact:not(.version-poll-card-archive){min-height:94px!important;margin:0!important;padding:14px 13px!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:rgba(255,255,255,.56)!important;overflow:hidden!important}
+.fun-grid-simple>.version-poll-card.version-poll-card-compact:not(.version-poll-card-archive) .version-poll-head,
+.fun-grid-simple>.version-poll-card.version-poll-card-compact:not(.version-poll-card-archive) .version-poll-song,
+.fun-grid-simple>.version-poll-card.version-poll-card-compact:not(.version-poll-card-archive) .version-poll-period,
+.fun-grid-simple>.version-poll-card.version-poll-card-compact:not(.version-poll-card-archive) .version-poll-list,
+.fun-grid-simple>.version-poll-card.version-poll-card-compact:not(.version-poll-card-archive) .version-poll-participants,
+.fun-grid-simple>.version-poll-card.version-poll-card-compact:not(.version-poll-card-archive) .version-poll-actions,
+.fun-grid-simple>.version-poll-card.version-poll-card-compact:not(.version-poll-card-archive) .version-poll-result,
+.fun-grid-simple>.version-poll-card.version-poll-card-compact:not(.version-poll-card-archive) .version-poll-note{display:none!important}
+.fun-grid-simple>.version-poll-card.version-poll-card-compact:not(.version-poll-card-archive) .version-poll-history{display:block!important;margin:0!important;width:100%!important;height:66px!important;border:0!important;text-align:left!important;text-decoration:none!important;color:transparent!important;font-size:0!important;position:relative!important}
+.fun-grid-simple>.version-poll-card.version-poll-card-compact:not(.version-poll-card-archive) .version-poll-history:before{content:'🎧';display:block;font-size:24px!important;line-height:1!important;color:initial!important}
+.fun-grid-simple>.version-poll-card.version-poll-card-compact:not(.version-poll-card-archive) .version-poll-history:after{content:'うにメン投票\Aみんなの声を見てみる';white-space:pre;display:block;margin-top:8px;font-size:13px;line-height:1.55;font-weight:800;color:#443647!important}
+@media(max-width:380px){
+ .fun-grid-simple .fun-card,.fun-grid-simple .version-poll-card-archive .version-poll-archive-card-button{min-height:88px!important;padding:12px 11px 10px!important}
+ .fun-grid-simple .fun-card>strong,.fun-grid-simple .version-poll-card-archive .version-poll-archive-copy strong{font-size:12px!important}
+ .fun-grid-simple .fun-card>small,.fun-grid-simple .version-poll-card-archive .version-poll-archive-copy em{font-size:7.5px!important}
+}
