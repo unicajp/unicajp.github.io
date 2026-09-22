@@ -4,21 +4,23 @@ const screen=()=>$('#scent16Screen'), KEY='unicaMindGardenV1', V='kokoroV2', TOD
 const AXES=['self','bond','inner','rest','future'];
 const META={self:{name:'わたしらしさ',icon:'⚡'},bond:{name:'人との距離',icon:'🤝'},inner:{name:'心の奥',icon:'✦'},rest:{name:'心の休め方',icon:'💧'},future:{name:'これから',icon:'🚀'}};
 const AUDIO_KEY='unicaKokoroBloomAudioV1';
-const AudioGame=(()=>{let ctx=null,master=null,bgmGain=null,sfxGain=null,timer=0,step=0;
+const AudioGame=(()=>{let ctx=null,master=null,bgmGain=null,sfxGain=null,timer=0,step=0,shouldPlay=false;
  function pref(){try{return Object.assign({bgm:true,sfx:true,bgmVolume:.22,sfxVolume:.38},JSON.parse(localStorage.getItem(AUDIO_KEY)||'{}'))}catch{return{bgm:true,sfx:true,bgmVolume:.22,sfxVolume:.38}}}
  function store(x){localStorage.setItem(AUDIO_KEY,JSON.stringify(x));apply()}
  function boot(){if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();bgmGain=ctx.createGain();sfxGain=ctx.createGain();bgmGain.connect(master);sfxGain.connect(master);master.connect(ctx.destination)}if(ctx.state==='suspended')ctx.resume().catch(()=>{});apply();return ctx}
- function apply(){if(!ctx)return;const p=pref();bgmGain.gain.setTargetAtTime(p.bgm?p.bgmVolume:0,ctx.currentTime,.04);sfxGain.gain.setTargetAtTime(p.sfx?p.sfxVolume:0,ctx.currentTime,.02)}
+ function apply(){if(!ctx)return;const p=pref();bgmGain.gain.setTargetAtTime(p.bgm?p.bgmVolume*1.18:0,ctx.currentTime,.04);sfxGain.gain.setTargetAtTime(p.sfx?p.sfxVolume*1.12:0,ctx.currentTime,.02)}
  function tone(freq,dur=.12,vol=.14,type='sine',when=0,dest=sfxGain){if(!boot())return;const t=ctx.currentTime+when,o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.001,vol),t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(dest);o.start(t);o.stop(t+dur+.03)}
  function sfx(name){const p=pref();if(!p.sfx)return;boot();if(name==='tap'){tone(660,.08,.08,'sine');tone(990,.09,.045,'sine',.035)}else if(name==='back'){tone(440,.08,.06,'triangle');tone(330,.09,.04,'triangle',.04)}else if(name==='grow'){[523,659,784].forEach((f,i)=>tone(f,.2,.08,'sine',i*.07))}else if(name==='seed'){[392,523,659,784,1047].forEach((f,i)=>tone(f,.32,.11,'triangle',i*.09))}else if(name==='bloom'){[262,330,392,523,659,784,1047].forEach((f,i)=>tone(f,.55,.11,'triangle',i*.075));setTimeout(()=>[523,659,784,1047,1319].forEach((f,i)=>tone(f,.7,.075,'sine',i*.055)),430)}else if(name==='water'){tone(880,.16,.07,'sine');tone(1175,.22,.055,'sine',.07)}}
  function bgmNote(){if(!ctx||!pref().bgm)return;const seq=[261.63,329.63,392,523.25,392,329.63,293.66,349.23,440,587.33,440,349.23];const f=seq[step++%seq.length];tone(f,.65,.032,'sine',0,bgmGain);tone(f/2,.8,.018,'triangle',0,bgmGain)}
- function start(){boot();if(timer)return;bgmNote();timer=setInterval(bgmNote,520)}
- function stop(){clearInterval(timer);timer=0}
+ function start(){shouldPlay=true;if(document.hidden)return;boot();if(timer)return;bgmNote();timer=setInterval(bgmNote,520)}
+ function stop(permanent=false){clearInterval(timer);timer=0;if(permanent)shouldPlay=false}
+ function suspend(){stop(false);if(ctx&&ctx.state==='running')ctx.suspend().catch(()=>{})}
+ function resume(){if(!shouldPlay||document.hidden)return;boot();if(pref().bgm)start()}
  function toggle(kind){const p=pref();p[kind]=!p[kind];store(p);if(kind==='bgm'&&p.bgm)start();return p[kind]}
  function settingsButton(){return `<button type="button" class="kb-audio-btn" id="kbAudioBtn" aria-label="サウンド設定">♫</button>`}
  function mount(){if(!$('.kb-audio-btn')){const m=$('#scent16Modal');if(m)m.insertAdjacentHTML('beforeend',settingsButton())}const b=$('#kbAudioBtn');if(b)b.onclick=()=>{boot();sfx('tap');audioPanel()}}
  function audioPanel(){let panel=$('#kbAudioPanel');if(panel){panel.remove();return}const p=pref(),m=$('#scent16Modal');if(!m)return;m.insertAdjacentHTML('beforeend',`<div class="kb-audio-panel" id="kbAudioPanel"><b>SOUND</b><button data-audio="bgm">${p.bgm?'🔊':'🔇'} BGM</button><button data-audio="sfx">${p.sfx?'✨':'—'} 効果音</button><small>パズルゲームに近い音量バランス</small></div>`);$$('[data-audio]',$('#kbAudioPanel')).forEach(x=>x.onclick=()=>{toggle(x.dataset.audio);$('#kbAudioPanel').remove();audioPanel()})}
- return{boot,start,stop,sfx,mount,pref};})();
+ return{boot,start,stop,suspend,resume,sfx,mount,pref};})();
 const Q=[
  ['予定のない休日。最初にしたいのは？','self',['ひとりで好きなこと','誰かと出かける'],[-2,2]],
  ['誰かが落ち込んでいたら？','bond',['そっとそばにいる','まず言葉をかける'],[-1,2]],
@@ -104,6 +106,13 @@ function installBloomViewportFix(){
   window.visualViewport?.addEventListener('scroll',update,{passive:true});
   update();
 }
-function install(){installBloomViewportFix();document.addEventListener('pointerdown',e=>{if(e.target.closest('#scent16Modal')){AudioGame.boot();AudioGame.start()}},{passive:true});const open=$('#openScent16');if(open){open.setAttribute('aria-label','KOKORO BLOOMを開く');open.addEventListener('click',()=>setTimeout(home,30));const c=open.querySelector('.scent16-home-copy');if(c)c.innerHTML='<small>NEW KOKORO EXPERIENCE</small><strong>KOKORO BLOOM</strong><em id="scent16HomeSummary">ゲームみたいに答えて、自分だけの花を咲かせよう。</em>';const b=$('#scent16HomeCta');if(b)b.textContent='START'}window.addEventListener('unica:firebase-member-restored',async()=>{try{const remote=await window.UNICA_FIREBASE?.loadMindGarden?.();if(remote?.[V]){const local=load();local[V]=remote[V];localStorage.setItem(KEY,JSON.stringify(local))}}catch{}})}
+function install(){installBloomViewportFix();
+  const modal=$('#scent16Modal'), siteBgm=$('#bgm'); let siteBgmWasPlaying=false, bloomOpen=false;
+  const isOpen=()=>!!modal && getComputedStyle(modal).display!=='none' && !modal.hidden && modal.getAttribute('aria-hidden')!=='true';
+  const syncAudioScope=()=>{const now=isOpen();if(now&&!bloomOpen){bloomOpen=true;if(siteBgm){siteBgmWasPlaying=!siteBgm.paused;siteBgm.pause()}if(!document.hidden)AudioGame.resume()}else if(!now&&bloomOpen){bloomOpen=false;AudioGame.stop(true);if(siteBgm&&siteBgmWasPlaying&&!document.hidden)siteBgm.play().catch(()=>{});siteBgmWasPlaying=false}};
+  if(modal)new MutationObserver(syncAudioScope).observe(modal,{attributes:true,attributeFilter:['class','style','hidden','aria-hidden']});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){AudioGame.suspend();if(siteBgm&&!siteBgm.paused)siteBgm.pause()}else if(isOpen()){AudioGame.resume()}else if(siteBgm&&siteBgmWasPlaying){siteBgm.play().catch(()=>{})}});
+  window.addEventListener('pagehide',()=>AudioGame.suspend(),{passive:true});
+  document.addEventListener('pointerdown',e=>{if(e.target.closest('#scent16Modal')){syncAudioScope();AudioGame.boot();AudioGame.start()}},{passive:true});const open=$('#openScent16');if(open){open.setAttribute('aria-label','KOKORO BLOOMを開く');open.addEventListener('click',()=>setTimeout(home,30));const c=open.querySelector('.scent16-home-copy');if(c)c.innerHTML='<small>NEW KOKORO EXPERIENCE</small><strong>KOKORO BLOOM</strong><em id="scent16HomeSummary">ゲームみたいに答えて、自分だけの花を咲かせよう。</em>';const b=$('#scent16HomeCta');if(b)b.textContent='START'}window.addEventListener('unica:firebase-member-restored',async()=>{try{const remote=await window.UNICA_FIREBASE?.loadMindGarden?.();if(remote?.[V]){const local=load();local[V]=remote[V];localStorage.setItem(KEY,JSON.stringify(local))}}catch{}})}
 window.UNICA_MIND_GARDEN={open:home,v2:true};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
 })();
