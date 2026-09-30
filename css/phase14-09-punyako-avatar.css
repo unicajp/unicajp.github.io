@@ -1,0 +1,9 @@
+/* Phase14.09 — ぷにゅかをUNICA WORLD共通アイコンとして使用 */
+.unica-punyako-avatar{position:relative;display:inline-grid;place-items:center;width:34px;height:34px;flex:0 0 34px;border-radius:50%;box-sizing:border-box;background:radial-gradient(circle at 50% 42%,#fff 0,#fff9fb 53%,#efe7f3 100%);border:1px solid rgba(112,80,102,.13);box-shadow:0 3px 10px rgba(70,45,65,.12);vertical-align:middle;overflow:hidden}
+.unica-punyako-avatar.is-tiny{width:25px;height:25px;flex-basis:25px}
+.unica-punyako-avatar img{width:94%;height:94%;object-fit:contain;display:block;filter:drop-shadow(0 2px 2px rgba(70,50,65,.10))}
+.unica-punyako-avatar .upa-fallback{display:none;place-items:center;width:100%;height:100%;font:800 11px/1 system-ui,sans-serif;color:#9a8191}
+.unica-punyako-avatar img[style*="display: none"]+.upa-fallback{display:grid}
+.unica-punyako-avatar.is-empty{background:linear-gradient(145deg,#fff,#f1edf3);color:#9d8a98;font:800 12px/1 system-ui,sans-serif}
+.unica-punyako-avatar.is-tiny.is-empty{font-size:9px}
+.admin-member-avatar .unica-punyako-avatar,.community-post-avatar .unica-punyako-avatar,.rank-avatar .unica-punyako-avatar,.prefecture-member-button .avatar .unica-punyako-avatar{width:100%;height:100%;max-width:42px;max-height:42px}
