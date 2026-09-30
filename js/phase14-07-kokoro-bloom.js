@@ -269,12 +269,56 @@ function playTapSample(volume=.95,rate=1){
     setTimeout(()=>{try{a.pause();a.removeAttribute('src');a.load()}catch(_){}},900);
   }catch(_){}
 }
+
+function softSquish(){
+  const ctx=ensureAudio();if(!ctx)return;
+  const now=ctx.currentTime;
+
+  // やわらかい「ぷにっ」本体。tap.mp3 は使わず、打撃感をなくす。
+  const osc=ctx.createOscillator(),g=ctx.createGain();
+  osc.type='sine';
+  osc.frequency.setValueAtTime(168,now);
+  osc.frequency.exponentialRampToValueAtTime(92,now+.14);
+  g.gain.setValueAtTime(.0001,now);
+  g.gain.linearRampToValueAtTime(Math.min(.34,.12*soundVolume*2.2),now+.012);
+  g.gain.exponentialRampToValueAtTime(.0001,now+.16);
+  osc.connect(g).connect(ctx.destination);
+  osc.start(now);osc.stop(now+.18);
+
+  // 少し遅れて戻る、丸い弾力音。
+  const bounce=ctx.createOscillator(),bg=ctx.createGain();
+  bounce.type='sine';
+  bounce.frequency.setValueAtTime(285,now+.045);
+  bounce.frequency.exponentialRampToValueAtTime(205,now+.13);
+  bg.gain.setValueAtTime(.0001,now+.04);
+  bg.gain.linearRampToValueAtTime(Math.min(.20,.07*soundVolume*2.2),now+.055);
+  bg.gain.exponentialRampToValueAtTime(.0001,now+.15);
+  bounce.connect(bg).connect(ctx.destination);
+  bounce.start(now+.04);bounce.stop(now+.17);
+
+  // ごく短い空気感だけを足す。高域の「バシッ」は出さない。
+  const len=Math.max(1,Math.floor(ctx.sampleRate*.055));
+  const buf=ctx.createBuffer(1,len,ctx.sampleRate),data=buf.getChannelData(0);
+  for(let i=0;i<len;i++){
+    const env=1-i/len;
+    data[i]=(Math.random()*2-1)*env*.28;
+  }
+  const src=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),ng=ctx.createGain();
+  src.buffer=buf;
+  filter.type='lowpass';
+  filter.frequency.value=520;
+  filter.Q.value=.5;
+  ng.gain.setValueAtTime(Math.min(.10,.035*soundVolume*2.0),now);
+  ng.gain.exponentialRampToValueAtTime(.0001,now+.06);
+  src.connect(filter).connect(ng).connect(ctx.destination);
+  src.start(now);src.stop(now+.065);
+}
 const sfx={
   open(){tone(620,.08,'sine',.018);tone(930,.12,'sine',.015,.05)},
   choice(){playTapSample(.62,1.06);tone(540,.065,'sine',.026);tone(720,.09,'triangle',.020,.035)},
   next(){playTapSample(.48,1.12);tone(470,.08,'sine',.020,0,650)},
   back(){playTapSample(.42,.94);tone(420,.09,'triangle',.020,0,280)},
-  squish(){playTapSample(1,.86);noise(.085,.018);tone(145,.12,'sine',.070,0,82);tone(285,.10,'triangle',.055,.055,430);tone(610,.07,'sine',.030,.12,820)},
+  squish(){softSquish()},
   sparkle(){[880,1175,1568].forEach((f,i)=>tone(f,.16,'sine',.018,i*.055))},
   birth(){playTapSample(.92,.72);noise(.65,.026);[392,523,659,784,1047].forEach((f,i)=>tone(f,.42,'sine',.045,i*.09));tone(1318,.65,'sine',.032,.42,1760)},
   evolve(){playTapSample(.86,.78);noise(.45,.022);tone(240,.45,'triangle',.03,0,680);[523,659,784,1047].forEach((f,i)=>tone(f,.28,'sine',.032,.18+i*.07));},
