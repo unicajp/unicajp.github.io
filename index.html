@@ -710,5 +710,74 @@
 })();
 </script>
 <script src="js/phase13-9-2-google-required.js?v=13.9.2"></script>
+
+<style id="phase14-13-support-compact-style">
+.compact-support-bottom{
+  margin-top:14px !important;
+  padding:12px 14px !important;
+  border-radius:18px !important;
+  max-width:100% !important;
+  box-shadow:0 6px 18px rgba(82,60,76,.06) !important;
+}
+.compact-support-bottom small,
+.compact-support-bottom .eyebrow,
+.compact-support-bottom .section-eyebrow{
+  font-size:10px !important;
+  letter-spacing:.10em !important;
+  margin-bottom:4px !important;
+}
+.compact-support-bottom h2,
+.compact-support-bottom h3{
+  font-size:16px !important;
+  line-height:1.25 !important;
+  margin:0 0 6px !important;
+}
+.compact-support-bottom p,
+.compact-support-bottom .support-text,
+.compact-support-bottom .contact-text{
+  font-size:12px !important;
+  line-height:1.6 !important;
+  margin:0 !important;
+}
+.compact-support-bottom a{
+  font-size:12px !important;
+}
+</style>
+<script id="phase14-13-support-compact-script">
+(()=>{
+  'use strict';
+  const findSupport = ()=>{
+    const direct = document.querySelector('.renewal-contact, .support-card, .contact-card, #supportCard, #contactCard');
+    if (direct) return direct;
+    const nodes = [...document.querySelectorAll('section,article,div')];
+    return nodes.find(el=>{
+      if(el.dataset.supportCompactScanned==='1') return false;
+      el.dataset.supportCompactScanned='1';
+      const txt=(el.textContent||'').replace(/\s+/g,' ').trim();
+      if(!txt) return false;
+      return txt.includes('お問い合わせ') || (txt.includes('SUPPORT') && txt.includes('DM')) || txt.includes('不具合・ご要望');
+    }) || null;
+  };
+  const moveSupport = ()=>{
+    const card = findSupport();
+    const stack = document.querySelector('#worldHome .app-home-stack');
+    if (!card || !stack) return false;
+    if (!card.classList.contains('compact-support-bottom')) {
+      card.classList.add('compact-support-bottom');
+    }
+    if (card.parentElement !== stack || stack.lastElementChild !== card) {
+      stack.appendChild(card);
+    }
+    return true;
+  };
+  const run=()=>{
+    moveSupport();
+    [300,800,1500,2500].forEach(ms=>setTimeout(moveSupport,ms));
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run,{once:true});
+  else run();
+})();
+</script>
+
 </body>
 </html>
