@@ -4415,3 +4415,204 @@ body.opened .intro-enter-hint{opacity:0;transition:opacity .2s ease}
 body.opened .door-panel,body.opened .door-line,body.opened .intro-orb,body.opened .intro-label,body.opened .intro-sub{display:none!important}
 @keyframes introHint{0%,100%{opacity:.48}50%{opacity:.92}}
 @media (prefers-reduced-motion:reduce){.intro-door-closed,.intro-door-open,.intro-enter-light{transition-duration:.35s!important}.intro-enter-hint{animation:none}}
+
+/* Phase 14.21 — intro door smaller and centered */
+.intro{
+  background: radial-gradient(circle at 50% 38%, #f7eadf 0%, #ecd8ca 48%, #d7bfae 100%) !important;
+}
+.intro-trigger{
+  background: transparent !important;
+}
+.intro-door{
+  inset: auto !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: min(74vw, 380px) !important;
+  aspect-ratio: 1365 / 2048 !important;
+  height: auto !important;
+  background-size: contain !important;
+  transform: translate(-50%, -47%) scale(1) !important;
+  filter: drop-shadow(0 14px 28px rgba(76, 49, 34, .12));
+}
+.intro-door-closed{
+  opacity: 1;
+  transform: translate(-50%, -47%) scale(1) !important;
+}
+.intro-door-open{
+  opacity: 0;
+  transform: translate(-50%, -47%) scale(1.02) !important;
+}
+.intro-enter-light{
+  left: 50% !important;
+  top: 46% !important;
+  width: min(8vw, 36px) !important;
+  height: min(26vh, 160px) !important;
+  transform: translate(-50%, -50%) scale(.12) !important;
+  box-shadow: 0 0 72px 40px rgba(255,245,250,.88) !important;
+}
+.intro-enter-hint{
+  left: 50% !important;
+  bottom: max(12vh, 86px) !important;
+  transform: translateX(-50%) !important;
+  font-size: 10px !important;
+  letter-spacing: .26em !important;
+  color: rgba(108, 78, 65, .70) !important;
+  text-shadow: 0 2px 10px rgba(255,255,255,.7) !important;
+}
+body.opened .intro-door-closed{
+  opacity: 0 !important;
+  transform: translate(-50%, -47%) scale(1.05) !important;
+  filter: brightness(1.12) drop-shadow(0 16px 30px rgba(76,49,34,.10)) !important;
+}
+body.opened .intro-door-open{
+  opacity: 1 !important;
+  transform: translate(-50%, -47%) scale(1.11) !important;
+  filter: brightness(1.08) drop-shadow(0 18px 36px rgba(76,49,34,.08)) !important;
+}
+body.opened .intro-enter-light{
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(10) !important;
+}
+@media (max-width: 520px){
+  .intro-door{
+    width: min(76vw, 340px) !important;
+    transform: translate(-50%, -46%) scale(1) !important;
+  }
+  .intro-door-closed{
+    transform: translate(-50%, -46%) scale(1) !important;
+  }
+  .intro-door-open{
+    transform: translate(-50%, -46%) scale(1.02) !important;
+  }
+  body.opened .intro-door-closed{
+    transform: translate(-50%, -46%) scale(1.05) !important;
+  }
+  body.opened .intro-door-open{
+    transform: translate(-50%, -46%) scale(1.1) !important;
+  }
+  .intro-enter-hint{
+    bottom: max(10vh, 74px) !important;
+  }
+}
+
+/* Phase 14.22 — align closed/open door positions and prevent open image clipping */
+.intro-door{
+  top: 49% !important;
+}
+.intro-door-closed{
+  width: min(64vw, 330px) !important;
+  left: 50% !important;
+  transform: translate(-50%, -46%) scale(1) !important;
+}
+.intro-door-open{
+  width: min(68vw, 352px) !important;
+  left: 50% !important;
+  transform: translate(-56.2%, -46%) scale(1.01) !important;
+}
+.intro-enter-light{
+  left: 47.2% !important;
+  top: 45.8% !important;
+  width: min(7vw, 34px) !important;
+  height: min(24vh, 150px) !important;
+}
+body.opened .intro-door-closed{
+  transform: translate(-50%, -46%) scale(1.03) !important;
+}
+body.opened .intro-door-open{
+  transform: translate(-56.2%, -46%) scale(1.07) !important;
+}
+body.opened .intro-enter-light{
+  transform: translate(-50%, -50%) scale(9.2) !important;
+}
+@media (max-width: 520px){
+  .intro-door-closed{
+    width: min(66vw, 312px) !important;
+    transform: translate(-50%, -45.5%) scale(1) !important;
+  }
+  .intro-door-open{
+    width: min(70vw, 334px) !important;
+    transform: translate(-56.2%, -45.5%) scale(1.01) !important;
+  }
+  body.opened .intro-door-closed{
+    transform: translate(-50%, -45.5%) scale(1.03) !important;
+  }
+  body.opened .intro-door-open{
+    transform: translate(-56.2%, -45.5%) scale(1.06) !important;
+  }
+  .intro-enter-light{
+    left: 47% !important;
+    top: 45.4% !important;
+  }
+}
+
+
+/* Phase 14.23 — use aligned full-door assets without clipping */
+.intro-door{
+  left:50% !important;
+  top:50% !important;
+  width:min(66vw, 330px) !important;
+  height:auto !important;
+  aspect-ratio:2 / 3 !important;
+  inset:auto !important;
+  background-size:contain !important;
+  background-position:center !important;
+  background-repeat:no-repeat !important;
+}
+.intro-door-closed,
+.intro-door-open{
+  left:50% !important;
+  width:min(66vw, 330px) !important;
+  transform:translate(-50%,-46%) scale(1) !important;
+}
+body.opened .intro-door-closed{
+  transform:translate(-50%,-46%) scale(1.02) !important;
+}
+body.opened .intro-door-open{
+  opacity:1 !important;
+  transform:translate(-50%,-46%) scale(1.05) !important;
+  filter:brightness(1.06) drop-shadow(0 15px 30px rgba(76,49,34,.08)) !important;
+}
+.intro-enter-light{
+  left:50% !important;
+  top:45.5% !important;
+}
+@media (max-width:520px){
+  .intro-door,
+  .intro-door-closed,
+  .intro-door-open{
+    width:min(68vw, 318px) !important;
+  }
+  .intro-door-closed,
+  .intro-door-open{
+    transform:translate(-50%,-45.5%) scale(1) !important;
+  }
+  body.opened .intro-door-closed{
+    transform:translate(-50%,-45.5%) scale(1.02) !important;
+  }
+  body.opened .intro-door-open{
+    transform:translate(-50%,-45.5%) scale(1.045) !important;
+  }
+}
+
+
+/* Phase 14.24 — zoom the door out a little more */
+.intro-door{
+  width:min(57vw, 286px) !important;
+}
+.intro-door-closed,
+.intro-door-open{
+  width:min(57vw, 286px) !important;
+}
+body.opened .intro-door-open{
+  transform:translate(-50%,-46%) scale(1.03) !important;
+}
+@media (max-width:520px){
+  .intro-door,
+  .intro-door-closed,
+  .intro-door-open{
+    width:min(59vw, 274px) !important;
+  }
+  body.opened .intro-door-open{
+    transform:translate(-50%,-45.5%) scale(1.028) !important;
+  }
+}
