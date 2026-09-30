@@ -432,7 +432,7 @@
     const noticeStrong = document.querySelector('.register-notice strong');
     const noticeText = document.querySelector('.register-notice p');
     if (noticeStrong) noticeStrong.textContent = '大切なお知らせ';
-    if (noticeText) noticeText.innerHTML = 'ニックネームは登録後に変更できません。<br>花のアイコンは誕生日とぷにゃこ診断から自動で育ちます。';
+    if (noticeText) noticeText.innerHTML = 'ニックネームは登録後に変更できません。<br>ぷにゃこ診断で誕生したぷにゅかが、あなたのアイコンとして一緒に育っていきます。';
     registerSkip.textContent = '今は登録せず、公式サイトを見る';
     pendingRegistration = null;
     registerError.textContent = '';

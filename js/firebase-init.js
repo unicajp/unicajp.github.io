@@ -312,11 +312,15 @@ async function saveScentDiagnosis(result) {
   const member = localMember();
   if (!uid || !member || !result) throw new Error('うにメン情報を確認できません。');
   const payload = {
+    schema: String(result.schema || 'punyako-v4'),
     typeId: String(result.typeId || ''),
+    typeImage: String(result.typeImage || ''),
     flower: String(result.flower || ''),
     scentName: String(result.scentName || ''),
     flowerMeaning: String(result.flowerMeaning || ''),
     stats: result.stats || {},
+    hidden: result.hidden || {},
+    route: result.route || {},
     diagnosedDate: String(result.diagnosedDate || ''),
     message: String(result.message || '')
   };
@@ -328,6 +332,49 @@ async function saveScentDiagnosis(result) {
   localStorage.setItem(MEMBER_KEY, JSON.stringify(updated));
   window.dispatchEvent(new CustomEvent('unica:scent-diagnosis-saved', { detail: payload }));
   return payload;
+}
+
+async function savePunyakoJourney(journey) {
+  await authReady;
+  const member = localMember();
+  if (!uid || !member || !journey) throw new Error('うにメン情報を確認できません。');
+  const current = member.punyakoJourney || {};
+  const payload = {
+    ...current,
+    ...journey,
+    seedComplete: Boolean(journey.seedComplete ?? current.seedComplete),
+    equippedId: String(journey.equippedId ?? current.equippedId ?? ''),
+    equippedImage: String(journey.equippedImage ?? current.equippedImage ?? ''),
+    equippedName: String(journey.equippedName ?? current.equippedName ?? ''),
+    currentStage: String(journey.currentStage ?? current.currentStage ?? ''),
+    completedQuestions: Math.max(0, Number(journey.completedQuestions ?? current.completedQuestions ?? 0)),
+    updatedAtMs: Date.now()
+  };
+  await setDoc(doc(db, 'users', uid), {
+    punyakoJourney: payload,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+  const updated = { ...member, punyakoJourney: payload };
+  localStorage.setItem(MEMBER_KEY, JSON.stringify(updated));
+  localStorage.setItem('unicaPunyakoJourneyV4', JSON.stringify(payload));
+  window.dispatchEvent(new CustomEvent('unica:punyako-avatar-updated', { detail: payload }));
+  return payload;
+}
+
+async function loadPunyakoMembers() {
+  await authReady;
+  const snap = await getDocs(collection(db, 'users'));
+  return snap.docs.map(row => {
+    const data = row.data();
+    return {
+      uid: row.id,
+      name: String(data.name || 'うにメン'),
+      number: Number(data.number || 0),
+      avatar: String(data.avatar || '🌸'),
+      punyakoJourney: data.punyakoJourney || null,
+      scentDiagnosis: data.scentDiagnosis || null
+    };
+  });
 }
 
 async function saveMindGarden(data) {
@@ -410,6 +457,8 @@ window.UNICA_FIREBASE = {
   submitMilkMatchLeaderboard,
   loadMilkMatchLeaderboard,
   saveScentDiagnosis,
+  savePunyakoJourney,
+  loadPunyakoMembers,
   loadScentMembers,
   loadBloomBadgeMembers,
   saveMindGarden,

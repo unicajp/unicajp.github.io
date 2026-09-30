@@ -1,165 +1,396 @@
-(()=>{'use strict';
+(()=>{
+'use strict';
 const $=(s,r=document)=>r.querySelector(s);
 const modal=$('#scent16Modal'),screen=$('#scent16Screen'),title=$('#scent16Title');
 if(!modal||!screen)return;
+
 const MEMBER_KEY='unicaWorldMemberV4';
-const PROGRESS_KEY='unicaPunyakoDiagnosisV3Progress';
-const RESULT_KEY='unicaPunyakoDiagnosisV3Result';
-const HISTORY_KEY='unicaPunyakoDiagnosisV3History';
-const ACTIVE_BY_TYPE_KEY='unicaPunyakoDiagnosisV3ActiveProfiles';
+const PROGRESS_KEY='unicaPunyakoDiagnosisV4Progress';
+const RESULT_KEY='unicaPunyakoDiagnosisV4Result';
+const HISTORY_KEY='unicaPunyakoDiagnosisV4History';
+const ACTIVE_BY_TYPE_KEY='unicaPunyakoDiagnosisV4ActiveProfiles';
+const JOURNEY_KEY='unicaPunyakoJourneyV4';
+const SOUND_KEY='unicaPunyakoSoundV1';
+const SOUND_VOLUME_KEY='unicaPunyakoSoundVolumeV1';
+const ASSET='assets/punyuka/';
 const AXES=['kindness','action','curiosity','sensitivity','flexibility'];
 const AXIS_LABEL={kindness:'思いやり',action:'行動力',curiosity:'好奇心',sensitivity:'感受性',flexibility:'しなやかさ'};
+const HIDDEN=['socialEnergy','spaceNeed','decisionSpeed','expressionLevel','recoveryStyle','noveltyNeed'];
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const read=(k,f=null)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??f}catch{return f}};
 const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const member=()=>read(MEMBER_KEY,null);
 const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo'}).format(new Date());
-const ASSET='assets/punyuka/';
+
+const FORMS={
+  stage1_base:{id:'stage1_base',name:'ぷにゅか',image:ASSET+'stage1_base.webp',stage:'stage1'},
+  stage2_ear:{id:'stage2_ear',name:'みみぷにゅか',image:ASSET+'stage2_ear.webp',stage:'stage2'},
+  stage2_wing:{id:'stage2_wing',name:'はねぷにゅか',image:ASSET+'stage2_wing.webp',stage:'stage2'},
+  stage3_01_fluffy_ear:{id:'stage3_01_fluffy_ear',name:'ふわみみぷにゅか',image:ASSET+'stage3_01_fluffy_ear.webp',stage:'stage3'},
+  stage3_02_round_ear:{id:'stage3_02_round_ear',name:'まるみみぷにゅか',image:ASSET+'stage3_02_round_ear.webp',stage:'stage3'},
+  stage3_03_kira_wing:{id:'stage3_03_kira_wing',name:'キラはねぷにゅか',image:ASSET+'stage3_03_kira_wing.webp',stage:'stage3'},
+  stage3_04_gira_wing:{id:'stage3_04_gira_wing',name:'ギラはねぷにゅか',image:ASSET+'stage3_04_gira_wing.webp',stage:'stage3'}
+};
 
 const TYPES=[
-{id:'punyuka_01',name:'気配りウサぷにゅか',image:ASSET+'final/01_flower_rabbit.webp',group:'fluffy',pair:'fluffy_social',side:'left',icon:'🌸',core:'小さな変化によく気づき、さりげなく人を助けられるタイプ。',strength:'相手が言葉にする前の困りごとにも気づきやすく、安心できる空気を作れます。',recharge:'自分のためだけに何もしない時間を作ると、やさしさが戻ってきます。',advice:'全部を引き受けず、「今日はここまで」と決めることも立派な気配りです。'},
-{id:'punyuka_02',name:'陽キャイヌぷにゅか',image:ASSET+'final/02_sun_dog.webp',group:'fluffy',pair:'fluffy_social',side:'right',icon:'☀️',core:'人と一緒にいることでエネルギーが広がり、場を明るくできるタイプ。',strength:'声をかける速さと親しみやすさで、初対面の空気までやわらかくできます。',recharge:'楽しい予定のあとに少しだけ一人時間を入れると、疲れをためにくくなります。',advice:'元気に見せなくても大丈夫。静かな自分も同じくらい大切に。'},
-{id:'punyuka_03',name:'好奇心ネコぷにゅか',image:ASSET+'final/03_color_cat.webp',group:'fluffy',pair:'fluffy_mind',side:'left',icon:'🎨',core:'「それ何？」から世界を広げ、自分の感覚で面白い方向へ進むタイプ。',strength:'新しいものを見つける速さと、好きなことへ夢中になれる集中力があります。',recharge:'飽きたときは無理に続けず、別の刺激を少し入れると再び集中できます。',advice:'興味が移るのは弱点ではなく才能。大事なものだけ戻れる印を残しておこう。'},
-{id:'punyuka_04',name:'洞察キツネぷにゅか',image:ASSET+'final/04_moon_fox.webp',group:'fluffy',pair:'fluffy_mind',side:'right',icon:'🌙',core:'表面だけで決めず、静かに観察して奥にある意味を見つけるタイプ。',strength:'人の言葉や状況の細かな違和感を拾い、本質を考える力があります。',recharge:'情報を遮断して、考えを一人で整理する時間が大きな回復になります。',advice:'考えがまとまってから話したいタイプ。急かされる場では「少し考えたい」と伝えてOK。'},
-{id:'punyuka_05',name:'面倒見クマぷにゅか',image:ASSET+'final/05_guard_bear.webp',group:'round',pair:'round_real',side:'left',icon:'🛡️',core:'頼られると力が出て、みんなが安心して動ける土台を作るタイプ。',strength:'責任感があり、困っている人を放っておかず最後まで支えられます。',recharge:'自分が誰にも頼らなくていい時間を確保すると、気持ちが軽くなります。',advice:'「任せる」も面倒見のひとつ。全部自分で背負わない方が長く支えられます。'},
-{id:'punyuka_06',name:'楽天パンダぷにゅか',image:ASSET+'final/06_lucky_panda.webp',group:'round',pair:'round_real',side:'right',icon:'🍀',core:'嫌なことがあっても次の楽しみを見つけ、気持ちを切り替えられるタイプ。',strength:'失敗を必要以上に引きずらず、周囲にも「まあ何とかなる」と余白を作れます。',recharge:'好きな食べ物や小さなご褒美など、すぐ楽しめるものが回復のスイッチ。',advice:'前向きさで飛ばしすぎず、たまには嫌だった気持ちにも名前をつけてあげよう。'},
-{id:'punyuka_07',name:'夢見ヒツジぷにゅか',image:ASSET+'final/07_dream_sheep.webp',group:'round',pair:'round_inner',side:'left',icon:'☁️',core:'頭の中に豊かな景色があり、想像することで心を育てるタイプ。',strength:'まだ形のない未来や物語を思い描き、人とは違う世界を作れます。',recharge:'音楽・物語・眠る前の空想など、現実から少し離れる時間が大切です。',advice:'夢は小さく現実に置くと育ちます。思いついたら一行だけでもメモしてみよう。'},
-{id:'punyuka_08',name:'探究コアラぷにゅか',image:ASSET+'final/08_stargazer_koala.webp',group:'round',pair:'round_inner',side:'right',icon:'🔭',core:'気になったことを深く調べ、納得するまで知りたくなるタイプ。',strength:'一つのテーマを丁寧に掘り下げ、知識を自分のものにする力があります。',recharge:'好きなことを誰にも邪魔されず調べる時間が、そのまま休息になります。',advice:'全部わかってから動こうとしなくても大丈夫。途中の仮説で一度試すと発見が増えます。'},
-{id:'punyuka_09',name:'癒しテンシぷにゅか',image:ASSET+'final/09_healing_angel.webp',group:'kira',pair:'kira_soft',side:'left',icon:'🪽',core:'相手を否定せず受け止め、そばにいるだけで安心を作れるタイプ。',strength:'聞く力と共感力が高く、誰かが弱っているときに自然と寄り添えます。',recharge:'人の気持ちを受け取りすぎた日は、一人になって心を空っぽにする時間を。',advice:'優しさは無限ではありません。自分を守る距離を取ることも優しさです。'},
-{id:'punyuka_10',name:'冒険テンマぷにゅか',image:ASSET+'final/10_rainbow_pegasus.webp',group:'kira',pair:'kira_spark',side:'left',icon:'🌈',core:'まだ見たことのない場所や経験に、期待しながら飛び込めるタイプ。',strength:'未来を明るく想像し、最初の一歩を踏み出す勇気があります。',recharge:'同じ景色が続くと疲れやすいので、小さな新体験が元気の源になります。',advice:'遠くへ行くだけが冒険ではありません。いつもの道を一本変えるだけでも十分。'},
-{id:'punyuka_11',name:'柔軟チョウぷにゅか',image:ASSET+'final/11_flower_butterfly.webp',group:'kira',pair:'kira_soft',side:'right',icon:'🦋',core:'状況に合わせて形を変え、無理なく周囲になじむことが得意なタイプ。',strength:'予定外のことが起きても、その場に合うやり方へ自然に切り替えられます。',recharge:'変化が多かった日は、いつもの場所・いつもの習慣へ戻ると整います。',advice:'合わせられるからこそ、自分が本当はどうしたいかを時々確認してみよう。'},
-{id:'punyuka_12',name:'閃ピクシーぷにゅか',image:ASSET+'final/12_inspiration_fairy.webp',group:'kira',pair:'kira_spark',side:'right',icon:'✨',core:'突然つながる「ひらめき」を楽しみ、発想で世界を面白くするタイプ。',strength:'離れたもの同士を結びつけ、他の人が思いつかないアイデアを生み出せます。',recharge:'ぼんやりする時間や遊びが、次のアイデアを連れてきます。',advice:'ひらめきを全部完成させなくてOK。まずは一番わくわくする一つだけ形に。'},
-{id:'punyuka_13',name:'猛進ドラゴぷにゅか',image:ASSET+'final/13_thunder_dragon.webp',group:'gira',pair:'gira_active',side:'left',icon:'⚡',core:'決めた瞬間から一気に動き、壁があっても突破しようとするタイプ。',strength:'迷いを行動で振り切る強さがあり、停滞した場面を動かせます。',recharge:'全力で走ったあとは、何もしない時間を意識して入れると次の力が戻ります。',advice:'速さは武器。大事な場面だけ、一度周りを見る一拍を入れるとさらに強くなります。'},
-{id:'punyuka_14',name:'悪戯デビルぷにゅか',image:ASSET+'final/14_trick_devil.webp',group:'gira',pair:'gira_active',side:'right',icon:'😈',core:'頭の回転と遊び心で、正面突破ではない面白い道を見つけるタイプ。',strength:'空気を読みながら機転を利かせ、退屈な状況にも楽しさを足せます。',recharge:'自由にふざけたり、くだらないことを楽しめる相手との時間が回復になります。',advice:'冗談が通じない場では少しだけ説明を足すと、あなたの魅力が誤解されにくくなります。'},
-{id:'punyuka_15',name:'冷静ペンギぷにゅか',image:ASSET+'final/15_ice_penguin.webp',group:'gira',pair:'gira_steady',side:'left',icon:'❄️',core:'感情が大きく動く場面でも、一度整理してから判断できるタイプ。',strength:'焦りに巻き込まれにくく、周囲が混乱しているときほど落ち着いて考えられます。',recharge:'静かで予測できる時間を過ごすと、頭の中がきれいに整います。',advice:'冷静さの奥にある気持ちも、ときどき言葉にすると周りに伝わりやすくなります。'},
-{id:'punyuka_16',name:'暁の不死鳥ぷにゅか',image:ASSET+'final/16_dawn_phoenix.webp',group:'gira',pair:'gira_steady',side:'right',icon:'🔥',core:'うまくいかない日があっても、時間をかけて何度でも立ち上がれるタイプ。',strength:'失敗や変化を自分の物語に変え、以前より強い形で戻ってくる粘りがあります。',recharge:'完全に止まる時間を怖がらないこと。休んでいる間にも次の朝は近づいています。',advice:'立ち直る速さを競わなくて大丈夫。あなたは「戻ってこられること」そのものが強さです。'}
+{id:'punyuka_01',name:'気配りウサぷにゅか',image:ASSET+'final/01_flower_rabbit.webp',group:'fluffy',icon:'🌸',fx:'flower',aff:[90,52,48,78,62],core:'小さな変化によく気づき、さりげなく人を助けられるタイプ。',strength:'相手が言葉にする前の困りごとにも気づきやすく、安心できる空気を作れます。',recharge:'自分のためだけに何もしない時間を作ると、やさしさが戻ってきます。',advice:'全部を引き受けず、「今日はここまで」と決めることも立派な気配りです。'},
+{id:'punyuka_02',name:'陽キャイヌぷにゅか',image:ASSET+'final/02_sun_dog.webp',group:'fluffy',icon:'☀️',fx:'sun',aff:[68,88,58,52,76],core:'人と一緒にいることでエネルギーが広がり、場を明るくできるタイプ。',strength:'声をかける速さと親しみやすさで、初対面の空気までやわらかくできます。',recharge:'楽しい予定のあとに少しだけ一人時間を入れると、疲れをためにくくなります。',advice:'元気に見せなくても大丈夫。静かな自分も同じくらい大切に。'},
+{id:'punyuka_03',name:'好奇心ネコぷにゅか',image:ASSET+'final/03_color_cat.webp',group:'fluffy',icon:'🎨',fx:'color',aff:[48,70,92,62,78],core:'「それ何？」から世界を広げ、自分の感覚で面白い方向へ進むタイプ。',strength:'新しいものを見つける速さと、好きなことへ夢中になれる集中力があります。',recharge:'飽きたときは無理に続けず、別の刺激を少し入れると再び集中できます。',advice:'興味が移るのは弱点ではなく才能。大事なものだけ戻れる印を残しておこう。'},
+{id:'punyuka_04',name:'洞察キツネぷにゅか',image:ASSET+'final/04_moon_fox.webp',group:'fluffy',icon:'🌙',fx:'moon',aff:[52,38,78,92,52],core:'表面だけで決めず、静かに観察して奥にある意味を見つけるタイプ。',strength:'人の言葉や状況の細かな違和感を拾い、本質を考える力があります。',recharge:'情報を遮断して、考えを一人で整理する時間が大きな回復になります。',advice:'考えがまとまってから話したいタイプ。急かされる場では「少し考えたい」と伝えてOK。'},
+{id:'punyuka_05',name:'面倒見クマぷにゅか',image:ASSET+'final/05_guard_bear.webp',group:'round',icon:'🛡️',fx:'guard',aff:[88,68,42,55,58],core:'頼られると力が出て、みんなが安心して動ける土台を作るタイプ。',strength:'責任感があり、困っている人を放っておかず最後まで支えられます。',recharge:'自分が誰にも頼らなくていい時間を確保すると、気持ちが軽くなります。',advice:'「任せる」も面倒見のひとつ。全部自分で背負わない方が長く支えられます。'},
+{id:'punyuka_06',name:'楽天パンダぷにゅか',image:ASSET+'final/06_lucky_panda.webp',group:'round',icon:'🍀',fx:'clover',aff:[65,58,48,42,92],core:'嫌なことがあっても次の楽しみを見つけ、気持ちを切り替えられるタイプ。',strength:'失敗を必要以上に引きずらず、周囲にも「まあ何とかなる」と余白を作れます。',recharge:'好きな食べ物や小さなご褒美など、すぐ楽しめるものが回復のスイッチ。',advice:'前向きさで飛ばしすぎず、たまには嫌だった気持ちにも名前をつけてあげよう。'},
+{id:'punyuka_07',name:'夢見ヒツジぷにゅか',image:ASSET+'final/07_dream_sheep.webp',group:'round',icon:'☁️',fx:'dream',aff:[58,34,66,94,56],core:'頭の中に豊かな景色があり、想像することで心を育てるタイプ。',strength:'まだ形のない未来や物語を思い描き、人とは違う世界を作れます。',recharge:'音楽・物語・眠る前の空想など、現実から少し離れる時間が大切です。',advice:'夢は小さく現実に置くと育ちます。思いついたら一行だけでもメモしてみよう。'},
+{id:'punyuka_08',name:'探究コアラぷにゅか',image:ASSET+'final/08_stargazer_koala.webp',group:'round',icon:'🔭',fx:'star',aff:[50,42,95,70,48],core:'気になったことを深く調べ、納得するまで知りたくなるタイプ。',strength:'一つのテーマを丁寧に掘り下げ、知識を自分のものにする力があります。',recharge:'好きなことを誰にも邪魔されず調べる時間が、そのまま休息になります。',advice:'全部わかってから動こうとしなくても大丈夫。途中の仮説で一度試すと発見が増えます。'},
+{id:'punyuka_09',name:'癒しテンシぷにゅか',image:ASSET+'final/09_healing_angel.webp',group:'kira',icon:'🪽',fx:'angel',aff:[96,42,40,84,74],core:'相手を否定せず受け止め、そばにいるだけで安心を作れるタイプ。',strength:'聞く力と共感力が高く、誰かが弱っているときに自然と寄り添えます。',recharge:'人の気持ちを受け取りすぎた日は、一人になって心を空っぽにする時間を。',advice:'優しさは無限ではありません。自分を守る距離を取ることも優しさです。'},
+{id:'punyuka_10',name:'冒険テンマぷにゅか',image:ASSET+'final/10_rainbow_pegasus.webp',group:'kira',icon:'🌈',fx:'rainbow',aff:[55,92,86,55,82],core:'まだ見たことのない場所や経験に、期待しながら飛び込めるタイプ。',strength:'未来を明るく想像し、最初の一歩を踏み出す勇気があります。',recharge:'同じ景色が続くと疲れやすいので、小さな新体験が元気の源になります。',advice:'遠くへ行くだけが冒険ではありません。いつもの道を一本変えるだけでも十分。'},
+{id:'punyuka_11',name:'柔軟チョウぷにゅか',image:ASSET+'final/11_flower_butterfly.webp',group:'kira',icon:'🦋',fx:'butterfly',aff:[68,52,58,65,96],core:'状況に合わせて形を変え、無理なく周囲になじむことが得意なタイプ。',strength:'予定外のことが起きても、その場に合うやり方へ自然に切り替えられます。',recharge:'変化が多かった日は、いつもの場所・いつもの習慣へ戻ると整います。',advice:'合わせられるからこそ、自分が本当はどうしたいかを時々確認してみよう。'},
+{id:'punyuka_12',name:'閃ピクシーぷにゅか',image:ASSET+'final/12_inspiration_fairy.webp',group:'kira',icon:'✨',fx:'pixie',aff:[52,64,92,84,78],core:'突然つながる「ひらめき」を楽しみ、発想で世界を面白くするタイプ。',strength:'離れたもの同士を結びつけ、他の人が思いつかないアイデアを生み出せます。',recharge:'ぼんやりする時間や遊びが、次のアイデアを連れてきます。',advice:'ひらめきを全部完成させなくてOK。まずは一番わくわくする一つだけ形に。'},
+{id:'punyuka_13',name:'猛進ドラゴぷにゅか',image:ASSET+'final/13_thunder_dragon.webp',group:'gira',icon:'⚡',fx:'thunder',aff:[42,98,62,40,45],core:'決めた瞬間から一気に動き、壁があっても突破しようとするタイプ。',strength:'迷いを行動で振り切る強さがあり、停滞した場面を動かせます。',recharge:'全力で走ったあとは、何もしない時間を意識して入れると次の力が戻ります。',advice:'速さは武器。大事な場面だけ、一度周りを見る一拍を入れるとさらに強くなります。'},
+{id:'punyuka_14',name:'悪戯デビルぷにゅか',image:ASSET+'final/14_trick_devil.webp',group:'gira',icon:'😈',fx:'devil',aff:[45,76,88,55,86],core:'頭の回転と遊び心で、正面突破ではない面白い道を見つけるタイプ。',strength:'空気を読みながら機転を利かせ、退屈な状況にも楽しさを足せます。',recharge:'自由にふざけたり、くだらないことを楽しめる相手との時間が回復になります。',advice:'冗談が通じない場では少しだけ説明を足すと、あなたの魅力が誤解されにくくなります。'},
+{id:'punyuka_15',name:'冷静ペンギぷにゅか',image:ASSET+'final/15_ice_penguin.webp',group:'gira',icon:'❄️',fx:'ice',aff:[48,48,72,42,70],core:'感情が大きく動く場面でも、一度整理してから判断できるタイプ。',strength:'焦りに巻き込まれにくく、周囲が混乱しているときほど落ち着いて考えられます。',recharge:'静かで予測できる時間を過ごすと、頭の中がきれいに整います。',advice:'冷静さの奥にある気持ちも、ときどき言葉にすると周りに伝わりやすくなります。'},
+{id:'punyuka_16',name:'暁の不死鳥ぷにゅか',image:ASSET+'final/16_dawn_phoenix.webp',group:'gira',icon:'🔥',fx:'phoenix',aff:[60,78,54,72,90],core:'うまくいかない日があっても、時間をかけて何度でも立ち上がれるタイプ。',strength:'失敗や変化を自分の物語に変え、以前より強い形で戻ってくる粘りがあります。',recharge:'完全に止まる時間を怖がらないこと。休んでいる間にも次の朝は近づいています。',advice:'立ち直る速さを競わなくて大丈夫。あなたは「戻ってこられること」そのものが強さです。'}
 ];
 const TYPE_MAP=Object.fromEntries(TYPES.map(t=>[t.id,t]));
+const GROUP_IDS={fluffy:['punyuka_01','punyuka_02','punyuka_03','punyuka_04'],round:['punyuka_05','punyuka_06','punyuka_07','punyuka_08'],kira:['punyuka_09','punyuka_10','punyuka_11','punyuka_12'],gira:['punyuka_13','punyuka_14','punyuka_15','punyuka_16']};
 
-const q=(text,a,b)=>({text,options:[a,b]});
-const o=(label,route,stats={})=>({label,route,stats});
-const COMMON=[
-q('霧の森で、遠くから小さな声が聞こえました。最初にするなら？',o('声のする方へ歩いていく','ear',{kindness:3,curiosity:1}),o('高い場所から森全体を見渡す','wing',{action:2,curiosity:2})),
-q('不思議な扉の前に、二つの鍵があります。惹かれるのは？',o('誰かが残した、あたたかい鍵','ear',{kindness:2,sensitivity:2}),o('まだ誰も使っていない、光る鍵','wing',{action:2,curiosity:2})),
-q('旅の途中で夜になります。落ち着く場所は？',o('仲間の気配がする小さな宿','ear',{kindness:2,flexibility:1}),o('星がよく見える丘の上','wing',{sensitivity:2,curiosity:1})),
-q('魔法をひとつだけ使えるなら？',o('誰かの気持ちが少し軽くなる魔法','ear',{kindness:3,sensitivity:1}),o('行ったことのない場所へ飛べる魔法','wing',{action:3,curiosity:1})),
-q('地図にない道を見つけました。どうする？',o('近くの人に、この道を知っているか聞く','ear',{kindness:1,flexibility:2}),o('少しだけ先へ進んで確かめる','wing',{action:3,curiosity:2}))
+const opt=(label,{stats={},hidden={},stage2={},stage3={},finalId=null}={})=>({label,stats,hidden,stage2,stage3,finalId});
+const q=(id,text,options,meta={})=>({id,text,options,meta});
+
+const BIRTH=[
+q('birth1','森を歩いていると、小さな光の生き物が木の枝に引っかかっています。どうする？',[
+  opt('まず助けてあげる',{stats:{kindness:3,action:1},hidden:{expressionLevel:1},stage2:{ear:.8}}),
+  opt('少し離れて、どうして引っかかったのか見る',{stats:{curiosity:2,sensitivity:2},hidden:{decisionSpeed:-1,spaceNeed:1},stage2:{ear:.3,wing:.2}}),
+  opt('光が飛んできた方向も気になる',{stats:{curiosity:3,action:1},hidden:{noveltyNeed:2},stage2:{wing:.8}})
+]),
+q('birth2','誰もいない古い塔で、壁の向こうから「コンコン」と音がします。',[
+  opt('とりあえずノックを返す',{stats:{action:2,flexibility:1},hidden:{socialEnergy:1,decisionSpeed:1},stage2:{wing:.5,ear:.2}}),
+  opt('壁の模様や音の間隔を調べる',{stats:{curiosity:3,sensitivity:1},hidden:{spaceNeed:1},stage2:{ear:.3,wing:.3}}),
+  opt('入口を覚えておいて、いったん先へ進む',{stats:{flexibility:2,sensitivity:1},hidden:{decisionSpeed:-1,recoveryStyle:1},stage2:{ear:.5}})
+]),
+q('birth3','突然の雨で、持っていた地図の半分が読めなくなりました。',[
+  opt('分かるところまで進んでみる',{stats:{action:3,curiosity:1},hidden:{decisionSpeed:2,noveltyNeed:1},stage2:{wing:.8}}),
+  opt('いったん雨宿りして、残った地図を整理する',{stats:{sensitivity:1,flexibility:1},hidden:{spaceNeed:1,decisionSpeed:-2},stage2:{ear:.5}}),
+  opt('近くの生き物に道を聞いてみる',{stats:{kindness:1,flexibility:3},hidden:{socialEnergy:2,expressionLevel:1},stage2:{ear:.6,wing:.2}})
+]),
+q('birth4','不思議な町のお祭りで、1時間だけ自由時間ができました。どこへ行く？',[
+  opt('にぎやかな広場',{stats:{action:2,kindness:1},hidden:{socialEnergy:3,expressionLevel:2},stage2:{ear:.4,wing:.4}}),
+  opt('細い路地の奥にある謎のお店',{stats:{curiosity:3,action:1},hidden:{noveltyNeed:3},stage2:{wing:.7}}),
+  opt('少し離れた丘から町全体を眺める',{stats:{sensitivity:3,curiosity:1},hidden:{spaceNeed:2},stage2:{ear:.7}})
+]),
+q('birth5','泉の中から声がします。「ひとつだけ、見たいものを映してあげる」何を見る？',[
+  opt('大切な人が笑っているところ',{stats:{kindness:3,sensitivity:1},hidden:{socialEnergy:1},stage2:{ear:.9}}),
+  opt('まだ誰も知らない場所',{stats:{curiosity:3,action:1},hidden:{noveltyNeed:3},stage2:{wing:.9}}),
+  opt('少し先の自分',{stats:{sensitivity:2,flexibility:1},hidden:{recoveryStyle:1},stage2:{ear:.2,wing:.4}})
+])
 ];
-const EAR=[
-q('森の中に二つの休憩場所。どちらを選ぶ？',o('風や匂いを感じられる、ふわふわの草原','a',{sensitivity:2,flexibility:1}),o('大きな木に守られた、落ち着く木陰','b',{kindness:2,flexibility:-1})),
-q('誰かから相談を受けたとき、近いのは？',o('話しながら一緒に気持ちを探す','a',{kindness:2,sensitivity:2}),o('最後まで聞いて、必要なところを支える','b',{kindness:3,action:1})),
-q('休日に急に予定が空きました。',o('気になる場所へふらっと出かける','a',{curiosity:3,flexibility:2}),o('好きなことをゆっくり深める','b',{curiosity:2,sensitivity:1})),
-q('小さな村のお祭りを手伝うなら？',o('人と話しながら、あちこち動く係','a',{action:2,kindness:1}),o('必要なものを整えて支える係','b',{kindness:2,action:1})),
-q('宝箱を見つけたら、まず気になるのは？',o('中に何が入っているのか','a',{curiosity:3}),o('誰がここに置いたのか','b',{curiosity:2,sensitivity:2}))
+
+const STAGE2_CORE=[
+q('s2_1','旅の途中、小さな村で仲良くなった子に「もう少しいて」と言われました。',[
+  opt('もう少し一緒にいる',{stats:{kindness:2,sensitivity:1},hidden:{socialEnergy:1},stage2:{ear:2.5}}),
+  opt('また会う約束をして、まだ知らない場所へ進む',{stats:{action:2,curiosity:1},hidden:{noveltyNeed:2},stage2:{wing:2.5}})
+]),
+q('s2_2','魔法使いが、どちらか一つの部屋をくれるそうです。',[
+  opt('暖炉と大きなソファのある小さな部屋',{stats:{kindness:1,sensitivity:2},hidden:{spaceNeed:1},stage2:{ear:2.5}}),
+  opt('空まで見渡せる高い塔の部屋',{stats:{curiosity:2,action:1},hidden:{noveltyNeed:2},stage2:{wing:2.5}})
+]),
+q('s2_3','夜空に突然、知らない島へ続く光の橋が現れました。',[
+  opt('まず町の人に、あの橋を知っているか聞く',{stats:{kindness:1,curiosity:1},hidden:{socialEnergy:1,decisionSpeed:-1},stage2:{ear:2.5}}),
+  opt('消える前に渡ってみる',{stats:{action:3,curiosity:1},hidden:{decisionSpeed:2,noveltyNeed:2},stage2:{wing:2.5}})
+])
 ];
-const WING=[
-q('空に浮かぶ島へ着きました。惹かれる光は？',o('やわらかく揺れる、虹色の光','a',{sensitivity:3,flexibility:2}),o('遠くまで照らす、強い稲妻の光','b',{action:3,curiosity:1})),
-q('困っている仲間を見つけました。',o('まず安心できるようそばに行く','a',{kindness:3,sensitivity:1}),o('すぐ原因を探して動き出す','b',{action:3,curiosity:1})),
-q('知らない世界へ行くなら？',o('景色や出会いを楽しみながら進む','a',{flexibility:2,sensitivity:2}),o('目標を決めて一気にたどり着く','b',{action:3,flexibility:-1})),
-q('突然、予定が全部変わりました。',o('その場で面白い方へ切り替える','a',{flexibility:3,curiosity:1}),o('まず状況を整理して次の手を決める','b',{action:2,flexibility:1})),
-q('あなたの翼が光るのはどんな瞬間？',o('誰かや何かと心がつながったとき','a',{kindness:2,sensitivity:2}),o('難しい壁を越えようとしたとき','b',{action:3}))
+const STAGE2_TIE=[
+q('s2_tie_1','一日だけ魔法が使えます。どちらを選ぶ？',[
+  opt('誰かの本当の気持ちが少し分かる魔法',{stats:{kindness:2,sensitivity:2},hidden:{expressionLevel:-1},stage2:{ear:3}}),
+  opt('どこへでも飛んでいける魔法',{stats:{action:2,curiosity:2},hidden:{noveltyNeed:2},stage2:{wing:3}})
+]),
+q('s2_tie_2','旅のお守りを一つだけ選びます。',[
+  opt('誰かが自分を想うと温かくなる石',{stats:{kindness:2,sensitivity:1},hidden:{socialEnergy:1},stage2:{ear:3}}),
+  opt('まだ見ぬ場所が近づくと光る羽',{stats:{curiosity:2,action:1},hidden:{noveltyNeed:2},stage2:{wing:3}})
+])
 ];
-const PAIR_Q={
+const STAGE2_FUN=[
+q('s2_fun_1','しゃべる宝箱が言いました。「開けたければ、私を笑わせろ！」',[
+  opt('全力で変なことをする',{stats:{action:2,flexibility:2},hidden:{expressionLevel:3,socialEnergy:1},stage2:{wing:.5}}),
+  opt('宝箱の好みを聞き出す',{stats:{kindness:1,curiosity:2},hidden:{socialEnergy:1},stage2:{ear:.5}}),
+  opt('そもそも鍵穴を探す',{stats:{curiosity:3},hidden:{decisionSpeed:-1},stage2:{ear:.2,wing:.2}})
+]),
+q('s2_fun_2','空飛ぶパンがあなたの朝ごはんを持って逃げました。',[
+  opt('全力で追いかける',{stats:{action:3},hidden:{decisionSpeed:2,noveltyNeed:1},stage2:{wing:.6}}),
+  opt('まあいいか、と別の朝ごはんを探す',{stats:{flexibility:3},hidden:{recoveryStyle:2},stage2:{ear:.2,wing:.2}}),
+  opt('どこへ飛んでいくのか観察する',{stats:{curiosity:3,sensitivity:1},hidden:{spaceNeed:1},stage2:{ear:.5}})
+])
+];
+
+const STAGE3_EAR=[
+q('s3e_1','森で何かが動いた気がしました。',[
+  opt('すぐ見に行く',{stats:{curiosity:2,action:2},hidden:{decisionSpeed:1},stage3:{a:2}}),
+  opt('少し待って、もう一度音を聞く',{stats:{sensitivity:2,kindness:1},hidden:{decisionSpeed:-1},stage3:{b:2}})
+]),
+q('s3e_2','仲間の様子がいつもと少し違います。',[
+  opt('すぐ声をかける',{stats:{kindness:2,action:1},hidden:{expressionLevel:1},stage3:{a:2}}),
+  opt('必要そうなら助けられるよう、近くにいる',{stats:{kindness:3,sensitivity:1},hidden:{spaceNeed:1},stage3:{b:2}})
+]),
+q('s3e_3','不思議な本を見つけました。',[
+  opt('ぱらぱらめくって、気になる場所から読む',{stats:{curiosity:3,flexibility:1},hidden:{noveltyNeed:1},stage3:{a:2}}),
+  opt('最初からじっくり読む',{stats:{curiosity:2,sensitivity:1},hidden:{decisionSpeed:-1},stage3:{b:2}})
+]),
+q('s3e_4','旅の宿で好きな場所を選べます。',[
+  opt('外の気配が分かる窓辺',{stats:{sensitivity:2,curiosity:1},hidden:{noveltyNeed:1},stage3:{a:2}}),
+  opt('大きなクッションの真ん中',{stats:{kindness:1,flexibility:1},hidden:{spaceNeed:1,recoveryStyle:1},stage3:{b:2}})
+]),
+q('s3e_5','森の精霊から一つ力をもらえます。',[
+  opt('小さな変化にすぐ気づく力',{stats:{sensitivity:3,curiosity:1},hidden:{expressionLevel:1},stage3:{a:3}}),
+  opt('どんな時でも落ち着ける力',{stats:{flexibility:2,kindness:1},hidden:{recoveryStyle:2},stage3:{b:3}})
+])
+];
+const STAGE3_WING=[
+q('s3w_1','嵐で道が塞がれました。',[
+  opt('別の道を探す',{stats:{flexibility:3,curiosity:1},hidden:{noveltyNeed:1},stage3:{a:2}}),
+  opt('どうにかして道を開ける',{stats:{action:3},hidden:{decisionSpeed:2},stage3:{b:2}})
+]),
+q('s3w_2','仲間同士で意見が割れています。',[
+  opt('両方を混ぜられないか考える',{stats:{flexibility:2,kindness:2},hidden:{socialEnergy:1},stage3:{a:2}}),
+  opt('一度決めて進もうと言う',{stats:{action:2,kindness:1},hidden:{decisionSpeed:2},stage3:{b:2}})
+]),
+q('s3w_3','魔法の使い方を一つ覚えます。',[
+  opt('姿や形を変える魔法',{stats:{flexibility:3,sensitivity:1},hidden:{noveltyNeed:1},stage3:{a:2}}),
+  opt('強い壁を壊す魔法',{stats:{action:3},hidden:{decisionSpeed:2},stage3:{b:2}})
+]),
+q('s3w_4','突然、予定が全部変わりました。',[
+  opt('それはそれで面白そう',{stats:{flexibility:3,curiosity:1},hidden:{recoveryStyle:2},stage3:{a:2}}),
+  opt('新しい目標をすぐ決める',{stats:{action:3},hidden:{decisionSpeed:2},stage3:{b:2}})
+]),
+q('s3w_5','伝説の羽を一枚選びます。',[
+  opt('光の色が毎日変わる羽',{stats:{sensitivity:2,flexibility:2},hidden:{noveltyNeed:1},stage3:{a:3}}),
+  opt('雷の中でも燃え続ける羽',{stats:{action:3,flexibility:1},hidden:{recoveryStyle:2},stage3:{b:3}})
+])
+];
+
+const FINAL_CORE={
 fluffy:[
-q('新しい街に着いたら、先に目に入るのは？',o('そこにいる人たちの表情','a',{kindness:2}),o('見たことのない店や路地','b',{curiosity:3})),q('困りごとを見つけたときは？',o('自分にできることを考える','a',{kindness:3}),o('なぜ起きたのかを考える','b',{curiosity:2,sensitivity:1})),q('誰かと話す時間と、一人で考える時間。今ほしいのは？',o('誰かと気持ちを交わす時間','a',{kindness:2,action:1}),o('自分の興味を追いかける時間','b',{curiosity:3})),q('プレゼントを選ぶなら？',o('相手が今ほしそうなもの','a',{kindness:3}),o('相手がまだ知らなそうな面白いもの','b',{curiosity:3})),q('物語の主人公なら？',o('仲間との関係を大切に進む','a',{kindness:2,flexibility:1}),o('謎を追いかけながら進む','b',{curiosity:3,sensitivity:1}))],
+q('f_fluffy_1','知らない町へ着いたら、最初に気になるのは？',[
+  opt('困っている人がいないか',{stats:{kindness:2},finalId:'punyuka_01'}),opt('人が集まっている楽しそうな場所',{stats:{action:2},hidden:{socialEnergy:2},finalId:'punyuka_02'}),opt('見たことのない店や路地',{stats:{curiosity:2},hidden:{noveltyNeed:2},finalId:'punyuka_03'}),opt('町全体の様子や人の流れ',{stats:{sensitivity:2},finalId:'punyuka_04'})]),
+q('f_fluffy_2','友達が「大丈夫」と言っています。でも、少しだけ様子が違います。',[
+  opt('そっと気遣う',{stats:{kindness:3},finalId:'punyuka_01'}),opt('笑わせたり外へ誘ったりする',{stats:{action:2},hidden:{expressionLevel:2},finalId:'punyuka_02'}),opt('何があったのか素直に聞いてみる',{stats:{curiosity:2,kindness:1},finalId:'punyuka_03'}),opt('今は聞かない方がいいか、少し観察する',{stats:{sensitivity:3},finalId:'punyuka_04'})]),
+q('f_fluffy_3','道端で魔法の鍵を拾いました。',[
+  opt('落とした人を探す',{stats:{kindness:3},finalId:'punyuka_01'}),opt('みんなに見せて情報を集める',{stats:{action:1,kindness:1},hidden:{socialEnergy:2},finalId:'punyuka_02'}),opt('何が開く鍵なのか試したい',{stats:{curiosity:3},finalId:'punyuka_03'}),opt('傷や模様から持ち主や用途を推理する',{stats:{curiosity:2,sensitivity:2},finalId:'punyuka_04'})]),
+q('f_fluffy_4','お祭りの途中で、突然音楽が止まりました。',[
+  opt('困っている係の人を手伝う',{stats:{kindness:2,action:1},finalId:'punyuka_01'}),opt('自分が声を出して場をつなぐ',{stats:{action:2},hidden:{expressionLevel:3},finalId:'punyuka_02'}),opt('何が起きたのか裏側を見に行く',{stats:{curiosity:3},finalId:'punyuka_03'}),opt('音・人の動きから原因を考える',{stats:{sensitivity:2,curiosity:1},finalId:'punyuka_04'})])
+],
 round:[
-q('村に新しい場所を作るなら？',o('みんなが安心して集まれる場所','a',{kindness:3}),o('静かに夢中になれる場所','b',{curiosity:2,sensitivity:2})),q('何か問題が起きたときは？',o('まず今日できることから整える','a',{action:2,kindness:1}),o('少し離れて、別の可能性を考える','b',{curiosity:2,sensitivity:1})),q('人から頼られることは？',o('わりと嬉しい。力になりたい','a',{kindness:3,action:1}),o('嫌ではないけど、自分の世界も大切','b',{sensitivity:2,curiosity:1})),q('長い旅で大切なのは？',o('毎日を無理なく続けること','a',{flexibility:2,kindness:1}),o('旅の意味や発見を持ち帰ること','b',{curiosity:3})),q('宝物にしたいのは？',o('みんなとの思い出','a',{kindness:2,sensitivity:1}),o('自分だけが見つけた景色','b',{curiosity:2,sensitivity:2}))],
+q('f_round_1','魔王の城へ着いたら、魔王が方向音痴で泣いていました。',[
+  opt('帰り道を一緒に考えてあげる',{stats:{kindness:3},finalId:'punyuka_05'}),opt('「まあ何とかなるよ」と励ます',{stats:{flexibility:3},hidden:{recoveryStyle:2},finalId:'punyuka_06'}),opt('魔王が迷子になる物語を想像してしまう',{stats:{sensitivity:3},finalId:'punyuka_07'}),opt('どうして自分の城で迷うのか構造を調べたい',{stats:{curiosity:3},finalId:'punyuka_08'})]),
+q('f_round_2','長い旅の夜。焚き火のそばで何をしていそう？',[
+  opt('みんなの食事や毛布を気にする',{stats:{kindness:3},finalId:'punyuka_05'}),opt('今日あった面白い失敗を笑い話にする',{stats:{flexibility:2},hidden:{recoveryStyle:2},finalId:'punyuka_06'}),opt('火を見ながら空想にふける',{stats:{sensitivity:3},finalId:'punyuka_07'}),opt('明日のルートや星の位置を調べる',{stats:{curiosity:3},finalId:'punyuka_08'})]),
+q('f_round_3','一冊だけ持ち帰れる不思議な本があります。',[
+  opt('みんなの役に立つ生活の本',{stats:{kindness:2},finalId:'punyuka_05'}),opt('読むと少し元気になれる本',{stats:{flexibility:2},finalId:'punyuka_06'}),opt('夢の中の世界が描かれた本',{stats:{sensitivity:3},finalId:'punyuka_07'}),opt('世界の謎が細かく書かれた本',{stats:{curiosity:3},finalId:'punyuka_08'})]),
+q('f_round_4','4人で宝探しをするとしたら、自然とどの役になりそう？',[
+  opt('みんなを支えるまとめ役',{stats:{kindness:2,action:1},finalId:'punyuka_05'}),opt('失敗しても空気を明るくする役',{stats:{flexibility:2},hidden:{socialEnergy:1},finalId:'punyuka_06'}),opt('変わったアイデアを想像する役',{stats:{sensitivity:2,curiosity:1},finalId:'punyuka_07'}),opt('手がかりを徹底的に調べる役',{stats:{curiosity:3},finalId:'punyuka_08'})])
+],
 kira:[
-q('誰かが落ち込んでいます。自然にできるのは？',o('そばで気持ちを受け止める','a',{kindness:3,sensitivity:2}),o('気分が変わる新しい風を連れてくる','b',{action:2,curiosity:2})),q('あなたが光を届けるなら？',o('やわらかく包む光','a',{kindness:2,sensitivity:2}),o('遠くへ進む道を照らす光','b',{action:2,curiosity:2})),q('変化が起きたときは？',o('その場の人に合わせながら整える','a',{flexibility:3,kindness:1}),o('せっかくなら新しいことを試す','b',{curiosity:3,action:1})),q('魔法の使い方で近いのは？',o('今いる人を少し楽にする','a',{kindness:3}),o('今までなかったものを生み出す','b',{curiosity:3,sensitivity:1})),q('嬉しい瞬間は？',o('誰かの表情がやわらいだとき','a',{kindness:3}),o('「やってみたい！」が生まれたとき','b',{action:2,curiosity:2}))],
+q('f_kira_1','空に突然、逆さまの城が現れました。最初に思うのは？',[
+  opt('中に困っている人はいないかな',{stats:{kindness:3},finalId:'punyuka_09'}),opt('行けるなら今すぐ行ってみたい',{stats:{action:3,curiosity:1},finalId:'punyuka_10'}),opt('どうすれば安全に入れるか状況に合わせて考える',{stats:{flexibility:3},finalId:'punyuka_11'}),opt('普通じゃない入り方を思いつきたい',{stats:{curiosity:3,sensitivity:1},finalId:'punyuka_12'})]),
+q('f_kira_2','迷子の星が一つ、あなたの手のひらに落ちてきました。',[
+  opt('安心するまでそばにいてあげる',{stats:{kindness:3},finalId:'punyuka_09'}),opt('一緒に空まで帰る方法を探しに行く',{stats:{action:2,curiosity:1},finalId:'punyuka_10'}),opt('その星に合う帰り方をいくつか試す',{stats:{flexibility:3},finalId:'punyuka_11'}),opt('星を飛ばす新しい道具を思いつく',{stats:{curiosity:3},finalId:'punyuka_12'})]),
+q('f_kira_3','魔法工房で一日だけ自由に作れます。',[
+  opt('疲れた人が休めるもの',{stats:{kindness:3},finalId:'punyuka_09'}),opt('遠くまで飛んでいけるもの',{stats:{action:2,curiosity:1},finalId:'punyuka_10'}),opt('どんな場面にも形を変えられるもの',{stats:{flexibility:3},finalId:'punyuka_11'}),opt('誰も用途を思いつかない変なもの',{stats:{curiosity:3,sensitivity:1},finalId:'punyuka_12'})]),
+q('f_kira_4','晴れの予定だったのに、急に虹色の雨が降ってきました。',[
+  opt('濡れて困っている人へ傘を差し出す',{stats:{kindness:3},finalId:'punyuka_09'}),opt('せっかくなので雨の中を走ってみる',{stats:{action:3},finalId:'punyuka_10'}),opt('予定を変えて雨でも楽しめる方法を探す',{stats:{flexibility:3},finalId:'punyuka_11'}),opt('虹色の雨で何ができるか試したくなる',{stats:{curiosity:3},finalId:'punyuka_12'})])
+],
 gira:[
-q('壁が立ちはだかりました。',o('勢いをつけて突破口を探す','a',{action:3}),o('一度止まり、長く続けられる方法を考える','b',{flexibility:2,sensitivity:1})),q('勝負どころで近いのは？',o('まず動いて流れを作る','a',{action:3}),o('焦らず自分のタイミングを待つ','b',{flexibility:1,sensitivity:1})),q('トラブルが起きたら？',o('その場で手を打ちながら進む','a',{action:3,flexibility:1}),o('状況を整理してから確実に進む','b',{flexibility:2,curiosity:1})),q('周りが迷っているときは？',o('自分が先に一歩出る','a',{action:3}),o('落ち着くまで支えてから進む','b',{kindness:2,flexibility:1})),q('強さとは？',o('怖くても前へ出ること','a',{action:3}),o('崩れてもまた立て直せること','b',{flexibility:2,sensitivity:1}))]
-};
-const FINAL_Q={
-fluffy_social:[q('誰かが元気をなくしていたら？',o('さりげなく必要なことをしておく','left',{kindness:3,sensitivity:1}),o('声をかけて一緒に明るい空気を作る','right',{action:2,kindness:2})),q('グループで自然にすることは？',o('困っている人がいないか見る','left',{kindness:3}),o('話題を作って場を盛り上げる','right',{action:2,flexibility:1})),q('嬉しいと言われたいのは？',o('「気づいてくれてありがとう」','left',{kindness:3,sensitivity:1}),o('「一緒にいると楽しい」','right',{action:2,kindness:1})),q('知らない人が多い場所では？',o('まず周りを見て必要なことを探す','left',{sensitivity:2,kindness:2}),o('近くの人に話しかけてみる','right',{action:3})),q('あなたのやさしさに近いのは？',o('静かに先回りするやさしさ','left',{kindness:3}),o('元気を分けるやさしさ','right',{action:2,kindness:2}))],
-fluffy_mind:[q('面白いものを見つけたら？',o('すぐ触って試してみたい','left',{curiosity:3,action:1}),o('まずよく観察して仕組みを考えたい','right',{curiosity:2,sensitivity:2})),q('謎に出会うと？',o('次々に別の可能性も試す','left',{curiosity:3,flexibility:2}),o('一つずつ手がかりをつなぐ','right',{curiosity:2,sensitivity:2})),q('人を見るときは？',o('何が好きなのか気になる','left',{curiosity:3}),o('言葉の裏の気持ちが気になる','right',{sensitivity:3})),q('自由時間は？',o('気になったことを次々やる','left',{curiosity:3,flexibility:2}),o('一つのことを静かに考える','right',{curiosity:2,sensitivity:2})),q('新しい発見の喜びは？',o('「こんなのもあるんだ！」','left',{curiosity:3}),o('「やっぱり、そういうことか」','right',{curiosity:2,sensitivity:2}))],
-round_real:[q('頼まれごとが重なったら？',o('優先順位をつけて最後まで面倒を見る','left',{kindness:3,action:2}),o('できる範囲でやって、あとは何とかなると思う','right',{flexibility:3})),q('失敗した友だちには？',o('一緒に立て直す方法を考える','left',{kindness:3,action:1}),o('「次いこ！」と気持ちを切り替える','right',{flexibility:3,action:1})),q('責任ある役を頼まれたら？',o('必要なら引き受ける','left',{action:2,kindness:2}),o('得意な人がやればいいと思える','right',{flexibility:3})),q('予定どおりいかなかった日は？',o('できなかった分を整えておきたい','left',{action:2}),o('そんな日もある、と切り替える','right',{flexibility:3})),q('周りから言われるなら？',o('「頼りになる」','left',{kindness:2,action:2}),o('「一緒にいると気が楽」','right',{flexibility:3,kindness:1}))],
-round_inner:[q('眠る前にしがちなのは？',o('いろんな未来を想像する','left',{sensitivity:3,curiosity:1}),o('気になったことを調べる','right',{curiosity:3})),q('未知の星を見つけたら？',o('そこにどんな世界があるか想像する','left',{sensitivity:3}),o('どんな星なのか情報を集める','right',{curiosity:3})),q('好きな作品に出会うと？',o('自分の中で物語がさらに広がる','left',{sensitivity:3}),o('設定や背景まで詳しく知りたくなる','right',{curiosity:3})),q('答えがない問いは？',o('自由に想像できて楽しい','left',{sensitivity:2,flexibility:1}),o('できるところまで調べたくなる','right',{curiosity:3})),q('心が動くのは？',o('まだない未来を思い描いたとき','left',{sensitivity:3}),o('知らなかったことがつながったとき','right',{curiosity:3}))],
-kira_soft:[q('誰かの悩みに向き合うなら？',o('気持ちをそのまま受け止める','left',{kindness:3,sensitivity:2}),o('その人に合わせて接し方を変える','right',{flexibility:3,kindness:1})),q('空気が重い場所では？',o('安心して話せる雰囲気を作る','left',{kindness:3}),o('少し流れを変えて空気を動かす','right',{flexibility:3})),q('「やさしい」と言われるのは？',o('話を聞いているとき','left',{kindness:3,sensitivity:1}),o('相手に合わせて動いたとき','right',{flexibility:3,kindness:1})),q('急な予定変更では？',o('みんなが不安にならないよう気にする','left',{kindness:3}),o('新しい予定へすぐ頭を切り替える','right',{flexibility:3})),q('人との距離感は？',o('安心できる距離をそっと守る','left',{kindness:2,sensitivity:2}),o('相手ごとにちょうどいい距離へ変える','right',{flexibility:3}))],
-kira_spark:[q('知らない扉を見つけたら？',o('開けて先へ行ってみたい','left',{action:3,curiosity:2}),o('この扉から何が生まれるか想像したい','right',{curiosity:2,sensitivity:2})),q('思いついた瞬間は？',o('とりあえずやってみる','left',{action:3}),o('アイデアをどんどん膨らませる','right',{curiosity:3,sensitivity:1})),q('新しいものを作るなら？',o('使いながら完成させる','left',{action:3,flexibility:1}),o('今までにない組み合わせを考える','right',{curiosity:3})),q('わくわくする言葉は？',o('「行ってみよう！」','left',{action:3}),o('「思いついた！」','right',{curiosity:3,sensitivity:1})),q('未来へ進む力は？',o('未知へ踏み出す勇気','left',{action:3}),o('新しい景色を思い描く発想','right',{curiosity:3,sensitivity:2}))],
-gira_active:[q('難しい課題が来たら？',o('まずぶつかって突破口を作る','left',{action:3}),o('別ルートがないか頭をひねる','right',{curiosity:2,flexibility:2})),q('勝つためなら？',o('正面から力を出し切る','left',{action:3}),o('相手の予想外を狙う','right',{curiosity:2,flexibility:2})),q('退屈な空気は？',o('勢いで動かす','left',{action:3}),o('ちょっとした悪戯で崩す','right',{curiosity:2,flexibility:2})),q('仲間が止まっていたら？',o('自分が先頭に立つ','left',{action:3}),o('面白い方法を見つけて誘う','right',{curiosity:2,flexibility:2})),q('得意なのは？',o('迷いを振り切ること','left',{action:3}),o('その場で機転を利かせること','right',{flexibility:3,curiosity:1}))],
-gira_steady:[q('大きな失敗のあと近いのは？',o('まず静かに状況を整理する','left',{sensitivity:1,flexibility:2}),o('時間がかかっても、もう一度立ち上がる','right',{flexibility:3,action:1})),q('強い感情が出たときは？',o('一度落ち着いてから言葉にする','left',{flexibility:2,sensitivity:1}),o('落ちても、少しずつ戻ってくる','right',{flexibility:3})),q('長い困難では？',o('ペースを崩さず淡々と進む','left',{flexibility:2,action:1}),o('何度止まってもまた始める','right',{flexibility:3,action:1})),q('自分の強さは？',o('冷静さを失いにくいこと','left',{flexibility:2}),o('折れても終わりにしないこと','right',{flexibility:3})),q('朝焼けを見ると？',o('今日やることを静かに決める','left',{action:1,sensitivity:1}),o('昨日とは違う一日を始められると思う','right',{flexibility:3,sensitivity:1}))]
-};
-const TUNE=[
-{text:'大切な人が困っているとき、いちばん自然なのは？',options:[o('まず気持ちを聞く',null,{kindness:6,sensitivity:2}),o('一緒に解決策を考える',null,{kindness:2,action:4}),o('必要なら少し距離を置いて見守る',null,{flexibility:4,sensitivity:-1})]},
-{text:'予定のない一日。いちばん惹かれるのは？',options:[o('誰かと過ごす',null,{kindness:3,action:2}),o('気になることを試す',null,{curiosity:6,action:2}),o('静かに好きな世界へ浸る',null,{sensitivity:6})]},
-{text:'急な変化が起きたら？',options:[o('すぐ別の方法へ切り替える',null,{flexibility:6,action:2}),o('まず状況を整理してから動く',null,{curiosity:2,flexibility:3}),o('周りの様子を見ながら合わせる',null,{kindness:2,sensitivity:2,flexibility:3})]},
-{text:'新しいことを始めるときは？',options:[o('思い立ったらまず一歩',null,{action:6}),o('調べて面白さが見えてから',null,{curiosity:5}),o('自分の気持ちが動くまで待つ',null,{sensitivity:5})]},
-{text:'あなたらしい「好き」の育て方は？',options:[o('人と分かち合って大きくする',null,{kindness:4,action:2}),o('どんどん深く知っていく',null,{curiosity:6}),o('自分の中でゆっくり味わう',null,{sensitivity:6,flexibility:1})]}
-];
+q('f_gira_1','100回やっても開かない扉があります。',[
+  opt('もっと力を込めて突破口を探す',{stats:{action:3},finalId:'punyuka_13'}),opt('「実は引くんじゃない？」と別の手を試す',{stats:{curiosity:2,flexibility:2},finalId:'punyuka_14'}),opt('そもそも扉なのか、仕組みを確認する',{stats:{curiosity:2},hidden:{decisionSpeed:-1},finalId:'punyuka_15'}),opt('101回目も試す',{stats:{flexibility:2,action:1},hidden:{recoveryStyle:3},finalId:'punyuka_16'})]),
+q('f_gira_2','目の前で橋が崩れました。向こう側へ行く必要があります。',[
+  opt('すぐ別の突破方法を探して動く',{stats:{action:3},finalId:'punyuka_13'}),opt('何か面白い抜け道がないか探す',{stats:{curiosity:2,flexibility:1},finalId:'punyuka_14'}),opt('地形と残った材料を確認してから決める',{stats:{curiosity:2,sensitivity:1},finalId:'punyuka_15'}),opt('時間がかかっても、渡れる形になるまで続ける',{stats:{flexibility:2},hidden:{recoveryStyle:3},finalId:'punyuka_16'})]),
+q('f_gira_3','強い相手との勝負。あなたに近いのは？',[
+  opt('先に仕掛けて流れを作る',{stats:{action:3},finalId:'punyuka_13'}),opt('相手の予想外のことをする',{stats:{curiosity:2,flexibility:1},finalId:'punyuka_14'}),opt('相手の動きを見てから最善手を選ぶ',{stats:{sensitivity:1,curiosity:2},finalId:'punyuka_15'}),opt('何度失敗しても攻略法が見えるまで続ける',{stats:{flexibility:2},hidden:{recoveryStyle:3},finalId:'punyuka_16'})]),
+q('f_gira_4','大きな挑戦に失敗しました。翌日どうしていそう？',[
+  opt('すぐ次の挑戦を始める',{stats:{action:3},finalId:'punyuka_13'}),opt('失敗をネタにして別ルートを思いつく',{stats:{curiosity:2,flexibility:2},finalId:'punyuka_14'}),opt('原因を整理して、同じ失敗を避ける',{stats:{curiosity:2},hidden:{decisionSpeed:-1},finalId:'punyuka_15'}),opt('休んでも、また戻ってくる',{stats:{flexibility:2},hidden:{recoveryStyle:3},finalId:'punyuka_16'})])
+]};
 
-let answers=[],qIndex=0,backHandler=null;
-function countRoute(from,to,key){const c={};for(let i=from;i<to;i++){const v=answers[i]?.route;if(v)c[v]=(c[v]||0)+1}return key?c[key]||0:c}
-function stage2(){if(answers.length<5)return null;return countRoute(0,5,'ear')>=3?'ear':'wing'}
-function stage3(){if(answers.length<10)return null;const s2=stage2(),a=countRoute(5,10,'a')>=3;return s2==='ear'?(a?'fluffy':'round'):(a?'kira':'gira')}
-function pair(){if(answers.length<15)return null;const s3=stage3(),a=countRoute(10,15,'a')>=3;if(s3==='fluffy')return a?'fluffy_social':'fluffy_mind';if(s3==='round')return a?'round_real':'round_inner';if(s3==='kira')return a?'kira_soft':'kira_spark';return a?'gira_active':'gira_steady'}
-function finalType(){if(answers.length<20)return null;const p=pair(),left=countRoute(15,20,'left')>=3;return TYPES.find(t=>t.pair===p&&t.side===(left?'left':'right'))||null}
-function stats(){const out=Object.fromEntries(AXES.map(k=>[k,50]));answers.forEach(a=>{Object.entries(a?.stats||{}).forEach(([k,v])=>{if(k in out)out[k]+=Number(v)||0})});AXES.forEach(k=>out[k]=clamp(Math.round(out[k]),20,90));return out}
+const pq=(id,a,b,text,la,lb,sa={},sb={},ha={},hb={})=>q(id,text,[opt(la,{stats:sa,hidden:ha,finalId:a}),opt(lb,{stats:sb,hidden:hb,finalId:b})],{pairKey:[a,b].sort().join('|')});
+const FINAL_PAIR={
+fluffy:[
+pq('p01_02','punyuka_01','punyuka_02','落ち込んでいる仲間がいたら？','静かにそばにいて、必要なことを手伝う','外へ誘ったり笑わせたりして元気づける',{kindness:3},{action:2,kindness:1},{spaceNeed:1},{socialEnergy:2,expressionLevel:2}),
+pq('p01_03','punyuka_01','punyuka_03','知らない子が一人で困っています。','まず「大丈夫？」と声をかける','何に困っているのか、状況を詳しく聞く',{kindness:3},{curiosity:2,kindness:1}),
+pq('p01_04','punyuka_01','punyuka_04','友達の言葉に少し違和感がありました。','傷ついていないかを気にかける','なぜそう言ったのか、背景を考える',{kindness:3},{sensitivity:2,curiosity:1}),
+pq('p02_03','punyuka_02','punyuka_03','新しい遊びを見つけたときは？','誰かを誘って一緒に盛り上がりたい','まず自分で触って試してみたい',{action:2},{curiosity:3},{socialEnergy:2},{noveltyNeed:2}),
+pq('p02_04','punyuka_02','punyuka_04','初対面の集まりに入るなら？','まず話しかけて空気を作る','しばらく周りを見てから話す',{action:2},{sensitivity:2},{socialEnergy:3,expressionLevel:2},{spaceNeed:2}),
+pq('p03_04','punyuka_03','punyuka_04','知らない機械を見つけました。','触って確かめたい','まず仕組みを予想したい',{curiosity:3,action:1},{curiosity:2,sensitivity:2},{noveltyNeed:2},{decisionSpeed:-1})],
+round:[
+pq('p05_06','punyuka_05','punyuka_06','仲間が失敗して落ち込んでいます。','次はうまくいくよう一緒に準備する','「そんな日もある！」と気分を切り替える',{kindness:3,action:1},{flexibility:3},{},{recoveryStyle:2}),
+pq('p05_07','punyuka_05','punyuka_07','休日に頼まれごとが一つあります。','まず終わらせて安心したい','少し自分の世界に浸ってから動きたい',{action:2,kindness:1},{sensitivity:3},{decisionSpeed:1},{spaceNeed:2}),
+pq('p05_08','punyuka_05','punyuka_08','壊れた道具を前にしたら？','使えるように直すことを優先する','なぜ壊れたのか仕組みを調べる',{action:2,kindness:1},{curiosity:3}),
+pq('p06_07','punyuka_06','punyuka_07','長い待ち時間ができました。','何か楽しいことを見つける','ぼんやり空想して過ごす',{flexibility:3},{sensitivity:3},{recoveryStyle:2},{spaceNeed:1}),
+pq('p06_08','punyuka_06','punyuka_08','分からないことが一つあります。','必要になったら調べればいいと思う','気になって今すぐ調べたくなる',{flexibility:2},{curiosity:3},{recoveryStyle:1},{noveltyNeed:1}),
+pq('p07_08','punyuka_07','punyuka_08','星空を見ているとき、近いのは？','星の向こうの物語を想像する','星がどう動いているのか知りたくなる',{sensitivity:3},{curiosity:3})],
+kira:[
+pq('p09_10','punyuka_09','punyuka_10','誰かが不安そうに新しい場所へ向かいます。','安心できるよう一緒に歩く','「行ってみよう！」と背中を押す',{kindness:3},{action:3},{socialEnergy:1},{noveltyNeed:2}),
+pq('p09_11','punyuka_09','punyuka_11','友達の予定が急に変わりました。','まず気持ちを聞く','すぐ新しい予定を一緒に考える',{kindness:3},{flexibility:3}),
+pq('p09_12','punyuka_09','punyuka_12','困っている人へ贈る魔法なら？','心が少し軽くなる魔法','思わず笑うような不思議な魔法',{kindness:3},{curiosity:2,sensitivity:1},{},{expressionLevel:2}),
+pq('p10_11','punyuka_10','punyuka_11','知らない道が三つあります。','一番わくわくする道を選ぶ','状況を見ながら進みやすい道へ変える',{action:2,curiosity:2},{flexibility:3},{noveltyNeed:2},{}),
+pq('p10_12','punyuka_10','punyuka_12','空飛ぶ乗り物を作るなら？','どこまでも行ける速い乗り物','見たことのない変な仕組みの乗り物',{action:2,curiosity:1},{curiosity:3,sensitivity:1},{noveltyNeed:2},{noveltyNeed:2}),
+pq('p11_12','punyuka_11','punyuka_12','予定通りにいかないとき。','今あるものを使って別の形に整える','全然違う方法を思いつくまで遊んでみる',{flexibility:3},{curiosity:3,flexibility:1})],
+gira:[
+pq('p13_14','punyuka_13','punyuka_14','難しいゲームで詰まりました。','とにかくもう一回挑戦する','ルールの穴みたいな変な攻略法を探す',{action:3},{curiosity:2,flexibility:2},{decisionSpeed:2},{noveltyNeed:2}),
+pq('p13_15','punyuka_13','punyuka_15','緊急事態が起きました。','まず動いて状況を変える','情報を集めて優先順位を決める',{action:3},{curiosity:1,sensitivity:1},{decisionSpeed:3},{decisionSpeed:-1}),
+pq('p13_16','punyuka_13','punyuka_16','大きな壁にぶつかったとき。','今の勢いのまま突破口を作る','一度止まっても、時間をかけて必ず戻る',{action:3},{flexibility:2,action:1},{decisionSpeed:2},{recoveryStyle:3}),
+pq('p14_15','punyuka_14','punyuka_15','怪しい箱を見つけました。','わざと変な角度から開けてみる','罠がないか確認してから開ける',{curiosity:2,flexibility:1},{curiosity:1,sensitivity:1},{noveltyNeed:2},{decisionSpeed:-2}),
+pq('p14_16','punyuka_14','punyuka_16','失敗が続いて空気が重いとき。','一回ふざけて流れを変える','今日は休んでも、また明日続ける',{flexibility:2},{flexibility:2,sensitivity:1},{expressionLevel:2},{recoveryStyle:3}),
+pq('p15_16','punyuka_15','punyuka_16','長期戦になりそうです。','無理のない計画を立てて淡々と進む','止まる日があっても最後まで戻り続ける',{curiosity:1,flexibility:1},{flexibility:2,action:1},{decisionSpeed:-1},{recoveryStyle:3})]
+};
+
+let answers=[],qIndex=0,backHandler=null,audioContext=null;
+let soundEnabled=localStorage.getItem(SOUND_KEY)!=='off';
+let soundVolume=clamp(Number(localStorage.getItem(SOUND_VOLUME_KEY)||1),0,1.5);
+
+function ensureAudio(){
+  if(!soundEnabled)return null;
+  try{if(!audioContext)audioContext=new (window.AudioContext||window.webkitAudioContext)();if(audioContext.state==='suspended')audioContext.resume();return audioContext}catch{return null}
+}
+function tone(freq,duration=.09,type='sine',volume=.03,delay=0,endFreq=null){
+  const ctx=ensureAudio();if(!ctx)return;const now=ctx.currentTime+delay,osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(freq,now);if(endFreq)osc.frequency.exponentialRampToValueAtTime(Math.max(40,endFreq),now+duration);gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(Math.max(.0001,Math.min(.75,volume*soundVolume*3.9)),now+.012);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);osc.connect(gain).connect(ctx.destination);osc.start(now);osc.stop(now+duration+.04)
+}
+function noise(duration=.18,volume=.012,delay=0){const ctx=ensureAudio();if(!ctx)return;const len=Math.max(1,Math.floor(ctx.sampleRate*duration)),buf=ctx.createBuffer(1,len,ctx.sampleRate),data=buf.getChannelData(0);for(let i=0;i<len;i++)data[i]=(Math.random()*2-1)*(1-i/len);const src=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();src.buffer=buf;filter.type='bandpass';filter.frequency.value=1300;gain.gain.value=Math.min(.6,volume*soundVolume*3.9);src.connect(filter).connect(gain).connect(ctx.destination);src.start(ctx.currentTime+delay)}
+const sfx={
+  open(){tone(620,.08,'sine',.018);tone(930,.12,'sine',.015,.05)},
+  choice(){tone(540,.055,'sine',.018);tone(720,.08,'triangle',.012,.035)},
+  next(){tone(470,.07,'sine',.012,0,620)},
+  back(){tone(420,.08,'triangle',.012,0,300)},
+  squish(){tone(180,.07,'sine',.018,0,135);tone(290,.06,'sine',.012,.055,360)},
+  sparkle(){[880,1175,1568].forEach((f,i)=>tone(f,.16,'sine',.018,i*.055))},
+  birth(){noise(.65,.016);[392,523,659,784,1047].forEach((f,i)=>tone(f,.42,'sine',.045,i*.09));tone(1318,.65,'sine',.032,.42,1760)},
+  evolve(){noise(.45,.012);tone(240,.45,'triangle',.03,0,680);[523,659,784,1047].forEach((f,i)=>tone(f,.28,'sine',.032,.18+i*.07));},
+  final(){noise(.8,.02);tone(180,.75,'triangle',.035,0,920);[392,523,659,784,1047,1318].forEach((f,i)=>tone(f,.42,'sine',.052,.18+i*.09));tone(1760,.9,'sine',.035,.7,2460)},
+  result(){[659,784,988].forEach((f,i)=>tone(f,.22,'sine',.022,i*.065))}
+};
+
+function addMap(target,src){Object.entries(src||{}).forEach(([k,v])=>{target[k]=(target[k]||0)+(Number(v)||0)})}
+function stage2Scores(){const out={ear:0,wing:0};answers.forEach(a=>addMap(out,a?.stage2));return out}
+function stage2(){if(answers.length<10)return null;const s=stage2Scores();return s.ear>=s.wing?'ear':'wing'}
+function stage3Direct(){const out={a:0,b:0};answers.slice(10,15).forEach(a=>addMap(out,a?.stage3));return out}
+function stats(){const out=Object.fromEntries(AXES.map(k=>[k,50]));answers.forEach(a=>addMap(out,a?.stats));AXES.forEach(k=>out[k]=clamp(Math.round(out[k]),20,90));return out}
+function hidden(){const out=Object.fromEntries(HIDDEN.map(k=>[k,50]));answers.forEach(a=>addMap(out,a?.hidden));HIDDEN.forEach(k=>out[k]=clamp(Math.round(out[k]),20,90));return out}
+function stage3(){
+  if(answers.length<15)return null;const d=stage3Direct(),st=stats(),s2=stage2();
+  let a=d.a,b=d.b;
+  if(s2==='ear'){a+=(st.curiosity+st.sensitivity+st.action)/450;b+=(st.kindness+st.flexibility+(100-st.action))/450;return a>=b?'fluffy':'round'}
+  a+=(st.kindness+st.sensitivity+st.flexibility)/450;b+=(st.action+st.curiosity+(100-st.kindness))/450;return a>=b?'kira':'gira'
+}
+function finalScores(){const ids=GROUP_IDS[stage3()]||[],out=Object.fromEntries(ids.map(id=>[id,0]));answers.slice(15).forEach(a=>{if(a?.finalId in out)out[a.finalId]+=2});return out}
+function typeDistance(t,st){return AXES.reduce((sum,k,i)=>sum+Math.abs((st[k]??50)-t.aff[i]),0)}
+function finalType(){
+  if(answers.length<25)return null;const scores=finalScores(),st=stats(),ids=Object.keys(scores);ids.sort((a,b)=>scores[b]-scores[a]||typeDistance(TYPE_MAP[a],st)-typeDistance(TYPE_MAP[b],st)||a.localeCompare(b));return TYPE_MAP[ids[0]]||null
+}
+function currentForm(){
+  if(qIndex<5)return null;
+  if(qIndex<10)return FORMS.stage1_base;
+  if(qIndex<15)return stage2()==='ear'?FORMS.stage2_ear:FORMS.stage2_wing;
+  const s3=stage3();return s3==='fluffy'?FORMS.stage3_01_fluffy_ear:s3==='round'?FORMS.stage3_02_round_ear:s3==='kira'?FORMS.stage3_03_kira_wing:FORMS.stage3_04_gira_wing
+}
+function pairQuestion(){
+  const group=stage3(),bank=FINAL_PAIR[group]||[],used=new Set(answers.slice(19).map(a=>a?.meta?.pairKey).filter(Boolean)),scores=finalScores(),rank=Object.keys(scores).sort((a,b)=>scores[b]-scores[a]);
+  const top=new Set(rank.slice(0,2));
+  const candidates=bank.filter(x=>!used.has(x.meta.pairKey));
+  candidates.sort((x,y)=>{
+    const [xa,xb]=x.meta.pairKey.split('|'),[ya,yb]=y.meta.pairKey.split('|');
+    const xp=(top.has(xa)&&top.has(xb)?100:0)+(top.has(xa)||top.has(xb)?20:0)-Math.abs((scores[xa]||0)-(scores[xb]||0));
+    const yp=(top.has(ya)&&top.has(yb)?100:0)+(top.has(ya)||top.has(yb)?20:0)-Math.abs((scores[ya]||0)-(scores[yb]||0));
+    return yp-xp||x.id.localeCompare(y.id)
+  });
+  return candidates[0]||bank[0]
+}
 function currentQuestion(){
- if(qIndex<5)return COMMON[qIndex];
- if(qIndex<10)return (stage2()==='ear'?EAR:WING)[qIndex-5];
- if(qIndex<15)return PAIR_Q[stage3()][qIndex-10];
- if(qIndex<20)return FINAL_Q[pair()][qIndex-15];
- return TUNE[qIndex-20];
+  if(qIndex<5)return BIRTH[qIndex];
+  if(qIndex<8)return STAGE2_CORE[qIndex-5];
+  if(qIndex<10){const s=stage2Scores(),gap=Math.abs(s.ear-s.wing);return (gap<2.2?STAGE2_TIE:STAGE2_FUN)[qIndex-8]}
+  if(qIndex<15)return (stage2()==='ear'?STAGE3_EAR:STAGE3_WING)[qIndex-10];
+  if(qIndex<19)return FINAL_CORE[stage3()][qIndex-15];
+  if(qIndex<25)return pairQuestion();
+  return null
 }
-function chapter(){if(qIndex<5)return ['第1章','こころの入口',1];if(qIndex<10)return ['第2章','ひびき',2];if(qIndex<15)return ['第3章','分かれ道',3];if(qIndex<20)return ['第4章','こころの核',4];return ['最終章','あなたらしさ',5]}
-function form(){
- if(qIndex<5)return {name:'ぷにゅか',image:ASSET+'stage1_base.webp'};
- if(qIndex<10)return stage2()==='ear'?{name:'みみぷにゅか',image:ASSET+'stage2_ear.webp'}:{name:'はねぷにゅか',image:ASSET+'stage2_wing.webp'};
- const s3=stage3();return {fluffy:{name:'ふわみみぷにゅか',image:ASSET+'stage3_01_fluffy_ear.webp'},round:{name:'まるみみぷにゅか',image:ASSET+'stage3_02_round_ear.webp'},kira:{name:'キラはねぷにゅか',image:ASSET+'stage3_03_kira_wing.webp'},gira:{name:'ギラはねぷにゅか',image:ASSET+'stage3_04_gira_wing.webp'}}[s3];
-}
-function saveProgress(){write(PROGRESS_KEY,{answers,qIndex,updatedAt:Date.now()})}
-function loadProgress(){const p=read(PROGRESS_KEY,null);if(!p||!Array.isArray(p.answers))return false;answers=p.answers.slice(0,25);qIndex=clamp(Number(p.qIndex)||answers.length,0,24);return answers.length>0}
+function chapter(){if(qIndex<5)return['誕生編','ぷにゅかが生まれるまで',1];if(qIndex<10)return['進化編Ⅰ','はじめての進化',2];if(qIndex<15)return['進化編Ⅱ','こころの形',3];return['最終進化編','あなたらしさの核心',4]}
+function milestoneText(){if(qIndex<5)return`あと${5-qIndex}問でぷにゅか誕生`;if(qIndex<10)return`あと${10-qIndex}問で進化`;if(qIndex<15)return`あと${15-qIndex}問でさらに進化`;return`あと${25-qIndex}問で最終進化`}
+function saveProgress(){write(PROGRESS_KEY,{schema:'punyako-v4',answers,qIndex,updatedAt:Date.now()})}
+function loadProgress(){const p=read(PROGRESS_KEY,null);if(!p||!Array.isArray(p.answers)||p.schema!=='punyako-v4')return false;answers=p.answers.slice(0,25);qIndex=clamp(Number(p.qIndex)??answers.length,0,25);if(qIndex!==answers.length)qIndex=answers.length;return answers.length>0}
 function clearProgress(){localStorage.removeItem(PROGRESS_KEY)}
 function activeResult(){return read(RESULT_KEY,null)}
+function localJourney(){return read(JOURNEY_KEY,null)||member()?.punyakoJourney||null}
+function formById(id){return FORMS[id]||TYPE_MAP[id]||null}
+function setLocalJourney(payload){
+  const current=localJourney()||{},next={...current,...payload,updatedAtMs:Date.now()};write(JOURNEY_KEY,next);const m=member();if(m){write(MEMBER_KEY,{...m,punyakoJourney:next})}window.dispatchEvent(new CustomEvent('unica:punyako-avatar-updated',{detail:next}));return next
+}
+async function saveJourney(info,completedQuestions,{seedComplete=true}={}){
+  if(!info)return null;const payload=setLocalJourney({seedComplete,equippedId:info.id,equippedImage:info.image,equippedName:info.name,currentStage:info.stage||'final',completedQuestions,seedCompletedAtMs:seedComplete?(localJourney()?.seedCompletedAtMs||Date.now()):0});
+  try{for(let i=0;i<40&&!window.UNICA_FIREBASE?.savePunyakoJourney;i++)await new Promise(r=>setTimeout(r,100));await window.UNICA_FIREBASE?.savePunyakoJourney?.(payload)}catch(e){console.warn('ぷにゅか進化データのオンライン保存に失敗',e)}
+  return payload
+}
 function updateHome(){
- const r=activeResult()||member()?.scentDiagnosis;const f=$('#scent16HomeFlower'),s=$('#scent16HomeSummary'),c=$('#scent16HomeCta');
- if(f)f.textContent=r?.typeId?'✦':'✦';
- if(s)s.textContent=r?.typeId?`MY ぷにゅか：${r.scentName||TYPE_MAP[r.typeId]?.name||'診断済み'}`:'25の物語から、あなたのぷにゅかが進化します。';
- if(c)c.textContent=r?.typeId?'結果を見る':'診断する';
- document.querySelectorAll('[data-status-for="scent"]').forEach(el=>el.textContent=r?.typeId?'診断済み':'診断する');
+  const result=activeResult(),journey=localJourney(),summary=$('#scent16HomeSummary'),cta=$('#scent16HomeCta');
+  if(summary){if(result?.typeId)summary.textContent=`${TYPE_MAP[result.typeId]?.name||'最終ぷにゅか'}に進化済み`;else if(journey?.seedComplete)summary.textContent=`${journey.equippedName||'ぷにゅか'}を育てています。`;else summary.textContent='まず5問で、ぷにゅか誕生！'}
+  if(cta)cta.textContent=result?.typeId?'結果を見る':journey?.seedComplete?'続きを育てる':'5問診断をする';
+  document.querySelectorAll('[data-status-for="scent"]').forEach(el=>el.textContent=result?.typeId?'最終進化済み':journey?.seedComplete?`育成中 ${journey.completedQuestions||5}/25`:'5問で誕生')
 }
 async function saveActive(result){
- write(RESULT_KEY,result);const m=member();if(m){m.scentDiagnosis=result;write(MEMBER_KEY,m)}
- const map=read(ACTIVE_BY_TYPE_KEY,{});map[result.typeId]=result;write(ACTIVE_BY_TYPE_KEY,map);
- updateHome();
- try{for(let i=0;i<40&&!window.UNICA_FIREBASE?.saveScentDiagnosis;i++)await new Promise(r=>setTimeout(r,100));await window.UNICA_FIREBASE?.saveScentDiagnosis?.(result)}catch(e){console.warn('ぷにゃこ診断のオンライン保存に失敗',e)}
- window.dispatchEvent(new CustomEvent('unica:punyako-diagnosis-complete',{detail:result}));
+  write(RESULT_KEY,result);const by=read(ACTIVE_BY_TYPE_KEY,{});by[result.typeId]=result;write(ACTIVE_BY_TYPE_KEY,by);const t=TYPE_MAP[result.typeId];if(t)await saveJourney({...t,stage:'final'},25);
+  try{for(let i=0;i<40&&!window.UNICA_FIREBASE?.saveScentDiagnosis;i++)await new Promise(r=>setTimeout(r,100));await window.UNICA_FIREBASE?.saveScentDiagnosis?.(result)}catch(e){console.warn('ぷにゃこ診断のオンライン保存に失敗',e)}
+  updateHome();window.dispatchEvent(new CustomEvent('unica:punyako-diagnosis-complete',{detail:result}))
 }
 function addHistory(result){const h=read(HISTORY_KEY,[]);if(!h.some(x=>x.runId===result.runId))h.unshift(result);write(HISTORY_KEY,h.slice(0,50))}
-function makeResult(){const t=finalType(),st=stats();return {schema:'punyako-v3',runId:'pk_'+Date.now().toString(36),typeId:t.id,flower:t.icon,scentName:t.name,flowerMeaning:t.core,stats:st,diagnosedDate:today(),message:`${t.name}。${t.core}`,route:{stage2:stage2(),stage3:stage3(),pair:pair()},answers:[...answers],createdAt:Date.now()}}
-function open(){if(!member()){document.getElementById('openMemberGate')?.click();return}modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('member-gate-open');showIntro()}
+function makeResult(){const t=finalType(),st=stats(),hd=hidden();return{schema:'punyako-v4',runId:'pk4_'+Date.now().toString(36),typeId:t.id,typeImage:t.image,flower:t.icon,scentName:t.name,flowerMeaning:t.core,stats:st,hidden:hd,diagnosedDate:today(),message:`${t.name}。${t.core}`,route:{stage2:stage2(),stage3:stage3()},answers:[...answers],createdAt:Date.now()}}
+
+function open(){if(!member()){document.getElementById('openMemberGate')?.click();return}sfx.open();modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('member-gate-open');showIntro()}
 function close(){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('member-gate-open');backHandler=null}
 function setBack(fn){backHandler=fn;const b=$('#scent16NavBack');if(b)b.style.visibility=fn?'visible':'hidden'}
-function headerBack(){if(backHandler)return backHandler();close()}
-function charHtml(info,extra=''){return `<button class="punyako-character ${extra}" id="punyakoCharacter" type="button" aria-label="${esc(info.name)}をぷにぷにする"><span class="punyako-character-glow"></span><img src="${esc(info.image)}" alt="${esc(info.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="punyako-img-fallback">✦</span><small>${esc(info.name)}</small></button>`}
-function bindSquish(){const el=$('#punyakoCharacter');if(!el)return;el.onclick=()=>{el.classList.remove('is-tapped');void el.offsetWidth;el.classList.add('is-tapped');setTimeout(()=>el.classList.remove('is-tapped'),520)}}
-function showIntro(){
- setBack(close);const r=activeResult()||member()?.scentDiagnosis,p=read(PROGRESS_KEY,null),n=Math.min(p?.answers?.length||0,25);
- if(title)title.textContent='ぷにゃこ診断';
- const t=r?.typeId?TYPE_MAP[r.typeId]:null;
- screen.className='scent16-screen punyako-screen punyako-intro-bg';
- screen.innerHTML=`<div class="punyako-intro"><small class="punyako-kicker">ぷにゃこ診断</small>${charHtml(t||{name:'ぷにゅか',image:ASSET+'stage1_base.webp'})}<h3>${t?'あなたのぷにゅか':'こころの旅へ、出発しよう。'}</h3><p>${t?`いま一緒にいるのは <b>${esc(t.name)}</b>。もう一度旅をすると、別のぷにゅかや新しい性格に出会えるかもしれません。`:'25の小さな物語を選んでいくと、ぷにゅかが少しずつ進化します。正解はありません。いちばん自然に感じた方を選んでください。'}</p><div class="punyako-intro-meta"><span>25 QUESTIONS</span><span>1 → 2 → 4 → 16</span><span>AUTO SAVE</span></div>${n?`<button class="punyako-primary" id="punyakoResume">続きから <b>${n}/25</b></button><button class="punyako-secondary" id="punyakoRestart">最初からやり直す</button>`:`<button class="punyako-primary" id="punyakoStart">診断をはじめる</button>`}${r?`<button class="punyako-secondary" id="punyakoMyResult">今の結果を見る</button>`:''}<button class="punyako-text-button" id="punyakoHistory">診断履歴</button><div class="punyako-world-count" id="punyakoWorldCount">みんなの診断人数を読み込み中…</div></div>`;
- bindSquish();
- $('#punyakoStart')?.addEventListener('click',startNew);$('#punyakoResume')?.addEventListener('click',()=>{loadProgress();showQuestion()});$('#punyakoRestart')?.addEventListener('click',()=>{if(confirm('途中の回答を消して最初から始めますか？'))startNew()});$('#punyakoMyResult')?.addEventListener('click',()=>showResult(r));$('#punyakoHistory')?.addEventListener('click',showHistory);refreshWorldCount();
-}
-async function refreshWorldCount(){const el=$('#punyakoWorldCount');if(!el)return;try{for(let i=0;i<40&&!window.UNICA_FIREBASE?.loadScentMembers;i++)await new Promise(r=>setTimeout(r,100));const rows=await window.UNICA_FIREBASE?.loadScentMembers?.();const n=Array.isArray(rows)?rows.filter(x=>String(x?.scentDiagnosis?.typeId||'').startsWith('punyuka_')).length:0;el.textContent=`ぷにゃこ診断 ${n}人が完了`;}catch{el.textContent='あなたのぷにゅかを見つけよう'}}
-function startNew(){answers=[];qIndex=0;saveProgress();showQuestion()}
-function showQuestion(){
- qIndex=clamp(qIndex,0,24);const qu=currentQuestion(),ch=chapter(),info=form(),progress=Math.round((qIndex/25)*100);setBack(()=>{if(qIndex<=0)return showIntro();qIndex--;saveProgress();showQuestion()});
- screen.className=`scent16-screen punyako-screen punyako-chapter-${ch[2]}`;
- screen.innerHTML=`<div class="punyako-question"><div class="punyako-progress-head"><span>${esc(ch[0])} <b>${esc(ch[1])}</b></span><em>${qIndex+1} / 25</em></div><div class="punyako-progress"><i style="width:${progress}%"></i></div>${charHtml(info)}<div class="punyako-question-card"><small>QUESTION ${String(qIndex+1).padStart(2,'0')}</small><h3>${esc(qu.text)}</h3><div class="punyako-options">${qu.options.map((x,i)=>`<button type="button" data-punyako-choice="${i}" class="${answers[qIndex]?.choiceIndex===i?'is-selected':''}"><span>${String.fromCharCode(65+i)}</span><b>${esc(x.label)}</b></button>`).join('')}</div></div><p class="punyako-question-hint">考えすぎず、「こっちかも」で選んでOK。</p></div>`;
- bindSquish();screen.querySelectorAll('[data-punyako-choice]').forEach(b=>b.addEventListener('click',()=>answer(Number(b.dataset.punyakoChoice))));
-}
-function answer(choiceIndex){const qu=currentQuestion(),opt=qu.options[choiceIndex];answers=answers.slice(0,qIndex);answers[qIndex]={choiceIndex,route:opt.route||null,stats:opt.stats||{}};const char=$('#punyakoCharacter');char?.classList.add('is-reacting');screen.querySelectorAll('[data-punyako-choice]').forEach(b=>b.disabled=true);const answered=qIndex+1;qIndex++;saveProgress();setTimeout(()=>{if(answered===5)return showEvolution('stage2');if(answered===10)return showEvolution('stage3');if(answered===25)return finishDiagnosis();showQuestion()},420)}
-function showEvolution(kind){const info=kind==='stage2'?(stage2()==='ear'?{name:'みみぷにゅか',image:ASSET+'stage2_ear.webp'}:{name:'はねぷにゅか',image:ASSET+'stage2_wing.webp'}):form();const label=kind==='stage2'?'ぷにゅかが変化した！':'さらに進化した！';setBack(null);screen.className='scent16-screen punyako-screen punyako-evolution-bg';screen.innerHTML=`<div class="punyako-evolution"><div class="punyako-evolution-ring"></div><small>EVOLUTION</small>${charHtml(info,'is-evolving')}<h3>${label}</h3><strong>${esc(info.name)}</strong><p>こころの選び方が、少しずつ姿になっています。</p><button class="punyako-primary" id="punyakoEvolutionNext">つづける</button></div>`;bindSquish();$('#punyakoEvolutionNext').onclick=showQuestion}
-function finishDiagnosis(){clearProgress();const result=makeResult();addHistory(result);const t=TYPE_MAP[result.typeId];setBack(null);screen.className='scent16-screen punyako-screen punyako-final-bg';screen.innerHTML=`<div class="punyako-evolution punyako-final-evolution"><div class="punyako-evolution-ring"></div><small>FINAL EVOLUTION</small>${charHtml(t,'is-evolving')}<h3>あなたのぷにゅかが生まれました！</h3><strong>${esc(t.name)}</strong><p>${esc(t.core)}</p><button class="punyako-primary" id="punyakoFinalNext">結果を見る</button></div>`;bindSquish();$('#punyakoFinalNext').onclick=()=>{const old=activeResult();if(old?.typeId===result.typeId&&old?.runId!==result.runId)showSameTypeChoice(result,old);else{saveActive(result);showResult(result)}}}
-function showSameTypeChoice(result,old){const t=TYPE_MAP[result.typeId];setBack(showIntro);screen.className='scent16-screen punyako-screen punyako-result-bg';screen.innerHTML=`<div class="punyako-same"><small>SAME PUNYUKA, NEW HEART</small>${charHtml(t)}<h3>また ${esc(t.name)} になりました！</h3><p>同じぷにゅかでも、今回の答えで性格の形が少し変わっています。今回の性格データを使いますか？</p><button class="punyako-primary" id="useNewProfile">今回の性格を使う</button><button class="punyako-secondary" id="keepOldProfile">今の性格のまま</button><small class="punyako-note">今回の結果も診断履歴には保存されています。</small></div>`;bindSquish();$('#useNewProfile').onclick=()=>{saveActive(result);showResult(result)};$('#keepOldProfile').onclick=()=>showResult(old)}
-function radarSvg(st){const cx=120,cy=120,r=78,levels=[.25,.5,.75,1],pts=(rad)=>AXES.map((_,i)=>{const a=-Math.PI/2+i*2*Math.PI/5;return `${cx+Math.cos(a)*r*rad},${cy+Math.sin(a)*r*rad}`}).join(' ');const valuePts=AXES.map((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/5,rr=r*(clamp(st?.[k]||50,0,100)/100);return `${cx+Math.cos(a)*rr},${cy+Math.sin(a)*rr}`}).join(' ');return `<svg class="punyako-radar" viewBox="0 0 240 240" aria-label="性格の五角形グラフ">${levels.map(l=>`<polygon points="${pts(l)}" class="grid"></polygon>`).join('')}${AXES.map((_,i)=>{const a=-Math.PI/2+i*2*Math.PI/5;return `<line x1="${cx}" y1="${cy}" x2="${cx+Math.cos(a)*r}" y2="${cy+Math.sin(a)*r}" class="axis"></line>`}).join('')}<polygon points="${valuePts}" class="value"></polygon>${AXES.map((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/5,rr=r+24;return `<text x="${cx+Math.cos(a)*rr}" y="${cy+Math.sin(a)*rr+4}" text-anchor="middle">${AXIS_LABEL[k]}</text>`}).join('')}</svg>`}
-function showResult(raw){const t=TYPE_MAP[raw?.typeId];if(!t)return showIntro();const result={...raw,scentName:raw.scentName||t.name,stats:raw.stats||{}};setBack(showIntro);screen.className='scent16-screen punyako-screen punyako-result-bg';screen.innerHTML=`<div class="punyako-result"><small class="punyako-kicker">YOUR PUNYUKA</small>${charHtml(t)}<h3>${esc(t.name)}</h3><p class="punyako-core">${esc(t.core)}</p><section class="punyako-radar-wrap"><div>${radarSvg(result.stats)}</div><ul>${AXES.map(k=>`<li><span>${AXIS_LABEL[k]}</span><b>${clamp(result.stats?.[k]||50,0,100)}</b></li>`).join('')}</ul></section><div class="punyako-result-cards"><article><small>あなたの強み</small><p>${esc(t.strength)}</p></article><article><small>回復のヒント</small><p>${esc(t.recharge)}</p></article><article><small>ぷにゅかから一言</small><p>${esc(t.advice)}</p></article></div><div class="punyako-result-actions"><button class="punyako-primary" id="punyakoRedo">もう一度診断する</button><button class="punyako-secondary" id="punyakoHistoryFromResult">診断履歴を見る</button><button class="punyako-text-button" id="punyakoBackHome">ぷにゃこ診断トップへ</button></div></div>`;bindSquish();$('#punyakoRedo').onclick=()=>{if(confirm('新しく25問の旅を始めますか？'))startNew()};$('#punyakoHistoryFromResult').onclick=showHistory;$('#punyakoBackHome').onclick=showIntro}
-function showHistory(){const hist=read(HISTORY_KEY,[]);setBack(()=>{const r=activeResult();r?showResult(r):showIntro()});screen.className='scent16-screen punyako-screen punyako-result-bg';screen.innerHTML=`<div class="punyako-history"><small class="punyako-kicker">DIAGNOSIS HISTORY</small><h3>診断履歴</h3><p>過去の性格データへいつでも戻せます。</p>${hist.length?`<div class="punyako-history-list">${hist.map((r,i)=>{const t=TYPE_MAP[r.typeId];if(!t)return'';return `<article><img src="${esc(t.image)}" alt=""><div><strong>${esc(t.name)}</strong><small>${esc(r.diagnosedDate||'')}</small><span>${AXES.map(k=>`${AXIS_LABEL[k]} ${r.stats?.[k]??50}`).join(' · ')}</span></div><button type="button" data-restore-history="${i}">この性格に戻す</button></article>`}).join('')}</div>`:'<div class="punyako-empty">まだ診断履歴がありません。</div>'}<button class="punyako-secondary" id="punyakoHistoryBack">戻る</button></div>`;screen.querySelectorAll('[data-restore-history]').forEach(b=>b.onclick=()=>{const r=hist[Number(b.dataset.restoreHistory)];if(!r)return;if(confirm(`${TYPE_MAP[r.typeId]?.name||'このぷにゅか'}のこの性格に戻しますか？`)){saveActive(r);showResult(r)}});$('#punyakoHistoryBack').onclick=()=>{const r=activeResult();r?showResult(r):showIntro()}}
+function headerBack(){sfx.back();if(backHandler)return backHandler();close()}
+function charHtml(info,extra=''){if(!info)return'';return`<button class="punyako-character ${extra}" id="punyakoCharacter" type="button" aria-label="${esc(info.name)}をぷにぷにする"><span class="punyako-character-glow"></span><img src="${esc(info.image)}" alt="${esc(info.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="punyako-img-fallback">✦</span><small>${esc(info.name)}</small></button>`}
+function bindSquish(){const el=$('#punyakoCharacter');if(!el)return;el.onclick=()=>{sfx.squish();el.classList.remove('is-tapped');void el.offsetWidth;el.classList.add('is-tapped');setTimeout(()=>el.classList.remove('is-tapped'),520)}}
+function soundButton(){return`<button class="punyako-sound" id="punyakoSound" type="button" aria-label="効果音のオンオフ">${soundEnabled?'🔊':'🔇'}</button>`}
+function bindSound(){const b=$('#punyakoSound');if(!b)return;b.onclick=()=>{soundEnabled=!soundEnabled;localStorage.setItem(SOUND_KEY,soundEnabled?'on':'off');b.textContent=soundEnabled?'🔊':'🔇';if(soundEnabled){ensureAudio();sfx.sparkle()}}}
+function particleHtml(symbols=['✦','·','✧'],count=28){return`<div class="punyako-fx-particles" aria-hidden="true">${Array.from({length:count},(_,i)=>`<i style="--i:${i};--x:${(i*37)%100}%;--d:${(i%7)*.08}s">${symbols[i%symbols.length]}</i>`).join('')}</div>`}
 
-$('#openScent16')?.addEventListener('click',e=>{e.preventDefault();open()});$('#scent16NavBack')?.addEventListener('click',headerBack);$('#scent16Exit')?.addEventListener('click',close);document.querySelectorAll('[data-close-scent16]').forEach(x=>x.addEventListener('click',close));window.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('is-open'))close()});window.addEventListener('unica:firebase-member-restored',updateHome);window.addEventListener('unica:scent-diagnosis-saved',updateHome);
-if(title)title.textContent='ぷにゃこ診断';const headSmall=modal.querySelector('.scent16-header small');if(headSmall)headSmall.textContent='ぷにゃこ診断';updateHome();
-window.UNICA_SCENT16={close,typeById:id=>TYPE_MAP[id]||null,getMyResult:()=>activeResult()||member()?.scentDiagnosis,getProgress:()=>read(PROGRESS_KEY,null),showIntro,startDiagnosis:startNew,showResult};
+function showIntro(){
+  loadProgress();updateHome();setBack(null);const result=activeResult(),journey=localJourney(),form=journey?.seedComplete?formById(journey.equippedId):null;
+  screen.className='scent16-screen punyako-screen punyako-intro-bg';
+  screen.innerHTML=`<div class="punyako-intro"><small class="punyako-kicker">ぷにゃこ診断</small>${form?charHtml(form):'<div class="punyako-before-birth"><span>?</span><small>まだ姿はありません</small></div>'}<h3>${journey?.seedComplete?'この子を、もっと育てよう。':'まず5問で、ぷにゅか誕生。'}</h3><p>${journey?.seedComplete?'答えを重ねるたび、ぷにゅかの姿が変わっていきます。':'5つの不思議な質問に答えると、あなたのこころから最初のぷにゅかが生まれます。'}</p><div class="punyako-project-mini"><b>30人チャレンジ</b><strong>5問の診断を30人達成で<br>「ミルクの匂い - 弾き語り ver.」RELEASE決定!!</strong><span id="punyakoWorldCount">人数を集計中…</span></div><div class="punyako-intro-meta"><span>まずは5問</span><span>全25問で最終進化</span><span>途中保存</span></div>${qIndex>0&&qIndex<25?`<button class="punyako-primary" id="punyakoContinue">続きから育てる <b>${qIndex}/25</b></button><button class="punyako-secondary" id="punyakoRestart">最初からやり直す</button>`:`<button class="punyako-primary" id="punyakoStart">${result?'もう一度診断する':'5問診断をはじめる'}</button>`}${result?'<button class="punyako-secondary" id="punyakoMyResult">今の最終結果を見る</button><button class="punyako-text-button" id="punyakoHistory">診断履歴</button>':''}<small class="punyako-note">5問目でぷにゅかをGETすると、サイト内のあなたのアイコンにも反映されます。</small></div>`;
+  bindSquish();refreshWorldCount();
+  $('#punyakoContinue')?.addEventListener('click',()=>{sfx.next();showQuestion()});
+  $('#punyakoRestart')?.addEventListener('click',()=>{if(confirm('回答途中のデータを消して、最初から始めますか？'))startNew()});
+  $('#punyakoStart')?.addEventListener('click',()=>{if(result&&!confirm('新しい25問の旅を始めますか？'))return;startNew()});
+  $('#punyakoMyResult')?.addEventListener('click',()=>showResult(result));$('#punyakoHistory')?.addEventListener('click',showHistory)
+}
+async function refreshWorldCount(){const el=$('#punyakoWorldCount');if(!el)return;try{for(let i=0;i<40&&!window.UNICA_FIREBASE?.loadPunyakoMembers;i++)await new Promise(r=>setTimeout(r,100));const rows=await window.UNICA_FIREBASE?.loadPunyakoMembers?.();const n=Array.isArray(rows)?rows.filter(x=>x?.punyakoJourney?.seedComplete).length:0;el.textContent=`現在 ${n} / 30人`;el.classList.toggle('is-complete',n>=30)}catch{el.textContent='5問で参加できます'}}
+function startNew(){answers=[];qIndex=0;clearProgress();saveProgress();sfx.sparkle();showQuestion()}
+
+function showQuestion(){
+  const qu=currentQuestion();if(!qu)return;setBack(showIntro);const [ch,sub,no]=chapter(),form=currentForm(),pct=Math.round(qIndex/25*100);
+  screen.className=`scent16-screen punyako-screen punyako-chapter-${no}`;
+  screen.innerHTML=`<div class="punyako-question"><div class="punyako-progress-head"><span>${esc(ch)}<b>${esc(sub)}</b></span><div class="punyako-progress-tools">${soundButton()}<em>${qIndex+1} / 25</em></div></div><div class="punyako-progress"><i style="width:${pct}%"></i></div>${form?charHtml(form):''}<div class="punyako-question-card"><small>${esc(milestoneText())}</small><h3>${esc(qu.text)}</h3><div class="punyako-options">${qu.options.map((x,i)=>`<button type="button" data-punyako-choice="${i}"><span>${String.fromCharCode(65+i)}</span><b>${esc(x.label)}</b></button>`).join('')}</div></div><p class="punyako-question-hint">直感で選んで大丈夫です。</p></div>`;
+  bindSquish();bindSound();screen.querySelectorAll('[data-punyako-choice]').forEach(b=>b.onclick=()=>answer(Number(b.dataset.punyakoChoice)))
+}
+function answer(choiceIndex){
+  const qu=currentQuestion(),op=qu?.options?.[choiceIndex];if(!qu||!op)return;sfx.choice();answers=answers.slice(0,qIndex);answers[qIndex]={questionId:qu.id,choiceIndex,stage2:op.stage2||{},stage3:op.stage3||{},finalId:op.finalId||null,stats:op.stats||{},hidden:op.hidden||{},meta:qu.meta||{}};screen.querySelectorAll('[data-punyako-choice]').forEach((b,i)=>{b.disabled=true;b.classList.toggle('is-selected',i===choiceIndex)});const char=$('#punyakoCharacter');char?.classList.add('is-reacting');qIndex++;saveProgress();const answered=qIndex;setTimeout(()=>{if(answered===5)return showBirth();if(answered===10)return showEvolution('stage2');if(answered===15)return showEvolution('stage3');if(answered===25)return finishDiagnosis();sfx.next();showQuestion()},480)
+}
+function showBirth(){
+  const info=FORMS.stage1_base;setBack(null);saveJourney(info,5).then(()=>{window.dispatchEvent(new CustomEvent('unica:punyako-seed-complete',{detail:localJourney()}));refreshWorldCount()});screen.className='scent16-screen punyako-screen punyako-birth-bg';screen.innerHTML=`<div class="punyako-evolution punyako-birth">${particleHtml(['✦','✧','♡','·'],38)}<div class="punyako-evolution-ring is-birth"></div><div class="punyako-burst-rays"></div><small>BIRTH</small>${charHtml(info,'is-evolving')}<h3>ぷにゅかが誕生しました！</h3><strong>ぷにゅか GET！</strong><p>あなたの最初の5つの答えから、小さなぷにゅかが生まれました。</p><div class="punyako-get-project"><b>30人チャレンジに参加完了！</b><span>ここから先は、この子を育てていけます。</span></div><button class="punyako-primary" id="punyakoBirthNext">この子を育てる</button><button class="punyako-secondary" id="punyakoBirthClose">今日はここまで</button></div>`;setTimeout(()=>sfx.birth(),80);setTimeout(()=>sfx.sparkle(),850);bindSquish();$('#punyakoBirthNext').onclick=()=>{sfx.next();showQuestion()};$('#punyakoBirthClose').onclick=close
+}
+function stageInfo(kind){
+  if(kind==='stage2')return stage2()==='ear'?FORMS.stage2_ear:FORMS.stage2_wing;
+  const s3=stage3();return s3==='fluffy'?FORMS.stage3_01_fluffy_ear:s3==='round'?FORMS.stage3_02_round_ear:s3==='kira'?FORMS.stage3_03_kira_wing:FORMS.stage3_04_gira_wing
+}
+function showEvolution(kind){
+  const info=stageInfo(kind),completed=kind==='stage2'?10:15;saveJourney(info,completed);setBack(null);screen.className='scent16-screen punyako-screen punyako-evolution-bg';screen.innerHTML=`<div class="punyako-evolution punyako-big-evolution">${particleHtml(['✦','✧','◇','·'],34)}<div class="punyako-evolution-ring"></div><div class="punyako-burst-rays"></div><small>EVOLUTION</small>${charHtml(info,'is-evolving')}<h3>${kind==='stage2'?'ぷにゅかが進化した！':'さらに姿が変わった！'}</h3><strong>${esc(info.name)}</strong><p>これまでの選び方が、少しずつ姿になっています。</p><button class="punyako-primary" id="punyakoEvolutionNext">つづける</button></div>`;setTimeout(()=>sfx.evolve(),80);setTimeout(()=>sfx.sparkle(),650);bindSquish();$('#punyakoEvolutionNext').onclick=()=>{sfx.next();showQuestion()}
+}
+function finishDiagnosis(){
+  clearProgress();const result=makeResult(),t=TYPE_MAP[result.typeId];addHistory(result);saveJourney({...t,stage:'final'},25);setBack(null);screen.className=`scent16-screen punyako-screen punyako-final-bg fx-${t.fx}`;const symbols={flower:['🌸','✦','♡'],sun:['☀','✦','·'],color:['✦','◆','●'],moon:['☾','✦','·'],guard:['✦','◇','·'],clover:['♧','✦','·'],dream:['☁','✦','○'],star:['★','✦','·'],angel:['✦','♡','·'],rainbow:['✦','◇','·'],butterfly:['✦','❀','·'],pixie:['✦','✧','·'],thunder:['⚡','✦','·'],devil:['✦','◆','·'],ice:['❄','✦','·'],phoenix:['✦','🔥','·']}[t.fx]||['✦','✧','·'];screen.innerHTML=`<div class="punyako-evolution punyako-final-evolution">${particleHtml(symbols,48)}<div class="punyako-evolution-ring is-final"></div><div class="punyako-burst-rays is-final"></div><small>FINAL EVOLUTION</small>${charHtml(t,'is-evolving')}<h3>最終進化！</h3><strong>${esc(t.name)}</strong><p>${esc(t.core)}</p><button class="punyako-primary" id="punyakoFinalNext">診断結果を見る</button></div>`;setTimeout(()=>sfx.final(),60);setTimeout(()=>sfx.sparkle(),1000);bindSquish();$('#punyakoFinalNext').onclick=()=>{const old=activeResult();if(old?.typeId===result.typeId&&old?.runId!==result.runId)showSameTypeChoice(result,old);else{saveActive(result);showResult(result)}}
+}
+function showSameTypeChoice(result,old){const t=TYPE_MAP[result.typeId];setBack(showIntro);screen.className='scent16-screen punyako-screen punyako-result-bg';screen.innerHTML=`<div class="punyako-same"><small>SAME PUNYUKA, NEW HEART</small>${charHtml(t)}<h3>また ${esc(t.name)} になりました！</h3><p>同じぷにゅかでも、今回の答えで性格の形が少し変わっています。今回の性格データを使いますか？</p><button class="punyako-primary" id="useNewProfile">今回の性格を使う</button><button class="punyako-secondary" id="keepOldProfile">今の性格のまま</button><small class="punyako-note">今回の結果も診断履歴には保存されています。</small></div>`;bindSquish();$('#useNewProfile').onclick=()=>{saveActive(result);showResult(result)};$('#keepOldProfile').onclick=()=>showResult(old)}
+function radarSvg(st){const cx=120,cy=120,r=78,levels=[.25,.5,.75,1],pts=(rad)=>AXES.map((_,i)=>{const a=-Math.PI/2+i*2*Math.PI/5;return`${cx+Math.cos(a)*r*rad},${cy+Math.sin(a)*r*rad}`}).join(' '),valuePts=AXES.map((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/5,rr=r*(clamp(st?.[k]||50,0,100)/100);return`${cx+Math.cos(a)*rr},${cy+Math.sin(a)*rr}`}).join(' ');return`<svg class="punyako-radar" viewBox="0 0 240 240" aria-label="性格の五角形グラフ">${levels.map(l=>`<polygon points="${pts(l)}" class="grid"></polygon>`).join('')}${AXES.map((_,i)=>{const a=-Math.PI/2+i*2*Math.PI/5;return`<line x1="${cx}" y1="${cy}" x2="${cx+Math.cos(a)*r}" y2="${cy+Math.sin(a)*r}" class="axis"></line>`}).join('')}<polygon points="${valuePts}" class="value"></polygon>${AXES.map((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/5,rr=r+24;return`<text x="${cx+Math.cos(a)*rr}" y="${cy+Math.sin(a)*rr+4}" text-anchor="middle">${AXIS_LABEL[k]}</text>`}).join('')}</svg>`}
+function showResult(raw){const t=TYPE_MAP[raw?.typeId];if(!t)return showIntro();sfx.result();const result={...raw,scentName:raw.scentName||t.name,stats:raw.stats||{}};setBack(showIntro);screen.className='scent16-screen punyako-screen punyako-result-bg';screen.innerHTML=`<div class="punyako-result"><small class="punyako-kicker">YOUR PUNYUKA</small>${charHtml(t)}<h3>${esc(t.name)}</h3><p class="punyako-core">${esc(t.core)}</p><section class="punyako-radar-wrap"><div>${radarSvg(result.stats)}</div><ul>${AXES.map(k=>`<li><span>${AXIS_LABEL[k]}</span><b>${clamp(result.stats?.[k]||50,0,100)}</b></li>`).join('')}</ul></section><div class="punyako-result-cards"><article><small>あなたの強み</small><p>${esc(t.strength)}</p></article><article><small>回復のヒント</small><p>${esc(t.recharge)}</p></article><article><small>ぷにゅかから一言</small><p>${esc(t.advice)}</p></article></div><div class="punyako-result-actions"><button class="punyako-primary" id="punyakoRedo">もう一度診断する</button><button class="punyako-secondary" id="punyakoHistoryFromResult">診断履歴を見る</button><button class="punyako-text-button" id="punyakoBackHome">ぷにゃこ診断トップへ</button></div></div>`;bindSquish();$('#punyakoRedo').onclick=()=>{if(confirm('新しく25問の旅を始めますか？'))startNew()};$('#punyakoHistoryFromResult').onclick=showHistory;$('#punyakoBackHome').onclick=showIntro}
+function showHistory(){const hist=read(HISTORY_KEY,[]);setBack(()=>{const r=activeResult();r?showResult(r):showIntro()});screen.className='scent16-screen punyako-screen punyako-result-bg';screen.innerHTML=`<div class="punyako-history"><small class="punyako-kicker">DIAGNOSIS HISTORY</small><h3>診断履歴</h3><p>過去の性格データへいつでも戻せます。</p>${hist.length?`<div class="punyako-history-list">${hist.map((r,i)=>{const t=TYPE_MAP[r.typeId];if(!t)return'';return`<article><img src="${esc(t.image)}" alt=""><div><strong>${esc(t.name)}</strong><small>${esc(r.diagnosedDate||'')}</small><span>${AXES.map(k=>`${AXIS_LABEL[k]} ${r.stats?.[k]??50}`).join(' · ')}</span></div><button type="button" data-restore-history="${i}">この性格に戻す</button></article>`}).join('')}</div>`:'<div class="punyako-empty">まだ診断履歴がありません。</div>'}<button class="punyako-secondary" id="punyakoHistoryBack">戻る</button></div>`;screen.querySelectorAll('[data-restore-history]').forEach(b=>b.onclick=()=>{const r=hist[Number(b.dataset.restoreHistory)];if(!r)return;if(confirm(`${TYPE_MAP[r.typeId]?.name||'このぷにゅか'}のこの性格に戻しますか？`)){saveActive(r);showResult(r)}});$('#punyakoHistoryBack').onclick=()=>{const r=activeResult();r?showResult(r):showIntro()}}
+
+if(title)title.textContent='ぷにゃこ診断';
+$('#openScent16')?.addEventListener('click',e=>{e.preventDefault();open()});$('#scent16NavBack')?.addEventListener('click',headerBack);$('#scent16Exit')?.addEventListener('click',close);document.querySelectorAll('[data-close-scent16]').forEach(x=>x.addEventListener('click',close));window.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('is-open'))close()});window.addEventListener('unica:firebase-member-restored',updateHome);window.addEventListener('unica:scent-diagnosis-saved',updateHome);window.addEventListener('unica:punyako-avatar-updated',updateHome);updateHome();
+window.UNICA_SCENT16={close,typeById:id=>TYPE_MAP[id]||null,scentIconUrl:id=>TYPE_MAP[id]?.image||'',getMyResult:()=>activeResult()||member()?.scentDiagnosis,getProgress:()=>read(PROGRESS_KEY,null),showIntro,startDiagnosis:startNew,showResult};
 })();

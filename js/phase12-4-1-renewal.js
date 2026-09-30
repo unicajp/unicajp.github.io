@@ -7,7 +7,7 @@ function remember(key,label,icon){try{localStorage.setItem('unicaRecentFeature',
 function renderRecent(){const box=$('#renewalRecent');if(!box)return;let r=null;try{r=JSON.parse(localStorage.getItem('unicaRecentFeature')||'null')}catch(_){}if(!r){box.classList.remove('is-visible');return}box.classList.add('is-visible');box.innerHTML=`<span class="recent-icon">${r.icon||'✨'}</span><div><small>最近利用した機能</small><strong>${r.label||''}</strong><b>続きから開く ›</b></div>`;box.onclick=()=>{const b=document.querySelector(`[data-feature-key="${r.key}"]`);if(b)b.click()};}
 function statusText(key){
  if(key==='game'){const n=$('#milkLyricsHomeUnlocked')?.textContent||'0';return `歌詞 ${n}/9`}
- if(key==='scent'){try{const r=JSON.parse(localStorage.getItem('unicaPunyakoDiagnosisV3Result')||'null');return r?.typeId?'診断済み':'診断する'}catch(_){return '診断する'}}
+ if(key==='scent'){try{const r=JSON.parse(localStorage.getItem('unicaPunyakoDiagnosisV4Result')||'null');const j=JSON.parse(localStorage.getItem('unicaPunyakoJourneyV4')||'null');if(r?.typeId)return '最終進化済み';if(j?.seedComplete)return `育成中 ${Math.max(5,Number(j.completedQuestions||5))}/25`;return '5問で誕生'}catch(_){return '5問で誕生'}}
  if(key==='prefecture'){return $('#prefectureTotalMembers')?.textContent||'全国を見る'}
  if(key==='flowers')return '16種類公開';
  if(key==='lyrics'){const n=$('#milkLyricsHomeUnlocked')?.textContent||'0';return `${n}/9 CHAPTER`}
@@ -30,7 +30,7 @@ function build(){
    subLink({key:'lyrics',icon:'📖',title:'歌詞図鑑',status:`解放 ${statusText('lyrics')}`,open:()=>clickTarget('openMilkLyrics')})
   ),
   featureStack(
-   card({key:'scent',cls:'scent',icon:'✦',title:'ぷにゃこ診断',desc:'25の物語から、あなたのぷにゅかが進化！',badge:'NEW',open:()=>clickTarget('openScent16')})
+   card({key:'scent',cls:'scent',icon:'✦',title:'ぷにゃこ診断',desc:'まず5問でぷにゅか誕生！ 続けるとどんどん進化。',badge:'NEW',open:()=>clickTarget('openScent16')})
   ),
   featureStack(
    card({key:'prefecture',cls:'prefecture',icon:'🗾',title:'全国のうにメン',desc:'全国にいる仲間を見てみよう！',open:()=>clickTarget('openPrefectureDirectory')})
