@@ -38,52 +38,64 @@
       if (!AC) return;
       const ctx = new AC();
       const master = ctx.createGain();
-      master.gain.value = 0.82;
+      master.gain.value = 0.92;
       master.connect(ctx.destination);
       const now = ctx.currentTime;
 
-      const chime = (freq, at, dur, vol, endFreq = freq) => {
+      const tone = (freq, at, dur, vol, endFreq = freq, type = 'sine') => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.type = 'sine';
+        osc.type = type;
         osc.frequency.setValueAtTime(freq, now + at);
-        osc.frequency.exponentialRampToValueAtTime(endFreq, now + at + dur);
+        osc.frequency.exponentialRampToValueAtTime(Math.max(20,endFreq), now + at + dur);
         gain.gain.setValueAtTime(0.0001, now + at);
-        gain.gain.exponentialRampToValueAtTime(vol, now + at + 0.018);
+        gain.gain.exponentialRampToValueAtTime(vol, now + at + 0.012);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + at + dur);
         osc.connect(gain); gain.connect(master);
         osc.start(now + at); osc.stop(now + at + dur + 0.03);
       };
 
-      // Crystal latch: a small glassy "kacha", not the generic UI tap.
-      chime(1180, 0.00, 0.09, 0.12, 820);
-      chime(1760, 0.035, 0.11, 0.075, 1320);
+      const noise = (at, dur, vol, fromHz, toHz, type = 'bandpass', q = 0.8) => {
+        const len = Math.max(1, Math.floor(ctx.sampleRate * dur));
+        const buffer = ctx.createBuffer(1, len, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < len; i++) {
+          const env = Math.sin(Math.PI * Math.min(1, i / len));
+          data[i] = (Math.random() * 2 - 1) * (0.42 + 0.58 * env);
+        }
+        const src = ctx.createBufferSource(); src.buffer = buffer;
+        const filter = ctx.createBiquadFilter(); filter.type = type; filter.Q.value = q;
+        filter.frequency.setValueAtTime(fromHz, now + at);
+        filter.frequency.exponentialRampToValueAtTime(toHz, now + at + dur);
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.0001, now + at);
+        gain.gain.exponentialRampToValueAtTime(vol, now + at + Math.min(.05,dur*.16));
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + at + dur);
+        src.connect(filter); filter.connect(gain); gain.connect(master);
+        src.start(now + at); src.stop(now + at + dur + .02);
+      };
 
-      // Door shimmer.
-      chime(740, 0.22, 0.72, 0.055, 1240);
-      chime(1110, 0.29, 0.88, 0.038, 1880);
+      // 1) 「ガチャ」— 木の扉の真鍮ラッチが外れる短い音。
+      noise(0.00, 0.075, 0.13, 1900, 820, 'bandpass', 1.6);
+      tone(245, 0.008, 0.085, 0.10, 150, 'triangle');
+      noise(0.072, 0.065, 0.075, 1350, 620, 'bandpass', 1.3);
+      tone(170, 0.075, 0.075, 0.055, 112, 'sine');
 
-      // Soft rising "fwaa" as the light expands and the camera enters.
-      const len = Math.floor(ctx.sampleRate * 1.85);
-      const buffer = ctx.createBuffer(1, len, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * (0.55 + 0.45 * Math.sin(Math.PI * i / len));
-      const src = ctx.createBufferSource(); src.buffer = buffer;
-      const filter = ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.Q.value = 0.7;
-      filter.frequency.setValueAtTime(430, now + 0.28);
-      filter.frequency.exponentialRampToValueAtTime(2300, now + 2.0);
-      const air = ctx.createGain();
-      air.gain.setValueAtTime(0.0001, now + 0.25);
-      air.gain.exponentialRampToValueAtTime(0.15, now + 0.72);
-      air.gain.setValueAtTime(0.15, now + 1.35);
-      air.gain.exponentialRampToValueAtTime(0.0001, now + 2.12);
-      src.connect(filter); filter.connect(air); air.connect(master);
-      src.start(now + 0.25); src.stop(now + 2.15);
+      // 2) 「ギィ…」— 扉がゆっくり開く、柔らかな木＋金具の軋み。
+      noise(0.12, 0.92, 0.080, 720, 250, 'bandpass', 2.0);
+      tone(142, 0.13, 0.84, 0.050, 78, 'sawtooth');
+      tone(228, 0.18, 0.73, 0.026, 124, 'triangle');
+      tone(116, 0.72, 0.30, 0.034, 84, 'sine');
 
-      // Passing-through sparkle just before the site appears.
-      chime(1560, 1.45, 0.48, 0.045, 2460);
-      chime(2340, 1.55, 0.40, 0.028, 3120);
-      window.setTimeout(() => ctx.close().catch(() => {}), 2800);
+      // 3) 「ファぁ〜」— 白い光の空間が広がる、空気の上昇音。
+      noise(0.58, 1.72, 0.14, 430, 2500, 'bandpass', 0.62);
+      tone(392, 0.78, 1.20, 0.027, 784, 'sine');
+      tone(523.25, 0.92, 1.12, 0.030, 1046.5, 'sine');
+      tone(659.25, 1.06, 1.03, 0.022, 1318.5, 'sine');
+      tone(1046.5, 1.55, 0.54, 0.025, 1760, 'sine');
+      tone(1568, 1.67, 0.44, 0.016, 2349, 'sine');
+
+      window.setTimeout(() => ctx.close().catch(() => {}), 3000);
     } catch (_) {}
   }
 
