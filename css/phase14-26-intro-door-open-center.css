@@ -1,0 +1,47 @@
+/* Phase 14.26 — open-door entrance centered first, then closed-door matched */
+.intro-door{
+  top:50% !important;
+  left:50% !important;
+  width:min(66vw, 332px) !important;
+  aspect-ratio:1280 / 1536 !important;
+  height:auto !important;
+  background-size:contain !important;
+  background-position:center center !important;
+}
+.intro-door-closed,
+.intro-door-open{
+  left:50% !important;
+  width:min(66vw, 332px) !important;
+}
+.intro-door-closed{
+  transform:translate(-50%, -46.5%) scale(1) !important;
+}
+.intro-door-open{
+  transform:translate(-50%, -46.5%) scale(1.005) !important;
+}
+.intro-enter-light{
+  left:50% !important;
+  top:46.0% !important;
+  width:min(6.2vw, 32px) !important;
+  height:min(24vh, 154px) !important;
+}
+body.opened .intro-door-closed{
+  opacity:0 !important;
+  transform:translate(-50%, -46.5%) scale(1.03) !important;
+}
+body.opened .intro-door-open{
+  opacity:1 !important;
+  transform:translate(-50%, -46.5%) scale(1.055) !important;
+}
+@media (max-width: 520px){
+  .intro-door,
+  .intro-door-closed,
+  .intro-door-open{
+    width:min(68vw, 318px) !important;
+  }
+  .intro-door{ top:49.8% !important; }
+  .intro-door-closed{ transform:translate(-50%, -46.2%) scale(1) !important; }
+  .intro-door-open{ transform:translate(-50%, -46.2%) scale(1.005) !important; }
+  body.opened .intro-door-closed{ transform:translate(-50%, -46.2%) scale(1.03) !important; }
+  body.opened .intro-door-open{ transform:translate(-50%, -46.2%) scale(1.055) !important; }
+}
