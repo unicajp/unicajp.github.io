@@ -1,0 +1,61 @@
+/* Phase 14.20 — warm fantasy door entrance */
+.intro{
+  background:radial-gradient(circle at 50% 43%,#f9ecdf 0%,#efd7c4 45%,#d7b59b 78%,#b98f77 100%)!important;
+  overflow:hidden;
+  perspective:900px;
+}
+.intro-trigger{
+  background:radial-gradient(circle at 50% 43%,#f9ecdf 0%,#efd7c4 45%,#d7b59b 78%,#b98f77 100%)!important;
+  overflow:hidden;
+  transform-style:preserve-3d;
+}
+.intro-door{
+  inset:0!important;
+  background-repeat:no-repeat!important;
+  background-size:auto 100%!important;
+  background-position:50% 50%!important;
+  transform-origin:50% 50%!important;
+}
+.intro-door-closed{
+  background-image:url('../assets/intro/unica-door-closed.webp?v=14.20')!important;
+  opacity:1;
+  transform:scale(1)!important;
+  transition:opacity .34s ease,filter .34s ease!important;
+}
+.intro-door-open{
+  background-image:url('../assets/intro/unica-door-open.webp?v=14.20')!important;
+  opacity:0;
+  transform:scale(1)!important;
+  transition:opacity .38s ease .16s,transform 1.75s cubic-bezier(.2,.72,.18,1) .24s,filter .7s ease .16s!important;
+}
+body.opened .intro-door-closed{
+  opacity:0!important;
+  transform:scale(1)!important;
+  filter:brightness(1.06)!important;
+}
+body.opened .intro-door-open{
+  opacity:1!important;
+  transform:scale(1.13)!important;
+  filter:brightness(1.08)!important;
+}
+.intro-enter-light{
+  left:50%!important;
+  top:49%!important;
+  width:7%!important;
+  height:49%!important;
+  background:rgba(255,255,255,.99)!important;
+  box-shadow:0 0 105px 68px rgba(255,244,214,.84)!important;
+  filter:blur(25px)!important;
+  transition:opacity .42s ease .32s,transform 1.55s cubic-bezier(.18,.7,.18,1) .34s!important;
+}
+body.opened .intro-enter-light{
+  opacity:1!important;
+  transform:translate(-50%,-50%) scale(12)!important;
+}
+.intro-enter-hint{
+  color:rgba(103,72,58,.70)!important;
+  text-shadow:0 2px 14px rgba(255,255,255,.78)!important;
+}
+@media (max-width:520px){
+  .intro-door{background-size:auto 100%!important;background-position:50% 50%!important}
+}
