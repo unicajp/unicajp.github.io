@@ -30,7 +30,7 @@ function build(){
    subLink({key:'lyrics',icon:'📖',title:'歌詞図鑑',status:`解放 ${statusText('lyrics')}`,open:()=>clickTarget('openMilkLyrics')})
   ),
   featureStack(
-   card({key:'scent',cls:'scent',icon:'✦',title:'ぷにゃこ診断',desc:'まず5問でぷにゅか誕生！ 続けるとどんどん進化。',badge:'NEW',open:()=>clickTarget('openScent16')})
+   card({key:'scent',cls:'scent',icon:'✦',title:'ぷにゅか診断',desc:'まず5問でぷにゅか誕生！ 続けるとどんどん進化。',badge:'NEW',open:()=>clickTarget('openScent16')})
   ),
   featureStack(
    card({key:'prefecture',cls:'prefecture',icon:'🗾',title:'全国のうにメン',desc:'全国にいる仲間を見てみよう！',open:()=>clickTarget('openPrefectureDirectory')})

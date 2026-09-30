@@ -52,7 +52,7 @@ function normalizeJourney(profile={}){
 function html(profile={},size='normal'){
   const self=isSelf(profile),j=normalizeJourney(profile),tiny=size==='tiny';
   if(!j.seedComplete){
-    return `<span class="unica-punyako-avatar ${tiny?'is-tiny':''} is-empty" ${self?'data-punyako-self="1"':''} title="ぷにゃこ診断でぷにゅかを誕生させよう" aria-label="ぷにゅか未誕生"><span aria-hidden="true">✦</span></span>`;
+    return `<span class="unica-punyako-avatar ${tiny?'is-tiny':''} is-empty" ${self?'data-punyako-self="1"':''} title="ぷにゅか診断でぷにゅかを誕生させよう" aria-label="ぷにゅか未誕生"><span aria-hidden="true">✦</span></span>`;
   }
   return `<span class="unica-punyako-avatar ${tiny?'is-tiny':''}" ${self?'data-punyako-self="1"':''} data-punyako-id="${esc(j.equippedId)}" title="${esc(j.equippedName)}" aria-label="${esc(j.equippedName)}"><img src="${esc(j.equippedImage)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="upa-fallback" aria-hidden="true">✦</span></span>`;
 }

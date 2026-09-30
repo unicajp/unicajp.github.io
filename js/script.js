@@ -417,7 +417,7 @@
     if (passCheers) passCheers.textContent = String(member.cheers ?? 0);
     if (passTitle) passTitle.textContent = member.title || 'はじまりのうにメン';
     if (openPassButton) openPassButton.textContent = 'うにパスをひらく';
-    if (memberMessage) memberMessage.textContent = 'あなたがこの世界に来た日から、時間は少しずつ積み重なっています。花のアイコンは誕生日とぷにゃこ診断から育っていきます。';
+    if (memberMessage) memberMessage.textContent = 'あなたがこの世界に来た日から、時間は少しずつ積み重なっています。花のアイコンは誕生日とぷにゅか診断から育っていきます。';
     if (openMemberSettingsButton) openMemberSettingsButton.hidden = false;
     updateWorldHome();
     renderCheerSummary();
@@ -432,7 +432,7 @@
     const noticeStrong = document.querySelector('.register-notice strong');
     const noticeText = document.querySelector('.register-notice p');
     if (noticeStrong) noticeStrong.textContent = '大切なお知らせ';
-    if (noticeText) noticeText.innerHTML = 'ニックネームは登録後に変更できません。<br>ぷにゃこ診断で誕生したぷにゅかが、あなたのアイコンとして一緒に育っていきます。';
+    if (noticeText) noticeText.innerHTML = 'ニックネームは登録後に変更できません。<br>ぷにゅか診断で誕生したぷにゅかが、あなたのアイコンとして一緒に育っていきます。';
     registerSkip.textContent = '今は登録せず、公式サイトを見る';
     pendingRegistration = null;
     registerError.textContent = '';
