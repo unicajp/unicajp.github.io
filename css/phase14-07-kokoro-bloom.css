@@ -1,4 +1,4 @@
-/* Phase14.08 — ぷにゅか診断 */
+/* Phase14.08 — ぷにゃこ診断 */
 #scent16Modal .scent16-panel{background:linear-gradient(180deg,#fffdfb,#faf6ff 58%,#f4f8ff);overflow:hidden}
 #scent16Modal .scent16-header{position:sticky;top:0;z-index:20;background:rgba(255,253,251,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(90,68,88,.08)}
 #scent16Modal .scent16-header small{letter-spacing:.14em;color:#9a7c91}
@@ -68,3 +68,34 @@
 .punyako-final-bg[class*="fx-"] .punyako-evolution-ring.is-final{background:conic-gradient(from 0deg,rgba(255,255,255,0),var(--fx1),#fff,var(--fx2),var(--fx1),rgba(255,255,255,0))}.punyako-final-bg[class*="fx-"]{background:radial-gradient(circle at 50% 36%,#fff 0,color-mix(in srgb,var(--fx2) 35%,#fff) 25%,color-mix(in srgb,var(--fx1) 24%,#f6f0ff) 58%,#eef4ff 100%)}
 @media(max-width:390px){.punyako-birth .punyako-character,.punyako-big-evolution .punyako-character{width:210px;height:210px}.punyako-birth .punyako-character img,.punyako-big-evolution .punyako-character img{max-width:190px;max-height:190px}.punyako-final-evolution .punyako-character{width:235px;height:235px}.punyako-final-evolution .punyako-character img{max-width:215px;max-height:215px}.punyako-birth h3,.punyako-big-evolution h3{font-size:24px}.punyako-final-evolution h3{font-size:28px}.punyako-burst-rays{width:340px;height:340px}.punyako-burst-rays.is-final{width:420px;height:420px}}
 @media(prefers-reduced-motion:reduce){.punyako-fx-particles i,.punyako-burst-rays,.punyako-evolution-ring,.punyako-character{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+
+/* Phase 14.14: make the punyuka itself feel tappable. */
+.punyako-tap-guide{
+  position:absolute;
+  z-index:7;
+  top:4px;
+  right:-7px;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:5px 8px 5px 6px;
+  border-radius:999px;
+  background:rgba(255,255,255,.93);
+  border:1px solid rgba(179,112,153,.18);
+  box-shadow:0 5px 14px rgba(84,58,78,.11);
+  color:#9f6686;
+  pointer-events:none;
+  transform-origin:20% 80%;
+  animation:punyakoTapGuide 1.45s ease-in-out infinite;
+}
+.punyako-tap-guide i{font-style:normal;font-size:13px;line-height:1;animation:punyakoTapFinger .8s ease-in-out infinite}
+.punyako-tap-guide b{font-size:9px;line-height:1;white-space:nowrap;letter-spacing:.02em}
+.punyako-tap-guide.is-popped{animation:punyakoTapGuidePop .7s ease both;background:rgba(255,243,249,.97);color:#bb5c8a}
+@keyframes punyakoTapGuide{0%,100%{transform:translateY(0) rotate(-2deg);opacity:.82}50%{transform:translateY(-4px) rotate(1deg);opacity:1}}
+@keyframes punyakoTapFinger{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(3px) scale(.92)}}
+@keyframes punyakoTapGuidePop{0%{transform:scale(.9)}35%{transform:scale(1.14) rotate(2deg)}100%{transform:scale(1)}}
+.punyako-question .punyako-tap-guide{top:1px;right:-4px}
+.punyako-evolution .punyako-tap-guide{top:15px;right:0}
+.punyako-result .punyako-tap-guide,.punyako-same .punyako-tap-guide{top:9px;right:-2px}
+@media(max-width:390px){.punyako-tap-guide{right:-2px;padding:4px 7px 4px 5px}.punyako-tap-guide b{font-size:8px}.punyako-tap-guide i{font-size:12px}}
