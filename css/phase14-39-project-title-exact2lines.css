@@ -1,0 +1,52 @@
+
+/* Phase 14.39 — 30人プロジェクト見出しを「全文表示の2行」に修正 */
+.punyako-release-title{
+  width:100% !important;
+  max-width:none !important;
+  overflow:visible !important;
+  margin:0 0 5px !important;
+  padding:0 !important;
+  line-height:1.14 !important;
+}
+
+/* 1行目 */
+.punyako-release-title b{
+  display:block !important;
+  width:100% !important;
+  max-width:none !important;
+  margin:0 0 2px !important;
+  padding:0 !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  white-space:nowrap !important;
+  font-size:clamp(9px, 2.7vw, 11.2px) !important;
+  line-height:1.15 !important;
+  letter-spacing:-.045em !important;
+}
+
+/* 2行目 */
+.punyako-release-title strong{
+  display:block !important;
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  white-space:nowrap !important;
+  font-size:clamp(8.7px, 2.55vw, 10.8px) !important;
+  line-height:1.15 !important;
+  letter-spacing:-.05em !important;
+}
+
+/* かなり狭い端末でも全文が切れないようにもう一段小さくする */
+@media(max-width:370px){
+  .punyako-release-title b{
+    font-size:8.7px !important;
+    letter-spacing:-.055em !important;
+  }
+  .punyako-release-title strong{
+    font-size:8.3px !important;
+    letter-spacing:-.06em !important;
+  }
+}
