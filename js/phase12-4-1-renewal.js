@@ -28,11 +28,15 @@ function tryOpen(selectors=[], fallback){
   return false;
 }
 function openVote(){
+  if(typeof window.UNICA_OPEN_VERSION_POLL_HISTORY==='function'){
+    window.UNICA_OPEN_VERSION_POLL_HISTORY();
+    return true;
+  }
   return tryOpen([
+    '#versionPollHistory',
     '#openVersionPoll',
     '#openVoteResult',
     '[data-open-version-poll]',
-    '[data-feature-key="vote"]',
     '.version-poll-open',
     '.version-poll-home-open',
     '.version-poll-card button',
