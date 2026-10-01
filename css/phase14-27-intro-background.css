@@ -187,3 +187,57 @@ body.opened .intro-door-open{
 }
 
 /* Phase 14.31: home-layout regression restore; entrance behavior unchanged from 14.30. */
+
+
+/* Phase 14.32 — performance pass: one short animation path, no expensive blur on the door */
+.intro{
+  transition:opacity .26s ease, visibility .26s ease !important;
+}
+.intro-door-closed{
+  transition:opacity .14s ease !important;
+}
+.intro-door-open{
+  transition:
+    opacity .18s ease .05s,
+    transform .34s cubic-bezier(.2,.75,.24,1) .05s !important;
+}
+.intro-enter-light{
+  transition:
+    opacity .18s ease .22s,
+    transform .40s cubic-bezier(.2,.75,.24,1) .22s !important;
+}
+body.opened .intro-door-closed{
+  opacity:0 !important;
+  transform:translate(-50%,-46.5%) scale(1) !important;
+}
+body.opened .intro-door-open{
+  opacity:1 !important;
+  transform:translate(-50%,-46.5%) scale(1.01) !important;
+  filter:none !important;
+}
+body.opened .intro-enter-light{
+  opacity:.44 !important;
+  transform:translate(-50%,-50%) scale(3.6) !important;
+}
+.intro.door-soft-fade .intro-door-open{
+  opacity:.08 !important;
+  filter:none !important;
+  transform:translate(-50%,-46.5%) scale(1.012) !important;
+  transition:opacity .20s ease, transform .20s ease !important;
+}
+.intro.door-soft-fade .intro-enter-light{
+  opacity:.68 !important;
+  transform:translate(-50%,-50%) scale(4.4) !important;
+  transition:opacity .22s ease, transform .24s ease !important;
+}
+@media (max-width:520px){
+  body.opened .intro-door-closed{
+    transform:translate(-50%,-46.2%) scale(1) !important;
+  }
+  body.opened .intro-door-open{
+    transform:translate(-50%,-46.2%) scale(1.01) !important;
+  }
+  .intro.door-soft-fade .intro-door-open{
+    transform:translate(-50%,-46.2%) scale(1.012) !important;
+  }
+}
