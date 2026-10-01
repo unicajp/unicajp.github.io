@@ -82,20 +82,20 @@
       tone(170, 0.075, 0.075, 0.055, 112, 'sine');
 
       // 2) 「ギィ…」— 扉がゆっくり開く、柔らかな木＋金具の軋み。
-      noise(0.12, 0.92, 0.080, 720, 250, 'bandpass', 2.0);
-      tone(142, 0.13, 0.84, 0.050, 78, 'sawtooth');
-      tone(228, 0.18, 0.73, 0.026, 124, 'triangle');
-      tone(116, 0.72, 0.30, 0.034, 84, 'sine');
+      noise(0.12, 0.46, 0.072, 720, 280, 'bandpass', 1.8);
+      tone(142, 0.13, 0.42, 0.044, 88, 'sawtooth');
+      tone(228, 0.18, 0.36, 0.022, 136, 'triangle');
+      tone(116, 0.46, 0.18, 0.028, 88, 'sine');
 
       // 3) 「ファぁ〜」— 白い光の空間が広がる、空気の上昇音。
-      noise(0.58, 1.72, 0.14, 430, 2500, 'bandpass', 0.62);
-      tone(392, 0.78, 1.20, 0.027, 784, 'sine');
-      tone(523.25, 0.92, 1.12, 0.030, 1046.5, 'sine');
-      tone(659.25, 1.06, 1.03, 0.022, 1318.5, 'sine');
-      tone(1046.5, 1.55, 0.54, 0.025, 1760, 'sine');
-      tone(1568, 1.67, 0.44, 0.016, 2349, 'sine');
+      noise(0.42, 0.86, 0.12, 430, 2200, 'bandpass', 0.62);
+      tone(392, 0.52, 0.68, 0.024, 784, 'sine');
+      tone(523.25, 0.60, 0.62, 0.026, 1046.5, 'sine');
+      tone(659.25, 0.68, 0.55, 0.019, 1318.5, 'sine');
+      tone(1046.5, 0.86, 0.34, 0.022, 1760, 'sine');
+      tone(1568, 0.94, 0.28, 0.014, 2200, 'sine');
 
-      window.setTimeout(() => ctx.close().catch(() => {}), 3000);
+      window.setTimeout(() => ctx.close().catch(() => {}), 1700);
     } catch (_) {}
   }
 
@@ -125,18 +125,26 @@
     if (opened) return;
     opened = true;
     playIntroEnterSound();
+
+    // Phase14.32:
+    // 入口演出はこの1本だけで管理する。
+    // 旧2.45秒タイマーと追加のclickリスナーを廃止し、短く軽い流れに統一。
     body.classList.add('opened');
-    // UNICA WORLDの固定メニューを、扉を開いた後に表示する。
-    // 以前の版では site-entered が一度も付かず、追加機能へ移動できない状態だった。
-    window.setTimeout(() => body.classList.add('site-entered'), 1900);
-    window.setTimeout(fadeInBgm, 760);
-    window.setTimeout(() => intro?.classList.add('is-hidden'), 2450);
+
+    window.setTimeout(fadeInBgm, 320);
+    window.setTimeout(() => intro?.classList.add('door-soft-fade'), 620);
+    window.setTimeout(() => body.classList.add('site-entered'), 820);
+    window.setTimeout(() => intro?.classList.add('is-hidden'), 1080);
+
     window.setTimeout(() => {
       document.querySelectorAll('.hero .reveal').forEach((element, index) => {
-        window.setTimeout(() => element.classList.add('is-visible'), index * 180);
+        window.setTimeout(() => element.classList.add('is-visible'), index * 90);
       });
-    }, 2050);
-    window.setTimeout(() => { if (!readMember()) openMemberGate(); }, 2600);
+    }, 880);
+
+    window.setTimeout(() => {
+      if (!readMember()) openMemberGate();
+    }, 1280);
   }
 
   introTrigger?.addEventListener('click', openSite);
