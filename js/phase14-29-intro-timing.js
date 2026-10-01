@@ -9,14 +9,18 @@
     if(scheduled) return;
     scheduled = true;
 
-    // Let the open-door artwork be visible long enough to register,
-    // but do not leave the whole entrance in the old slow-motion state.
+    // Show the opened door clearly first.
+    window.setTimeout(() => {
+      intro.classList.add('door-soft-fade');
+    }, 980);
+
+    // Then leave only the surrounding glow feeling before entering the site.
     window.setTimeout(() => {
       document.body.classList.add('site-entered');
-    }, 1250);
+    }, 1320);
 
     window.setTimeout(() => {
       intro.classList.add('is-hidden');
-    }, 1580);
+    }, 1620);
   }, {passive:true});
 })();
