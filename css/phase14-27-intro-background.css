@@ -156,3 +156,32 @@ body.opened .intro-door-open{
     transform:translate(-50%,-46.2%) scale(1.025) !important;
   }
 }
+
+
+/* Phase 14.30 — fade the open door itself before transition, leave the surroundings wrapped in light */
+.intro.door-soft-fade .intro-door-open{
+  opacity:.16 !important;
+  filter: brightness(1.12) saturate(.92) blur(1.2px) !important;
+  transition:
+    opacity .28s ease,
+    filter .32s ease,
+    transform .32s ease !important;
+}
+.intro.door-soft-fade .intro-door-closed{
+  opacity:0 !important;
+}
+.intro.door-soft-fade .intro-enter-light{
+  opacity:.78 !important;
+  transform:translate(-50%,-50%) scale(6.2) !important;
+  transition:
+    opacity .30s ease,
+    transform .34s cubic-bezier(.16,.78,.22,1) !important;
+}
+.intro.door-soft-fade::before{
+  opacity:1 !important;
+  background:
+    radial-gradient(circle at 50% 52%, rgba(255,250,238,.62), rgba(255,244,223,.24) 20%, rgba(255,240,212,0) 42%),
+    linear-gradient(180deg, rgba(255,248,241,.08) 0%, rgba(255,246,235,.04) 32%, rgba(25,17,34,.10) 100%),
+    radial-gradient(circle at 50% 78%, rgba(255,228,190,.20), rgba(255,228,190,0) 36%) !important;
+  transition: background .28s ease, opacity .28s ease !important;
+}
