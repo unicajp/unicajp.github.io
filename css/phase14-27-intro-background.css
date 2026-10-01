@@ -185,3 +185,5 @@ body.opened .intro-door-open{
     radial-gradient(circle at 50% 78%, rgba(255,228,190,.20), rgba(255,228,190,0) 36%) !important;
   transition: background .28s ease, opacity .28s ease !important;
 }
+
+/* Phase 14.31: home-layout regression restore; entrance behavior unchanged from 14.30. */
