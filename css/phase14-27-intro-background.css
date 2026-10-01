@@ -1,44 +1,91 @@
-/* Phase 14.27 — intro background image matching the fantasy door */
+/* Phase 14.28 bugfix — intro background + stable full-screen door overlay.
+   Overwrites phase14-27-intro-background.css; no index.html replacement is required. */
 .intro{
-  position: relative;
-  overflow: hidden;
+  position:fixed !important;
+  inset:0 !important;
+  z-index:100 !important;
+  overflow:hidden !important;
   background:
-    radial-gradient(circle at 50% 18%, rgba(255,248,238,0.28), rgba(255,248,238,0) 28%),
-    linear-gradient(180deg, rgba(49,44,74,0.08) 0%, rgba(33,24,36,0.16) 100%),
+    radial-gradient(circle at 50% 18%, rgba(255,248,238,.20), rgba(255,248,238,0) 30%),
+    linear-gradient(180deg, rgba(40,37,67,.05) 0%, rgba(25,19,32,.12) 100%),
     url('../assets/intro/unica-intro-village-bg.webp') center center / cover no-repeat !important;
 }
+.intro.is-hidden{opacity:0 !important;visibility:hidden !important;}
+.intro::before,.intro::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+}
 .intro::before{
-  content:'';
-  position:absolute;
-  inset:0;
   background:
-    linear-gradient(180deg, rgba(255,250,246,0.10) 0%, rgba(255,245,236,0.03) 30%, rgba(25,17,34,0.10) 100%),
-    radial-gradient(circle at 50% 78%, rgba(255,228,190,0.16), rgba(255,228,190,0) 34%);
-  pointer-events:none;
+    linear-gradient(180deg, rgba(255,250,246,.07) 0%, rgba(255,245,236,.02) 34%, rgba(25,17,34,.09) 100%),
+    radial-gradient(circle at 50% 72%, rgba(255,228,190,.12), rgba(255,228,190,0) 35%);
 }
-.intro::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
-  pointer-events:none;
-}
+.intro::after{box-shadow:inset 0 0 0 1px rgba(255,255,255,.035);}
 .intro-trigger{
-  position:relative;
-  z-index:1;
-  width:100%;
-  height:100%;
-  background: transparent !important;
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  border:0 !important;
+  overflow:hidden !important;
+  background:transparent !important;
+  z-index:1 !important;
 }
-.intro-enter-hint{
-  text-shadow: 0 2px 8px rgba(36,23,28,0.28), 0 0 14px rgba(255,244,220,0.34);
-  letter-spacing: 0.18em;
+.intro-door{
+  position:absolute !important;
+  top:50% !important;
+  left:50% !important;
+  width:min(66vw,332px) !important;
+  aspect-ratio:1280 / 1536 !important;
+  height:auto !important;
+  inset:auto !important;
+  background-size:contain !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
+  will-change:transform,opacity,filter;
+  z-index:2 !important;
+}
+.intro-door-closed{
+  background-image:url('../assets/intro/unica-door-closed.webp') !important;
+  opacity:1;
+  transform:translate(-50%,-46.5%) scale(1) !important;
+}
+.intro-door-open{
+  background-image:url('../assets/intro/unica-door-open.webp') !important;
+  opacity:0;
+  transform:translate(-50%,-46.5%) scale(1.005) !important;
 }
 .intro-enter-light{
-  filter: blur(0.2px) drop-shadow(0 0 10px rgba(255,245,214,0.8)) drop-shadow(0 0 18px rgba(255,230,185,0.42));
+  z-index:3 !important;
+  left:50% !important;
+  top:46% !important;
+  width:min(6.2vw,32px) !important;
+  height:min(24vh,154px) !important;
+  filter:blur(.2px) drop-shadow(0 0 10px rgba(255,245,214,.8)) drop-shadow(0 0 18px rgba(255,230,185,.42));
 }
-@media (max-width: 520px){
-  .intro{
-    background-position: center top !important;
-  }
+.intro-enter-hint{
+  z-index:4 !important;
+  text-shadow:0 2px 8px rgba(36,23,28,.28),0 0 14px rgba(255,244,220,.34) !important;
+  letter-spacing:.18em !important;
+}
+body.opened .intro-door-closed{
+  opacity:0 !important;
+  transform:translate(-50%,-46.5%) scale(1.03) !important;
+}
+body.opened .intro-door-open{
+  opacity:1 !important;
+  transform:translate(-50%,-46.5%) scale(1.055) !important;
+}
+@media (max-width:520px){
+  .intro{background-position:center top !important;}
+  .intro-door,.intro-door-closed,.intro-door-open{width:min(68vw,318px) !important;}
+  .intro-door{top:49.8% !important;}
+  .intro-door-closed{transform:translate(-50%,-46.2%) scale(1) !important;}
+  .intro-door-open{transform:translate(-50%,-46.2%) scale(1.005) !important;}
+  body.opened .intro-door-closed{transform:translate(-50%,-46.2%) scale(1.03) !important;}
+  body.opened .intro-door-open{transform:translate(-50%,-46.2%) scale(1.055) !important;}
 }
