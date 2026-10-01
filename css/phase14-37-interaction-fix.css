@@ -1,0 +1,53 @@
+
+/* Phase 14.37 — interaction regression fix */
+
+/*
+  Root cause:
+  Phase14.29 left `body.opened .intro-door-open { visibility:visible!important; }`.
+  After the intro itself became `.is-hidden`, that child could still override
+  inherited visibility. The intro was visually transparent but the door layer
+  remained over the page and intercepted taps/swipes.
+*/
+.intro.is-hidden{
+  display:none !important;
+  pointer-events:none !important;
+}
+
+.intro.is-hidden .intro-trigger,
+.intro.is-hidden .intro-door,
+.intro.is-hidden .intro-door-open,
+.intro.is-hidden .intro-door-closed,
+.intro.is-hidden .intro-enter-light,
+.intro.is-hidden .intro-enter-hint{
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+
+/* Keep the entrance interactive only while it is actually on screen. */
+.intro:not(.is-hidden),
+.intro:not(.is-hidden) .intro-trigger{
+  pointer-events:auto !important;
+}
+
+/* Restore natural touch behavior for the latest YouTube carousel. */
+#unicoLatestYouTube,
+#unicoLatestYouTubeTrack{
+  pointer-events:auto !important;
+}
+
+#unicoLatestYouTubeTrack{
+  touch-action:pan-x pan-y !important;
+  overflow-x:auto !important;
+  -webkit-overflow-scrolling:touch !important;
+}
+
+/* External music / SNS links must stay above ordinary decorative layers. */
+#unico .youtube-support-links a,
+#unico .social-pair-actions a,
+#unico .listen-unico,
+#music .compact-song a,
+#connect .social-grid a{
+  position:relative;
+  z-index:2;
+  pointer-events:auto !important;
+}
