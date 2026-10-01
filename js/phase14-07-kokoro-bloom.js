@@ -272,46 +272,53 @@ function playTapSample(volume=.95,rate=1){
 
 function softSquish(){
   const ctx=ensureAudio();if(!ctx)return;
+  if(soundVolume<=.01)return;
   const now=ctx.currentTime;
 
-  // やわらかい「ぷにっ」本体。tap.mp3 は使わず、打撃感をなくす。
-  const osc=ctx.createOscillator(),g=ctx.createGain();
-  osc.type='sine';
-  osc.frequency.setValueAtTime(168,now);
-  osc.frequency.exponentialRampToValueAtTime(92,now+.14);
-  g.gain.setValueAtTime(.0001,now);
-  g.gain.linearRampToValueAtTime(Math.min(.34,.12*soundVolume*2.2),now+.012);
-  g.gain.exponentialRampToValueAtTime(.0001,now+.16);
-  osc.connect(g).connect(ctx.destination);
-  osc.start(now);osc.stop(now+.18);
+  // Smartphone speakers lose the old 90–170 Hz body almost completely.
+  // Move the main "ぷにっ" into the audible low-mid range, then add a tiny soft rebound.
+  const master=ctx.createGain(),comp=ctx.createDynamicsCompressor();
+  const v=Math.min(1,.72*soundVolume);
+  master.gain.setValueAtTime(v,now);
+  comp.threshold.setValueAtTime(-18,now);comp.knee.setValueAtTime(12,now);comp.ratio.setValueAtTime(4,now);comp.attack.setValueAtTime(.003,now);comp.release.setValueAtTime(.11,now);
+  master.connect(comp).connect(ctx.destination);
 
-  // 少し遅れて戻る、丸い弾力音。
-  const bounce=ctx.createOscillator(),bg=ctx.createGain();
+  const body=ctx.createOscillator(),bg=ctx.createGain();
+  body.type='sine';
+  body.frequency.setValueAtTime(360,now);
+  body.frequency.exponentialRampToValueAtTime(185,now+.15);
+  bg.gain.setValueAtTime(.0001,now);
+  bg.gain.linearRampToValueAtTime(.54,now+.010);
+  bg.gain.exponentialRampToValueAtTime(.0001,now+.18);
+  body.connect(bg).connect(master);body.start(now);body.stop(now+.19);
+
+  const soft=ctx.createOscillator(),sg=ctx.createGain();
+  soft.type='triangle';
+  soft.frequency.setValueAtTime(610,now+.018);
+  soft.frequency.exponentialRampToValueAtTime(300,now+.115);
+  sg.gain.setValueAtTime(.0001,now+.015);
+  sg.gain.linearRampToValueAtTime(.28,now+.030);
+  sg.gain.exponentialRampToValueAtTime(.0001,now+.135);
+  soft.connect(sg).connect(master);soft.start(now+.015);soft.stop(now+.145);
+
+  // Cute elastic return: short and round, not a sharp click.
+  const bounce=ctx.createOscillator(),rg=ctx.createGain();
   bounce.type='sine';
-  bounce.frequency.setValueAtTime(285,now+.045);
-  bounce.frequency.exponentialRampToValueAtTime(205,now+.13);
-  bg.gain.setValueAtTime(.0001,now+.04);
-  bg.gain.linearRampToValueAtTime(Math.min(.20,.07*soundVolume*2.2),now+.055);
-  bg.gain.exponentialRampToValueAtTime(.0001,now+.15);
-  bounce.connect(bg).connect(ctx.destination);
-  bounce.start(now+.04);bounce.stop(now+.17);
+  bounce.frequency.setValueAtTime(275,now+.075);
+  bounce.frequency.exponentialRampToValueAtTime(430,now+.145);
+  rg.gain.setValueAtTime(.0001,now+.070);
+  rg.gain.linearRampToValueAtTime(.22,now+.086);
+  rg.gain.exponentialRampToValueAtTime(.0001,now+.165);
+  bounce.connect(rg).connect(master);bounce.start(now+.07);bounce.stop(now+.175);
 
-  // ごく短い空気感だけを足す。高域の「バシッ」は出さない。
-  const len=Math.max(1,Math.floor(ctx.sampleRate*.055));
+  // A little soft "p" texture so the sound reads as ぷにっ even on a phone speaker.
+  const len=Math.max(1,Math.floor(ctx.sampleRate*.065));
   const buf=ctx.createBuffer(1,len,ctx.sampleRate),data=buf.getChannelData(0);
-  for(let i=0;i<len;i++){
-    const env=1-i/len;
-    data[i]=(Math.random()*2-1)*env*.28;
-  }
-  const src=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),ng=ctx.createGain();
-  src.buffer=buf;
-  filter.type='lowpass';
-  filter.frequency.value=520;
-  filter.Q.value=.5;
-  ng.gain.setValueAtTime(Math.min(.10,.035*soundVolume*2.0),now);
-  ng.gain.exponentialRampToValueAtTime(.0001,now+.06);
-  src.connect(filter).connect(ng).connect(ctx.destination);
-  src.start(now);src.stop(now+.065);
+  for(let i=0;i<len;i++){const env=1-i/len;data[i]=(Math.random()*2-1)*env*.34}
+  const src=ctx.createBufferSource(),hp=ctx.createBiquadFilter(),lp=ctx.createBiquadFilter(),ng=ctx.createGain();
+  src.buffer=buf;hp.type='highpass';hp.frequency.value=260;lp.type='lowpass';lp.frequency.value=1500;
+  ng.gain.setValueAtTime(.16,now);ng.gain.exponentialRampToValueAtTime(.0001,now+.07);
+  src.connect(hp).connect(lp).connect(ng).connect(master);src.start(now);src.stop(now+.07);
 }
 const sfx={
   open(){tone(620,.08,'sine',.018);tone(930,.12,'sine',.015,.05)},
