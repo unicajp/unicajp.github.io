@@ -1,0 +1,77 @@
+
+/* Phase 14.34 — SUPPORT lives below the SNS area, not in the home dashboard */
+.site-bottom-support{
+  width:min(calc(100% - 32px), 680px);
+  min-height:42px;
+  margin:8px auto 112px;
+  padding:7px 9px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  border:1px solid rgba(103,78,94,.10);
+  border-radius:13px;
+  background:rgba(255,255,255,.68);
+  box-shadow:0 4px 12px rgba(70,48,62,.04);
+  color:#594651;
+  text-align:left;
+}
+.site-bottom-support-copy{
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  grid-template-rows:auto auto;
+  column-gap:7px;
+  align-items:center;
+}
+.site-bottom-support-copy small{
+  grid-row:1 / 3;
+  margin:0;
+  padding:4px 5px;
+  border-radius:7px;
+  background:rgba(245,236,243,.84);
+  color:#90768a;
+  font:700 6.5px/1 Georgia,serif;
+  letter-spacing:.08em;
+}
+.site-bottom-support-copy strong{
+  margin:0;
+  font-size:11px;
+  line-height:1.15;
+  font-weight:700;
+  white-space:nowrap;
+}
+.site-bottom-support-copy span{
+  margin-top:1px;
+  font-size:8px;
+  line-height:1.15;
+  color:#8b7984;
+  white-space:nowrap;
+}
+.site-bottom-support>a{
+  flex:0 0 auto;
+  min-height:29px;
+  padding:0 9px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  border-radius:999px;
+  background:#2b2529;
+  color:#fff;
+  text-decoration:none;
+  font-size:9px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.site-bottom-support>a:active{transform:scale(.97)}
+.site-bottom-support>a b{font-size:9px;font-weight:400;opacity:.8}
+
+@media(max-width:520px){
+  .site-bottom-support{
+    width:calc(100% - 24px);
+    min-height:40px;
+    margin:7px 12px 104px;
+    padding:6px 8px;
+  }
+}
