@@ -1,0 +1,44 @@
+/* Phase 14.27 — intro background image matching the fantasy door */
+.intro{
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255,248,238,0.28), rgba(255,248,238,0) 28%),
+    linear-gradient(180deg, rgba(49,44,74,0.08) 0%, rgba(33,24,36,0.16) 100%),
+    url('../assets/intro/unica-intro-village-bg.webp') center center / cover no-repeat !important;
+}
+.intro::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(180deg, rgba(255,250,246,0.10) 0%, rgba(255,245,236,0.03) 30%, rgba(25,17,34,0.10) 100%),
+    radial-gradient(circle at 50% 78%, rgba(255,228,190,0.16), rgba(255,228,190,0) 34%);
+  pointer-events:none;
+}
+.intro::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+  pointer-events:none;
+}
+.intro-trigger{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:100%;
+  background: transparent !important;
+}
+.intro-enter-hint{
+  text-shadow: 0 2px 8px rgba(36,23,28,0.28), 0 0 14px rgba(255,244,220,0.34);
+  letter-spacing: 0.18em;
+}
+.intro-enter-light{
+  filter: blur(0.2px) drop-shadow(0 0 10px rgba(255,245,214,0.8)) drop-shadow(0 0 18px rgba(255,230,185,0.42));
+}
+@media (max-width: 520px){
+  .intro{
+    background-position: center top !important;
+  }
+}
