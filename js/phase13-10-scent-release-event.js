@@ -7,7 +7,7 @@ function card(){
   e.innerHTML=`
     <div class="sre-summary punyako-release-card" aria-live="polite">
       <div class="sre-summary-top"><span>PUNYUKA DIAGNOSIS PROJECT</span><em>5 QUESTIONS × 30 MEMBERS</em></div>
-      <h3 class="punyako-release-title"><b>ぷにゅか診断を5問まで<br>30人が達成したら</b><strong>「ミルクの匂い - 弾き語り ver.」<br>RELEASE決定!!</strong></h3>
+      <h3 class="punyako-release-title"><b>ぷにゅか診断を5問まで30人が達成したら</b><strong>「ミルクの匂い - 弾き語り ver.」RELEASE決定!!</strong></h3>
       <div class="sre-summary-main">
         <strong><b id="sreCount">—</b><small>/30人</small></strong>
         <div><span id="sreNext">参加人数を集計しています…</span><i><u id="sreProgress"></u></i></div>
