@@ -89,3 +89,70 @@ body.opened .intro-door-open{
   body.opened .intro-door-closed{transform:translate(-50%,-46.2%) scale(1.03) !important;}
   body.opened .intro-door-open{transform:translate(-50%,-46.2%) scale(1.055) !important;}
 }
+
+
+/* Phase 14.29 — fast entrance animation + make the open-door image clearly visible */
+.intro{
+  transition:opacity .42s ease, visibility .42s ease !important;
+}
+
+.intro-door-closed{
+  z-index:4 !important;
+  transition:
+    opacity .18s ease .02s,
+    filter .24s ease !important;
+}
+
+.intro-door-open{
+  z-index:3 !important;
+  opacity:0 !important;
+  transition:
+    opacity .20s ease .10s,
+    transform .68s cubic-bezier(.16,.82,.22,1) .10s,
+    filter .30s ease .10s !important;
+}
+
+.intro-enter-light{
+  z-index:2 !important;
+  opacity:0 !important;
+  transform:translate(-50%,-50%) scale(.12) !important;
+  transition:
+    opacity .24s ease .38s,
+    transform .64s cubic-bezier(.16,.78,.22,1) .38s !important;
+}
+
+.intro-enter-hint{
+  z-index:5 !important;
+}
+
+body.opened .intro-door-closed{
+  opacity:0 !important;
+  transform:translate(-50%,-46.5%) scale(1.005) !important;
+  filter:brightness(1.04) !important;
+}
+
+body.opened .intro-door-open{
+  opacity:1 !important;
+  transform:translate(-50%,-46.5%) scale(1.025) !important;
+  filter:brightness(1.035) !important;
+}
+
+body.opened .intro-enter-light{
+  opacity:.52 !important;
+  transform:translate(-50%,-50%) scale(4.8) !important;
+}
+
+/* The open-door artwork already contains a bright portal.
+   Keep the synthetic light behind the actual door image so it cannot wash it out. */
+body.opened .intro-door-open{
+  visibility:visible !important;
+}
+
+@media (max-width:520px){
+  body.opened .intro-door-closed{
+    transform:translate(-50%,-46.2%) scale(1.005) !important;
+  }
+  body.opened .intro-door-open{
+    transform:translate(-50%,-46.2%) scale(1.025) !important;
+  }
+}
