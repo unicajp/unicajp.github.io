@@ -38,7 +38,7 @@ function mount(){
   const root=$('#phase1241Renewal'),artist=root?.querySelector('.artist-renewal-zone');
   if(!root||!artist)return false;
   root.insertBefore(card(),artist);
-  $('#sreDiagnose')?.addEventListener('click',()=>$('#openScent16')?.click());
+  $('#sreDiagnose')?.addEventListener('click',()=>{ if(typeof window.UNICA_HOME_LINKS?.diagnosis==='function') window.UNICA_HOME_LINKS.diagnosis(); else window.UNICA_SCENT16?.open?.(); });
   load();return true;
 }
 function start(){if(mount())return;let t=0,id=setInterval(()=>{if(mount()||++t>50)clearInterval(id)},120)}

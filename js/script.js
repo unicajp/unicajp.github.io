@@ -978,13 +978,8 @@
   function closeCommunityModal(){ communityModal?.classList.remove('is-open'); communityModal?.setAttribute('aria-hidden','true'); body.classList.remove('member-gate-open'); }
   document.querySelectorAll('[data-close-community]').forEach(b=>b.addEventListener('click',closeCommunityModal));
   communityComment?.addEventListener('input',()=>{const count=document.getElementById('communityCount');if(count)count.textContent=`${communityComment.value.length} / 80`;});
-  document.getElementById('submitCommunityComment')?.addEventListener('click',()=>{
-    const current=readMember();const value=communityComment?.value.trim();if(!current||postsTodayBy(current)>=COMMUNITY_POST_LIMIT)return;
-    if(!value){const s=document.getElementById('communityStatus');if(s)s.textContent='応援コメントを入力してください。';return;}
-    const time=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date());
-    const rows=readCommunityPosts();rows.unshift({id:communityId(),name:current.name,avatar:current.avatar,number:current.number,prefecture:current.prefecture||'',text:value,date:todayKey(),time,likes:0,likedBy:[]});writeCommunityPosts(rows);
-    if(communityComment)communityComment.value='';const count=document.getElementById('communityCount');if(count)count.textContent='0 / 80';renderCommunity();updateMemberView();toast('うにかへ応援コメントを送りました。');
-  });
+  // Community submit is handled only by phase10-2.js (Firebase).
+
   document.querySelectorAll('[data-community-tab]').forEach(btn=>btn.addEventListener('click',()=>{activeCommunityTab=btn.dataset.communityTab;document.querySelectorAll('[data-community-tab]').forEach(x=>x.classList.toggle('is-active',x===btn));renderCommunity();}));
   renderCommunityHome();
   window.addEventListener('unica:firebase-member-restored', () => { updateMemberView(); renderCommunityHome(); });
@@ -1139,6 +1134,6 @@
   updateMemberView();
 
 
-  document.getElementById('statusOpenPass')?.addEventListener('click', () => document.getElementById('openPassButton')?.click());
+  // statusOpenPass is handled centrally by phase13-4-unipass-card.js.
   document.getElementById('statusSettings')?.addEventListener('click', () => document.getElementById('openMemberSettings')?.click());
 })();

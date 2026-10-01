@@ -1630,6 +1630,8 @@
   rankingSpotBtn?.addEventListener('click', () => showRecords('all'));
   rulesBtn?.addEventListener('click', showSimpleRules);
 
+  window.UNICA_MILK_MATCH = Object.assign(window.UNICA_MILK_MATCH || {}, { open: openModal, close: closeModal });
+
   openBtn.addEventListener('click', openModal);
   modal.querySelectorAll('[data-close-milk-match]').forEach(el => el.addEventListener('click', closeModal));
   newGameBtn?.addEventListener('click', showLobby);

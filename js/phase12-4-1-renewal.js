@@ -2,7 +2,12 @@
 'use strict';
 const $=(s,r=document)=>r.querySelector(s);
 const make=(tag,cls,html)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e};
-function clickTarget(id){const e=document.getElementById(id);if(e){e.click();return true}return false}
+function guestLock(){const m=$('#guestLockModal');if(!m)return false;m.classList.add('is-open');m.setAttribute('aria-hidden','false');document.body.classList.add('guest-lock-open');return true}
+function hasMember(){try{return Boolean(JSON.parse(localStorage.getItem('unicaWorldMemberV4')||localStorage.getItem('unicaWorldMemberV3')||'null'))}catch(_){return false}}
+function memberRoute(fn){if(!hasMember()){guestLock();return false}try{return fn()!==false}catch(_){return false}}
+function openGame(){return memberRoute(()=>window.UNICA_MILK_MATCH?.open?.())}
+function openScent(){return memberRoute(()=>window.UNICA_SCENT16?.open?.())}
+function openPrefecture(){return memberRoute(()=>window.UNICA_PREFECTURE_DIRECTORY?.open?.())}
 function remember(key,label,icon){try{localStorage.setItem('unicaRecentFeature',JSON.stringify({key,label,icon,at:Date.now()}));}catch(_){} renderRecent();}
 function renderRecent(){
   const box=$('#renewalRecent');if(!box)return;
@@ -19,33 +24,12 @@ function statusText(key){
  if(key==='vote'){return '投票結果を見る'}
  return '開く';
 }
-function tryOpen(selectors=[], fallback){
-  for(const sel of selectors){
-    const e=document.querySelector(sel);
-    if(e){e.click();return true;}
-  }
-  if(typeof fallback==='function'){try{return !!fallback()}catch(_){}}
-  return false;
-}
 function openVote(){
   if(typeof window.UNICA_OPEN_VERSION_POLL_HISTORY==='function'){
     window.UNICA_OPEN_VERSION_POLL_HISTORY();
     return true;
   }
-  return tryOpen([
-    '#versionPollHistory',
-    '#openVersionPoll',
-    '#openVoteResult',
-    '[data-open-version-poll]',
-    '.version-poll-open',
-    '.version-poll-home-open',
-    '.version-poll-card button',
-    '.version-poll-card a'
-  ],()=>{
-    if(typeof window.openVersionPoll==='function'){window.openVersionPoll();return true}
-    if(typeof window.openVersionPollModal==='function'){window.openVersionPollModal();return true}
-    return false;
-  });
+  return false;
 }
 function card({key,icon,title,desc,open}){
   const b=make('button',`simple-home-card card-${key}`);
@@ -61,10 +45,10 @@ function build(){
  const fun=make('section','renewal-section renewal-section-simple','<div class="renewal-section-head"><div><small>ENJOY UNICA WORLD</small><h2>楽しむ</h2></div></div>');
  const grid=make('div','fun-grid fun-grid-simple');
  grid.append(
-   card({key:'game',icon:'🎮',title:'MILK BLOOM',desc:'歌詞を集めて遊ぶ',open:()=>clickTarget('openMilkMatch')}),
-   card({key:'scent',icon:'✦',title:'ぷにゅか診断',desc:'まず5問でぷにゅか誕生',open:()=>clickTarget('openScent16')}),
-   card({key:'vote',icon:'🎧',title:'うにメン投票',desc:'投票結果を見る',open:()=>openVote()}),
-   card({key:'prefecture',icon:'🗾',title:'全国のうにメン',desc:'全国の仲間を見てみる',open:()=>clickTarget('openPrefectureDirectory')})
+   card({key:'game',icon:'🎮',title:'MILK BLOOM',desc:'歌詞を集めて遊ぶ',open:openGame}),
+   card({key:'scent',icon:'✦',title:'ぷにゅか診断',desc:'まず5問でぷにゅか誕生',open:openScent}),
+   card({key:'vote',icon:'🎧',title:'うにメン投票',desc:'投票結果を見る',open:()=>memberRoute(openVote)}),
+   card({key:'prefecture',icon:'🗾',title:'全国のうにメン',desc:'全国の仲間を見てみる',open:openPrefecture})
  );
  fun.append(grid);root.append(fun);
  const artist=make('section','renewal-section artist-renewal-zone','<div class="renewal-section-head"><div><small>ARTIST & MUSIC</small><h2>うにかの音楽</h2></div><p>聴く・知る</p></div>');

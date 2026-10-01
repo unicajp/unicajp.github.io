@@ -414,7 +414,7 @@ function bindUI(){
   $('#phaseOnlineButton')?.addEventListener('click',()=>toast(`${$('#phaseOnlineCount')?.textContent||0}人が現在オンラインです。`));
   window.addEventListener('unica:online-count',e=>{ $('#phaseOnlineCount') && ($('#phaseOnlineCount').textContent=String(e.detail.count)); });
   $('#openPassButton')?.addEventListener('click',updatePassport);
-  $('#statusOpenPass')?.addEventListener('click',updatePassport);
+  // statusOpenPass is handled centrally by phase13-4-unipass-card.js.
 }
 
 installUI(); bindUI();

@@ -19,49 +19,43 @@ function toast(text){
   clearTimeout(toast.t);
   toast.t=setTimeout(()=>el.classList.remove('is-visible','is-show'),1800);
 }
-function clickOriginal(id){
-  const el=document.getElementById(id);
-  if(!el)return false;
-  el.click();
-  return true;
-}
-function forceModal(id, bodyClass='modal-open'){
-  const modal=document.getElementById(id);
+function openGuestLock(){
+  const modal=$('#guestLockModal');
   if(!modal)return false;
   modal.classList.add('is-open');
   modal.setAttribute('aria-hidden','false');
-  if(bodyClass)document.body.classList.add(bodyClass);
+  document.body.classList.add('guest-lock-open');
+  window.setTimeout(()=>$('#guestLockRegister')?.focus(),120);
   return true;
 }
-function after(ms,fn){ window.setTimeout(fn,ms); }
+function requireMember(){
+  if(member())return true;
+  openGuestLock();
+  return false;
+}
 
 function openGame(){
-  clickOriginal('openMilkMatch');
-  after(90,()=>{
-    const modal=$('#milkMatchModal');
-    if(modal && !isOpen(modal)){
-      forceModal('milkMatchModal', null);
-      document.body.style.overflow='hidden';
-    }
-  });
+  if(!requireMember())return;
+  if(typeof window.UNICA_MILK_MATCH?.open==='function'){
+    window.UNICA_MILK_MATCH.open();
+    return;
+  }
+  toast('MILK BLOOMを読み込み中です。少し待ってもう一度押してください。');
 }
 function openDiagnosis(){
-  clickOriginal('openScent16');
-  after(90,()=>{
-    const modal=$('#scent16Modal');
-    if(modal && !isOpen(modal) && member()){
-      forceModal('scent16Modal','member-gate-open');
-      try{ window.UNICA_SCENT16?.showIntro?.(); }catch(_){}
-    }
-  });
+  if(!requireMember())return;
+  if(typeof window.UNICA_SCENT16?.open==='function'){
+    window.UNICA_SCENT16.open();
+    return;
+  }
+  toast('ぷにゅか診断を読み込み中です。少し待ってもう一度押してください。');
 }
 function openVote(){
+  if(!requireMember())return;
   if(typeof window.UNICA_OPEN_VERSION_POLL_HISTORY==='function'){
     window.UNICA_OPEN_VERSION_POLL_HISTORY();
     return;
   }
-  const btn=$('#versionPollHistory');
-  if(btn){btn.click();return;}
   // The poll module is loaded as a module, so give it a short moment if Firebase is still initializing.
   let tries=0;
   const timer=setInterval(()=>{
@@ -76,23 +70,21 @@ function openVote(){
   },120);
 }
 function openPrefecture(){
-  clickOriginal('openPrefectureDirectory');
-  after(120,()=>{
-    const modal=$('#prefectureDirectoryModal');
-    if(modal && !isOpen(modal) && member()){
-      forceModal('prefectureDirectoryModal','modal-open');
-    }
-  });
+  if(!requireMember())return;
+  if(typeof window.UNICA_PREFECTURE_DIRECTORY?.open==='function'){
+    window.UNICA_PREFECTURE_DIRECTORY.open();
+    return;
+  }
+  toast('全国のうにメンを読み込み中です。少し待ってもう一度押してください。');
 }
 function openCommunity(){
-  const btn=document.querySelector('[data-world-nav="community"]');
-  if(btn && btn.id!=='homeQuickCommentHistory')btn.click();
-  after(80,()=>{
-    const modal=$('#communityModal');
-    if(modal && !isOpen(modal) && member()){
-      forceModal('communityModal','member-gate-open');
-    }
-  });
+  if(!requireMember())return;
+  const modal=$('#communityModal');
+  if(modal && !isOpen(modal)){
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.classList.add('member-gate-open');
+  }
 }
 
 const routes={
