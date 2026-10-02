@@ -99,7 +99,7 @@ document.addEventListener('click',event=>{
   const target=event.target instanceof Element ? event.target : null;
   if(!target)return;
 
-  const card=target.closest('.simple-home-card[data-feature-key]');
+  const card=target.closest('#phase1241Renewal [data-feature-key]');
   if(card){
     const key=card.dataset.featureKey;
     const fn=routes[key];
