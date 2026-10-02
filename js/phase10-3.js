@@ -84,11 +84,11 @@
   function makeFloatingCommentsInteractive() {
     const layer = $('#supportCommentFloatLayer');
     if (!layer) return;
-    layer.setAttribute('aria-label', '応援コメント。ハートでいいね、左右スワイプまたはカード左右のタップで切り替えられます。');
+    
     layer.addEventListener('click', async (event) => {
-      const likeControl = event.target.closest('.support-float-like-button');
+      const likeControl = event.target.closest('.home-comment-like');
       if (!likeControl || event.target.closest('.support-float-next')) return;
-      const floating = event.target.closest('.support-floating-comment-button');
+      const floating = event.target.closest('.home-comment-row');
       if (!floating || floating.dataset.busy === 'true') return;
       event.preventDefault();
       event.stopPropagation();
@@ -116,9 +116,10 @@
       }
       window.setTimeout(() => floating.classList.remove('is-tapped'), 430);
       if (result) {
-        const heart = $('.support-float-like', floating);
+        const heart = $('.home-comment-like b', floating);
         if (heart) heart.textContent = `♥ ${result.count}`;
         floating.classList.add('is-liked');
+        likeControl.setAttribute('aria-pressed', 'true');
         toast('いいねしました。');
       }
       floating.dataset.busy = 'false';
@@ -130,173 +131,54 @@
     const layer = $('#supportCommentFloatLayer');
     if (!list || !layer) return;
 
-    let featuredIndex = 0;
-    let latestIndex = 0;
-    let latestPrevious = -1;
-    let featuredTimer = 0;
-    let latestTimer = 0;
-    let mutationTimer = 0;
-    const FEATURED_MS = 10000;
-    const LATEST_MS = 8500;
-
-    const cardFallbackRows = () => commentCards().map(dataFromCard).filter(Boolean);
-    const getFeatured = () => {
-      const rows = Array.isArray(window.UNICA_TOP_SUPPORT_FEATURED)
-        ? window.UNICA_TOP_SUPPORT_FEATURED.filter(row => row?.text)
-        : [];
-      if (rows.length) return rows.slice(0, 5);
-      return cardFallbackRows()
-        .sort((a,b) => Number(b.count||0) - Number(a.count||0))
-        .slice(0,5);
+    const dateLabel = (row) => {
+      if (row.date) return `${row.date.replaceAll('-', '/')} ${row.time || ''}`.trim();
+      if (row.createdAt) return new Intl.DateTimeFormat('ja-JP', {
+        timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', hour12: false
+      }).format(new Date(row.createdAt * 1000));
+      return '日時不明';
     };
-    const getLatest = () => {
-      const rows = Array.isArray(window.UNICA_TOP_SUPPORT_LATEST)
-        ? window.UNICA_TOP_SUPPORT_LATEST.filter(row => row?.text)
-        : [];
-      return (rows.length ? rows : cardFallbackRows()).slice(0,10);
-    };
-
-    /* 最新ほど選ばれやすい重み。10件なら 10,9,...1。 */
-    const weightedLatestIndex = (rows) => {
-      if (rows.length <= 1) return 0;
-      const weights = rows.map((_, i) => rows.length - i);
-      const total = weights.reduce((sum, n) => sum + n, 0);
-      let chosen = 0;
-      for (let retry = 0; retry < 4; retry += 1) {
-        let roll = Math.random() * total;
-        chosen = 0;
-        for (let i = 0; i < weights.length; i += 1) {
-          roll -= weights[i];
-          if (roll <= 0) { chosen = i; break; }
-        }
-        if (chosen !== latestPrevious) break;
+    const timestamp = (row) => Number(row.createdAt || 0) ||
+      (Date.parse(`${row.date || ''}T${row.time || '00:00'}:00+09:00`) / 1000 || 0);
+    let signature = '';
+    const render = () => {
+      const source = Array.isArray(window.UNICA_TOP_SUPPORT_LATEST)
+        ? window.UNICA_TOP_SUPPORT_LATEST : commentCards().map(dataFromCard).filter(Boolean);
+      const rows = [...source].filter(row => row.text).sort((a, b) => timestamp(b) - timestamp(a));
+      const nextSignature = JSON.stringify(rows.map(row => [row.id, row.text, row.name, row.count, row.liked, dateLabel(row), row.profile]));
+      if (signature === nextSignature) return;
+      signature = nextSignature;
+      const scrollTop = layer.scrollTop;
+      const fragment = document.createDocumentFragment();
+      rows.forEach(data => {
+        const card = document.createElement('article');
+        card.className = `home-comment-row${data.liked ? ' is-liked' : ''}`;
+        card.dataset.postId = data.id || '';
+        card.innerHTML = '<span class="home-comment-avatar"></span><div class="home-comment-copy"><header><strong></strong><time></time></header><p></p></div><button type="button" class="home-comment-like" aria-label="このコメントにいいね"><b></b></button>';
+        $('.home-comment-avatar', card).innerHTML = window.UNICA_BLOOM_BADGE?.html?.(data.profile || {}, 'tiny') || '';
+        $('strong', card).textContent = data.name || 'うにメン';
+        $('time', card).textContent = dateLabel(data);
+        if (timestamp(data)) $('time', card).dateTime = new Date(timestamp(data) * 1000).toISOString();
+        $('p', card).textContent = data.text;
+        $('b', card).textContent = `${data.liked ? '♥' : '♡'} ${Number(data.count || 0)}`;
+        $('.home-comment-like', card).setAttribute('aria-pressed', String(Boolean(data.liked)));
+        fragment.appendChild(card);
+      });
+      if (!rows.length) {
+        const empty = document.createElement('p');
+        empty.className = 'home-comment-empty';
+        empty.textContent = 'まだコメントはありません。最初の応援を届けよう。';
+        fragment.appendChild(empty);
       }
-      latestPrevious = chosen;
-      return chosen;
+      layer.replaceChildren(fragment);
+      layer.scrollTop = scrollTop;
     };
-
-    const makeCard = (kind, data) => {
-      if (!data?.text) return null;
-      const card = document.createElement('div');
-      card.className = `support-floating-comment support-floating-comment-button support-floating-comment-${kind}${data.liked ? ' is-liked' : ''}`;
-      card.dataset.postId = data.id || '';
-      card.dataset.kind = kind;
-      card.setAttribute('role', 'group');
-      card.setAttribute('aria-label', `${kind === 'featured' ? '注目' : '新着'}コメント。${data.name}さんからの応援`);
-      card.innerHTML = '<span class="support-float-label"></span><span class="support-float-avatar"></span><div class="support-float-copy"><p></p><small></small></div><span class="support-float-controls"><button type="button" class="support-float-like-button" aria-label="このコメントにいいね"><b class="support-float-like"></b></button><span class="support-float-pager"><button type="button" class="support-float-prev" aria-label="前のコメントを表示">‹</button><span class="support-float-count" aria-hidden="true"></span><button type="button" class="support-float-next" aria-label="次のコメントを表示">›</button></span></span>';
-      $('.support-float-label', card).textContent = kind === 'featured' ? '注目' : '新着';
-      $('.support-float-avatar', card).innerHTML = window.UNICA_BLOOM_BADGE?.html?.(data.profile||{},'tiny') || '';
-      $('p', card).textContent = data.text;
-      $('small', card).textContent = `${data.name}さん`;
-      $('.support-float-like', card).textContent = `${data.liked ? '♥' : '♡'} ${Number(data.count||0)}`;
-      return card;
-    };
-
-    const replaceCard = (kind, data) => {
-      const nextCard = makeCard(kind, data);
-      const current = layer.querySelector(`[data-kind="${kind}"]`);
-      if (!nextCard) {
-        current?.remove();
-        return;
-      }
-      nextCard.classList.add('is-entering');
-      if (current) current.replaceWith(nextCard);
-      else layer.appendChild(nextCard);
-      requestAnimationFrame(() => nextCard.classList.remove('is-entering'));
-    };
-
-    const setPager = (kind, index, total) => {
-      const card = layer.querySelector(`[data-kind="${kind}"]`);
-      if (!card) return;
-      const count = $('.support-float-count', card);
-      if (count) count.textContent = `${index + 1}/${total}`;
-      card.dataset.index = String(index);
-      card.dataset.total = String(total);
-    };
-    const showFeatured = (direction = 1) => {
-      const rows = getFeatured();
-      if (!rows.length) return replaceCard('featured', null);
-      featuredIndex = (featuredIndex + direction + rows.length) % rows.length;
-      replaceCard('featured', rows[featuredIndex]);
-      setPager('featured', featuredIndex, rows.length);
-    };
-    const showLatest = (direction = 0) => {
-      const rows = getLatest();
-      if (!rows.length) return replaceCard('latest', null);
-      if (direction === 0) latestIndex = weightedLatestIndex(rows);
-      else latestIndex = (latestIndex + direction + rows.length) % rows.length;
-      replaceCard('latest', rows[latestIndex]);
-      setPager('latest', latestIndex, rows.length);
-    };
-
-    const scheduleFeatured = () => {
-      clearTimeout(featuredTimer);
-      featuredTimer = setTimeout(() => { showFeatured(1); scheduleFeatured(); }, FEATURED_MS);
-    };
-    const scheduleLatest = () => {
-      clearTimeout(latestTimer);
-      latestTimer = setTimeout(() => { showLatest(); scheduleLatest(); }, LATEST_MS);
-    };
-    const restart = () => {
-      clearTimeout(mutationTimer);
-      mutationTimer = setTimeout(() => {
-        showFeatured(0);
-        showLatest(0);
-        scheduleFeatured();
-        scheduleLatest();
-      }, 120);
-    };
-
-    const moveCard = (card, direction) => {
-      if (!card) return;
-      if (card.dataset.kind === 'featured') {
-        showFeatured(direction);
-        scheduleFeatured();
-      } else {
-        showLatest(direction);
-        scheduleLatest();
-      }
-    };
-
-    layer.addEventListener('click', (event) => {
-      if (event.target.closest('.support-float-like-button')) return;
-      const card = event.target.closest('.support-floating-comment-button');
-      if (!card) return;
-      const prev = event.target.closest('.support-float-prev');
-      const next = event.target.closest('.support-float-next');
-      let direction = 0;
-      if (prev) direction = -1;
-      else if (next) direction = 1;
-      else {
-        const rect = card.getBoundingClientRect();
-        direction = event.clientX < rect.left + rect.width / 2 ? -1 : 1;
-      }
-      event.preventDefault();
-      event.stopPropagation();
-      moveCard(card, direction);
-    });
-
-    let swipeStartX = 0;
-    let swipeStartY = 0;
-    layer.addEventListener('pointerdown', (event) => {
-      if (event.target.closest('button')) return;
-      swipeStartX = event.clientX;
-      swipeStartY = event.clientY;
-    }, { passive: true });
-    layer.addEventListener('pointerup', (event) => {
-      if (!swipeStartX || event.target.closest('button')) return;
-      const dx = event.clientX - swipeStartX;
-      const dy = event.clientY - swipeStartY;
-      swipeStartX = 0;
-      swipeStartY = 0;
-      if (Math.abs(dx) < 34 || Math.abs(dx) <= Math.abs(dy)) return;
-      const card = event.target.closest('.support-floating-comment-button');
-      moveCard(card, dx < 0 ? 1 : -1);
-    }, { passive: true });
-
-    new MutationObserver(restart).observe(list, { childList: true, subtree: true });
-    layer.classList.add('is-two-tier');
-    restart();
+    new MutationObserver(render).observe(list, { childList: true, subtree: true });
+    layer.setAttribute('tabindex', '0');
+    layer.setAttribute('role', 'region');
+    layer.setAttribute('aria-label', 'みんなの応援コメント。新着順。上下にスクロールできます。');
+    render();
   }
 
   function ensureCheerFeedback() {

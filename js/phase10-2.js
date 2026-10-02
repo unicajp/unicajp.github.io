@@ -124,7 +124,7 @@ function renderSupportLikeRanking(){
 function renderComments(){
   const m=member(); const list=$('#communityList'); if(!list)return;
   const rows=filteredComments();
-  /* トップ表示用：注目5件＋新着10件。見た目は従来の小型カードを維持する。 */
+  /* トップの新着スクロール一覧。モーダルの選択タブとは独立する。 */
   const toTopComment = row => ({
     id:String(row.id||''),
     ownerUid:String(row.ownerUid||''),
@@ -133,6 +133,8 @@ function renderComments(){
     text:String(row.text||''),
     count:Number(row.likeCount||0),
     liked:myLikedCommentIds.has(row.id),
+    date:String(row.date||''),
+    time:String(row.time||''),
     createdAt:Number(row.createdAt?.seconds||0)
   });
   window.UNICA_TOP_SUPPORT_FEATURED = [...comments]
@@ -141,7 +143,7 @@ function renderComments(){
     .map(toTopComment);
   window.UNICA_TOP_SUPPORT_LATEST = [...comments]
     .sort((a,b)=>Number(b.createdAt?.seconds||0)-Number(a.createdAt?.seconds||0))
-    .slice(0,10)
+    .slice(0,30)
     .map(toTopComment);
   /* 旧処理との互換性を維持。 */
   window.UNICA_TOP_SUPPORT_COMMENTS = window.UNICA_TOP_SUPPORT_LATEST;
