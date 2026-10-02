@@ -8,15 +8,6 @@ function memberRoute(fn){if(!hasMember()){guestLock();return false}try{return fn
 function openGame(){return memberRoute(()=>window.UNICA_MILK_MATCH?.open?.())}
 function openScent(){return memberRoute(()=>window.UNICA_SCENT16?.open?.())}
 function openPrefecture(){return memberRoute(()=>window.UNICA_PREFECTURE_DIRECTORY?.open?.())}
-function remember(key,label,icon){try{localStorage.setItem('unicaRecentFeature',JSON.stringify({key,label,icon,at:Date.now()}));}catch(_){} renderRecent();}
-function renderRecent(){
-  const box=$('#renewalRecent');if(!box)return;
-  let r=null;try{r=JSON.parse(localStorage.getItem('unicaRecentFeature')||'null')}catch(_){}
-  if(!r){box.classList.remove('is-visible');box.innerHTML='';return}
-  box.classList.add('is-visible');
-  box.innerHTML=`<span class="recent-icon">${r.icon||'✨'}</span><div><small>最近利用した機能</small><strong>${r.label||''}</strong><b>続きから開く ›</b></div>`;
-  box.onclick=()=>{const b=document.querySelector(`[data-feature-key="${r.key}"]`);if(b)b.click()};
-}
 function statusText(key){
  if(key==='game'){const n=$('#milkLyricsHomeUnlocked')?.textContent||'0';return `歌詞を集めて遊ぶ`}
  if(key==='scent'){try{const r=JSON.parse(localStorage.getItem('unicaPunyakoDiagnosisV4Result')||'null');const j=JSON.parse(localStorage.getItem('unicaPunyakoJourneyV4')||'null');if(r?.typeId)return '育てたぷにゅかを見る';if(j?.seedComplete)return `続きから育てる`;return 'まず5問で誕生';}catch(_){return 'まず5問で誕生'}}
@@ -35,14 +26,14 @@ function card({key,icon,title,desc,open}){
   const b=make('button',`simple-home-card card-${key}`);
   b.type='button';b.dataset.featureKey=key;
   b.innerHTML=`<span class="simple-home-icon">${icon}</span><strong>${title}</strong><small>${desc||statusText(key)}</small>`;
-  b.addEventListener('click',()=>{remember(key,title,icon);open()});
+  b.addEventListener('click',open);
   return b;
 }
 function build(){
  const stack=$('#worldHome .app-home-stack');if(!stack||$('#phase1241Renewal'))return;
  const root=make('div','phase1241-renewal phase1410-clean-home');root.id='phase1241Renewal';
- const recent=make('button','recent-feature-card');recent.type='button';recent.id='renewalRecent';root.append(recent);
- const fun=make('section','renewal-section renewal-section-simple','<div class="renewal-section-head"><div><small>ENJOY UNICA WORLD</small><h2>楽しむ</h2></div></div>');
+ const fun=make('section','renewal-section renewal-section-simple');
+ fun.setAttribute('aria-label','ゲーム・診断・投票・全国のうにメン');
  const grid=make('div','fun-grid fun-grid-simple');
  grid.append(
    card({key:'game',icon:'🎮',title:'MILK BLOOM',desc:'歌詞を集めて遊ぶ',open:openGame}),
@@ -69,7 +60,6 @@ function build(){
    document.querySelector('main')?.append(support);
  }
  ['#milkMatchHomeCard','#openMilkLyrics','.milk-release-countdown','#scent16HomeCard','#prefectureHomeCard'].forEach(sel=>{const e=$(sel,stack);if(e)e.classList.add('phase1241-hidden-home')});
- renderRecent();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
 })();
