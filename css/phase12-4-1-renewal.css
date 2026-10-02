@@ -13,3 +13,9 @@
 .renewal-contact{margin:22px 0 8px;padding:17px;border-radius:22px;background:#fff;border:1px solid rgba(102,76,111,.13);text-align:center;box-shadow:0 8px 22px rgba(70,48,75,.07)}.renewal-contact small{display:block;color:#9b829c;font-weight:900;letter-spacing:.12em}.renewal-contact h3{margin:5px 0;color:#3a2b3e}.renewal-contact p{margin:0 0 11px;color:#77667a;font-size:13px;line-height:1.55}.renewal-contact a{display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border-radius:999px;background:#1d1d22;color:#fff;text-decoration:none;font-weight:900}
 .phase1241-hidden-home{display:none!important}
 @media(max-width:380px){.fun-card{min-height:126px;padding:13px}.fun-card strong{font-size:14px}.fun-card small{font-size:11px}}
+
+/* Compact independent name-only home entrances. */
+.home-feature-links{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:5px;width:fit-content;max-width:100%;margin:0 auto}
+.home-feature-links .home-feature-link{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:auto;min-width:0;height:24px;min-height:0;margin:0;padding:4px 9px;border:1px solid #e4d8df;border-radius:7px;background:rgba(255,255,255,.92);color:#604953;font:600 9px/1.2 system-ui,-apple-system,sans-serif;white-space:nowrap;text-align:center;box-shadow:none;cursor:pointer}
+.home-feature-links .home-feature-link:active{background:#f4eaf0}
+.home-feature-links .home-feature-link:focus-visible{outline:2px solid #b46e88;outline-offset:2px}
