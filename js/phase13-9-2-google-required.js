@@ -101,8 +101,8 @@
     try {
       const api = await apiReady();
       const info = api.authInfo();
-      if (readMember() && !info.googleLinked) showGate();
-      else hideGate();
+      // Authentication events may dismiss an existing gate, but never open it.
+      if (!readMember() || (info.signedIn && info.googleLinked)) hideGate();
     } catch (_) {}
   }
 
@@ -158,13 +158,28 @@
   function init() {
     ensureRegisterNotice();
     ensureGate();
-    if (readMember() && !window.UNICA_FIREBASE?.authInfo?.().googleLinked) showGate();
     // Capture at window level before existing document/button handlers.
     const blockUnlinked = event => {
-      if (!readMember() || window.UNICA_FIREBASE?.authInfo?.().googleLinked) return;
-      if (event.target instanceof Node && gate.contains(event.target)) return;
+      const intro = $('#intro');
+      if (intro && !intro.classList.contains('is-hidden')) return;
+      if (!readMember()) return;
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target || gate.contains(target)) return;
+      // Scrolling and tapping noninteractive page areas do not open the gate.
+      if (event.type !== 'submit' && !target.closest('button,a,input,textarea,select,[role="button"],[data-feature-key],[data-world-nav]')) return;
+      const info = window.UNICA_FIREBASE?.authInfo?.();
+      if (info?.signedIn && info.googleLinked) return;
       event.preventDefault();
       event.stopImmediatePropagation();
+      if (!info?.signedIn) {
+        const toast = $('#miniToast');
+        if (toast) {
+          toast.textContent = 'ログイン情報を確認中です。少し待ってもう一度押してください。';
+          toast.classList.add('is-show');
+          setTimeout(() => toast.classList.remove('is-show'), 1900);
+        }
+        return;
+      }
       showGate();
     };
     window.addEventListener('click', blockUnlinked, true);
