@@ -5,6 +5,8 @@
   const LEGACY_KEYS = ['unicaWorldMemberV3','unicaWorldMemberV2','unicaWorldMemberV1'];
   let bypassConfirm = false;
   let gate = null;
+  const lockedElements = new Set();
+  let previousFocus = null;
 
   const $ = s => document.querySelector(s);
   const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -62,7 +64,7 @@
         <div class="google-required-icon">G</div>
         <p class="google-required-kicker">KEEP YOUR UNICA PASS</p>
         <h2 id="googleRequiredTitle">うにパスを守るため<br>Google連携が必要です</h2>
-        <p>ブラウザ変更や機種変更でも、今の<strong>うにメンNo.・登録情報・記録</strong>をそのまま引き継げるようにします。</p>
+        <p>各機能を使うにはGoogle連携が必要です。ブラウザ変更や機種変更でも、今の<strong>うにメンNo.・登録情報・記録</strong>をそのまま引き継げるようにします。</p>
         <button id="googleRequiredLink" type="button"><span>G</span> Googleアカウントと連携</button>
         <small>現在のうにパスにGoogleを連携します。新しいうにメン番号は発行されません。</small>
         <p id="googleRequiredMessage" class="google-required-message" aria-live="polite"></p>
@@ -74,22 +76,32 @@
 
   function showGate() {
     ensureGate();
+    if (!gate.classList.contains('is-open')) previousFocus = document.activeElement;
+    for (const element of document.body.children) {
+      if (element === gate || ['SCRIPT','STYLE','LINK'].includes(element.tagName) || element.inert) continue;
+      element.inert = true;
+      lockedElements.add(element);
+    }
     gate.classList.add('is-open');
     gate.setAttribute('aria-hidden', 'false');
     document.body.classList.add('google-required-open');
+    if (!gate.contains(document.activeElement)) $('#googleRequiredLink')?.focus();
   }
 
   function hideGate() {
+    for (const element of lockedElements) element.inert = false;
+    lockedElements.clear();
     gate?.classList.remove('is-open');
     gate?.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('google-required-open');
+    if (gate?.contains(document.activeElement)) previousFocus?.focus?.();
   }
 
   async function enforceExistingMember() {
     try {
       const api = await apiReady();
       const info = api.authInfo();
-      if (readMember() && info.signedIn && !info.googleLinked) showGate();
+      if (readMember() && !info.googleLinked) showGate();
       else hideGate();
     } catch (_) {}
   }
@@ -146,6 +158,25 @@
   function init() {
     ensureRegisterNotice();
     ensureGate();
+    if (readMember() && !window.UNICA_FIREBASE?.authInfo?.().googleLinked) showGate();
+    // Capture at window level before existing document/button handlers.
+    const blockUnlinked = event => {
+      if (!readMember() || window.UNICA_FIREBASE?.authInfo?.().googleLinked) return;
+      if (event.target instanceof Node && gate.contains(event.target)) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      showGate();
+    };
+    window.addEventListener('click', blockUnlinked, true);
+    window.addEventListener('submit', blockUnlinked, true);
+    window.addEventListener('keydown', event => {
+      if (!gate.classList.contains('is-open')) return;
+      if (event.key === 'Escape') { event.preventDefault(); event.stopImmediatePropagation(); }
+      if (event.key === 'Tab') { event.preventDefault(); $('#googleRequiredLink')?.focus(); }
+    }, true);
+    new MutationObserver(() => {
+      if (gate.classList.contains('is-open')) showGate();
+    }).observe(document.body, {childList:true});
     $('#registerConfirm')?.addEventListener('click', requireGoogleBeforeRegistration, true);
     window.addEventListener('unica:firebase-ready', () => setTimeout(enforceExistingMember, 150));
     window.addEventListener('unica:firebase-member-restored', () => setTimeout(enforceExistingMember, 150));
