@@ -52,11 +52,10 @@
 .home-comments-heading strong{font-size:5.5px;line-height:1.5}.home-comments-heading span{font-size:4.5px;line-height:1.5;color:#8b7179}
 .home-comment-feed{max-height:75px;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#cbb7bf transparent}
 .home-comment-feed:focus-visible{outline:2px solid #b46e88;outline-offset:-2px}
-.home-comment-row{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:5px;align-items:start;padding:5px 10px;border-bottom:1px solid #f0e8eb}
+.home-comment-row{display:grid;grid-template-columns:14px minmax(0,1fr);gap:5px;align-items:start;padding:5px 10px;border-bottom:1px solid #f0e8eb}
 .home-comment-row:last-child{border-bottom:0}.home-comment-avatar{display:grid;place-items:center;width:14px;height:14px;overflow:hidden}.home-comment-copy{min-width:0}
 .home-comment-copy header{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 7px}.home-comment-copy strong{font-size:5.5px;overflow-wrap:anywhere}.home-comment-copy time{font-size:4.5px;line-height:1.5;color:#8b7179;font-variant-numeric:tabular-nums}
-.home-comments .home-comment-copy p{text-align:left;margin:2px 0 0;font-size:6px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
-.home-comment-like{border:1px solid #eadce2;border-radius:9px;background:#fff8fa;color:#966274;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;align-self:start;width:24px;height:18px;min-height:18px;min-width:24px;padding:2px;border-radius:6px;line-height:1;font-size:5.5px;cursor:pointer}.home-comment-row.is-liked .home-comment-like{background:#fbe8ef;color:#b45176}
+.home-comments .home-comment-copy p{text-align:left;margin:2px 0 0;font-size:8px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
 .home-comment-empty{margin:0;padding:7.5px 11px;font-size:5.5px;line-height:1.6}
 @media(max-width:520px){.home-comments{width:92vw;margin:8px auto 5px}}
 
