@@ -96,7 +96,7 @@
 <span class="status-identity"><strong id="statusName">未登録</strong><small hidden="" id="statusNumber"></small></span>
 </button>
 <div class="status-chip status-community" hidden><small>💌 応援</small><strong id="statusPosts">0</strong></div>
-<div class="status-chip status-reaction" hidden><small>♥ いいね</small><strong id="statusReactions">0</strong></div>
+
 <button class="unipass-direct-button" data-world-nav="pass" id="openUniPassDirect" type="button" aria-label="うにパスを開く">
 <span class="unipass-direct-mark" aria-hidden="true">💳</span>
 </button>
@@ -421,13 +421,10 @@
 <section aria-labelledby="communityTitle" aria-modal="true" class="world-modal-panel community-panel community-panel-plus support-panel" role="dialog">
 <button aria-label="閉じる" class="world-modal-close" data-close-community="" type="button">×</button>
 <div class="community-head support-head">
-<div><p class="eyebrow">MESSAGE FOR UNICA</p><h2 id="communityTitle">応援コメント</h2><p>うにかへ届けたい言葉を残す場所です。コメントには誰でも「いいね」を送れます。</p></div>
+<div><p class="eyebrow">MESSAGE FOR UNICA</p><h2 id="communityTitle">応援コメント</h2><p>うにかへ届けたい言葉を残す場所です。</p></div>
 <div class="community-live"><span>💌</span><strong id="communityOnlineCount">0</strong><small>コメント</small></div>
 </div>
-<section aria-live="polite" class="support-like-ranking" id="supportLikeRanking">
-<div class="support-like-ranking-head"><div><small>ALL-TIME LIKE RANKING</small><strong>累計いいねランキング</strong></div><span>TOP 3</span></div>
-<div class="support-like-ranking-list" id="supportLikeRankingList"><p class="support-ranking-empty">集計中です…</p></div>
-</section>
+
 <div class="community-compose community-compose-plus support-compose">
 <div class="community-compose-head"><span id="communityComposeAvatar">🌸</span><div><strong id="communityComposeName">あなた</strong><small>1日1件・80文字まで</small></div></div>
 <textarea id="communityComment" maxlength="80" placeholder="うにかへ応援コメントを送る（80文字まで）"></textarea>
@@ -436,7 +433,7 @@
 </div>
 <div class="community-tabs support-tabs" role="tablist">
 <button class="is-active" data-community-tab="new" type="button">🕒 新着順</button>
-<button data-community-tab="popular" type="button">🔥 人気順</button>
+
 <button data-community-tab="mine" type="button">📜 自分の履歴</button>
 </div>
 <div class="community-notice"><strong>応援が集まる場所</strong><span>返信機能はありません。うにかへの応援だけを、やさしく積み重ねていきます。</span></div>
@@ -456,7 +453,7 @@
 <div><dt>登録日</dt><dd id="detailJoined">—</dd></div>
 <div><dt>一緒に歩いた日数</dt><dd id="detailDays">0日</dd></div>
 <div><dt>応援コメント</dt><dd id="detailPostCount">💌 0</dd></div>
-<div><dt>もらったいいね</dt><dd id="detailReactionCount">♥ 0</dd></div>
+
 <div><dt>都道府県</dt><dd id="detailPrefecture">—</dd></div>
 <div><dt>誕生日</dt><dd id="detailBirthday">—</dd></div>
 <div class="passport-detail-wide passport-scent-row" hidden="" id="detailScentRow"><dt>ぷにゅか診断</dt><dd><button class="passport-scent-button" id="detailScentButton" type="button"><span id="detailScentFlower">🌸</span><span><strong id="detailScentName">—</strong><small id="detailScentDate">—</small></span><em id="detailScentMatch"></em></button></dd></div>
@@ -642,9 +639,9 @@
 <div aria-live="polite" class="mini-toast" id="miniToast" role="status"></div>
 <script src="js/phase14-09-punyako-avatar.js?v=14.09"></script>
 <script src="js/firebase-init.js?v=14.09-punyako-journey" type="module"></script>
-<script src="js/phase10-2.js?v=14.41" type="module"></script>
-<script src="js/script.js?v=14.40"></script>
-<script src="js/phase10-3.js?v=14.41"></script>
+<script src="js/phase10-2.js?v=14.50" type="module"></script>
+<script src="js/script.js?v=14.50"></script>
+<script src="js/phase10-3.js?v=14.50"></script>
 <script src="js/phase10-7-prefectures.js?v=14.40" type="module"></script>
 <script src="js/phase10-5-guest.js?v=13.10.5"></script>
 <script src="js/phase10-11-scroll-only.js"></script>
@@ -674,7 +671,7 @@
 <link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=13.5.2"/>
 <link rel="stylesheet" href="css/phase13-18-scent-compact.css?v=13.18"/>
 <link rel="stylesheet" href="css/phase13-20-world-background.css?v=13.20.3"/>
-<link rel="stylesheet" href="css/phase13-21-home-quick-comment.css?v=14.43"/>
+<link rel="stylesheet" href="css/phase13-21-home-quick-comment.css?v=14.50"/>
 <link rel="stylesheet" href="css/phase13-27-home-hero-spacing.css?v=13.27"/>
 <link rel="stylesheet" href="css/phase13-29-home-hero-gap-cleanup.css?v=13.29"/>
 <link rel="stylesheet" href="css/phase14-35-home-ultra-compact.css?v=14.35"/>
