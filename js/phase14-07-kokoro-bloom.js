@@ -389,7 +389,7 @@ function setLocalJourney(payload){
   const current=localJourney()||{},next={...current,...payload,updatedAtMs:Date.now()};write(JOURNEY_KEY,next);const m=member();if(m){write(MEMBER_KEY,{...m,punyakoJourney:next})}window.dispatchEvent(new CustomEvent('unica:punyako-avatar-updated',{detail:next}));return next
 }
 async function saveJourney(info,completedQuestions,{seedComplete=true}={}){
-  if(!info)return null;const payload=setLocalJourney({seedComplete,equippedId:info.id,equippedImage:info.image,equippedName:info.name,currentStage:info.stage||'final',completedQuestions,seedCompletedAtMs:seedComplete?(localJourney()?.seedCompletedAtMs||Date.now()):0});
+  if(!info)return null;const snapshot=info.stats||(answers.length>=5?stats():localJourney()?.analysisStats);const snapshotQuestions=info.stats?25:(answers.length>=5?answers.length:localJourney()?.analysisQuestions||0);const payload=setLocalJourney({... (snapshot?{analysisStats:snapshot,analysisQuestions:snapshotQuestions}:{}),seedComplete,equippedId:info.id,equippedImage:info.image,equippedName:info.name,currentStage:info.stage||'final',completedQuestions,seedCompletedAtMs:seedComplete?(localJourney()?.seedCompletedAtMs||Date.now()):0});
   try{for(let i=0;i<40&&!window.UNICA_FIREBASE?.savePunyakoJourney;i++)await new Promise(r=>setTimeout(r,100));await window.UNICA_FIREBASE?.savePunyakoJourney?.(payload)}catch(e){console.warn('ぷにゅか進化データのオンライン保存に失敗',e)}
   return payload
 }
@@ -400,11 +400,11 @@ function updateHome(){
   document.querySelectorAll('[data-status-for="scent"]').forEach(el=>el.textContent=result?.typeId?'最終進化済み':journey?.seedComplete?`育成中 ${journey.completedQuestions||5}/25`:'5問で誕生')
 }
 async function saveActive(result){
-  write(RESULT_KEY,result);const by=read(ACTIVE_BY_TYPE_KEY,{});by[result.typeId]=result;write(ACTIVE_BY_TYPE_KEY,by);const t=TYPE_MAP[result.typeId];if(t)await saveJourney({...t,stage:'final'},25);
+  write(RESULT_KEY,result);const by=read(ACTIVE_BY_TYPE_KEY,{});by[result.typeId]=result;write(ACTIVE_BY_TYPE_KEY,by);const t=TYPE_MAP[result.typeId];if(t)await saveJourney({...t,stage:'final',stats:result.stats},25);
   try{for(let i=0;i<40&&!window.UNICA_FIREBASE?.saveScentDiagnosis;i++)await new Promise(r=>setTimeout(r,100));await window.UNICA_FIREBASE?.saveScentDiagnosis?.(result)}catch(e){console.warn('ぷにゅか診断のオンライン保存に失敗',e)}
   updateHome();window.dispatchEvent(new CustomEvent('unica:punyako-diagnosis-complete',{detail:result}))
 }
-function addHistory(result){const h=read(HISTORY_KEY,[]);if(!h.some(x=>x.runId===result.runId))h.unshift(result);write(HISTORY_KEY,h.slice(0,50))}
+function addHistory(result){const h=read(HISTORY_KEY,[]);if(!h.some(x=>x.runId===result.runId))h.unshift(result);write(HISTORY_KEY,h)}
 function makeResult(){const t=finalType(),st=stats(),hd=hidden();return{schema:'punyako-v4',runId:'pk4_'+Date.now().toString(36),typeId:t.id,typeImage:t.image,flower:t.icon,scentName:t.name,flowerMeaning:t.core,stats:st,hidden:hd,diagnosedDate:today(),message:`${t.name}。${t.core}`,route:{stage2:stage2(),stage3:stage3()},answers:[...answers],createdAt:Date.now()}}
 
 function open(){if(!member()){document.getElementById('openMemberGate')?.click();return}sfx.open();modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('member-gate-open');showIntro()}
@@ -468,6 +468,7 @@ function showIntro(){
         <p>回答は自動保存。5問で一度区切れるので、気軽に参加できます。</p>
       </div>
     </div>`;
+  screen.insertAdjacentHTML('beforeend',pkMenuHtml());pkBind();
   bindSquish();bindSound();refreshWorldCount();
   $('#punyakoContinue')?.addEventListener('click',()=>{sfx.next();showQuestion()});
   $('#punyakoRestart')?.addEventListener('click',()=>{if(confirm('回答途中のデータを消して、最初から始めますか？'))startNew()});
@@ -516,7 +517,7 @@ function answer(choiceIndex){
   const qu=currentQuestion(),op=qu?.options?.[choiceIndex];if(!qu||!op)return;sfx.choice();answers=answers.slice(0,qIndex);answers[qIndex]={questionId:qu.id,choiceIndex,stage2:op.stage2||{},stage3:op.stage3||{},finalId:op.finalId||null,stats:op.stats||{},hidden:op.hidden||{},meta:qu.meta||{}};screen.querySelectorAll('[data-punyako-choice]').forEach((b,i)=>{b.disabled=true;b.classList.toggle('is-selected',i===choiceIndex)});const char=$('#punyakoCharacter');char?.classList.add('is-reacting');qIndex++;saveProgress();const answered=qIndex;setTimeout(()=>{if(answered===5)return showBirth();if(answered===10)return showEvolution('stage2');if(answered===15)return showEvolution('stage3');if(answered===25)return finishDiagnosis();sfx.next();showQuestion()},480)
 }
 function showBirth(){modal.classList.remove('is-punyako-game-intro');
-  const info=FORMS.stage1_base;setBack(null);saveJourney(info,5).then(()=>{window.dispatchEvent(new CustomEvent('unica:punyako-seed-complete',{detail:localJourney()}));refreshWorldCount()});screen.className='scent16-screen punyako-screen punyako-birth-bg punyako-game-reward-bg';screen.innerHTML=`<div class="punyako-evolution punyako-birth">${particleHtml(['✦','✧','♡','·'],38)}<div class="punyako-evolution-ring is-birth"></div><div class="punyako-burst-rays"></div><div class="punyako-reward-label">MISSION REWARD</div><small>BIRTH UNLOCKED</small>${charHtml(info,'is-evolving')}<h3>ぷにゅかが誕生しました！</h3><strong class="punyako-get-banner">NEW! ぷにゅか GET！</strong><p>あなたの最初の5つの答えから、小さなぷにゅかが生まれました。</p><div class="punyako-get-project"><b>✓ LIMITED MISSION 参加完了！</b><span>30人チャレンジにカウントされました。あと20問で最終進化＆性格データ完成。</span></div><button class="punyako-primary" id="punyakoBirthNext"><small>CONTINUE QUEST</small>この子を育てる <b>›</b></button><button class="punyako-secondary" id="punyakoBirthClose">SAVEして今日はここまで</button></div>`;setTimeout(()=>sfx.birth(),80);setTimeout(()=>sfx.sparkle(),850);bindSquish();$('#punyakoBirthNext').onclick=()=>{sfx.next();showQuestion()};$('#punyakoBirthClose').onclick=close
+  const info=FORMS.stage1_base;setBack(null);saveJourney(info,5).then(()=>{window.dispatchEvent(new CustomEvent('unica:punyako-seed-complete',{detail:localJourney()}));refreshWorldCount()});screen.className='scent16-screen punyako-screen punyako-birth-bg punyako-game-reward-bg';screen.innerHTML=`<div class="punyako-evolution punyako-birth">${particleHtml(['✦','✧','♡','·'],38)}<div class="punyako-evolution-ring is-birth"></div><div class="punyako-burst-rays"></div><div class="punyako-reward-label">MISSION REWARD</div><small>BIRTH UNLOCKED</small>${charHtml(info,'is-evolving')}<h3>ぷにゅかが誕生しました！</h3><strong class="punyako-get-banner">NEW! ぷにゅか GET！</strong><p>あなたの最初の5つの答えから、小さなぷにゅかが生まれました。</p><div class="punyako-get-project"><b>✓ LIMITED MISSION 参加完了！</b><span>30人チャレンジにカウントされました。あと20問で最終進化＆性格データ完成。</span></div><button class="punyako-primary" id="punyakoBirthNext"><small>CONTINUE QUEST</small>この子を育てる <b>›</b></button><button class="punyako-secondary" id="punyakoBirthClose">SAVEして今日はここまで</button></div>`;setTimeout(()=>sfx.birth(),80);setTimeout(()=>sfx.sparkle(),850);bindSquish();$('#punyakoBirthNext').onclick=()=>{sfx.next();showQuestion()};$('#punyakoBirthClose').onclick=close;screen.insertAdjacentHTML('beforeend',pkMenuHtml());pkBind()
 }
 function stageInfo(kind){
   if(kind==='stage2')return stage2()==='ear'?FORMS.stage2_ear:FORMS.stage2_wing;
@@ -530,10 +531,81 @@ function finishDiagnosis(){modal.classList.remove('is-punyako-game-intro');
 }
 function showSameTypeChoice(result,old){modal.classList.remove('is-punyako-game-intro');const t=TYPE_MAP[result.typeId];setBack(showIntro);screen.className='scent16-screen punyako-screen punyako-result-bg punyako-game-result-bg';screen.innerHTML=`<div class="punyako-same"><div class="punyako-result-status"><small>PROFILE UPDATE</small><strong>SAME PUNYUKA, NEW HEART</strong></div>${charHtml(t)}<h3>また ${esc(t.name)} になりました！</h3><p>同じぷにゅかでも、今回の答えで性格パラメータが変化しています。どちらのデータを装備しますか？</p><button class="punyako-primary" id="useNewProfile"><small>EQUIP NEW DATA</small>今回の性格を使う</button><button class="punyako-secondary" id="keepOldProfile">今の性格のまま</button><small class="punyako-note">今回の結果もSAVE DATAに保存されています。</small></div>`;bindSquish();$('#useNewProfile').onclick=()=>{saveActive(result);showResult(result)};$('#keepOldProfile').onclick=()=>showResult(old)}
 function radarSvg(st){const cx=120,cy=120,r=78,levels=[.25,.5,.75,1],pts=(rad)=>AXES.map((_,i)=>{const a=-Math.PI/2+i*2*Math.PI/5;return`${cx+Math.cos(a)*r*rad},${cy+Math.sin(a)*r*rad}`}).join(' '),valuePts=AXES.map((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/5,rr=r*(clamp(st?.[k]||50,0,100)/100);return`${cx+Math.cos(a)*rr},${cy+Math.sin(a)*rr}`}).join(' ');return`<svg class="punyako-radar" viewBox="0 0 240 240" aria-label="性格の五角形グラフ">${levels.map(l=>`<polygon points="${pts(l)}" class="grid"></polygon>`).join('')}${AXES.map((_,i)=>{const a=-Math.PI/2+i*2*Math.PI/5;return`<line x1="${cx}" y1="${cy}" x2="${cx+Math.cos(a)*r}" y2="${cy+Math.sin(a)*r}" class="axis"></line>`}).join('')}<polygon points="${valuePts}" class="value"></polygon>${AXES.map((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/5,rr=r+24;return`<text x="${cx+Math.cos(a)*rr}" y="${cy+Math.sin(a)*rr+4}" text-anchor="middle">${AXIS_LABEL[k]}</text>`}).join('')}</svg>`}
-function showResult(raw){modal.classList.remove('is-punyako-game-intro');const t=TYPE_MAP[raw?.typeId];if(!t)return showIntro();sfx.result();const result={...raw,scentName:raw.scentName||t.name,stats:raw.stats||{}};setBack(showIntro);screen.className='scent16-screen punyako-screen punyako-result-bg punyako-game-result-bg';screen.innerHTML=`<div class="punyako-result"><div class="punyako-result-status"><small>MISSION CLEAR</small><strong>PLAYER PROFILE</strong><span>25 / 25 COMPLETE</span></div>${charHtml(t)}<div class="punyako-result-rarity">FINAL PUNYUKA</div><h3>${esc(t.name)}</h3><p class="punyako-core">${esc(t.core)}</p><div class="punyako-unlock-strip"><span>✓ ICON</span><span>✓ PERSONALITY</span><span>✓ COMPATIBILITY DATA</span></div><section class="punyako-radar-wrap"><div>${radarSvg(result.stats)}</div><ul>${AXES.map(k=>`<li><span>${AXIS_LABEL[k]}</span><b>${clamp(result.stats?.[k]||50,0,100)}</b></li>`).join('')}</ul></section><div class="punyako-result-cards"><article><small>SKILL / あなたの強み</small><p>${esc(t.strength)}</p></article><article><small>RECOVERY / 回復のヒント</small><p>${esc(t.recharge)}</p></article><article><small>MESSAGE / ぷにゅかから一言</small><p>${esc(t.advice)}</p></article></div><div class="punyako-result-actions"><button class="punyako-primary" id="punyakoRedo"><small>NEW GAME</small>もう一度診断する</button><button class="punyako-secondary" id="punyakoHistoryFromResult">SAVE DATA / 診断履歴を見る</button><button class="punyako-text-button" id="punyakoBackHome">QUEST TOPへ</button></div></div>`;bindSquish();$('#punyakoRedo').onclick=()=>{if(confirm('新しく25問の旅を始めますか？'))startNew()};$('#punyakoHistoryFromResult').onclick=showHistory;$('#punyakoBackHome').onclick=showIntro}
+function showResult(raw){modal.classList.remove('is-punyako-game-intro');const t=TYPE_MAP[raw?.typeId];if(!t)return showIntro();sfx.result();const result={...raw,scentName:raw.scentName||t.name,stats:raw.stats||{}};setBack(showIntro);screen.className='scent16-screen punyako-screen punyako-result-bg punyako-game-result-bg';screen.innerHTML=`<div class="punyako-result"><div class="punyako-result-status"><small>MISSION CLEAR</small><strong>PLAYER PROFILE</strong><span>25 / 25 COMPLETE</span></div>${charHtml(t)}<div class="punyako-result-rarity">FINAL PUNYUKA</div><h3>${esc(t.name)}</h3><p class="punyako-core">${esc(t.core)}</p><div class="punyako-unlock-strip"><span>✓ ICON</span><span>✓ PERSONALITY</span><span>✓ COMPATIBILITY DATA</span></div><section class="punyako-radar-wrap"><div>${radarSvg(result.stats)}</div><ul>${AXES.map(k=>`<li><span>${AXIS_LABEL[k]}</span><b>${clamp(result.stats?.[k]||50,0,100)}</b></li>`).join('')}</ul></section><div class="punyako-result-cards"><article><small>SKILL / あなたの強み</small><p>${esc(t.strength)}</p></article><article><small>RECOVERY / 回復のヒント</small><p>${esc(t.recharge)}</p></article><article><small>MESSAGE / ぷにゅかから一言</small><p>${esc(t.advice)}</p></article></div><div class="punyako-result-actions"><button class="punyako-primary" id="punyakoRedo"><small>NEW GAME</small>もう一度診断する</button><button class="punyako-secondary" id="punyakoHistoryFromResult">SAVE DATA / 診断履歴を見る</button><button class="punyako-text-button" id="punyakoBackHome">QUEST TOPへ</button></div></div>`;screen.insertAdjacentHTML('beforeend',pkMenuHtml());pkBind();bindSquish();$('#punyakoRedo').onclick=()=>{if(confirm('新しく25問の旅を始めますか？'))startNew()};$('#punyakoHistoryFromResult').onclick=showHistory;$('#punyakoBackHome').onclick=showIntro}
 function showHistory(){modal.classList.remove('is-punyako-game-intro');const hist=read(HISTORY_KEY,[]);setBack(()=>{const r=activeResult();r?showResult(r):showIntro()});screen.className='scent16-screen punyako-screen punyako-result-bg punyako-game-result-bg';screen.innerHTML=`<div class="punyako-history"><div class="punyako-result-status"><small>SAVE DATA</small><strong>DIAGNOSIS HISTORY</strong><span>${hist.length} SLOT</span></div><h3>診断履歴</h3><p>過去の性格データを選んで、いつでも装備し直せます。</p>${hist.length?`<div class="punyako-history-list">${hist.map((r,i)=>{const t=TYPE_MAP[r.typeId];if(!t)return'';return`<article><em>SLOT ${String(i+1).padStart(2,'0')}</em><img src="${esc(t.image)}" alt=""><div><strong>${esc(t.name)}</strong><small>${esc(r.diagnosedDate||'')}</small><span>${AXES.map(k=>`${AXIS_LABEL[k]} ${r.stats?.[k]??50}`).join(' · ')}</span></div><button type="button" data-restore-history="${i}">このDATAを装備</button></article>`}).join('')}</div>`:'<div class="punyako-empty">NO SAVE DATA<br>まだ診断履歴がありません。</div>'}<button class="punyako-secondary" id="punyakoHistoryBack">戻る</button></div>`;screen.querySelectorAll('[data-restore-history]').forEach(b=>b.onclick=()=>{const r=hist[Number(b.dataset.restoreHistory)];if(!r)return;if(confirm(`${TYPE_MAP[r.typeId]?.name||'このぷにゅか'}のこの性格に戻しますか？`)){saveActive(r);showResult(r)}});$('#punyakoHistoryBack').onclick=()=>{const r=activeResult();r?showResult(r):showIntro()}}
 
 if(title)title.textContent='ぷにゅか診断';
 $('#openScent16')?.addEventListener('click',e=>{e.preventDefault();open()});$('#scent16NavBack')?.addEventListener('click',headerBack);$('#scent16Exit')?.addEventListener('click',close);document.querySelectorAll('[data-close-scent16]').forEach(x=>x.addEventListener('click',close));window.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('is-open'))close()});window.addEventListener('unica:firebase-member-restored',updateHome);window.addEventListener('unica:scent-diagnosis-saved',updateHome);window.addEventListener('unica:punyako-avatar-updated',updateHome);updateHome();
 window.UNICA_SCENT16={open,close,typeById:id=>TYPE_MAP[id]||null,scentIconUrl:id=>TYPE_MAP[id]?.image||'',getMyResult:()=>activeResult()||member()?.scentDiagnosis,getProgress:()=>read(PROGRESS_KEY,null),showIntro,startDiagnosis:startNew,showResult};
+
+// Post-diagnosis features: use recorded answers/scores, never infer scores from art.
+function pkProfile(row){
+  const j=row?.punyakoJourney;
+  const equipped= j?.equippedId;
+  const final=row?.scentDiagnosis;
+  if(final?.stats && (!equipped || equipped===final.typeId)) return {stats:final.stats,n:25,name:final.scentName||TYPE_MAP[final.typeId]?.name||'最終ぷにゅか'};
+  if(j?.analysisStats) return {stats:j.analysisStats,n:Number(j.analysisQuestions||j.completedQuestions||5),name:j.equippedName||'ぷにゅか'};
+  return null;
+}
+function pkMine(){
+  const j=localJourney(),r=activeResult();
+  const p=pkProfile({punyakoJourney:j,scentDiagnosis:r});
+  if(p)return p;
+  const progress=read(PROGRESS_KEY,null)?.answers;
+  if(j?.seedComplete && progress?.length>=5){
+    const st=Object.fromEntries(AXES.map(k=>[k,50]));progress.forEach(a=>addMap(st,a.stats));AXES.forEach(k=>st[k]=clamp(Math.round(st[k]),20,90));
+    return {stats:st,n:progress.length,name:j.equippedName||'ぷにゅか'};
+  }
+  return null;
+}
+function pkDifferences(a,b){return AXES.map(k=>({key:k,a:Number(a[k]??50),b:Number(b[k]??50),gap:Math.abs(Number(a[k]??50)-Number(b[k]??50))}));}
+function pkMenuHtml(){return `<nav class="pk-insight-menu" aria-label="ぷにゅかで自分を知る"><button data-pk-page="self" type="button"><b>自分を知る</b><small>性格・強み・回復のヒント / 25問後</small></button><button data-pk-page="pair" type="button"><b>相性を見る</b><small>5問で簡易版・25問で詳しく</small></button><button data-pk-page="change" type="button"><b>変化を見る</b><small>再診断の5軸を比較 / 2回目から</small></button></nav>`;}
+function pkBind(){screen.querySelectorAll('[data-pk-page]').forEach(b=>b.onclick=()=>pkOpen(b.dataset.pkPage));}
+function pkFrame(title,html){modal.classList.remove('is-punyako-game-intro');setBack(showIntro);screen.className='scent16-screen punyako-screen punyako-result-bg';screen.innerHTML=`<section class="pk-insights"><h3>${esc(title)}</h3>${html}<button class="punyako-secondary" id="pkReturn" type="button">診断トップへ</button></section>`;$('#pkReturn').onclick=showIntro;}
+function pkLocked(title,message){pkFrame(title,`<p>${esc(message)}</p><button class="punyako-primary" id="pkContinue" type="button">${localJourney()?.seedComplete?'続きを育てる':'まず5問でぷにゅかを誕生させる'}</button>`);$('#pkContinue').onclick=()=>{if(loadProgress())showQuestion();else if(!localJourney()?.seedComplete)startNew();else showIntro();};}
+const PK_AXIS_TEXT={
+ kindness:['相手の気持ちを汲み、安心できる関係を作る','自分の希望も一言添えて、引き受ける量を決める','人に合わせ続けず、ひとりの時間も取る'],
+ action:['まず動いて、試しながら道を見つける','大きな決断の前に一度立ち止まり、確認する','予定を詰めず、何もしない時間を作る'],
+ curiosity:['気になることを掘り下げ、新しい見方を見つける','今取り組むことを一つ選び、残りはメモに預ける','小さな発見や好きなことに触れる'],
+ sensitivity:['細かな変化や気持ちの動きに気づく','相手の気持ちは決めつけず、言葉で確認する','音や情報を少なくして、静かに過ごす'],
+ flexibility:['状況に合わせて考え方や進め方を調整する','変えたくないことも先に伝えておく','自分で選べる自由な時間を持つ']
+};
+function pkSelf(){
+ const r=activeResult();if(!r?.stats)return pkLocked('自分を知る','25問を終えると、回答に基づいた性格の読み解きが開きます。');
+ const st=r.stats,rank=[...AXES].sort((a,b)=>st[b]-st[a]),hi=rank[0],second=rank[1],lo=rank[4];
+ const valid=(r.answers||[]).filter(a=>a.stats&&Object.keys(a.stats).length).length;
+ pkFrame('自分を知る',`<p class="pk-note">現在装備している診断結果を読み解きます。性格の優劣や医学的な判定ではありません。</p>${radarSvg(st)}<div class="pk-insight-card"><h4>あなたの傾向</h4><p>今回の回答では「${AXIS_LABEL[hi]}」と「${AXIS_LABEL[second]}」が相対的に高めです。${PK_AXIS_TEXT[hi][0]}傾向と、${PK_AXIS_TEXT[second][0]}傾向が表れています。</p><small>性格の数値に寄与した回答：${valid}問 / 全25問</small></div><div class="pk-insight-card"><h4>力を発揮しやすい場面</h4><p>${PK_AXIS_TEXT[hi][0]}ことが求められる場面。${AXIS_LABEL[second]}も一緒に使うと、自分らしい進め方を見つけやすそうです。</p></div><div class="pk-insight-card"><h4>つまずいたときのヒント</h4><p>${PK_AXIS_TEXT[hi][1]}。${AXIS_LABEL[lo]}の数値が低めでも、苦手だと決めつける必要はありません。その力を使う場面では、先に準備する・誰かに相談する方法も選べます。</p></div><div class="pk-insight-card"><h4>回復のヒント</h4><p>${PK_AXIS_TEXT[hi][2]}。${PK_AXIS_TEXT[second][2]}ことも試してみてください。</p></div><details class="pk-insight-card"><summary>5つの軸を詳しく見る</summary>${AXES.map(k=>`<h4>${AXIS_LABEL[k]}：${st[k]??50}</h4><p>${PK_AXIS_TEXT[k][0]}傾向を見る軸です。試せる工夫：${PK_AXIS_TEXT[k][1]}。</p>`).join('')}</details>`);
+}
+let pkPairRequest=0;
+async function pkPair(){
+ const mine=pkMine();if(!localJourney()?.seedComplete&&!activeResult())return pkLocked('相性を見る','まず5問でぷにゅかを誕生させると、相性の簡易版が使えます。');
+ if(!mine)return pkLocked('相性を見る','過去の誕生データに性格数値が残っていません。続きを回答して進化すると、簡易相性用データを保存できます。');
+ if(!localJourney()?.analysisStats && read(PROGRESS_KEY,null)?.answers?.length>=5){const form=formById(localJourney()?.equippedId);if(form)await saveJourney({...form,stats:undefined},mine.n);}
+ const ticket=++pkPairRequest;pkFrame('相性を見る','<p id="pkPairStatus">うにメンを読み込み中…</p><input id="pkPairSearch" type="search" placeholder="名前・会員番号で検索" aria-label="相性の相手を検索"><div id="pkPairList"></div><div id="pkPairResult"></div>');
+ const container=$('#pkPairList');
+ try{
+  const api=window.UNICA_FIREBASE;if(!api?.loadPunyakoMembers)throw Error('not-ready');
+  const rows=await api.loadPunyakoMembers();if(ticket!==pkPairRequest||!container.isConnected)return;
+  const candidates=rows.filter(row=>row.uid!==api.uid && (row.punyakoJourney?.seedComplete||row.scentDiagnosis?.typeId));
+  $('#pkPairStatus').textContent='現在装備しているぷにゅかの性格データで比較します。どちらかが25問未満なら簡易版です。';
+  const render=()=>{
+   const q=$('#pkPairSearch').value.trim().toLowerCase();const selected=candidates.filter(row=>`${row.name} ${row.number}`.toLowerCase().includes(q));
+   container.innerHTML=selected.length?selected.map(row=>`<button class="pk-member" data-pk-member="${esc(row.uid)}" type="button"><b>${esc(row.name)}</b><small>No.${row.number} · ${pkProfile(row)?(pkProfile(row).n>=25?'25問完了':'簡易データあり'):'性格データ更新待ち'}</small></button>`).join(''):'<p>対象のうにメンがまだいません。</p>';
+   container.querySelectorAll('[data-pk-member]').forEach(b=>b.onclick=()=>{const row=candidates.find(r=>r.uid===b.dataset.pkMember);pkPairResult(mine,row);});
+  };$('#pkPairSearch').oninput=render;render();
+ }catch(e){if(container.isConnected)$('#pkPairStatus').textContent='うにメンを読み込めませんでした。通信を確認し、診断トップからもう一度開いてください。';}
+}
+function pkPairResult(mine,row){
+ const other=pkProfile(row),box=$('#pkPairResult');if(!other){box.innerHTML='<p>この相手は性格数値の更新待ちです。回答を進めると比較できるようになります。</p>';return;}
+ const simple=mine.n<25||other.n<25,d=pkDifferences(mine.stats,other.stats),sorted=[...d].sort((a,b)=>a.gap-b.gap),near=sorted[0],far=sorted[4];
+ box.innerHTML=`<div class="pk-insight-card"><h4>${esc(row.name)}さんとの${simple?'簡易相性':'相性'}</h4><p class="pk-note">あなた${mine.n}問・相手${other.n}問のデータ。${simple?'少ない回答から見える傾向のため、25問後にもう一度比べてみてください。':'5軸の似ているところと違いを読み解きます。'}相性の良し悪しを断定するものではありません。</p><h4>似ているところ</h4><p>${AXIS_LABEL[near.key]}の差が最も小さく、${near.gap<=10?'この軸では近い傾向です。':'ほかの軸と比べると近い傾向です。'}共通のペースや希望を話し合う入口にできます。</p><h4>違いを活かせるところ</h4><p>${far.gap<=10?'5軸全体が近いため、役割は性格より得意なことや希望で分けてみましょう。':`${AXIS_LABEL[far.key]}に違いが出ています。数値が高い側が常に担当するのではなく、${PK_AXIS_TEXT[far.key][0]}場面でお互いの希望を聞いて役割を選ぶとよさそうです。`}</p><h4>接し方のヒント</h4><p>${PK_AXIS_TEXT[far.key][1]}。違いがあっても、相手の考えを確認することで調整できます。</p><table><thead><tr><th>軸</th><th>あなた</th><th>相手</th><th>傾向の差</th></tr></thead><tbody>${d.map(x=>`<tr><th>${AXIS_LABEL[x.key]}</th><td>${x.a}</td><td>${x.b}</td><td>${x.gap<=10?'近い':x.gap<=25?'少し違う':'違いがある'}</td></tr>`).join('')}</tbody></table></div>`;
+ box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function pkChange(){
+ const history=read(HISTORY_KEY,[]).filter(r=>r.stats);if(history.length<2){pkFrame('変化を見る','<p>25問の診断を2回以上完了すると、5軸の変化を比較できます。同じぷにゅかになった結果も比較できます。</p>');return;}
+ pkFrame('変化を見る',`<p>数値の変化は、そのときの気分や状況、選んだ回答の違いを含みます。成長や能力の上下を示すものではありません。</p><label>比べる前の結果<select id="pkOlder">${history.map((r,i)=>`<option value="${i}" ${i===1?'selected':''}>${esc(r.diagnosedDate)} · ${esc(TYPE_MAP[r.typeId]?.name||r.scentName)} · ${i+1}</option>`).join('')}</select></label><label>比べる後の結果<select id="pkNewer">${history.map((r,i)=>`<option value="${i}">${esc(r.diagnosedDate)} · ${esc(TYPE_MAP[r.typeId]?.name||r.scentName)} · ${i+1}</option>`).join('')}</select></label><div id="pkChangeResult"></div>`);
+ const render=()=>{const a=history[Number($('#pkOlder').value)],b=history[Number($('#pkNewer').value)],d=pkDifferences(a.stats,b.stats),big=[...d].sort((x,y)=>y.gap-x.gap)[0];$('#pkChangeResult').innerHTML=`<div class="pk-insight-card"><h4>5軸の比較</h4><table><thead><tr><th>軸</th><th>前</th><th>後</th><th>差</th></tr></thead><tbody>${d.map(x=>`<tr><th>${AXIS_LABEL[x.key]}</th><td>${x.a}</td><td>${x.b}</td><td>${x.b-x.a>0?'+':''}${x.b-x.a}</td></tr>`).join('')}</tbody></table><p>${big.gap?`${AXIS_LABEL[big.key]}の変化が最も大きく出ています。最近、その力を使う場面や気持ちの変化があったか振り返ってみてください。`:'この2つの結果では5軸の数値は同じです。'}</p></div>`;};$('#pkOlder').onchange=render;$('#pkNewer').onchange=render;render();
+}
+function pkOpen(page){if(page==='self')pkSelf();else if(page==='pair')pkPair();else pkChange();}
+
 })();
