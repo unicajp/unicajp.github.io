@@ -389,7 +389,7 @@ function setLocalJourney(payload){
   const current=localJourney()||{},next={...current,...payload,updatedAtMs:Date.now()};write(JOURNEY_KEY,next);const m=member();if(m){write(MEMBER_KEY,{...m,punyakoJourney:next})}window.dispatchEvent(new CustomEvent('unica:punyako-avatar-updated',{detail:next}));return next
 }
 async function saveJourney(info,completedQuestions,{seedComplete=true}={}){
-  if(!info)return null;const snapshot=info.stats||(answers.length>=5?stats():localJourney()?.analysisStats);const snapshotQuestions=info.stats?25:(answers.length>=5?answers.length:localJourney()?.analysisQuestions||0);const payload=setLocalJourney({... (snapshot?{analysisStats:snapshot,analysisQuestions:snapshotQuestions}:{}),seedComplete,equippedId:info.id,equippedImage:info.image,equippedName:info.name,currentStage:info.stage||'final',completedQuestions,seedCompletedAtMs:seedComplete?(localJourney()?.seedCompletedAtMs||Date.now()):0});
+  if(!info)return null;const snapshot=info.stats||(answers.length>=5?stats():localJourney()?.analysisStats);const snapshotHidden=info.hidden||(answers.length>=25?hidden():{});const snapshotQuestions=info.stats?25:(answers.length>=5?answers.length:localJourney()?.analysisQuestions||0);const payload=setLocalJourney({... (snapshot?{analysisStats:snapshot,analysisHidden:snapshotHidden,analysisQuestions:snapshotQuestions}:{}),seedComplete,equippedId:info.id,equippedImage:info.image,equippedName:info.name,currentStage:info.stage||'final',completedQuestions,seedCompletedAtMs:seedComplete?(localJourney()?.seedCompletedAtMs||Date.now()):0});
   try{for(let i=0;i<40&&!window.UNICA_FIREBASE?.savePunyakoJourney;i++)await new Promise(r=>setTimeout(r,100));await window.UNICA_FIREBASE?.savePunyakoJourney?.(payload)}catch(e){console.warn('ぷにゅか進化データのオンライン保存に失敗',e)}
   return payload
 }
@@ -400,7 +400,7 @@ function updateHome(){
   document.querySelectorAll('[data-status-for="scent"]').forEach(el=>el.textContent=result?.typeId?'最終進化済み':journey?.seedComplete?`育成中 ${journey.completedQuestions||5}/25`:'5問で誕生')
 }
 async function saveActive(result){
-  write(RESULT_KEY,result);const by=read(ACTIVE_BY_TYPE_KEY,{});by[result.typeId]=result;write(ACTIVE_BY_TYPE_KEY,by);const t=TYPE_MAP[result.typeId];if(t)await saveJourney({...t,stage:'final',stats:result.stats},25);
+  write(RESULT_KEY,result);const by=read(ACTIVE_BY_TYPE_KEY,{});by[result.typeId]=result;write(ACTIVE_BY_TYPE_KEY,by);const t=TYPE_MAP[result.typeId];if(t)await saveJourney({...t,stage:'final',stats:result.stats,hidden:result.hidden},25);
   try{for(let i=0;i<40&&!window.UNICA_FIREBASE?.saveScentDiagnosis;i++)await new Promise(r=>setTimeout(r,100));await window.UNICA_FIREBASE?.saveScentDiagnosis?.(result)}catch(e){console.warn('ぷにゅか診断のオンライン保存に失敗',e)}
   updateHome();window.dispatchEvent(new CustomEvent('unica:punyako-diagnosis-complete',{detail:result}))
 }
@@ -543,8 +543,8 @@ function pkProfile(row){
   const j=row?.punyakoJourney;
   const equipped= j?.equippedId;
   const final=row?.scentDiagnosis;
-  if(final?.stats && (!equipped || equipped===final.typeId)) return {stats:final.stats,n:25,name:final.scentName||TYPE_MAP[final.typeId]?.name||'最終ぷにゅか'};
-  if(j?.analysisStats) return {stats:j.analysisStats,n:Number(j.analysisQuestions||j.completedQuestions||5),name:j.equippedName||'ぷにゅか'};
+  if(final?.stats && (!equipped || equipped===final.typeId)) return {stats:final.stats,hidden:final.hidden||{},n:25,name:final.scentName||TYPE_MAP[final.typeId]?.name||'最終ぷにゅか'};
+  if(j?.analysisStats) return {stats:j.analysisStats,hidden:j.analysisHidden||{},n:Number(j.analysisQuestions||j.completedQuestions||5),name:j.equippedName||'ぷにゅか'};
   return null;
 }
 function pkMine(){
@@ -559,7 +559,7 @@ function pkMine(){
   return null;
 }
 function pkDifferences(a,b){return AXES.map(k=>({key:k,a:Number(a[k]??50),b:Number(b[k]??50),gap:Math.abs(Number(a[k]??50)-Number(b[k]??50))}));}
-function pkMenuHtml(){return `<nav class="pk-insight-menu" aria-label="ぷにゅかで自分を知る"><button data-pk-page="self" type="button"><b>自分を知る</b><small>性格・強み・回復のヒント / 25問後</small></button><button data-pk-page="pair" type="button"><b>相性を見る</b><small>5問で簡易版・25問で詳しく</small></button><button data-pk-page="change" type="button"><b>変化を見る</b><small>再診断の5軸を比較 / 2回目から</small></button></nav>`;}
+function pkMenuHtml(){return `<nav class="pk-insight-menu" aria-label="ぷにゅかで自分を知る"><button data-pk-page="self" type="button"><b>自分を知る</b><small>性格・強み・回復のヒント / 25問後</small></button><button data-pk-page="pair" type="button"><b>相性を見る</b><small>5問で簡易版・二人とも25問で詳細相性</small></button><button data-pk-page="change" type="button"><b>変化を見る</b><small>再診断の5軸を比較 / 2回目から</small></button></nav>`;}
 function pkBind(){screen.querySelectorAll('[data-pk-page]').forEach(b=>b.onclick=()=>pkOpen(b.dataset.pkPage));}
 function pkFrame(title,html){modal.classList.remove('is-punyako-game-intro');setBack(showIntro);screen.className='scent16-screen punyako-screen punyako-result-bg';screen.innerHTML=`<section class="pk-insights"><h3>${esc(title)}</h3>${html}<button class="punyako-secondary" id="pkReturn" type="button">診断トップへ</button></section>`;$('#pkReturn').onclick=showIntro;}
 function pkLocked(title,message){pkFrame(title,`<p>${esc(message)}</p><button class="punyako-primary" id="pkContinue" type="button">${localJourney()?.seedComplete?'続きを育てる':'まず5問でぷにゅかを誕生させる'}</button>`);$('#pkContinue').onclick=()=>{if(loadProgress())showQuestion();else if(!localJourney()?.seedComplete)startNew();else showIntro();};}
@@ -596,9 +596,24 @@ async function pkPair(){
  }catch(e){if(container.isConnected)$('#pkPairStatus').textContent='うにメンを読み込めませんでした。通信を確認し、診断トップからもう一度開いてください。';}
 }
 function pkPairResult(mine,row){
- const other=pkProfile(row),box=$('#pkPairResult');if(!other){box.innerHTML='<p>この相手は性格数値の更新待ちです。回答を進めると比較できるようになります。</p>';return;}
- const simple=mine.n<25||other.n<25,d=pkDifferences(mine.stats,other.stats),sorted=[...d].sort((a,b)=>a.gap-b.gap),near=sorted[0],far=sorted[4];
- box.innerHTML=`<div class="pk-insight-card"><h4>${esc(row.name)}さんとの${simple?'簡易相性':'相性'}</h4><p class="pk-note">あなた${mine.n}問・相手${other.n}問のデータ。${simple?'少ない回答から見える傾向のため、25問後にもう一度比べてみてください。':'5軸の似ているところと違いを読み解きます。'}相性の良し悪しを断定するものではありません。</p><h4>似ているところ</h4><p>${AXIS_LABEL[near.key]}の差が最も小さく、${near.gap<=10?'この軸では近い傾向です。':'ほかの軸と比べると近い傾向です。'}共通のペースや希望を話し合う入口にできます。</p><h4>違いを活かせるところ</h4><p>${far.gap<=10?'5軸全体が近いため、役割は性格より得意なことや希望で分けてみましょう。':`${AXIS_LABEL[far.key]}に違いが出ています。数値が高い側が常に担当するのではなく、${PK_AXIS_TEXT[far.key][0]}場面でお互いの希望を聞いて役割を選ぶとよさそうです。`}</p><h4>接し方のヒント</h4><p>${PK_AXIS_TEXT[far.key][1]}。違いがあっても、相手の考えを確認することで調整できます。</p><table><thead><tr><th>軸</th><th>あなた</th><th>相手</th><th>傾向の差</th></tr></thead><tbody>${d.map(x=>`<tr><th>${AXIS_LABEL[x.key]}</th><td>${x.a}</td><td>${x.b}</td><td>${x.gap<=10?'近い':x.gap<=25?'少し違う':'違いがある'}</td></tr>`).join('')}</tbody></table></div>`;
+ const other=pkProfile(row),box=$('#pkPairResult');if(!other){box.innerHTML='<p>この相手は性格データの更新待ちです。回答を進めると比較できるようになります。</p>';return;}
+ const score=window.UNICA_COMPATIBILITY.evaluate(mine,other),simple=mine.n<25||other.n<25;
+ const d=pkDifferences(mine.stats,other.stats),sorted=[...d].sort((a,b)=>a.gap-b.gap),near=sorted[0],far=sorted[4];
+ const label=v=>v>=.75?'活かしやすい':v>=.5?'工夫で活かせる':'相談しながら育てたい';
+ const topics={
+  socialEnergy:['人との過ごし方','にぎやかな時間と静かな時間の配分を相談する'],
+  spaceNeed:['距離感','連絡の頻度や、一人で過ごしたい時間を先に伝え合う'],
+  decisionSpeed:['決めるペース','すぐ決めることと、考える時間がほしいことを分ける'],
+  expressionLevel:['気持ちの伝え方','察してもらうだけでなく、希望や不安を短く言葉にする'],
+  recoveryStyle:['疲れたときの支え方','話を聞いてほしいか、そっとしてほしいかを本人に確認する'],
+  noveltyNeed:['新しいこととの付き合い方','新しい体験と、慣れた安心できる時間を両方用意する']
+ };
+ const detail=score.full?Object.entries(topics).map(([k,[name,hint]])=>{
+   const gap=Math.abs(mine.hidden[k]-other.hidden[k]);
+   const bothQuiet=k==='expressionLevel'&&Math.max(mine.hidden[k],other.hidden[k])<50;
+   return `<article class="pk-insight-card"><h4>${name}</h4><p>${bothQuiet?'二人とも気持ちを内側に置きやすい傾向が見えます。お互いに遠慮すると本音が伝わらないこともあります。':gap<=10?'この面では近い傾向が見られます。ただし、同じ希望を持っているとは限らないため、本人に確認しましょう。':gap<=25?'この面には少し違いが見られます。場面によって希望が変わることもあるので、違いを話すきっかけにできます。':'この面には違いが見られます。相手を自分と同じペースに合わせるより、お互いの希望を伝えると調整しやすそうです。'}</p><p>試せること：${hint}。</p></article>`;
+ }).join(''):'';
+ box.innerHTML=`<div class="pk-insight-card"><h4>${esc(row.name)}さんとの${simple?'簡易相性':score.full?'詳細相性':'25問相性（5軸版）'}</h4><div class="pk-compat-percent"><strong>${score.percent}<small>％</small></strong><span>総合相性</span></div><p class="pk-note">${simple?'どちらかが25問未満のため簡易版です。二人とも25問を終えると、会話・距離感なども読み解けます。':score.full?'5軸と内面的な傾向を使った詳細版です。':'以前の結果に内面データがないため、今回は5軸で比較しています。再診断で詳細版を利用できます。'}％は心地よさ・補い合い・調整のしやすさを組み合わせた、この診断独自の目安です。関係がうまくいく確率ではありません。</p><div class="pk-pair-tags"><span>心地よさ：${label(score.comfort)}</span><span>補い合い：${label(score.support)}</span><span>調整のしやすさ：${label(score.adjustment)}</span></div><h4>二人の強み</h4><p>${AXIS_LABEL[near.key]}は、ほかの軸に比べると近い傾向です。${PK_AXIS_TEXT[near.key][0]}場面で、考えや希望を共有する入口にできます。</p><h4>違いを活かすヒント</h4><p>${far.gap<=10?'5軸全体が近いため、役割は性格より得意なことや希望で分けてみましょう。':`${AXIS_LABEL[far.key]}には違いが見られます。${PK_AXIS_TEXT[far.key][0]}場面で、お互いにどこを担当したいか話してみましょう。違うからこそ、選べる進め方が増えることもあります。`}</p><h4>すれ違いを減らすヒント</h4><p>${PK_AXIS_TEXT[far.key][1]}。似ている相手にも、違う相手にも、希望を言葉にすることが役立ちます。</p></div>${detail}`;
  box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function pkChange(){
