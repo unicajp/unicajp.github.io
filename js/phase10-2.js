@@ -23,14 +23,12 @@ const LEGACY_MEMBER_KEY = 'unicaWorldMemberV3';
 let uid = null;
 let activeTab = 'new';
 let comments = [];
-let myLikedCommentIds = new Set();
 let songLiked = false;
 let notificationRows = [];
 let latestComments = [];
 let historyComments = [];
 let commentHistoryLoaded = false;
 let commentHistoryLoading = false;
-let commentLikeRefreshToken = 0;
 let memberDirectory = new Map();
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -98,28 +96,7 @@ function listenSongLike(){
 
 function commentDate(row){ const date=row.date||''; return `${date===todayKey()?'今日':date}${row.time?' '+row.time:''}`; }
 function scentMiniBadge(){ return ''; }
-function filteredComments(){ let rows=[...comments]; if(activeTab==='mine')rows=rows.filter(x=>x.ownerUid===uid); if(activeTab==='popular')rows.sort((a,b)=>Number(b.likeCount||0)-Number(a.likeCount||0)); else rows.sort((a,b)=>Number(b.createdAt?.seconds||0)-Number(a.createdAt?.seconds||0)); return rows; }
-
-function cumulativeLikeRanking(){
-  const byUid=new Map();
-  comments.forEach(row=>{
-    const ownerUid=String(row.ownerUid||'');
-    if(!ownerUid)return;
-    const profile=memberDirectory.get(ownerUid)||{};
-    const current=byUid.get(ownerUid)||{uid:ownerUid,name:profile.name||row.name||'うにメン',avatar:profile.avatar||row.avatar||'🌸',number:Number(profile.number||0),likes:0};
-    current.likes+=Math.max(0,Number(row.likeCount||0));
-    if(row.name)current.name=row.name;
-    if(row.avatar)current.avatar=row.avatar;
-    if(profile.number)current.number=Number(profile.number);
-    byUid.set(ownerUid,current);
-  });
-  return [...byUid.values()].sort((a,b)=>b.likes-a.likes||String(a.name).localeCompare(String(b.name),'ja')).slice(0,3);
-}
-function renderSupportLikeRanking(){
-  const box=$('#supportLikeRankingList'); if(!box)return;
-  const top=cumulativeLikeRanking(); const medals=['🥇','🥈','🥉']; const max=Math.max(1,...top.map(x=>x.likes));
-  box.innerHTML=top.length?top.map((x,i)=>`<button type="button" class="support-ranking-row" data-member-uid="${esc(x.uid)}"><span class="support-ranking-rank">${medals[i]}</span><span class="support-ranking-name"><b>${esc(x.name)}${scentMiniBadge(x.uid)}</b><small>うにメンNo.${String(Number(x.number||0)).padStart(4,'0')}</small></span><span class="support-ranking-bar"><i style="width:${Math.max(5,x.likes/max*100)}%"></i></span><strong>♥ ${x.likes}</strong></button>`).join(''):'<p class="support-ranking-empty">いいねが集まるとランキングに表示されます。</p>';
-}
+function filteredComments(){ let rows=[...comments]; if(activeTab==='mine')rows=rows.filter(x=>x.ownerUid===uid); rows.sort((a,b)=>Number(b.createdAt?.seconds||0)-Number(a.createdAt?.seconds||0)); return rows; }
 
 function renderComments(){
   const m=member(); const list=$('#communityList'); if(!list)return;
@@ -131,44 +108,21 @@ function renderComments(){
     name:String(row.name||'うにメン'),
     profile:memberDirectory.get(String(row.ownerUid||''))||{},
     text:String(row.text||''),
-    count:Number(row.likeCount||0),
-    liked:myLikedCommentIds.has(row.id),
     date:String(row.date||''),
     time:String(row.time||''),
     createdAt:Number(row.createdAt?.seconds||0)
   });
-  window.UNICA_TOP_SUPPORT_FEATURED = [...comments]
-    .sort((a,b)=>Number(b.likeCount||0)-Number(a.likeCount||0) || Number(b.createdAt?.seconds||0)-Number(a.createdAt?.seconds||0))
-    .slice(0,5)
-    .map(toTopComment);
   window.UNICA_TOP_SUPPORT_LATEST = [...comments]
     .sort((a,b)=>Number(b.createdAt?.seconds||0)-Number(a.createdAt?.seconds||0))
     .slice(0,30)
     .map(toTopComment);
   /* 旧処理との互換性を維持。 */
   window.UNICA_TOP_SUPPORT_COMMENTS = window.UNICA_TOP_SUPPORT_LATEST;
-  list.innerHTML=rows.map(row=>`<article class="community-post-plus support-comment-card${row.ownerUid===uid?' is-me':''}" data-post-id="${esc(row.id)}"><header><button class="community-post-avatar member-name-button" data-member-uid="${esc(row.ownerUid)}" type="button">${window.UNICA_BLOOM_BADGE?.html?.(memberDirectory.get(String(row.ownerUid||''))||{},'normal')||''}</button><div><button class="member-name-text" data-member-uid="${esc(row.ownerUid)}" type="button">${esc(row.name||'うにメン')}${scentMiniBadge(row.ownerUid)}${row.ownerUid===uid?'（あなた）':''}</button><small>${esc(row.prefecture||'')}${row.prefecture?'・':''}${esc(commentDate(row))}</small></div>${row.ownerUid===uid?`<button class="community-more" data-delete-remote="${esc(row.id)}" type="button">×</button>`:'<span></span>'}</header><p>${esc(row.text)}</p><div class="community-post-actions support-actions"><button class="${myLikedCommentIds.has(row.id)?'is-liked':''}" data-like-remote="${esc(row.id)}" type="button">${myLikedCommentIds.has(row.id)?'♥':'♡'} いいね <b>${Number(row.likeCount||0)}</b></button></div></article>`).join('') || `<div class="community-empty">${activeTab==='mine'?'まだ応援コメントを送っていません。':'まだ応援コメントはありません。'}</div>`;
+  list.innerHTML=rows.map(row=>`<article class="community-post-plus support-comment-card${row.ownerUid===uid?' is-me':''}" data-post-id="${esc(row.id)}"><header><button class="community-post-avatar member-name-button" data-member-uid="${esc(row.ownerUid)}" type="button">${window.UNICA_BLOOM_BADGE?.html?.(memberDirectory.get(String(row.ownerUid||''))||{},'normal')||''}</button><div><button class="member-name-text" data-member-uid="${esc(row.ownerUid)}" type="button">${esc(row.name||'うにメン')}${scentMiniBadge(row.ownerUid)}${row.ownerUid===uid?'（あなた）':''}</button><small>${esc(row.prefecture||'')}${row.prefecture?'・':''}${esc(commentDate(row))}</small></div>${row.ownerUid===uid?`<button class="community-more" data-delete-remote="${esc(row.id)}" type="button">×</button>`:'<span></span>'}</header><p>${esc(row.text)}</p></article>`).join('') || `<div class="community-empty">${activeTab==='mine'?'まだ応援コメントを送っていません。':'まだ応援コメントはありません。'}</div>`;
   $('#homeCommunityPosts') && ($('#homeCommunityPosts').textContent=String(comments.length));
   $('#homeCommunityMembers') && ($('#homeCommunityMembers').textContent=String(comments.reduce((s,x)=>s+Number(x.likeCount||0),0)));
-  /* トップは新着1件ではなく、累計いいねランキングTOP3を表示。 */
-  const homeLatest=$('#communityHomeLatest');
-  if(homeLatest){
-    const top=cumulativeLikeRanking();
-    const medals=['🥇','🥈','🥉'];
-    homeLatest.classList.add('is-ranking');
-    homeLatest.innerHTML=top.length
-      ? `<div class="home-support-ranking-head"><strong>累計いいねランキング</strong><small>TOP 3</small></div><div class="home-support-ranking-list">${top.map((x,i)=>`<button type="button" class="home-support-ranking-row" data-member-uid="${esc(x.uid)}"><span>${medals[i]}</span><span class="home-support-ranking-person"><b>${esc(x.name)}</b><small>うにメンNo.${String(Number(x.number||0)).padStart(4,'0')}</small></span><em>♥ ${x.likes}</em></button>`).join('')}</div>`
-      : `<div class="home-support-ranking-empty"><strong>ランキング集計中</strong><p>応援コメントにいいねが集まると表示されます。</p></div>`;
-  }
-  $$('#communityList [data-like-remote]').forEach(b=>b.onclick=async()=>{
-    if(b.disabled) return;
-    b.disabled=true;
-    await toggleCommentLike(b.dataset.likeRemote);
-    b.disabled=false;
-  });
   $$('#communityList [data-delete-remote]').forEach(b=>b.onclick=()=>deleteRemoteComment(b.dataset.deleteRemote));
   $$('[data-member-uid]').forEach(b=>b.onclick=()=>openMemberPass(b.dataset.memberUid));
-  renderSupportLikeRanking();
   updateComposer(); updatePassport();
 }
 function updateComposer(){
@@ -215,41 +169,6 @@ async function submitHomeQuickComment(event){
   toast('うにかへ応援コメントを送りました。');
 }
 
-async function toggleCommentLike(id){
-  if(!uid || !id) return null;
-  const likeRef=doc(db,'supportComments',id,'likes',uid), commentRef=doc(db,'supportComments',id);
-  try {
-    let nextLiked=false;
-    let nextCount=0;
-    await runTransaction(db,async tx=>{
-      const [l,c]=await Promise.all([tx.get(likeRef),tx.get(commentRef)]);
-      if(!c.exists()) throw new Error('comment-not-found');
-      const n=Math.max(0,Number(c.data().likeCount||0));
-      if(l.exists()){
-        nextLiked=false; nextCount=Math.max(0,n-1);
-        tx.delete(likeRef);
-        tx.update(commentRef,{likeCount:nextCount,updatedAt:serverTimestamp()});
-      }else{
-        nextLiked=true; nextCount=n+1;
-        tx.set(likeRef,{uid,createdAt:serverTimestamp()});
-        tx.update(commentRef,{likeCount:nextCount,updatedAt:serverTimestamp()});
-        if(c.data().ownerUid&&c.data().ownerUid!==uid){
-          const nr=doc(collection(db,'users',c.data().ownerUid,'notifications'));
-          tx.set(nr,{type:'commentLike',text:`${member()?.name||'うにメン'}さんがあなたの応援コメントにいいねしました`,commentId:id,read:false,createdAt:serverTimestamp()});
-        }
-      }
-    });
-    if(nextLiked) myLikedCommentIds.add(id); else myLikedCommentIds.delete(id);
-    const row=comments.find(x=>x.id===id); if(row) row.likeCount=nextCount;
-    renderComments();
-    return {liked:nextLiked,count:nextCount};
-  } catch(error) {
-    console.error('comment like',error);
-    toast('いいねを更新できませんでした。Firestoreルールも更新してください。');
-    return null;
-  }
-}
-window.UNICA_TOGGLE_COMMENT_LIKE = toggleCommentLike;
 async function deleteRemoteComment(id){ if(!confirm('この応援コメントを削除しますか？'))return; await deleteDoc(doc(db,'supportComments',id)); toast('応援コメントを削除しました。'); }
 function validRemoteComments(rows){
   return rows.filter(row=>!String(row.id||'').startsWith('demo-')&&!String(row.ownerUid||'').startsWith('demo-'));
@@ -266,7 +185,6 @@ function listenComments(){
     latestComments=validRemoteComments(snap.docs.map(d=>({id:d.id,...d.data()})));
     mergeCommentRows();
     renderComments();
-    refreshMyCommentLikes(latestComments,{replace:!commentHistoryLoaded}).catch(()=>{});
   },error=>console.error('comments',error));
 
   // 応援コメント画面が開かれた時だけ、過去分を一度取得する。
@@ -287,34 +205,12 @@ async function ensureCommentHistoryLoaded(){
     commentHistoryLoaded=true;
     mergeCommentRows();
     renderComments();
-    // 画面表示を止めず、過去分のいいね状態は小分けに並列取得する。
-    const older=historyComments.filter(row=>!latestComments.some(x=>x.id===row.id));
-    await refreshMyCommentLikes(older,{replace:false,batchSize:30});
   }catch(error){
     console.error('comment history',error);
   }finally{
     commentHistoryLoading=false;
   }
 }
-async function refreshMyCommentLikes(rows=comments,{replace=false,batchSize=30}={}){
-  if(!uid||!rows.length){ if(replace){myLikedCommentIds=new Set();renderComments();} return; }
-  const token=++commentLikeRefreshToken;
-  const found=replace?new Set():new Set(myLikedCommentIds);
-  for(let i=0;i<rows.length;i+=batchSize){
-    const batch=rows.slice(i,i+batchSize);
-    const results=await Promise.allSettled(batch.map(row=>getDoc(doc(db,'supportComments',row.id,'likes',uid))));
-    if(token!==commentLikeRefreshToken && replace)return;
-    results.forEach((result,index)=>{
-      if(result.status==='fulfilled'&&result.value.exists()) found.add(batch[index].id);
-      else if(result.status==='fulfilled') found.delete(batch[index].id);
-    });
-    myLikedCommentIds=new Set(found);
-    renderComments();
-    // 大量件数でもメインスレッドを占有し続けない。
-    if(i+batchSize<rows.length) await new Promise(resolve=>setTimeout(resolve,0));
-  }
-}
-
 let memberPassRequestToken=0;
 function memberJoinedDate(value){
   if(!value)return null;
@@ -351,7 +247,6 @@ async function openMemberPass(targetUid){
   $('#detailJoined') && ($('#detailJoined').textContent='読み込み中…');
   $('#detailDays') && ($('#detailDays').textContent='—');
   $('#detailPostCount') && ($('#detailPostCount').textContent='💌 —');
-  $('#detailReactionCount') && ($('#detailReactionCount').textContent='♥ —');
   $('#detailPrefecture') && ($('#detailPrefecture').textContent='—');
   $('#detailBirthday') && ($('#detailBirthday').textContent='—');
   $('#detailOpenSettings')?.toggleAttribute('hidden',true); $('#detailScentRow')?.toggleAttribute('hidden',true);
@@ -362,7 +257,6 @@ async function openMemberPass(targetUid){
     if(!snap.exists()){toast('このうにメンの情報はまだありません。');modal?.classList.remove('is-open');modal?.setAttribute('aria-hidden','true');return;}
     const u=snap.data();
     const ownComments=comments.filter(row=>row.ownerUid===targetUid);
-    const totalLikes=ownComments.reduce((sum,row)=>sum+Math.max(0,Number(row.likeCount||0)),0);
     const joinedValue=u.joined||u.joinedAt||u.registeredAt||u.createdAt||u.created;
     $('#detailAvatar') && ($('#detailAvatar').innerHTML=window.UNICA_BLOOM_BADGE?.html?.(u,'normal')||'');
     $('#detailName') && ($('#detailName').textContent=u.name||'うにメン');
@@ -370,7 +264,6 @@ async function openMemberPass(targetUid){
     $('#detailJoined') && ($('#detailJoined').textContent=formatMemberJoined(joinedValue));
     $('#detailDays') && ($('#detailDays').textContent=memberJoinedDays(joinedValue));
     $('#detailPostCount') && ($('#detailPostCount').textContent=`💌 ${ownComments.length}`);
-    $('#detailReactionCount') && ($('#detailReactionCount').textContent=`♥ ${totalLikes}`);
     $('#detailPrefecture') && ($('#detailPrefecture').textContent=u.prefecturePublic===false?'非公開':(u.prefecture||'—'));
     $('#detailBirthday') && ($('#detailBirthday').textContent=u.birthdayPublic===false?'非公開':(u.birthMonth&&u.birthDay?`${u.birthMonth}月${u.birthDay}日`:'—'));
     $('#detailTitle') && ($('#detailTitle').textContent=u.title||'はじまりのうにメン');
@@ -398,7 +291,7 @@ window.addEventListener('unica:open-member-pass',event=>openMemberPass(event.det
 function renderNotifications(){
   const unread=notificationRows.filter(n=>!n.read).length, badge=$('#notificationBadge'); if(badge){badge.hidden=unread===0;badge.textContent=String(unread);}
   const list=$('#notificationList'); if(!list)return;
-  list.innerHTML=notificationRows.map(n=>`<article class="notification-row${n.read?'':' is-unread'}"><span>${n.type==='commentLike'?'♥':'🔔'}</span><div><p>${esc(n.text||'新しい通知があります')}</p><small>${n.createdAt?.toDate?new Intl.DateTimeFormat('ja-JP',{dateStyle:'short',timeStyle:'short'}).format(n.createdAt.toDate()):'たった今'}</small></div></article>`).join('')||'<div class="notification-empty">通知はまだありません。</div>';
+  list.innerHTML=notificationRows.filter(n=>n.type!=='commentLike').map(n=>`<article class="notification-row${n.read?'':' is-unread'}"><span>${n.type==='commentLike'?'♥':'🔔'}</span><div><p>${esc(n.text||'新しい通知があります')}</p><small>${n.createdAt?.toDate?new Intl.DateTimeFormat('ja-JP',{dateStyle:'short',timeStyle:'short'}).format(n.createdAt.toDate()):'たった今'}</small></div></article>`).join('')||'<div class="notification-empty">通知はまだありません。</div>';
 }
 async function markAllRead(){ await Promise.all(notificationRows.filter(n=>!n.read).map(n=>setDoc(doc(db,'users',uid,'notifications',n.id),{read:true},{merge:true}))); }
 function listenNotifications(){ onSnapshot(query(collection(db,'users',uid,'notifications'),orderBy('createdAt','desc'),limit(50)),snap=>{notificationRows=snap.docs.map(d=>({id:d.id,...d.data()}));renderNotifications();}); }

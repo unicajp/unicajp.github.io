@@ -917,13 +917,12 @@
     const hm=document.getElementById('homeCommunityMembers'); if(hm)hm.textContent=String(stats.totalLikes);
     const latest=document.getElementById('communityHomeLatest');
     const newest=[...all].sort((a,b)=>`${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`))[0];
-    if(latest) latest.innerHTML=newest?`<span>${bloomBadgeHtml(bloomProfileForRow(newest),'tiny')}</span><div><strong>${safeText(newest.name)}</strong><p>${safeText(newest.text)}</p></div><em>♥ ${Number(newest.likes||0)}</em>`:'<div><strong>まだ応援コメントはありません</strong><p>最初の言葉を届けてみよう。</p></div>';
+    if(latest) latest.innerHTML=newest?`<span>${bloomBadgeHtml(bloomProfileForRow(newest),'tiny')}</span><div><strong>${safeText(newest.name)}</strong><p>${safeText(newest.text)}</p></div>`:'<div><strong>まだ応援コメントはありません</strong><p>最初の言葉を届けてみよう。</p></div>';
     startSupportFloat();
   }
   function sortedCommunityPosts(current){
     let posts=allCommunityPosts();
     if(activeCommunityTab==='mine') posts=posts.filter(x=>current&&String(x.number)===String(current.number));
-    if(activeCommunityTab==='popular') return posts.sort((a,b)=>Number(b.likes||0)-Number(a.likes||0)||`${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`));
     return posts.sort((a,b)=>`${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`));
   }
   function renderCommunity(){
@@ -934,7 +933,7 @@
     const name=document.getElementById('communityComposeName'); if(name)name.textContent=current.name||'あなた';
     if(communityComment) communityComment.disabled=left===0;
     if(submit){submit.disabled=left===0;submit.textContent=left===0?'今日は送信済み':`応援を送る（あと${left}件）`;}
-    if(status)status.textContent=left===0?'本日の送信上限に達しました。コメントへの「いいね」は引き続き送れます。':'';
+    if(status)status.textContent=left===0?'本日の送信上限に達しました。':'';
     const online=document.getElementById('communityOnlineCount'); if(online)online.textContent=String(allCommunityPosts().length);
     const posts=sortedCommunityPosts(current);
     const list=document.getElementById('communityList');
@@ -943,23 +942,12 @@
       return `<article class="community-post-plus support-comment-card${mine?' is-me':''}" data-post-id="${x.id}">
         <header><span class="community-post-avatar">${bloomBadgeHtml(bloomProfileForRow(x),'normal')}</span><div><strong>${safeText(x.name)}${mine?'（あなた）':''}</strong><small>${safeText(x.prefecture||'')}${x.prefecture?'・':''}${formatSupportDate(x)}</small></div>${mine?`<button class="community-more" data-delete-post="${x.id}" aria-label="自分の応援コメントを削除" type="button">×</button>`:'<span></span>'}</header>
         <p>${safeText(x.text)}</p>
-        <div class="community-post-actions support-actions"><button class="${liked?'is-liked':''}" data-like-post="${x.id}" type="button" aria-label="この応援コメントにいいね">${liked?'♥':'♡'} いいね <b>${Number(x.likes||0)}</b></button></div>
       </article>`;
     }).join('') || `<div class="community-empty">${activeCommunityTab==='mine'?'まだ応援コメントを送っていません。うにかへ最初の言葉を届けてみよう。':'まだ応援コメントはありません。'}</div>`;
     bindCommunityActions(); renderCommunityHome();
   }
   function findLocalPost(id){ const rows=readCommunityPosts(); return {rows,index:rows.findIndex(x=>x.id===id)}; }
-  function toggleLike(id,current){
-    const found=findLocalPost(id);
-    if(found.index>=0){
-      const post=found.rows[found.index]; post.likedBy=post.likedBy||[]; const ids=post.likedBy.map(String); const i=ids.indexOf(String(current.number));
-      if(i>=0){post.likedBy.splice(i,1);post.likes=Math.max(0,Number(post.likes||0)-1);}else{post.likedBy.push(current.number);post.likes=Number(post.likes||0)+1;}
-      writeCommunityPosts(found.rows); return;
-    }
-    return;
-  }
   function bindCommunityActions(){
-    document.querySelectorAll('[data-like-post]').forEach(btn=>btn.addEventListener('click',()=>{const current=readMember();if(!current){openMemberGate(true);return;}toggleLike(btn.dataset.likePost,current);renderCommunity();updateMemberView();}));
     document.querySelectorAll('[data-delete-post]').forEach(btn=>btn.addEventListener('click',()=>{if(!confirm('この応援コメントを削除しますか？'))return;const found=findLocalPost(btn.dataset.deletePost);if(found.index>=0){found.rows.splice(found.index,1);writeCommunityPosts(found.rows);renderCommunity();updateMemberView();toast('応援コメントを削除しました。');}}));
   }
   function todayFloatComments(){ return allCommunityPosts().filter(x=>x.date===todayKey()); }

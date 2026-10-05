@@ -69,61 +69,12 @@
 
   function dataFromCard(card) {
     if (!card) return null;
-    const likeButton = $('[data-like-remote], [data-like-post]', card);
     return {
-      id: card.dataset.postId || likeButton?.dataset.likeRemote || likeButton?.dataset.likePost || '',
+      id: card.dataset.postId || '',
       name: $('.member-name-text, header strong', card)?.textContent?.replace('（あなた）', '')?.trim() || 'うにメン',
       profile: {},
       text: $('p', card)?.textContent?.trim() || '',
-      count: Number(likeButton?.querySelector('b')?.textContent || 0),
-      liked: Boolean(likeButton?.classList.contains('is-liked')),
-      likeButton
     };
-  }
-
-  function makeFloatingCommentsInteractive() {
-    const layer = $('#supportCommentFloatLayer');
-    if (!layer) return;
-    
-    layer.addEventListener('click', async (event) => {
-      const likeControl = event.target.closest('.home-comment-like');
-      if (!likeControl || event.target.closest('.support-float-next')) return;
-      const floating = event.target.closest('.home-comment-row');
-      if (!floating || floating.dataset.busy === 'true') return;
-      event.preventDefault();
-      event.stopPropagation();
-
-      /* トップでは誤操作防止のため、いいね済みコメントの解除は行わない。 */
-      if (floating.classList.contains('is-liked')) {
-        floating.classList.add('is-tapped');
-        window.setTimeout(() => floating.classList.remove('is-tapped'), 430);
-        toast('いいね済みです。解除は応援コメント画面からできます。');
-        return;
-      }
-
-      const postId = floating.dataset.postId;
-      if (!postId) return;
-      floating.dataset.busy = 'true';
-      floating.classList.add('is-tapped');
-      const toggle = window.UNICA_TOGGLE_COMMENT_LIKE;
-      let result = null;
-      if (typeof toggle === 'function') result = await toggle(postId);
-      else {
-        const card = commentCards().find((row) => row.dataset.postId === postId);
-        const likeButton = card && $('[data-like-remote], [data-like-post]', card);
-        if (likeButton && !likeButton.classList.contains('is-liked')) likeButton.click();
-        else $('[data-world-nav="community"]')?.click();
-      }
-      window.setTimeout(() => floating.classList.remove('is-tapped'), 430);
-      if (result) {
-        const heart = $('.home-comment-like b', floating);
-        if (heart) heart.textContent = `♥ ${result.count}`;
-        floating.classList.add('is-liked');
-        likeControl.setAttribute('aria-pressed', 'true');
-        toast('いいねしました。');
-      }
-      floating.dataset.busy = 'false';
-    });
   }
 
   function observeFirebaseComments() {
@@ -146,23 +97,21 @@
       const source = Array.isArray(window.UNICA_TOP_SUPPORT_LATEST)
         ? window.UNICA_TOP_SUPPORT_LATEST : commentCards().map(dataFromCard).filter(Boolean);
       const rows = [...source].filter(row => row.text).sort((a, b) => timestamp(b) - timestamp(a));
-      const nextSignature = JSON.stringify(rows.map(row => [row.id, row.text, row.name, row.count, row.liked, dateLabel(row), row.profile]));
+      const nextSignature = JSON.stringify(rows.map(row => [row.id, row.text, row.name, dateLabel(row), row.profile]));
       if (signature === nextSignature) return;
       signature = nextSignature;
       const scrollTop = layer.scrollTop;
       const fragment = document.createDocumentFragment();
       rows.forEach(data => {
         const card = document.createElement('article');
-        card.className = `home-comment-row${data.liked ? ' is-liked' : ''}`;
+        card.className = 'home-comment-row';
         card.dataset.postId = data.id || '';
-        card.innerHTML = '<span class="home-comment-avatar"></span><div class="home-comment-copy"><header><strong></strong><time></time></header><p></p></div><button type="button" class="home-comment-like" aria-label="このコメントにいいね"><b></b></button>';
+        card.innerHTML = '<span class="home-comment-avatar"></span><div class="home-comment-copy"><header><strong></strong><time></time></header><p></p></div>';
         $('.home-comment-avatar', card).innerHTML = window.UNICA_BLOOM_BADGE?.html?.(data.profile || {}, 'tiny') || '';
         $('strong', card).textContent = data.name || 'うにメン';
         $('time', card).textContent = dateLabel(data);
         if (timestamp(data)) $('time', card).dateTime = new Date(timestamp(data) * 1000).toISOString();
         $('p', card).textContent = data.text;
-        $('b', card).textContent = `${data.liked ? '♥' : '♡'} ${Number(data.count || 0)}`;
-        $('.home-comment-like', card).setAttribute('aria-pressed', String(Boolean(data.liked)));
         fragment.appendChild(card);
       });
       if (!rows.length) {
@@ -194,7 +143,6 @@
   function init() {
     installFortuneSparkles();
     reinforceCommentScroll();
-    makeFloatingCommentsInteractive();
     observeFirebaseComments();
     ensureCheerFeedback();
   }
