@@ -418,6 +418,7 @@ function bindSound(){const b=$('#punyakoSound');if(!b)return;b.onclick=()=>{soun
 function particleHtml(symbols=['✦','·','✧'],count=28){return`<div class="punyako-fx-particles" aria-hidden="true">${Array.from({length:count},(_,i)=>`<i style="--i:${i};--x:${(i*37)%100}%;--d:${(i%7)*.08}s">${symbols[i%symbols.length]}</i>`).join('')}</div>`}
 
 function showIntro(){
+  pkSyncSavedProgress();
   loadProgress();updateHome();setBack(null);modal.classList.add('is-punyako-game-intro');
   const result=activeResult(),journey=localJourney(),form=journey?.seedComplete?formById(journey.equippedId):null;
   const progress=qIndex>0&&qIndex<25?qIndex:0;
@@ -468,7 +469,7 @@ function showIntro(){
         <p>回答は自動保存。5問で一度区切れるので、気軽に参加できます。</p>
       </div>
     </div>`;
-  screen.insertAdjacentHTML('beforeend',pkMenuHtml());pkBind();
+  screen.insertAdjacentHTML('beforeend',pkMenuHtml()+`<section class="pk-menu-roadmap"><h4>進化と一緒に、理解も深まる</h4>${pkGrowthHtml(pkMine()?.n||0)}</section>`);pkBind();
   bindSquish();bindSound();refreshWorldCount();
   $('#punyakoContinue')?.addEventListener('click',()=>{sfx.next();showQuestion()});
   $('#punyakoRestart')?.addEventListener('click',()=>{if(confirm('回答途中のデータを消して、最初から始めますか？'))startNew()});
@@ -524,7 +525,7 @@ function stageInfo(kind){
   const s3=stage3();return s3==='fluffy'?FORMS.stage3_01_fluffy_ear:s3==='round'?FORMS.stage3_02_round_ear:s3==='kira'?FORMS.stage3_03_kira_wing:FORMS.stage3_04_gira_wing
 }
 function showEvolution(kind){modal.classList.remove('is-punyako-game-intro');
-  const info=stageInfo(kind),completed=kind==='stage2'?10:15;saveJourney(info,completed);setBack(null);screen.className='scent16-screen punyako-screen punyako-evolution-bg punyako-game-reward-bg';screen.innerHTML=`<div class="punyako-evolution punyako-big-evolution">${particleHtml(['✦','✧','◇','·'],34)}<div class="punyako-evolution-ring"></div><div class="punyako-burst-rays"></div><div class="punyako-reward-label">RANK UP</div><small>EVOLUTION ${completed===10?'I':'II'}</small>${charHtml(info,'is-evolving')}<h3>${kind==='stage2'?'ぷにゅかが進化した！':'さらに姿が変わった！'}</h3><strong class="punyako-get-banner">${esc(info.name)}</strong><p>これまでの選び方が、少しずつ姿になっています。</p><div class="punyako-evolve-status"><span>QUEST ${completed}/25 CLEAR</span><b>FINALまであと${25-completed}問</b></div><button class="punyako-primary" id="punyakoEvolutionNext"><small>NEXT STAGE</small>つづける <b>›</b></button></div>`;setTimeout(()=>sfx.evolve(),80);setTimeout(()=>sfx.sparkle(),650);bindSquish();$('#punyakoEvolutionNext').onclick=()=>{sfx.next();showQuestion()}
+  const info=stageInfo(kind),completed=kind==='stage2'?10:15;saveJourney(info,completed);setBack(null);screen.className='scent16-screen punyako-screen punyako-evolution-bg punyako-game-reward-bg';screen.innerHTML=`<div class="punyako-evolution punyako-big-evolution">${particleHtml(['✦','✧','◇','·'],34)}<div class="punyako-evolution-ring"></div><div class="punyako-burst-rays"></div><div class="punyako-reward-label">RANK UP</div><small>EVOLUTION ${completed===10?'I':'II'}</small>${charHtml(info,'is-evolving')}<h3>${kind==='stage2'?'ぷにゅかが進化した！':'さらに姿が変わった！'}</h3><strong class="punyako-get-banner">${esc(info.name)}</strong><p>これまでの選び方が、少しずつ姿になっています。</p><div class="punyako-evolve-status"><span>QUEST ${completed}/25 CLEAR</span><b>FINALまであと${25-completed}問</b></div><button class="punyako-primary" id="punyakoEvolutionNext"><small>NEXT STAGE</small>つづける <b>›</b></button></div>`;setTimeout(()=>sfx.evolve(),80);setTimeout(()=>sfx.sparkle(),650);bindSquish();$('#punyakoEvolutionNext').onclick=()=>{sfx.next();showQuestion()};screen.insertAdjacentHTML('beforeend',pkMenuHtml());pkBind()
 }
 function finishDiagnosis(){modal.classList.remove('is-punyako-game-intro');
   clearProgress();const result=makeResult(),t=TYPE_MAP[result.typeId];addHistory(result);saveJourney({...t,stage:'final'},25);setBack(null);screen.className=`scent16-screen punyako-screen punyako-final-bg punyako-game-final-bg fx-${t.fx}`;const symbols={flower:['🌸','✦','♡'],sun:['☀','✦','·'],color:['✦','◆','●'],moon:['☾','✦','·'],guard:['✦','◇','·'],clover:['♧','✦','·'],dream:['☁','✦','○'],star:['★','✦','·'],angel:['✦','♡','·'],rainbow:['✦','◇','·'],butterfly:['✦','❀','·'],pixie:['✦','✧','·'],thunder:['⚡','✦','·'],devil:['✦','◆','·'],ice:['❄','✦','·'],phoenix:['✦','🔥','·']}[t.fx]||['✦','✧','·'];screen.innerHTML=`<div class="punyako-evolution punyako-final-evolution">${particleHtml(symbols,48)}<div class="punyako-evolution-ring is-final"></div><div class="punyako-burst-rays is-final"></div><div class="punyako-reward-label is-final">MISSION COMPLETE</div><small>FINAL EVOLUTION</small>${charHtml(t,'is-evolving')}<h3>最終進化！</h3><strong class="punyako-get-banner is-final">${esc(t.name)} GET!</strong><p>${esc(t.core)}</p><div class="punyako-final-unlocks"><span>✓ ICON UNLOCKED</span><span>✓ PERSONALITY DATA</span><span>✓ COMPATIBILITY READY</span></div><button class="punyako-primary" id="punyakoFinalNext"><small>OPEN RESULT</small>診断結果を見る <b>›</b></button></div>`;setTimeout(()=>sfx.final(),60);setTimeout(()=>sfx.sparkle(),1000);bindSquish();$('#punyakoFinalNext').onclick=()=>{const old=activeResult();if(old?.typeId===result.typeId&&old?.runId!==result.runId)showSameTypeChoice(result,old);else{saveActive(result);showResult(result)}}
@@ -539,6 +540,22 @@ $('#openScent16')?.addEventListener('click',e=>{e.preventDefault();open()});$('#
 window.UNICA_SCENT16={open,close,typeById:id=>TYPE_MAP[id]||null,scentIconUrl:id=>TYPE_MAP[id]?.image||'',getMyResult:()=>activeResult()||member()?.scentDiagnosis,getProgress:()=>read(PROGRESS_KEY,null),showIntro,startDiagnosis:startNew,showResult};
 
 // Post-diagnosis features: use recorded answers/scores, never infer scores from art.
+// Recover compatibility snapshots for members who answered before snapshots existed.
+function pkProgressSnapshot(progress){
+  if(progress?.schema!=='punyako-v4' || !Array.isArray(progress.answers) || progress.answers.length<5)return null;
+  const recorded=progress.answers.slice(0,25);
+  if(!recorded.every(a=>a?.stats && Object.keys(a.stats).length))return null;
+  const sum=keys=>{const out=Object.fromEntries(keys.map(k=>[k,50]));recorded.forEach(a=>addMap(out,keys===AXES?a.stats:a.hidden));keys.forEach(k=>out[k]=clamp(Math.round(out[k]),20,90));return out;};
+  return {analysisStats:sum(AXES),analysisHidden:recorded.length>=25?sum(HIDDEN):{},analysisQuestions:recorded.length};
+}
+async function pkSyncSavedProgress(){
+  const j=localJourney();if(!j?.seedComplete || j.analysisStats)return;
+  const snapshot=pkProgressSnapshot(read(PROGRESS_KEY,null));if(!snapshot)return;
+  const payload=setLocalJourney(snapshot);
+  try{for(let i=0;i<40&&!window.UNICA_FIREBASE?.savePunyakoJourney;i++)await new Promise(r=>setTimeout(r,100));await window.UNICA_FIREBASE?.savePunyakoJourney?.(payload);}
+  catch(e){console.warn('相性用データの同期に失敗',e);}
+}
+window.addEventListener('unica:firebase-member-restored',pkSyncSavedProgress);
 function pkCurrentResult(result){return result?.schema==='punyako-v4' && !!TYPE_MAP[result.typeId] && !!result.stats;}
 function pkEligible(row){return !!row?.punyakoJourney?.seedComplete || pkCurrentResult(row?.scentDiagnosis);}
 function pkProfile(row){
@@ -561,9 +578,18 @@ function pkMine(){
   return null;
 }
 function pkDifferences(a,b){return AXES.map(k=>({key:k,a:Number(a[k]??50),b:Number(b[k]??50),gap:Math.abs(Number(a[k]??50)-Number(b[k]??50))}));}
-function pkMenuHtml(){return `<nav class="pk-insight-menu" aria-label="ぷにゅかで自分を知る"><button data-pk-page="self" type="button"><b>自分を知る</b><small>性格・強み・回復のヒント / 25問後</small></button><button data-pk-page="pair" type="button"><b>相性を見る</b><small>5問で簡易版・二人とも25問で詳細相性</small></button><button data-pk-page="change" type="button"><b>変化を見る</b><small>再診断の5軸を比較 / 2回目から</small></button></nav>`;}
+function pkMenuHtml(){
+ const n=pkMine()?.n||0;
+ const items=[['self','自分を知る',n>=5?`${n}問の回答から、こころの芽を読む`:'5問でこころの芽がひらく'],['recovery','元気のヒント',n>=15?'疲れやすい場面・回復のヒント':n>=5?'今の自分に合う、小さなひと休み':'5問から見られます'],['pair','相性を見る',n>=25?'二人とも25問で精密相性':'5問で簡易版・25問で精密版'],['change','変化を見る','25問の再診断で、前の自分と比較']];
+ return `<nav class="pk-insight-menu" aria-label="ぷにゅかで自分を知る">${items.map(([page,name,copy],i)=>`<button data-pk-page="${page}" type="button"><span class="pk-menu-number">0${i+1}</span><span><b>${name}</b><small>${copy}</small></span><i aria-hidden="true">›</i></button>`).join('')}</nav>`;
+}
 function pkBind(){screen.querySelectorAll('[data-pk-page]').forEach(b=>b.onclick=()=>pkOpen(b.dataset.pkPage));}
-function pkFrame(title,html){modal.classList.remove('is-punyako-game-intro');setBack(showIntro);screen.className='scent16-screen punyako-screen punyako-result-bg';screen.innerHTML=`<section class="pk-insights"><h3>${esc(title)}</h3>${html}<button class="punyako-secondary" id="pkReturn" type="button">診断トップへ</button></section>`;$('#pkReturn').onclick=showIntro;}
+function pkFrame(title,html){
+ modal.classList.remove('is-punyako-game-intro');setBack(showIntro);screen.className='scent16-screen punyako-screen punyako-result-bg punyako-game-result-bg';
+ const mine=pkMine(),j=localJourney(),form=j?.seedComplete?formById(j.equippedId):null;
+ screen.innerHTML=`<section class="pk-insights"><div class="punyako-result-status"><small>こころの冒険</small><strong>${esc(title)}</strong><span>${mine?`${mine.n}/25 問`:'5問で解放'}</span></div>${form?`<div class="pk-companion">${charHtml(form)}<p>${esc(form.name)}</p></div>`:''}${html}<button class="punyako-secondary" id="pkReturn" type="button">診断トップへ</button></section>`;
+ $('#pkReturn').onclick=showIntro;bindSquish();
+}
 function pkLocked(title,message){pkFrame(title,`<p>${esc(message)}</p><button class="punyako-primary" id="pkContinue" type="button">${localJourney()?.seedComplete?'続きを育てる':'まず5問でぷにゅかを誕生させる'}</button>`);$('#pkContinue').onclick=()=>{if(loadProgress())showQuestion();else if(!localJourney()?.seedComplete)startNew();else showIntro();};}
 const PK_AXIS_TEXT={
  kindness:['相手の気持ちを汲み、安心できる関係を作る','自分の希望も一言添えて、引き受ける量を決める','人に合わせ続けず、ひとりの時間も取る'],
@@ -572,11 +598,38 @@ const PK_AXIS_TEXT={
  sensitivity:['細かな変化や気持ちの動きに気づく','相手の気持ちは決めつけず、言葉で確認する','音や情報を少なくして、静かに過ごす'],
  flexibility:['状況に合わせて考え方や進め方を調整する','変えたくないことも先に伝えておく','自分で選べる自由な時間を持つ']
 };
-function pkSelf(){
- const r=activeResult();if(!r?.stats)return pkLocked('自分を知る','25問を終えると、回答に基づいた性格の読み解きが開きます。');
- const st=r.stats,rank=[...AXES].sort((a,b)=>st[b]-st[a]),hi=rank[0],second=rank[1],lo=rank[4];
- const valid=(r.answers||[]).filter(a=>a.stats&&Object.keys(a.stats).length).length;
- pkFrame('自分を知る',`<p class="pk-note">現在装備している診断結果を読み解きます。性格の優劣や医学的な判定ではありません。</p>${radarSvg(st)}<div class="pk-insight-card"><h4>あなたの傾向</h4><p>今回の回答では「${AXIS_LABEL[hi]}」と「${AXIS_LABEL[second]}」が相対的に高めです。${PK_AXIS_TEXT[hi][0]}傾向と、${PK_AXIS_TEXT[second][0]}傾向が表れています。</p><small>性格の数値に寄与した回答：${valid}問 / 全25問</small></div><div class="pk-insight-card"><h4>力を発揮しやすい場面</h4><p>${PK_AXIS_TEXT[hi][0]}ことが求められる場面。${AXIS_LABEL[second]}も一緒に使うと、自分らしい進め方を見つけやすそうです。</p></div><div class="pk-insight-card"><h4>つまずいたときのヒント</h4><p>${PK_AXIS_TEXT[hi][1]}。${AXIS_LABEL[lo]}の数値が低めでも、苦手だと決めつける必要はありません。その力を使う場面では、先に準備する・誰かに相談する方法も選べます。</p></div><div class="pk-insight-card"><h4>回復のヒント</h4><p>${PK_AXIS_TEXT[hi][2]}。${PK_AXIS_TEXT[second][2]}ことも試してみてください。</p></div><details class="pk-insight-card"><summary>5つの軸を詳しく見る</summary>${AXES.map(k=>`<h4>${AXIS_LABEL[k]}：${st[k]??50}</h4><p>${PK_AXIS_TEXT[k][0]}傾向を見る軸です。試せる工夫：${PK_AXIS_TEXT[k][1]}。</p>`).join('')}</details>`);
+const PK_GROWTH=[
+ {n:5,name:'こころの芽',copy:'特徴3つ・元気のヒント・簡易相性'},
+ {n:10,name:'強みの芽',copy:'行動・人との関わり方'},
+ {n:15,name:'こころの扱い方',copy:'感情・疲れやすい場面・回復方法'},
+ {n:25,name:'あなたの全体像',copy:'総合分析・5軸・精密相性'}
+];
+function pkGrowthHtml(n){return `<div class="pk-growth" aria-label="分析の解放状況">${PK_GROWTH.map(x=>`<article class="${n>=x.n?'is-unlocked':'is-locked'}"><em>${x.n}問</em><div><b>${x.name}</b><small>${x.copy}</small></div><span>${n>=x.n?'解放済み':`あと${x.n-n}問`}</span></article>`).join('')}</div>`;}
+function pkSelf(recovery=false){
+ const mine=pkMine();if(!mine||mine.n<5)return pkLocked(recovery?'元気のヒント':'自分を知る',`5問でぷにゅかが誕生すると、こころの芽と元気のヒントが見られます。10・15・25問で内容が深まります。`);
+ const st=mine.stats,n=mine.n,rank=[...AXES].sort((a,b)=>st[b]-st[a]),hi=rank[0],second=rank[1];
+ const balanced=Math.max(...AXES.map(k=>st[k]))-Math.min(...AXES.map(k=>st[k]))<=4;
+ const card=(title,body)=>`<article class="pk-insight-card"><small>${n>=25?'総合分析':'育っている傾向'}</small><h4>${title}</h4><div class="pk-card-copy">${body}</div></article>`;
+ const sprouts=balanced?['場面によって、いろいろな力を使い分けているかもしれません。','一つの特徴に決めず、心地よかった場面を思い出してみましょう。','続きの回答で、自分らしい選び方が少しずつ見えてきます。']:[`${PK_AXIS_TEXT[hi][0]}傾向が芽生えています。`,`${PK_AXIS_TEXT[second][0]}一面も見えています。`,`${PK_AXIS_TEXT[hi][1]}と、その力を無理なく使いやすそうです。`];
+ let content=recovery?'':card('こころの芽',`<ul class="pk-sprouts">${sprouts.map(t=>`<li>${t}</li>`).join('')}</ul>`);
+ content+=card('今日の元気のヒント',balanced?'今日は「静かに休む」「好きなことに触れる」のどちらが心地よいか、気分で選んでみてください。':`${PK_AXIS_TEXT[hi][2]}。まずは5分だけ試して、心地よさを確かめてみてください。`);
+ if(n>=10&&!recovery){
+  const active=Number(st.action)>=50;
+  content+=card('行動と人との関わり方',`${active?'動きながら考えるほうが、手がかりを見つけやすそうです。小さく試してから次を決める進め方が合うかもしれません。':'まず様子を見てから動く選び方が表れています。準備する時間や、考えてから返事をする余裕を大切にしてみましょう。'}${Number(st.kindness)>=50?'人と決めるときは相手の希望を聞き、自分の希望も一つ伝えるとバランスを取りやすそうです。':'人と決めるときは、自分が大切にしたいことを先に伝え、相手の希望も聞いてみましょう。'}`);
+  content+=card('強みの芽',balanced?'状況に合わせて使う力を選べることが、強みになるかもしれません。うまくいった場面を一つ振り返ってみましょう。':`${PK_AXIS_TEXT[hi][0]}ことが求められる場面で、力を活かせそうです。${PK_AXIS_TEXT[second][0]}力も組み合わせると、できることが広がります。`);
+ }
+ if(n>=15){
+  content+=card('感情と疲れやすい場面',Number(st.sensitivity)>=50?'周りの細かな変化を受け取る分、情報や気遣いが重なる場面では疲れがたまりやすいかもしれません。「事実」と「自分の想像」を分けて、気になることは短く確認してみましょう。':'気持ちを切り替えて先に進む選び方が見えます。忙しさが続くと自分の疲れを後回しにすることもあるので、体の感覚や睡眠を振り返る時間を取ってみましょう。');
+  content+=card('自分に合う回復方法',`${PK_AXIS_TEXT[hi][2]}。${PK_AXIS_TEXT[second][2]}ことも候補です。一度に全部やらず、一つ試して、楽になった方法を自分の定番にしてみてください。`);
+ }
+ if(n>=25&&!recovery){
+  content+=card('あなたの全体像',balanced?'今回の5軸は近い値です。一つの性格にまとめるより、相手や場面に応じてどんな力を使っているか振り返ると、自分らしさを見つけやすそうです。':`25問を通して「${AXIS_LABEL[hi]}」と「${AXIS_LABEL[second]}」が相対的に高く表れました。${PK_AXIS_TEXT[hi][0]}ことを軸に、${PK_AXIS_TEXT[second][0]}一面を持っています。`);
+  content+=`<div class="pk-insight-card"><h4>5つの軸</h4>${radarSvg(st)}<details><summary>自分の5軸を詳しく見る</summary>${AXES.map(k=>`<h4>${AXIS_LABEL[k]}：${st[k]??50}</h4><p>${PK_AXIS_TEXT[k][0]}傾向を見る軸です。試せる工夫：${PK_AXIS_TEXT[k][1]}。</p>`).join('')}</details></div>`;
+  content+=card('自分を振り返る問い',`最近「${PK_AXIS_TEXT[hi][0]}」ことができたのはどんな場面でしたか？ 次は「${PK_AXIS_TEXT[hi][1]}」をどこで試せそうですか？`);
+ }
+ const next=PK_GROWTH.find(x=>x.n>n);
+ pkFrame(recovery?'元気のヒント':'自分を知る',`<p class="pk-note">${n}問の回答から見える${n<25?'途中の傾向':'今回の傾向'}です。${n<25?'続きの回答で内容が具体的になり、傾向が変わることもあります。':'性格の優劣や医学的な判定ではありません。'}</p>${content}<h4 class="pk-growth-title">この先にひらくもの</h4>${pkGrowthHtml(n)}${next?`<button class="punyako-primary" id="pkGrowNext" type="button"><small>あと${next.n-n}問で「${next.name}」</small>つづきを育てる <b>›</b></button>`:''}`);
+ $('#pkGrowNext')?.addEventListener('click',()=>{if(loadProgress())showQuestion();else showIntro();});
 }
 let pkPairRequest=0;
 async function pkPair(){
@@ -598,7 +651,7 @@ async function pkPair(){
  }catch(e){if(container.isConnected)$('#pkPairStatus').textContent='うにメンを読み込めませんでした。通信を確認し、診断トップからもう一度開いてください。';}
 }
 function pkPairResult(mine,row){
- const other=pkProfile(row),box=$('#pkPairResult');if(!other){box.innerHTML='<p>この相手は性格データの更新待ちです。回答を進めると比較できるようになります。</p>';return;}
+ const other=pkProfile(row),box=$('#pkPairResult');if(!other){box.innerHTML='<p>この相手は5問達成済みですが、以前の回答データがまだ同期されていません。相手が更新後のサイトで診断トップを開くと、保存済みの回答から自動同期します。回答が残っていない場合は再診断が必要です。</p>';return;}
  const score=window.UNICA_COMPATIBILITY.evaluate(mine,other),simple=mine.n<25||other.n<25;
  const d=pkDifferences(mine.stats,other.stats),sorted=[...d].sort((a,b)=>a.gap-b.gap),near=sorted[0],far=sorted[4];
  const label=v=>v>=.75?'活かしやすい':v>=.5?'工夫で活かせる':'相談しながら育てたい';
@@ -623,6 +676,6 @@ function pkChange(){
  pkFrame('変化を見る',`<p>数値の変化は、そのときの気分や状況、選んだ回答の違いを含みます。成長や能力の上下を示すものではありません。</p><label>比べる前の結果<select id="pkOlder">${history.map((r,i)=>`<option value="${i}" ${i===1?'selected':''}>${esc(r.diagnosedDate)} · ${esc(TYPE_MAP[r.typeId]?.name||r.scentName)} · ${i+1}</option>`).join('')}</select></label><label>比べる後の結果<select id="pkNewer">${history.map((r,i)=>`<option value="${i}">${esc(r.diagnosedDate)} · ${esc(TYPE_MAP[r.typeId]?.name||r.scentName)} · ${i+1}</option>`).join('')}</select></label><div id="pkChangeResult"></div>`);
  const render=()=>{const a=history[Number($('#pkOlder').value)],b=history[Number($('#pkNewer').value)],d=pkDifferences(a.stats,b.stats),big=[...d].sort((x,y)=>y.gap-x.gap)[0];$('#pkChangeResult').innerHTML=`<div class="pk-insight-card"><h4>5軸の比較</h4><table><thead><tr><th>軸</th><th>前</th><th>後</th><th>差</th></tr></thead><tbody>${d.map(x=>`<tr><th>${AXIS_LABEL[x.key]}</th><td>${x.a}</td><td>${x.b}</td><td>${x.b-x.a>0?'+':''}${x.b-x.a}</td></tr>`).join('')}</tbody></table><p>${big.gap?`${AXIS_LABEL[big.key]}の変化が最も大きく出ています。最近、その力を使う場面や気持ちの変化があったか振り返ってみてください。`:'この2つの結果では5軸の数値は同じです。'}</p></div>`;};$('#pkOlder').onchange=render;$('#pkNewer').onchange=render;render();
 }
-function pkOpen(page){if(page==='self')pkSelf();else if(page==='pair')pkPair();else pkChange();}
+function pkOpen(page){if(page==='self')pkSelf();else if(page==='recovery')pkSelf(true);else if(page==='pair')pkPair();else pkChange();}
 
 })();
