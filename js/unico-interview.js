@@ -8,8 +8,11 @@ const owner=()=>!!api?.auth.currentUser&&api.auth.currentUser.uid==='I1foe78gS2b
 const linked=()=>api?.auth.currentUser?.providerData.some(p=>p.providerId==='google.com');
 const date=v=>v?.toDate?new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(v.toDate()):'';
 function message(t){$('#ivMessage').textContent=t;}
+function requestInterviewLogin(){
+ const gate=document.getElementById('openMemberGate');if(gate)gate.click();else if($('#ivLogin'))$('#ivLogin').hidden=false;
+}
 function permissions(){
- $('#ivManage').hidden=!owner();$('#ivToggle').textContent=config?.enabled?'質問箱の受付を停止':'質問箱の受付を開始';$('#ivSubmit').disabled=busy||!config?.enabled||!countReady;root.querySelectorAll('[data-comments]').forEach(panel=>{if(panel._commentRows)renderComments(panel,panel._commentRows);});
+ if($('#ivLogin')&&linked())$('#ivLogin').hidden=true;$('#ivManage').hidden=!owner();$('#ivToggle').textContent=config?.enabled?'質問箱の受付を停止':'質問箱の受付を開始';$('#ivSubmit').disabled=busy||!config?.enabled||!countReady;root.querySelectorAll('[data-comments]').forEach(panel=>{if(panel._commentRows)renderComments(panel,panel._commentRows);});
  if(!owner()){$('#ivAdmin').hidden=true;$('#ivInbox').replaceChildren();pending=[];selected=null;adminOpen=false;editing=null;$('#ivQuestion').value='';$('#ivAnswer').value='';}
 }
 function publicRender(){
@@ -34,7 +37,7 @@ async function closeQuestion(id,article=null){
  await runTransaction(api.db,async tx=>{const [qs,cs]=await Promise.all([tx.get(qref),tx.get(cref)]);if(!qs.exists()||qs.data().status!=='pending')throw Error('already-closed');if(!cs.exists()||cs.data().pendingCount<1)throw Error('counter');if(article)tx.set(article.ref,article.data);tx.update(qref,{status:article?'answered':'closed',updatedAt:serverTimestamp()});tx.update(cref,{pendingCount:cs.data().pendingCount-1});});
 }
 $('#ivSubmit').onclick=async()=>{
- if(busy)return;if(!linked()||!localStorage.getItem('unicaWorldMemberV4')){message('質問の送信には、うにメン登録とGoogle連携が必要です。');document.getElementById('openMemberGate')?.click();return;}
+ if(busy)return;if(!linked()||!localStorage.getItem('unicaWorldMemberV4')){message('質問の送信には、うにメン登録とGoogle連携が必要です。');requestInterviewLogin();return;}
  const body=$('#ivBody').value.trim();if(!body||body.length>500){message('質問は1〜500文字で入力してください。');return;}
  busy=true;permissions();
  try{const ref=doc(collection(api.db,'interviewQuestions')),counter=doc(api.db,'interviewPublic','counter');await runTransaction(api.db,async tx=>{const snap=await tx.get(counter);if(!snap.exists())throw Error('not-ready');tx.set(ref,{body,authorUid:api.auth.currentUser.uid,status:'pending',createdAt:serverTimestamp()});tx.update(counter,{pendingCount:snap.data().pendingCount+1,lastSubmissionId:ref.id});});$('#ivBody').value='';message('質問を受け付けました。内容は管理者だけが確認します。');}
@@ -78,7 +81,7 @@ function bindComments(){
  panel.addEventListener('toggle',()=>{if(panel.open)watchComments(panel);else{commentStops.get(id)?.();commentStops.delete(id);}});
  panel.querySelector('form').onsubmit=async event=>{
  event.preventDefault();const form=event.currentTarget,msg=form.querySelector('.iv-comment-message'),input=form.querySelector('textarea'),button=form.querySelector('button');if(button.disabled)return;
- if(!linked()){msg.textContent='投稿には、うにメン登録とGoogle連携が必要です。';document.getElementById('openMemberGate')?.click();return;}
+ if(!linked()){msg.textContent='投稿には、うにメン登録とGoogle連携が必要です。';requestInterviewLogin();return;}
  const text=input.value.trim();if(!text||text.length>300){msg.textContent='感想は1〜300文字で入力してください。';return;}
  button.disabled=true;
  try{const uid=api.auth.currentUser.uid;const ref=doc(collection(api.db,'interviewComments'));
