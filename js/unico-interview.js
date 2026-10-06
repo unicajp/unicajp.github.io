@@ -113,8 +113,8 @@ function bindComments(){
 
 async function init(){
  for(let i=0;i<80&&!window.UNICA_FIREBASE?.db;i++)await new Promise(r=>setTimeout(r,100));api=window.UNICA_FIREBASE;if(!api?.db){message('読み込みに時間がかかっています。ページを再読み込みしてください。');return;}
- onSnapshot(doc(api.db,'interviewPublic','config'),s=>{config=s.exists()?s.data():null;permissions();message(config?.enabled?'':'質問箱は準備中です。');},()=>message('質問箱は準備中です。'));
- onSnapshot(doc(api.db,'interviewPublic','counter'),s=>{countReady=s.exists();$('#ivCount').textContent=countReady?String(s.data().pendingCount):'—';permissions();},()=>{$('#ivCount').textContent='—';countReady=false;permissions();});
+ onSnapshot(doc(api.db,'interviewPublic','config'),s=>{config=s.exists()?s.data():null;permissions();message(config?.enabled?'':config?'質問箱の受付は停止中です。':'質問箱の受付はまだ開始されていません。');},()=>{config=null;permissions();message('質問箱の設定を読み込めませんでした。');});
+ onSnapshot(doc(api.db,'interviewPublic','counter'),s=>{countReady=s.exists();$('#ivCount').textContent=countReady?String(s.data().pendingCount):'—';permissions();},()=>{$('#ivCount').textContent='—';countReady=false;permissions();message('質問件数を読み込めませんでした。');});
  onSnapshot(collection(api.db,'interviewArticles'),snap=>{articles=snap.docs.map(d=>({id:d.id,...d.data()}));publicRender();},()=>{$('#ivArticles').textContent='インタビューを読み込めませんでした。';});
  onAuthStateChanged(api.auth,permissions);
 }
