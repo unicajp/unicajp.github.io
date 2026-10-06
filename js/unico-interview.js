@@ -3,13 +3,32 @@ import {doc,collection,getDoc,getDocs,onSnapshot,runTransaction,setDoc,deleteDoc
 const root=document.getElementById('unicoInterview');
 const $=s=>root.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const interviewModal=document.getElementById('ivModal'),interviewEntry=document.getElementById('openUnicoInterview');
+let interviewReturnFocus=null;
+function openInterview(){
+ interviewReturnFocus=document.activeElement;interviewModal.classList.add('is-open');interviewModal.setAttribute('aria-hidden','false');document.body.classList.add('iv-modal-open');interviewModal.querySelector('button[data-close-interview]').focus();
+}
+function closeInterview(){
+ interviewModal.classList.remove('is-open');interviewModal.setAttribute('aria-hidden','true');document.body.classList.remove('iv-modal-open');interviewReturnFocus?.focus();
+}
+interviewEntry.addEventListener('click',event=>{event.preventDefault();openInterview();});
+interviewModal.querySelectorAll('[data-close-interview]').forEach(el=>el.addEventListener('click',closeInterview));
+window.addEventListener('keydown',event=>{
+ if(!interviewModal.classList.contains('is-open'))return;
+ if(event.key==='Escape'){event.preventDefault();closeInterview();}
+ if(event.key==='Tab'){
+  const nodes=[...interviewModal.querySelectorAll('button:not([disabled]),a[href],textarea,input,select,summary')].filter(el=>el.getClientRects().length);
+  if(!nodes.length)return;const first=nodes[0],last=nodes[nodes.length-1];
+  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+ }
+});
 let api,config=null,countReady=false,busy=false,pending=[],articles=[],selected=null,editing=null,adminOpen=false;
 const owner=()=>!!api?.auth.currentUser&&api.auth.currentUser.uid==='I1foe78gS2bApFhweosGaLQq4FW2';
 const linked=()=>api?.auth.currentUser?.providerData.some(p=>p.providerId==='google.com');
 const date=v=>v?.toDate?new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(v.toDate()):'';
 function message(t){$('#ivMessage').textContent=t;}
 function requestInterviewLogin(){
- const gate=document.getElementById('openMemberGate');if(gate)gate.click();else if($('#ivLogin'))$('#ivLogin').hidden=false;
+ const gate=document.getElementById('openMemberGate');if(gate){closeInterview();gate.click();}else if($('#ivLogin'))$('#ivLogin').hidden=false;
 }
 function permissions(){
  if($('#ivLogin')&&linked())$('#ivLogin').hidden=true;$('#ivManage').hidden=!owner();$('#ivToggle').textContent=config?.enabled?'質問箱の受付を停止':'質問箱の受付を開始';$('#ivSubmit').disabled=busy||!config?.enabled||!countReady;root.querySelectorAll('[data-comments]').forEach(panel=>{if(panel._commentRows)renderComments(panel,panel._commentRows);});
