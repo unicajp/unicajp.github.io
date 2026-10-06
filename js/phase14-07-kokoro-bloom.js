@@ -539,12 +539,14 @@ $('#openScent16')?.addEventListener('click',e=>{e.preventDefault();open()});$('#
 window.UNICA_SCENT16={open,close,typeById:id=>TYPE_MAP[id]||null,scentIconUrl:id=>TYPE_MAP[id]?.image||'',getMyResult:()=>activeResult()||member()?.scentDiagnosis,getProgress:()=>read(PROGRESS_KEY,null),showIntro,startDiagnosis:startNew,showResult};
 
 // Post-diagnosis features: use recorded answers/scores, never infer scores from art.
+function pkCurrentResult(result){return result?.schema==='punyako-v4' && !!TYPE_MAP[result.typeId] && !!result.stats;}
+function pkEligible(row){return !!row?.punyakoJourney?.seedComplete || pkCurrentResult(row?.scentDiagnosis);}
 function pkProfile(row){
   const j=row?.punyakoJourney;
-  const equipped= j?.equippedId;
+  // Journey snapshots describe the equipped current diagnosis; old scent results do not.
+  if(j?.seedComplete && j?.analysisStats) return {stats:j.analysisStats,hidden:j.analysisHidden||{},n:Number(j.analysisQuestions||j.completedQuestions||5),name:j.equippedName||'ぷにゅか'};
   const final=row?.scentDiagnosis;
-  if(final?.stats && (!equipped || equipped===final.typeId)) return {stats:final.stats,hidden:final.hidden||{},n:25,name:final.scentName||TYPE_MAP[final.typeId]?.name||'最終ぷにゅか'};
-  if(j?.analysisStats) return {stats:j.analysisStats,hidden:j.analysisHidden||{},n:Number(j.analysisQuestions||j.completedQuestions||5),name:j.equippedName||'ぷにゅか'};
+  if(pkCurrentResult(final) && (!j?.equippedId || j.equippedId===final.typeId)) return {stats:final.stats,hidden:final.hidden||{},n:25,name:final.scentName||TYPE_MAP[final.typeId]?.name||'最終ぷにゅか'};
   return null;
 }
 function pkMine(){
@@ -578,7 +580,7 @@ function pkSelf(){
 }
 let pkPairRequest=0;
 async function pkPair(){
- const mine=pkMine();if(!localJourney()?.seedComplete&&!activeResult())return pkLocked('相性を見る','まず5問でぷにゅかを誕生させると、相性の簡易版が使えます。');
+ const mine=pkMine();if(!pkEligible({punyakoJourney:localJourney(),scentDiagnosis:activeResult()}))return pkLocked('相性を見る','まず5問でぷにゅかを誕生させると、相性の簡易版が使えます。');
  if(!mine)return pkLocked('相性を見る','過去の誕生データに性格数値が残っていません。続きを回答して進化すると、簡易相性用データを保存できます。');
  if(!localJourney()?.analysisStats && read(PROGRESS_KEY,null)?.answers?.length>=5){const form=formById(localJourney()?.equippedId);if(form)await saveJourney({...form,stats:undefined},mine.n);}
  const ticket=++pkPairRequest;pkFrame('相性を見る','<p id="pkPairStatus">うにメンを読み込み中…</p><input id="pkPairSearch" type="search" placeholder="名前・会員番号で検索" aria-label="相性の相手を検索"><div id="pkPairList"></div><div id="pkPairResult"></div>');
@@ -586,7 +588,7 @@ async function pkPair(){
  try{
   const api=window.UNICA_FIREBASE;if(!api?.loadPunyakoMembers)throw Error('not-ready');
   const rows=await api.loadPunyakoMembers();if(ticket!==pkPairRequest||!container.isConnected)return;
-  const candidates=rows.filter(row=>row.uid!==api.uid && (row.punyakoJourney?.seedComplete||row.scentDiagnosis?.typeId));
+  const candidates=rows.filter(row=>row.uid!==api.uid && pkEligible(row));
   $('#pkPairStatus').textContent='現在装備しているぷにゅかの性格データで比較します。どちらかが25問未満なら簡易版です。';
   const render=()=>{
    const q=$('#pkPairSearch').value.trim().toLowerCase();const selected=candidates.filter(row=>`${row.name} ${row.number}`.toLowerCase().includes(q));
