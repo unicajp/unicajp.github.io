@@ -469,7 +469,7 @@ function showIntro(){
         <p>回答は自動保存。5問で一度区切れるので、気軽に参加できます。</p>
       </div>
     </div>`;
-  screen.insertAdjacentHTML('beforeend',pkMenuHtml()+`<section class="pk-menu-roadmap"><h4>進化と一緒に、理解も深まる</h4>${pkGrowthHtml(pkMine()?.n||0)}</section>`);pkBind();
+  screen.insertAdjacentHTML('beforeend',pkMenuHtml()+`<details class="pk-menu-roadmap"><summary>進化でひらく機能</summary>${pkGrowthHtml(pkMine()?.n||0)}</details>`);pkBind();
   bindSquish();bindSound();refreshWorldCount();
   $('#punyakoContinue')?.addEventListener('click',()=>{sfx.next();showQuestion()});
   $('#punyakoRestart')?.addEventListener('click',()=>{if(confirm('回答途中のデータを消して、最初から始めますか？'))startNew()});
@@ -579,9 +579,8 @@ function pkMine(){
 }
 function pkDifferences(a,b){return AXES.map(k=>({key:k,a:Number(a[k]??50),b:Number(b[k]??50),gap:Math.abs(Number(a[k]??50)-Number(b[k]??50))}));}
 function pkMenuHtml(){
- const n=pkMine()?.n||0;
- const items=[['self','自分を知る',n>=5?`${n}問の回答から、こころの芽を読む`:'5問でこころの芽がひらく'],['recovery','元気のヒント',n>=15?'疲れやすい場面・回復のヒント':n>=5?'今の自分に合う、小さなひと休み':'5問から見られます'],['pair','相性を見る',n>=25?'二人とも25問で精密相性':'5問で簡易版・25問で精密版'],['change','変化を見る','25問の再診断で、前の自分と比較']];
- return `<nav class="pk-insight-menu" aria-label="ぷにゅかで自分を知る">${items.map(([page,name,copy],i)=>`<button data-pk-page="${page}" type="button"><span class="pk-menu-number">0${i+1}</span><span><b>${name}</b><small>${copy}</small></span><i aria-hidden="true">›</i></button>`).join('')}</nav>`;
+ const items=[['daily','今日のぷにゅか'],['self','自分を知る'],['consult','ぷにゅか相談室'],['manual','取り扱い説明書'],['recovery','元気のヒント'],['pair','相性を見る'],['together','ふたりの過ごし方'],['change','変化を見る']];
+ return `<nav class="pk-insight-menu" aria-label="ぷにゅかのメニュー">${items.map(([page,name],i)=>`<button data-pk-page="${page}" data-tone="${i%4}" type="button"><b>${name}</b></button>`).join('')}</nav>`;
 }
 function pkBind(){screen.querySelectorAll('[data-pk-page]').forEach(b=>b.onclick=()=>pkOpen(b.dataset.pkPage));}
 function pkFrame(title,html){
@@ -632,11 +631,11 @@ function pkSelf(recovery=false){
  $('#pkGrowNext')?.addEventListener('click',()=>{if(loadProgress())showQuestion();else showIntro();});
 }
 let pkPairRequest=0;
-async function pkPair(){
+async function pkPair(together=false){
  const mine=pkMine();if(!pkEligible({punyakoJourney:localJourney(),scentDiagnosis:activeResult()}))return pkLocked('相性を見る','まず5問でぷにゅかを誕生させると、相性の簡易版が使えます。');
  if(!mine)return pkLocked('相性を見る','過去の誕生データに性格数値が残っていません。続きを回答して進化すると、簡易相性用データを保存できます。');
  if(!localJourney()?.analysisStats && read(PROGRESS_KEY,null)?.answers?.length>=5){const form=formById(localJourney()?.equippedId);if(form)await saveJourney({...form,stats:undefined},mine.n);}
- const ticket=++pkPairRequest;pkFrame('相性を見る','<p id="pkPairStatus">うにメンを読み込み中…</p><input id="pkPairSearch" type="search" placeholder="名前・会員番号で検索" aria-label="相性の相手を検索"><div id="pkPairList"></div><div id="pkPairResult"></div>');
+ const ticket=++pkPairRequest;pkFrame(together?'ふたりの過ごし方':'相性を見る','<p id="pkPairStatus">うにメンを読み込み中…</p><input id="pkPairSearch" type="search" placeholder="名前・会員番号で検索" aria-label="相性の相手を検索"><div id="pkPairList"></div><div id="pkPairResult"></div>');
  const container=$('#pkPairList');
  try{
   const api=window.UNICA_FIREBASE;if(!api?.loadPunyakoMembers)throw Error('not-ready');
@@ -646,11 +645,11 @@ async function pkPair(){
   const render=()=>{
    const q=$('#pkPairSearch').value.trim().toLowerCase();const selected=candidates.filter(row=>`${row.name} ${row.number}`.toLowerCase().includes(q));
    container.innerHTML=selected.length?selected.map(row=>`<button class="pk-member" data-pk-member="${esc(row.uid)}" type="button"><b>${esc(row.name)}</b><small>No.${row.number} · ${pkProfile(row)?(pkProfile(row).n>=25?'25問完了':'簡易データあり'):'性格データ更新待ち'}</small></button>`).join(''):'<p>対象のうにメンがまだいません。</p>';
-   container.querySelectorAll('[data-pk-member]').forEach(b=>b.onclick=()=>{const row=candidates.find(r=>r.uid===b.dataset.pkMember);pkPairResult(mine,row);});
+   container.querySelectorAll('[data-pk-member]').forEach(b=>b.onclick=()=>{const row=candidates.find(r=>r.uid===b.dataset.pkMember);pkPairResult(mine,row,together);});
   };$('#pkPairSearch').oninput=render;render();
  }catch(e){if(container.isConnected)$('#pkPairStatus').textContent='うにメンを読み込めませんでした。通信を確認し、診断トップからもう一度開いてください。';}
 }
-function pkPairResult(mine,row){
+function pkPairResult(mine,row,together=false){
  const other=pkProfile(row),box=$('#pkPairResult');if(!other){box.innerHTML='<p>この相手は5問達成済みですが、以前の回答データがまだ同期されていません。相手が更新後のサイトで診断トップを開くと、保存済みの回答から自動同期します。回答が残っていない場合は再診断が必要です。</p>';return;}
  const score=window.UNICA_COMPATIBILITY.evaluate(mine,other),simple=mine.n<25||other.n<25;
  const d=pkDifferences(mine.stats,other.stats),sorted=[...d].sort((a,b)=>a.gap-b.gap),near=sorted[0],far=sorted[4];
@@ -669,6 +668,10 @@ function pkPairResult(mine,row){
    return `<article class="pk-insight-card"><h4>${name}</h4><p>${bothQuiet?'二人とも気持ちを内側に置きやすい傾向が見えます。お互いに遠慮すると本音が伝わらないこともあります。':gap<=10?'この面では近い傾向が見られます。ただし、同じ希望を持っているとは限らないため、本人に確認しましょう。':gap<=25?'この面には少し違いが見られます。場面によって希望が変わることもあるので、違いを話すきっかけにできます。':'この面には違いが見られます。相手を自分と同じペースに合わせるより、お互いの希望を伝えると調整しやすそうです。'}</p><p>試せること：${hint}。</p></article>`;
  }).join(''):'';
  box.innerHTML=`<div class="pk-insight-card"><h4>${esc(row.name)}さんとの${simple?'簡易相性':score.full?'詳細相性':'25問相性（5軸版）'}</h4><div class="pk-compat-percent"><strong>${score.percent}<small>％</small></strong><span>総合相性</span></div><p class="pk-note">${simple?'どちらかが25問未満のため簡易版です。二人とも25問を終えると、会話・距離感なども読み解けます。':score.full?'5軸と内面的な傾向を使った詳細版です。':'以前の結果に内面データがないため、今回は5軸で比較しています。再診断で詳細版を利用できます。'}％は心地よさ・補い合い・調整のしやすさを組み合わせた、この診断独自の目安です。関係がうまくいく確率ではありません。</p><div class="pk-pair-tags"><span>心地よさ：${label(score.comfort)}</span><span>補い合い：${label(score.support)}</span><span>調整のしやすさ：${label(score.adjustment)}</span></div><h4>二人の強み</h4><p>${AXIS_LABEL[near.key]}は、ほかの軸に比べると近い傾向です。${PK_AXIS_TEXT[near.key][0]}場面で、考えや希望を共有する入口にできます。</p><h4>違いを活かすヒント</h4><p>${far.gap<=10?'5軸全体が近いため、役割は性格より得意なことや希望で分けてみましょう。':`${AXIS_LABEL[far.key]}には違いが見られます。${PK_AXIS_TEXT[far.key][0]}場面で、お互いにどこを担当したいか話してみましょう。違うからこそ、選べる進め方が増えることもあります。`}</p><h4>すれ違いを減らすヒント</h4><p>${PK_AXIS_TEXT[far.key][1]}。似ている相手にも、違う相手にも、希望を言葉にすることが役立ちます。</p></div>${detail}`;
+ const ideas={kindness:'お互いの好きな曲を一曲ずつ紹介し、その曲の好きなところを話す',action:'短い散歩や小さなお出かけを、無理のない予定で楽しむ',curiosity:'気になるお店や作品を一つずつ持ち寄り、一緒に新しいものを試す',sensitivity:'落ち着いた場所で音楽を聴き、それぞれの感じ方を話す',flexibility:'候補を二つ用意して、その日の気分でどちらにするか選ぶ'};
+ const tips=`<article class="pk-insight-card"><h4>一緒に楽しむなら</h4><p>${ideas[near.key]}のはどうでしょう。</p><h4>役割を決めるなら</h4><p>${far.gap>10?'提案する役と確かめる役を、得意なことや希望を聞いて分けてみましょう。':'交代で提案して、いつも同じ人任せにならない形を試してみましょう。'}</p><h4>すれ違ったときの一言</h4><p>「私はこうしたいと思っているよ。あなたはどう過ごしたい？」と、希望を一つずつ伝えてみましょう。</p></article>`;
+ if(together)box.innerHTML=`<h4>${esc(row.name)}さんとの過ごし方</h4><p class="pk-note">${score.full?'25問の傾向を使った提案です。':'5問から使える簡易提案です。二人とも25問で内容が深まります。'}</p>`+tips+detail;
+ else box.insertAdjacentHTML('beforeend',tips);
  box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function pkChange(){
@@ -676,6 +679,33 @@ function pkChange(){
  pkFrame('変化を見る',`<p>数値の変化は、そのときの気分や状況、選んだ回答の違いを含みます。成長や能力の上下を示すものではありません。</p><label>比べる前の結果<select id="pkOlder">${history.map((r,i)=>`<option value="${i}" ${i===1?'selected':''}>${esc(r.diagnosedDate)} · ${esc(TYPE_MAP[r.typeId]?.name||r.scentName)} · ${i+1}</option>`).join('')}</select></label><label>比べる後の結果<select id="pkNewer">${history.map((r,i)=>`<option value="${i}">${esc(r.diagnosedDate)} · ${esc(TYPE_MAP[r.typeId]?.name||r.scentName)} · ${i+1}</option>`).join('')}</select></label><div id="pkChangeResult"></div>`);
  const render=()=>{const a=history[Number($('#pkOlder').value)],b=history[Number($('#pkNewer').value)],d=pkDifferences(a.stats,b.stats),big=[...d].sort((x,y)=>y.gap-x.gap)[0];$('#pkChangeResult').innerHTML=`<div class="pk-insight-card"><h4>5軸の比較</h4><table><thead><tr><th>軸</th><th>前</th><th>後</th><th>差</th></tr></thead><tbody>${d.map(x=>`<tr><th>${AXIS_LABEL[x.key]}</th><td>${x.a}</td><td>${x.b}</td><td>${x.b-x.a>0?'+':''}${x.b-x.a}</td></tr>`).join('')}</tbody></table><p>${big.gap?`${AXIS_LABEL[big.key]}の変化が最も大きく出ています。最近、その力を使う場面や気持ちの変化があったか振り返ってみてください。`:'この2つの結果では5軸の数値は同じです。'}</p></div>`;};$('#pkOlder').onchange=render;$('#pkNewer').onchange=render;render();
 }
-function pkOpen(page){if(page==='self')pkSelf();else if(page==='recovery')pkSelf(true);else if(page==='pair')pkPair();else pkChange();}
+const PK_DAILY_KEY='unicaPunyukaDailyV1';
+function pkDailyKey(){return PK_DAILY_KEY+':'+(window.UNICA_FIREBASE?.uid||member()?.uid||'local');}
+function pkRequire(title){if((pkMine()?.n||0)<5){pkLocked(title,'まず5問でぷにゅかを誕生させると使えます。');return false;}return true;}
+function pkTopAxis(){const st=pkMine().stats;return [...AXES].sort((a,b)=>Number(st[b])-Number(st[a]))[0];}
+function pkDaily(){
+ if(!pkRequire('今日のぷにゅか'))return;
+ const records=read(pkDailyKey(),[]),saved=records.find(x=>x.date===today());
+ pkFrame('今日のぷにゅか',`<p class="pk-note">今日の状態を3つ教えてね。同じ日の記録は更新できます。記録はこの端末だけに保存されます。</p><form id="pkDailyForm">${[['mood','今日の気分',['しょんぼり','ふつう','ごきげん']],['energy','今の元気',['休みたい','ほどほど','元気いっぱい']],['social','人と話したい？',['ひとりでゆっくり','どちらでも','話したい']]].map(([key,label,options])=>`<fieldset class="pk-choice"><legend>${label}</legend>${options.map((text,i)=>`<label><input required type="radio" name="${key}" value="${i}" ${saved?.[key]===i?'checked':''}><span>${text}</span></label>`).join('')}</fieldset>`).join('')}<button class="punyako-primary" type="submit">今日のぷにゅかを見る</button></form><div id="pkDailyResult"></div><details class="pk-insight-card"><summary>最近の気分の流れ</summary><div id="pkDailyHistory"></div></details>`);
+ const render=()=>{const rows=read(pkDailyKey(),[]);$('#pkDailyHistory').innerHTML=rows.slice(0,14).map(x=>`<p>${esc(x.date)} · ${['しょんぼり','ふつう','ごきげん'][x.mood]} · ${['休みたい','ほどほど','元気いっぱい'][x.energy]}</p>`).join('')||'<p>まだ記録がありません。</p>';const x=rows.find(x=>x.date===today());if(x){const state=x.energy===0?'おやすみモード':x.mood===0?'そっと寄り添うモード':x.social===2?'おしゃべりモード':'ごきげんモード';$('#pkDailyResult').innerHTML=`<article class="pk-insight-card pk-daily-state" data-state="${x.energy===0?'rest':x.mood===0?'quiet':'happy'}"><h4>${state}</h4><div class="pk-daily-face" aria-label="今日のぷにゅかの表情">${x.energy===0?'－ ω －':x.mood===0?'・ ω ・':'⌒ ω ⌒'}</div><p>${x.energy===0?'今日は一つ休める予定を探してみよう。':x.mood===0?'うまく言葉にできなくても大丈夫。好きな音を聴いて、ひと息つこう。':x.social===2?'話したい人に、短いひとことから声をかけてみよう。':'今の心地よさを、少しだけ味わってみよう。'}${pkMine().n>=10?' '+PK_AXIS_TEXT[pkTopAxis()][2]+'ことも候補です。':''}${pkMine().n>=15?' 気持ちと予定が合わない日は、予定の量を調整してみてね。':''}${pkMine().n>=25?' 自分の取り扱い説明書も振り返ってみよう。':''}</p></article>`;}};
+ $('#pkDailyForm').onsubmit=e=>{e.preventDefault();const data=new FormData(e.currentTarget);const row={date:today(),mood:Number(data.get('mood')),energy:Number(data.get('energy')),social:Number(data.get('social'))};try{write(pkDailyKey(),[row,...read(pkDailyKey(),[]).filter(x=>x.date!==row.date)].slice(0,90));render();}catch{$('#pkDailyResult').textContent='保存できませんでした。端末の保存容量やブラウザ設定を確認してください。';}};render();
+}
+function pkConsult(){
+ if(!pkRequire('ぷにゅか相談室'))return;
+ const options=[['care','気を使いすぎた','今すぐ引き受けず「確認してから返事するね」と伝えてみよう。'],['energy','やる気が出ない','やることを一つだけ選び、2分で終わる大きさにしてみよう。'],['worry','考えがぐるぐるする','気になることを紙に出して、今できることを一つだけ選ぼう。'],['relation','人との距離に迷う','連絡の頻度や話したいことを、自分から一つ伝えてみよう。'],['choice','決められない','選択肢を二つに絞り、今大切にしたい条件を一つ決めよう。']];
+ pkFrame('ぷにゅか相談室',`<p class="pk-note">今の悩みに近いものを選んでください。試せる小さな工夫を一緒に探します。</p><div class="pk-consult-options">${options.map(([id,name])=>`<button class="punyako-secondary" data-consult="${id}" type="button">${name}</button>`).join('')}</div><div id="pkConsultResult"></div>`);
+ screen.querySelectorAll('[data-consult]').forEach(b=>b.onclick=()=>{const item=options.find(x=>x[0]===b.dataset.consult),mine=pkMine(),axis=pkTopAxis();$('#pkConsultResult').innerHTML=`<article class="pk-insight-card"><h4>${item[1]}</h4><p>${item[2]}</p><h4>あなたに合いそうなひと休み</h4><p>${PK_AXIS_TEXT[axis][2]}ことを、無理のない範囲で試してみてね。</p>${mine.n>=10?`<p>次に動くなら、${mine.stats.action>=50?'小さく一回試してから、続けるか決めてみよう。':'考える時間を先に決めて、準備できたところから進めよう。'}</p>`:''}${mine.n>=15?`<p>${mine.stats.sensitivity>=50?'受け取る情報を少なくする時間も大切に。':'忙しいときほど、体の疲れを一度確かめてみよう。'}</p>`:''}${mine.n>=25?'<h4>振り返ってみよう</h4><p>少し楽になった方法はどれ？ 次に同じ状況になったときも使えるよう、覚えておこう。</p>':''}<p class="pk-note">${mine.n}問の傾向を使った提案です。</p></article>`;});
+}
+function pkManual(){
+ if(!pkRequire('取り扱い説明書'))return;
+ const mine=pkMine(),axis=pkTopAxis(),n=mine.n;
+ const items=[['私の持ち味',PK_AXIS_TEXT[axis][0]+'一面があります。'],['心地よい接し方',mine.stats.action>=50?'小さく試せる提案をもらうと、動き出しやすそうです。':'返事を急がず、考える時間をもらえると助かりそうです。'],['回復のヒント',PK_AXIS_TEXT[axis][2]+'時間を大切にしたいです。']];
+ if(n>=10)items.push(['一緒に決めるとき','お互いの希望を一つずつ出して、無理のない進め方を相談したいです。']);
+ if(n>=15)items.push(['疲れやすい場面',mine.stats.sensitivity>=50?'情報や気遣いが重なる場面では、ひと息つく時間が必要かもしれません。':'忙しさが続くと、疲れを後回しにしがちかもしれません。']);
+ if(n>=25)items.push(['大切にしたいこと',PK_AXIS_TEXT[axis][1]+'ことを意識したいです。']);
+ pkFrame('取り扱い説明書',`<p class="pk-note">${n}問から見える私の傾向。共有したい項目だけチェックしてコピーできます。自動で公開されることはありません。</p><div class="pk-manual">${items.map(([name,copy],i)=>`<article class="pk-insight-card"><label><input type="checkbox" data-manual="${i}" checked> ${name}</label><p>${copy}</p></article>`).join('')}</div><button class="punyako-primary" id="pkManualCopy" type="button">選んだ項目をコピー</button><p id="pkManualStatus" role="status"></p><textarea id="pkManualText" aria-label="共有用の取り扱い説明書" hidden readonly></textarea>`);
+ $('#pkManualCopy').onclick=async()=>{const chosen=[...screen.querySelectorAll('[data-manual]:checked')].map(b=>items[Number(b.dataset.manual)]);if(!chosen.length){$('#pkManualStatus').textContent='共有する項目を選んでください。';return;}const text='私のぷにゅか取り扱い説明書（'+n+'問）\n\n'+chosen.map(([name,copy])=>name+'\n'+copy).join('\n\n');try{await navigator.clipboard.writeText(text);$('#pkManualStatus').textContent='コピーしました。';}catch{const area=$('#pkManualText');area.hidden=false;area.value=text;area.focus();area.select();$('#pkManualStatus').textContent='下の文章を選択してコピーしてください。';}};
+}
+function pkOpen(page){if(page==='self')pkSelf();else if(page==='recovery')pkSelf(true);else if(page==='pair'||page==='together')pkPair(page==='together');else if(page==='daily')pkDaily();else if(page==='consult')pkConsult();else if(page==='manual')pkManual();else pkChange();}
 
 })();
