@@ -1,5 +1,5 @@
 import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
-import {doc,collection,getDoc,getDocs,onSnapshot,runTransaction,setDoc,deleteDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js';
+import {doc,collection,getDoc,getDocs,onSnapshot,runTransaction,setDoc,deleteDoc,serverTimestamp,query,where,getCountFromServer} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js';
 const root=document.getElementById('unicoInterview');
 const $=s=>root.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -9,12 +9,14 @@ const linked=()=>api?.auth.currentUser?.providerData.some(p=>p.providerId==='goo
 const date=v=>v?.toDate?new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(v.toDate()):'';
 function message(t){$('#ivMessage').textContent=t;}
 function permissions(){
- $('#ivManage').hidden=!owner();$('#ivToggle').textContent=config?.enabled?'質問箱の受付を停止':'質問箱の受付を開始';$('#ivSubmit').disabled=busy||!config?.enabled||!countReady;
+ $('#ivManage').hidden=!owner();$('#ivToggle').textContent=config?.enabled?'質問箱の受付を停止':'質問箱の受付を開始';$('#ivSubmit').disabled=busy||!config?.enabled||!countReady;root.querySelectorAll('[data-comments]').forEach(panel=>{if(panel._commentRows)renderComments(panel,panel._commentRows);});
  if(!owner()){$('#ivAdmin').hidden=true;$('#ivInbox').replaceChildren();pending=[];selected=null;adminOpen=false;editing=null;$('#ivQuestion').value='';$('#ivAnswer').value='';}
 }
 function publicRender(){
+ stopCommentViews();
  const sorted=[...articles].sort((a,b)=>(b.updatedAt?.toMillis?.()||0)-(a.updatedAt?.toMillis?.()||0));
- $('#ivArticles').innerHTML=sorted.length?sorted.map((a,i)=>`<details class="iv-answer" ${i===0?'open':''}><summary><small>Q${String(i+1).padStart(2,'0')}</small><span>${esc(a.question)}</span><b aria-hidden="true">＋</b></summary><div class="iv-answer-body"><span class="iv-speaker">うにこ / UNICA</span><p>${esc(a.answer)}</p><time>${date(a.updatedAt)}</time></div></details>`).join(''):'<p class="iv-empty">最初のインタビューを準備しています。公開をお楽しみに。</p>';
+ $('#ivArticles').innerHTML=sorted.length?sorted.map((a,i)=>`<details class="iv-answer" ${i===0?'open':''}><summary><small>Q${String(i+1).padStart(2,'0')}</small><span>${esc(a.question)}</span><b aria-hidden="true">＋</b></summary><div class="iv-answer-body"><span class="iv-speaker">うにこ / UNICA</span><p>${esc(a.answer)}</p><time>${date(a.updatedAt)}</time>${commentShell(a.id)}</div></details>`).join(''):'<p class="iv-empty">最初のインタビューを準備しています。公開をお楽しみに。</p>';
+ bindComments();
  if(owner()&&adminOpen)renderEditList();
 }
 function renderEditList(){
@@ -51,6 +53,42 @@ $('#ivPublish').onclick=async()=>{
  catch{message('公開できませんでした。質問がすでに処理されていないか、通信状態を確認してください。');}finally{busy=false;$('#ivPublish').disabled=false;permissions();}
 };
 $('#ivDeleteArticle').onclick=async()=>{if(!owner()||!editing||!confirm('この記事を公開一覧から削除しますか？'))return;try{await deleteDoc(doc(api.db,'interviewArticles',editing));$('#ivNew').click();message('公開記事を削除しました。');}catch{message('削除できませんでした。');}};
+const commentViews=new Map(),commentStops=new Map(),commentCounts=new Map();
+const commentTime=v=>v?.toDate?new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(v.toDate()):'送信中';
+function commentQuery(id){return query(collection(api.db,'interviewComments'),where('articleId','==',id));}
+function commentShell(id){return `<details class="iv-comments" data-comments="${esc(id)}"><summary>感想 <span data-comment-count>${commentCounts.get(id)??'—'}</span>件 <i aria-hidden="true">›</i></summary><div class="iv-comment-list" aria-live="polite"></div><form class="iv-comment-form"><label>うにこの回答への感想を書く<textarea maxlength="300" placeholder="この回答を読んで感じたことを…" required></textarea></label><small>感想は公開されます。300文字まで。</small><button class="iv-primary" type="submit">感想を送る</button><p class="iv-comment-message" role="status"></p></form></details>`;}
+function stopCommentViews(){
+ root.querySelectorAll('[data-comments]').forEach(panel=>commentViews.set(panel.dataset.comments,{open:panel.open,draft:panel.querySelector('textarea').value}));
+ commentStops.forEach(stop=>stop());commentStops.clear();
+}
+function renderComments(panel,rows){
+ const list=panel.querySelector('.iv-comment-list');
+ list.innerHTML=rows.length?rows.map(r=>`<article class="iv-comment"><div><strong>${esc(r.authorName)}</strong><time>${commentTime(r.createdAt)}</time>${owner()?`<button type="button" data-delete-comment="${esc(r.id)}">削除</button>`:''}</div><p>${esc(r.text)}</p></article>`).join(''):'<p class="iv-empty">まだ感想はありません。最初のひとことをどうぞ。</p>';
+ list.querySelectorAll('[data-delete-comment]').forEach(button=>button.onclick=async()=>{if(!owner()||!confirm('この感想を削除しますか？'))return;try{await deleteDoc(doc(api.db,'interviewComments',button.dataset.deleteComment));}catch{panel.querySelector('.iv-comment-message').textContent='削除できませんでした。';}});
+}
+function watchComments(panel){
+ const id=panel.dataset.comments;if(commentStops.has(id))return;
+ panel.querySelector('.iv-comment-list').textContent='感想を読み込み中…';
+ const stop=onSnapshot(commentQuery(id),snap=>{if(!panel.isConnected)return;const rows=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)||b.id.localeCompare(a.id));commentCounts.set(id,rows.length);panel.querySelector('[data-comment-count]').textContent=String(rows.length);panel._commentRows=rows;renderComments(panel,rows);},()=>{if(panel.isConnected)panel.querySelector('.iv-comment-list').textContent='感想を読み込めませんでした。ページを再読み込みしてください。';});commentStops.set(id,stop);
+}
+function bindComments(){
+ root.querySelectorAll('[data-comments]').forEach(panel=>{
+ const id=panel.dataset.comments,saved=commentViews.get(id);if(saved){panel.open=saved.open;panel.querySelector('textarea').value=saved.draft;}
+ getCountFromServer(commentQuery(id)).then(snap=>{if(panel.isConnected&&!panel.open){commentCounts.set(id,snap.data().count);panel.querySelector('[data-comment-count]').textContent=String(snap.data().count);}}).catch(()=>{});
+ panel.addEventListener('toggle',()=>{if(panel.open)watchComments(panel);else{commentStops.get(id)?.();commentStops.delete(id);}});
+ panel.querySelector('form').onsubmit=async event=>{
+ event.preventDefault();const form=event.currentTarget,msg=form.querySelector('.iv-comment-message'),input=form.querySelector('textarea'),button=form.querySelector('button');if(button.disabled)return;
+ if(!linked()){msg.textContent='投稿には、うにメン登録とGoogle連携が必要です。';document.getElementById('openMemberGate')?.click();return;}
+ const text=input.value.trim();if(!text||text.length>300){msg.textContent='感想は1〜300文字で入力してください。';return;}
+ button.disabled=true;
+ try{const uid=api.auth.currentUser.uid;const ref=doc(collection(api.db,'interviewComments'));
+ await runTransaction(api.db,async tx=>{const [member,article]=await Promise.all([tx.get(doc(api.db,'users',uid)),tx.get(doc(api.db,'interviewArticles',id))]);if(!member.exists()||!article.exists())throw Error('not-available');tx.set(ref,{articleId:id,authorUid:uid,authorName:String(member.data().name||'うにメン'),text,createdAt:serverTimestamp()});});input.value='';commentViews.set(id,{open:true,draft:''});msg.textContent='感想を投稿しました。';}
+ catch{msg.textContent='投稿できませんでした。会員登録・通信状態を確認してください。';}finally{button.disabled=false;}
+ };
+ if(panel.open)watchComments(panel);
+ });
+}
+
 async function init(){
  for(let i=0;i<80&&!window.UNICA_FIREBASE?.db;i++)await new Promise(r=>setTimeout(r,100));api=window.UNICA_FIREBASE;if(!api?.db){message('読み込みに時間がかかっています。ページを再読み込みしてください。');return;}
  onSnapshot(doc(api.db,'interviewPublic','config'),s=>{config=s.exists()?s.data():null;permissions();message(config?.enabled?'':'質問箱は準備中です。');},()=>message('質問箱は準備中です。'));
