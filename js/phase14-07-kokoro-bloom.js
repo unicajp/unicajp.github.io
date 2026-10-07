@@ -444,7 +444,7 @@ function soundButton(){return`<button class="punyako-sound" id="punyakoSound" ty
 function bindSound(){const b=$('#punyakoSound');if(!b)return;b.onclick=()=>{soundEnabled=!soundEnabled;localStorage.setItem(SOUND_KEY,soundEnabled?'on':'off');b.textContent=soundEnabled?'🔊':'🔇';if(soundEnabled){ensureAudio();sfx.sparkle()}}}
 function particleHtml(symbols=['✦','·','✧'],count=28){return`<div class="punyako-fx-particles" aria-hidden="true">${Array.from({length:count},(_,i)=>`<i style="--i:${i};--x:${(i*37)%100}%;--d:${(i%7)*.08}s">${symbols[i%symbols.length]}</i>`).join('')}</div>`}
 
-function showIntro(){pkEnterScreen('intro');
+function showIntro(){pkCurrentBranch=null;pkEnterScreen('intro');
   pkSyncSavedProgress();
   loadProgress();updateHome();setBack(null);modal.classList.add('is-punyako-game-intro');
   const result=activeResult(),journey=localJourney(),form=journey?.seedComplete?formById(journey.equippedId):null;
@@ -605,16 +605,28 @@ function pkMine(){
   return null;
 }
 function pkDifferences(a,b){return AXES.map(k=>({key:k,a:Number(a[k]??50),b:Number(b[k]??50),gap:Math.abs(Number(a[k]??50)-Number(b[k]??50))}));}
+const PK_BRANCHES={
+ personality:{title:'性格',tone:1,items:[['self','性格診断の結果'],['manual','わたしの説明書'],['change','前の自分と比較']]},
+ compatibility:{title:'相性',tone:0,items:[['pair','相性診断'],['together','ふたりの接し方']]},
+ support:{title:'相談',tone:2,items:[['daily','今日の気分'],['consult','悩み相談'],['recovery','疲れと回復']]}
+};
+let pkCurrentBranch=null,pkBranchMenu=false;
 function pkMenuHtml(){
- const items=[['daily','今日のぷにゅか'],['self','自分を知る'],['consult','ぷにゅか相談室'],['manual','取り扱い説明書'],['recovery','元気のヒント'],['pair','相性を見る'],['together','ふたりの過ごし方'],['change','変化を見る']];
- return `<nav class="pk-insight-menu" aria-label="ぷにゅかのメニュー">${items.map(([page,name],i)=>`<button data-pk-page="${page}" data-tone="${i%4}" type="button"><b>${name}</b></button>`).join('')}</nav>`;
+ return `<nav class="pk-insight-menu pk-main-menu" aria-label="ぷにゅかのメニュー">${Object.entries(PK_BRANCHES).map(([page,x])=>`<button data-pk-page="${page}" data-tone="${x.tone}" type="button"><b>${x.title}</b></button>`).join('')}</nav>`;
 }
 function pkBind(){screen.querySelectorAll('[data-pk-page]').forEach(b=>b.onclick=()=>pkOpen(b.dataset.pkPage));}
+function pkBranch(key){
+ const branch=PK_BRANCHES[key];if(!branch)return;
+ pkCurrentBranch=key;pkBranchMenu=true;
+ pkFrame(branch.title,`<nav class="pk-insight-menu pk-branch-menu" aria-label="${branch.title}のメニュー">${branch.items.map(([page,name])=>`<button data-pk-page="${page}" data-tone="${branch.tone}" type="button"><b>${name}</b></button>`).join('')}</nav>`);
+ pkBranchMenu=false;pkBind();
+}
 function pkFrame(title,html){pkEnterScreen('insight:'+title);
- modal.classList.remove('is-punyako-game-intro');setBack(showIntro);screen.className='scent16-screen punyako-screen punyako-result-bg punyako-game-result-bg';
+ const branch=pkCurrentBranch,back=!pkBranchMenu&&branch?()=>pkBranch(branch):showIntro;
+ modal.classList.remove('is-punyako-game-intro');setBack(back);screen.className='scent16-screen punyako-screen punyako-result-bg punyako-game-result-bg';
  const mine=pkMine(),j=localJourney(),form=j?.seedComplete?formById(j.equippedId):null;
- screen.innerHTML=`<section class="pk-insights"><div class="punyako-result-status"><small>こころの冒険</small><strong>${esc(title)}</strong><span>${mine?`${mine.n}/25 問`:'5問で解放'}</span></div>${form?`<div class="pk-companion">${charHtml(form)}<p>${esc(form.name)}</p></div>`:''}${html}<button class="punyako-secondary" id="pkReturn" type="button">診断トップへ</button></section>`;
- $('#pkReturn').onclick=showIntro;bindSquish();
+ screen.innerHTML=`<section class="pk-insights"><div class="punyako-result-status"><small>こころの冒険</small><strong>${esc(title)}</strong><span>${mine?`${mine.n}/25 問`:'5問で解放'}</span></div>${form?`<div class="pk-companion">${charHtml(form)}<p>${esc(form.name)}</p></div>`:''}${html}<button class="punyako-secondary" id="pkReturn" type="button">${!pkBranchMenu&&branch?PK_BRANCHES[branch].title+'のメニューへ':'診断トップへ'}</button></section>`;
+ $('#pkReturn').onclick=back;bindSquish();
 }
 function pkLocked(title,message){pkFrame(title,`<p>${esc(message)}</p><button class="punyako-primary" id="pkContinue" type="button">${localJourney()?.seedComplete?'続きを育てる':'まず5問でぷにゅかを誕生させる'}</button>`);$('#pkContinue').onclick=()=>{if(loadProgress())showQuestion();else if(!localJourney()?.seedComplete)startNew();else showIntro();};}
 const PK_AXIS_TEXT={
@@ -733,6 +745,6 @@ function pkManual(){
  pkFrame('取り扱い説明書',`<p class="pk-note">${n}問から見える私の傾向。共有したい項目だけチェックしてコピーできます。自動で公開されることはありません。</p><div class="pk-manual">${items.map(([name,copy],i)=>`<article class="pk-insight-card"><label><input type="checkbox" data-manual="${i}" checked> ${name}</label><p>${copy}</p></article>`).join('')}</div><button class="punyako-primary" id="pkManualCopy" type="button">選んだ項目をコピー</button><p id="pkManualStatus" role="status"></p><textarea id="pkManualText" aria-label="共有用の取り扱い説明書" hidden readonly></textarea>`);
  $('#pkManualCopy').onclick=async()=>{const chosen=[...screen.querySelectorAll('[data-manual]:checked')].map(b=>items[Number(b.dataset.manual)]);if(!chosen.length){$('#pkManualStatus').textContent='共有する項目を選んでください。';return;}const text='私のぷにゅか取り扱い説明書（'+n+'問）\n\n'+chosen.map(([name,copy])=>name+'\n'+copy).join('\n\n');try{await navigator.clipboard.writeText(text);$('#pkManualStatus').textContent='コピーしました。';}catch{const area=$('#pkManualText');area.hidden=false;area.value=text;area.focus();area.select();$('#pkManualStatus').textContent='下の文章を選択してコピーしてください。';}};
 }
-function pkOpen(page){if(page==='self')pkSelf();else if(page==='recovery')pkSelf(true);else if(page==='pair'||page==='together')pkPair(page==='together');else if(page==='daily')pkDaily();else if(page==='consult')pkConsult();else if(page==='manual')pkManual();else pkChange();}
+function pkOpen(page){if(PK_BRANCHES[page])return pkBranch(page);pkCurrentBranch=Object.keys(PK_BRANCHES).find(key=>PK_BRANCHES[key].items.some(x=>x[0]===page))||null;if(page==='self')pkSelf();else if(page==='recovery')pkSelf(true);else if(page==='pair'||page==='together')pkPair(page==='together');else if(page==='daily')pkDaily();else if(page==='consult')pkConsult();else if(page==='manual')pkManual();else pkChange();}
 
 })();
