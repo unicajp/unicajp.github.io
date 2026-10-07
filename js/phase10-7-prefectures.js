@@ -21,6 +21,14 @@ function render(){const box=$('#prefectureDirectoryList');if(!box)return;$('#pre
 function setOpen(open){if(!open)positions[tab]=panel.scrollTop;modal.classList.toggle('is-open',open);modal.setAttribute('aria-hidden',!open);document.body.classList.toggle('modal-open',!!$('.world-modal.is-open'));if(open){focusReturn=document.activeElement;render();panel.scrollTop=positions[tab]||0;$('.ud-tabs button[aria-selected="true"]')?.focus({preventScroll:true});}else focusReturn?.focus?.({preventScroll:true});}
 function home(){const top=REGIONS.map(([name,ps])=>({name,count:ps.reduce((a,p)=>a+count(p),0)})).filter(x=>x.count).sort((a,b)=>b.count-a.count).slice(0,3);$('#prefectureTotalMembers')&&($('#prefectureTotalMembers').textContent=rows.length+'人');$('#prefectureHomeRanking')&&($('#prefectureHomeRanking').innerHTML='<p class="ud-note">一覧・地域・誕生日から仲間を探せます。</p>');window.dispatchEvent(new CustomEvent('unica:prefecture-summary',{detail:{total:rows.length,top}}));}
 function open(){if(!isMember()){document.getElementById('openMemberGate')?.click();return;}setOpen(true);}
+// Keep the public entry used by the existing home buttons.
+window.UNICA_PREFECTURE_DIRECTORY={
+ open,
+ openMembers(prefecture){
+  if(!PREFS.includes(prefecture))return;
+  tab='region';pref=prefecture;region=REGIONS.find(x=>x[1].includes(pref))[0];open();
+ }
+};
 $('#prefectureDirectoryTitle').textContent='うにメン';$('.prefecture-directory-intro').textContent='仲間を探したり、地域や誕生日を見られます。';$('#openPrefectureDirectory').innerHTML='うにメンを見る <span>›</span>';
 $('#openPrefectureDirectory').addEventListener('click',open);document.querySelectorAll('[data-close-prefecture-directory]').forEach(el=>el.addEventListener('click',()=>setOpen(false)));
 modal.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.udTab){positions[tab]=panel.scrollTop;tab=b.dataset.udTab;render();panel.scrollTop=positions[tab]||0;$('#udTab-'+tab)?.focus({preventScroll:true});}else if(b.dataset.udRegion){region=b.dataset.udRegion;pref='';render();}else if(b.dataset.udPref){pref=b.dataset.udPref;region=REGIONS.find(x=>x[1].includes(pref))[0];render();$('#udSelected')?.scrollIntoView({block:'nearest'});}else if(b.dataset.udPerson){positions[tab]=panel.scrollTop;setOpen(false);window.dispatchEvent(new CustomEvent('unica:open-member-pass',{detail:{uid:b.dataset.udPerson}}));}});
