@@ -298,3 +298,10 @@
 .pk-consult-options{display:grid;gap:9px}.pk-consult-options button{margin:0}.pk-manual label{font-weight:bold}.pk-manual input{accent-color:#c379df;width:18px;height:18px;vertical-align:middle}#pkManualText{width:100%;min-height:200px;box-sizing:border-box;font:inherit;padding:12px;border-radius:12px}#pkDailyHistory p{font-size:12px}
 @media(max-width:360px){.pk-insight-menu{padding:0;gap:11px 8px}.pk-insight-menu button{min-height:54px;padding:10px 3px}.pk-insight-menu button b{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.pk-insight-menu button{transition:none}}
+
+/* Three clear entry points, then a focused branch. */
+.pk-insight-menu.pk-main-menu{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pk-main-menu button{min-height:62px}.pk-main-menu button b{font-size:20px;letter-spacing:.12em}
+.pk-insight-menu.pk-branch-menu{grid-template-columns:1fr;max-width:350px;margin:20px auto;gap:14px}
+.pk-branch-menu button{min-height:56px}.pk-branch-menu button b{font-size:15px}
+@media(max-width:360px){.pk-main-menu button b{font-size:18px}.pk-insight-menu.pk-main-menu{gap:8px}}
