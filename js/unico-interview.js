@@ -113,12 +113,12 @@ function bindComments(){
  });
 }
 
-const REACTIONS=[['warm','ほっこりした'],['agree','共感した'],['more','もっと聞きたい']];
+const REACTIONS=[['warm','ほっこり'],['agree','共感'],['more','もっと聞きたい']];
 const readStates=new Map(),readCountStops=new Map(),readReceiptStops=new Map();
 let readAuthUid=null;
 const reactionKey=(id,kind)=>id+':'+kind;
 function readState(id,kind){const key=reactionKey(id,kind);if(!readStates.has(key))readStates.set(key,{count:null,countError:false,pressed:false,receiptReady:false,pending:false,error:''});return readStates.get(key);}
-function readShell(id){return `<div class="iv-reactions" data-reaction-group="${esc(id)}"><div class="iv-reaction-buttons">${REACTIONS.map(([kind,label])=>`<button type="button" class="iv-reaction-button" data-read-article="${esc(id)}" data-reaction="${kind}" aria-pressed="false" disabled><span>${label}</span><b>—</b></button>`).join('')}</div><p class="iv-reaction-note">いくつでも選べます。もう一度押すと解除できます。</p><p data-read-message role="status"></p></div>`;}
+function readShell(id){return `<div class="iv-reactions" data-reaction-group="${esc(id)}"><div class="iv-reaction-buttons">${REACTIONS.map(([kind,label])=>`<button type="button" class="iv-reaction-button" data-read-article="${esc(id)}" data-reaction="${kind}" aria-pressed="false" disabled><span>${label}</span><b>—</b></button>`).join('')}</div><p data-read-message role="status"></p></div>`;}
 function renderReadButton(id){
  const errors=[];
  root.querySelectorAll('[data-read-article]').forEach(button=>{if(button.dataset.readArticle!==id)return;const kind=button.dataset.reaction,st=readState(id,kind),label=REACTIONS.find(x=>x[0]===kind)[1];
