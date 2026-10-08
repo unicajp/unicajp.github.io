@@ -113,43 +113,50 @@ function bindComments(){
  });
 }
 
+const REACTIONS=[['warm','ほっこりした'],['agree','共感した'],['more','もっと聞きたい']];
 const readStates=new Map(),readCountStops=new Map(),readReceiptStops=new Map();
 let readAuthUid=null;
-function readState(id){if(!readStates.has(id))readStates.set(id,{count:null,countError:false,pressed:false,receiptReady:false,pending:false,error:''});return readStates.get(id);}
-function readShell(id){return `<div class="iv-read"><button type="button" class="iv-read-button" data-read-article="${esc(id)}" disabled>読んだよ · —人</button><p data-read-message="${esc(id)}" role="status"></p></div>`;}
+const reactionKey=(id,kind)=>id+':'+kind;
+function readState(id,kind){const key=reactionKey(id,kind);if(!readStates.has(key))readStates.set(key,{count:null,countError:false,pressed:false,receiptReady:false,pending:false,error:''});return readStates.get(key);}
+function readShell(id){return `<div class="iv-reactions" data-reaction-group="${esc(id)}"><div class="iv-reaction-buttons">${REACTIONS.map(([kind,label])=>`<button type="button" class="iv-reaction-button" data-read-article="${esc(id)}" data-reaction="${kind}" aria-pressed="false" disabled><span>${label}</span><b>—</b></button>`).join('')}</div><p class="iv-reaction-note">いくつでも選べます。もう一度押すと解除できます。</p><p data-read-message role="status"></p></div>`;}
 function renderReadButton(id){
- const state=readState(id),button=[...root.querySelectorAll('[data-read-article]')].find(b=>b.dataset.readArticle===id);if(!button)return;
- button.textContent=`${state.pressed?'読んだよ ✓':'読んだよ'} · ${state.count===null?'—':state.count}人`;
- button.disabled=state.pending||state.pressed||state.count===null||(linked()&&!state.receiptReady);
- button.setAttribute('aria-label',`${state.pressed?'読んだよ、記録済み':'この回答を読んだよ'}、${state.count===null?'人数を読み込み中':state.count+'人'}`);
- const msg=button.parentElement.querySelector('[data-read-message]');msg.textContent=state.error||(state.countError?'人数を読み込めませんでした。Firebaseルールの更新と通信状態を確認してください。':'');
+ const errors=[];
+ root.querySelectorAll('[data-read-article]').forEach(button=>{if(button.dataset.readArticle!==id)return;const kind=button.dataset.reaction,st=readState(id,kind),label=REACTIONS.find(x=>x[0]===kind)[1];
+ button.querySelector('span').textContent=label;button.querySelector('b').textContent=st.count===null?'—':String(st.count);
+ button.disabled=st.pending||st.count===null||(linked()&&!st.receiptReady);
+ button.classList.toggle('is-selected',st.pressed);button.setAttribute('aria-pressed',String(st.pressed));button.setAttribute('aria-label',`${label}、${st.count===null?'読み込み中':st.count+'人'}${st.pressed?'、選択済み。押すと解除':''}`);
+ if(st.error)errors.push(st.error);else if(st.countError)errors.push('件数を読み込めませんでした。通信状態とFirebaseルールを確認してください。');
+ });const group=[...root.querySelectorAll('[data-reaction-group]')].find(x=>x.dataset.reactionGroup===id);if(group)group.querySelector('[data-read-message]').textContent=[...new Set(errors)].join(' ');
 }
 function syncReadReceipts(){
  if(!api?.db)return;const uid=linked()?api.auth.currentUser.uid:null;
  if(readAuthUid!==uid){readReceiptStops.forEach(stop=>stop());readReceiptStops.clear();readAuthUid=uid;readStates.forEach(st=>{st.pressed=false;st.receiptReady=!uid;st.pending=false;st.error='';});}
- const ids=new Set(articles.map(a=>a.id));
- for(const [id,stop] of readReceiptStops)if(!ids.has(id)){stop();readReceiptStops.delete(id);}
- ids.forEach(id=>{const st=readState(id);if(!uid){st.receiptReady=true;renderReadButton(id);return;}
- if(!readReceiptStops.has(id))readReceiptStops.set(id,onSnapshot(doc(api.db,'interviewArticles',id,'reads',uid),snap=>{if(readAuthUid!==uid)return;st.pressed=snap.exists();st.receiptReady=true;st.error='';renderReadButton(id);},()=>{if(readAuthUid!==uid)return;st.receiptReady=false;st.error='記録を確認できませんでした。Firebaseルールの更新と通信状態を確認してください。';renderReadButton(id);}));renderReadButton(id);});
+ const keys=new Set(articles.flatMap(a=>REACTIONS.map(([kind])=>reactionKey(a.id,kind))));
+ for(const [key,stop] of readReceiptStops)if(!keys.has(key)){stop();readReceiptStops.delete(key);}
+ articles.forEach(({id})=>REACTIONS.forEach(([kind])=>{const st=readState(id,kind),key=reactionKey(id,kind);if(!uid){st.receiptReady=true;renderReadButton(id);return;}
+ if(!readReceiptStops.has(key))readReceiptStops.set(key,onSnapshot(doc(api.db,'interviewArticles',id,'reactions',uid,'choices',kind),snap=>{if(readAuthUid!==uid)return;st.pressed=snap.exists()&&snap.data().selected===true;st.receiptReady=true;st.error='';renderReadButton(id);},()=>{if(readAuthUid!==uid)return;st.receiptReady=false;st.error='選択状態を確認できませんでした。通信状態とFirebaseルールを確認してください。';renderReadButton(id);}));renderReadButton(id);}));
+}
+function reactionEffect(button){
+ if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+ const spark=document.createElement('i');spark.className='iv-reaction-spark';spark.textContent='✦';spark.setAttribute('aria-hidden','true');button.appendChild(spark);setTimeout(()=>spark.remove(),750);
 }
 function bindReadButtons(){
- const ids=new Set(articles.map(a=>a.id));for(const [id,stop] of readCountStops)if(!ids.has(id)){stop();readCountStops.delete(id);readStates.delete(id);}
- ids.forEach(id=>{if(!readCountStops.has(id))readCountStops.set(id,onSnapshot(doc(api.db,'interviewReadCounts',id),snap=>{const st=readState(id);st.count=snap.exists()?Number(snap.data().count):0;st.countError=false;renderReadButton(id);},()=>{const st=readState(id);st.count=null;st.countError=true;renderReadButton(id);}));});
- syncReadReceipts();
+ const keys=new Set(articles.flatMap(a=>REACTIONS.map(([kind])=>reactionKey(a.id,kind))));for(const [key,stop] of readCountStops)if(!keys.has(key)){stop();readCountStops.delete(key);readStates.delete(key);}
+ articles.forEach(({id})=>REACTIONS.forEach(([kind])=>{const key=reactionKey(id,kind);if(!readCountStops.has(key))readCountStops.set(key,onSnapshot(doc(api.db,'interviewReactionCounts',id,'counts',kind),snap=>{const st=readState(id,kind);st.count=snap.exists()?Number(snap.data().count):0;st.countError=false;renderReadButton(id);},()=>{const st=readState(id,kind);st.count=null;st.countError=true;renderReadButton(id);}));}));syncReadReceipts();
  root.querySelectorAll('[data-read-article]').forEach(button=>button.onclick=async()=>{
- const id=button.dataset.readArticle,st=readState(id);if(st.pending||st.pressed)return;
- if(!linked()){message('「読んだよ」には、うにメン登録とGoogle連携が必要です。');requestInterviewLogin();return;}
- const uid=api.auth.currentUser.uid;st.pending=true;st.error='';renderReadButton(id);
+ const id=button.dataset.readArticle,kind=button.dataset.reaction,st=readState(id,kind);if(st.pending)return;
+ if(!linked()){message('リアクションには、うにメン登録とGoogle連携が必要です。');requestInterviewLogin();return;}
+ const uid=api.auth.currentUser.uid,target=!st.pressed;st.pending=true;st.error='';renderReadButton(id);
  try{await runTransaction(api.db,async tx=>{
- const receipt=doc(api.db,'interviewArticles',id,'reads',uid),counter=doc(api.db,'interviewReadCounts',id);
+ const receipt=doc(api.db,'interviewArticles',id,'reactions',uid,'choices',kind),counter=doc(api.db,'interviewReactionCounts',id,'counts',kind);
  const [old,totals,article,member]=await Promise.all([tx.get(receipt),tx.get(counter),tx.get(doc(api.db,'interviewArticles',id)),tx.get(doc(api.db,'users',uid))]);
- if(!article.exists()||!member.exists())throw Error('not-available');if(old.exists())return;
- const count=totals.exists()?totals.data().count:0;if(!Number.isInteger(count)||count<0)throw Error('invalid-count');
- tx.set(receipt,{createdAt:serverTimestamp()});tx.set(counter,{count:count+1});
- });if(readAuthUid===uid)st.pressed=true;
- }catch{if(readAuthUid===uid)st.error='保存できませんでした。会員登録・Firebaseルール・通信状態を確認して、もう一度お試しください。';}
+ if(!article.exists()||!member.exists())throw Error('not-available');const selected=old.exists()&&old.data().selected===true;if(selected===target)return;
+ const count=totals.exists()?totals.data().count:0;if(!Number.isInteger(count)||count<0||(!target&&count===0))throw Error('invalid-count');
+ tx.set(receipt,{selected:target,updatedAt:serverTimestamp()});tx.set(counter,{count:count+(target?1:-1)});
+ });if(readAuthUid===uid){st.pressed=target;if(target&&button.isConnected)reactionEffect(button);}
+ }catch{if(readAuthUid===uid)st.error='保存できませんでした。会員登録・通信状態・Firebaseルールを確認して、もう一度お試しください。';}
  finally{st.pending=false;renderReadButton(id);}
- });ids.forEach(renderReadButton);
+ });articles.forEach(({id})=>renderReadButton(id));
 }
 
 async function init(){
