@@ -31,14 +31,16 @@ function requestInterviewLogin(){
  const gate=document.getElementById('openMemberGate');if(gate){closeInterview();gate.click();}else if($('#ivLogin'))$('#ivLogin').hidden=false;
 }
 function permissions(){
+ syncReadReceipts();
  if($('#ivLogin')&&linked())$('#ivLogin').hidden=true;$('#ivManage').hidden=!owner();$('#ivToggle').textContent=config?.enabled?'質問箱の受付を停止':'質問箱の受付を開始';$('#ivSubmit').disabled=busy||!config?.enabled||!countReady;root.querySelectorAll('[data-comments]').forEach(panel=>{if(panel._commentRows)renderComments(panel,panel._commentRows);});
  if(!owner()){$('#ivAdmin').hidden=true;$('#ivInbox').replaceChildren();pending=[];selected=null;adminOpen=false;editing=null;$('#ivQuestion').value='';$('#ivAnswer').value='';}
 }
 function publicRender(){
+ const answerOpen=new Map([...root.querySelectorAll('[data-answer]')].map(el=>[el.dataset.answer,el.open]));
  stopCommentViews();
  const sorted=[...articles].sort((a,b)=>(b.updatedAt?.toMillis?.()||0)-(a.updatedAt?.toMillis?.()||0));
- $('#ivArticles').innerHTML=sorted.length?sorted.map((a,i)=>`<details class="iv-answer" ${i===0?'open':''}><summary><small>Q${String(i+1).padStart(2,'0')}</small><span>${esc(a.question)}</span><b aria-hidden="true">＋</b></summary><div class="iv-answer-body"><span class="iv-speaker">うにこ / UNICA</span><p>${esc(a.answer)}</p><time>${date(a.updatedAt)}</time>${commentShell(a.id)}</div></details>`).join(''):'<p class="iv-empty">最初のインタビューを準備しています。公開をお楽しみに。</p>';
- bindComments();
+ $('#ivArticles').innerHTML=sorted.length?sorted.map((a,i)=>`<details class="iv-answer" data-answer="${esc(a.id)}" ${(answerOpen.has(a.id)?answerOpen.get(a.id):i===0)?'open':''}><summary><small>Q${String(i+1).padStart(2,'0')}</small><span>${esc(a.question)}</span><b aria-hidden="true">＋</b></summary><div class="iv-answer-body"><span class="iv-speaker">うにこ / UNICA</span><p>${esc(a.answer)}</p><time>${date(a.updatedAt)}</time>${readShell(a.id)}${commentShell(a.id)}</div></details>`).join(''):'<p class="iv-empty">最初のインタビューを準備しています。公開をお楽しみに。</p>';
+ bindComments();bindReadButtons();
  if(owner()&&adminOpen)renderEditList();
 }
 function renderEditList(){
@@ -109,6 +111,45 @@ function bindComments(){
  };
  if(panel.open)watchComments(panel);
  });
+}
+
+const readStates=new Map(),readCountStops=new Map(),readReceiptStops=new Map();
+let readAuthUid=null;
+function readState(id){if(!readStates.has(id))readStates.set(id,{count:null,countError:false,pressed:false,receiptReady:false,pending:false,error:''});return readStates.get(id);}
+function readShell(id){return `<div class="iv-read"><button type="button" class="iv-read-button" data-read-article="${esc(id)}" disabled>読んだよ · —人</button><p data-read-message="${esc(id)}" role="status"></p></div>`;}
+function renderReadButton(id){
+ const state=readState(id),button=[...root.querySelectorAll('[data-read-article]')].find(b=>b.dataset.readArticle===id);if(!button)return;
+ button.textContent=`${state.pressed?'読んだよ ✓':'読んだよ'} · ${state.count===null?'—':state.count}人`;
+ button.disabled=state.pending||state.pressed||state.count===null||(linked()&&!state.receiptReady);
+ button.setAttribute('aria-label',`${state.pressed?'読んだよ、記録済み':'この回答を読んだよ'}、${state.count===null?'人数を読み込み中':state.count+'人'}`);
+ const msg=button.parentElement.querySelector('[data-read-message]');msg.textContent=state.error||(state.countError?'人数を読み込めませんでした。Firebaseルールの更新と通信状態を確認してください。':'');
+}
+function syncReadReceipts(){
+ if(!api?.db)return;const uid=linked()?api.auth.currentUser.uid:null;
+ if(readAuthUid!==uid){readReceiptStops.forEach(stop=>stop());readReceiptStops.clear();readAuthUid=uid;readStates.forEach(st=>{st.pressed=false;st.receiptReady=!uid;st.pending=false;st.error='';});}
+ const ids=new Set(articles.map(a=>a.id));
+ for(const [id,stop] of readReceiptStops)if(!ids.has(id)){stop();readReceiptStops.delete(id);}
+ ids.forEach(id=>{const st=readState(id);if(!uid){st.receiptReady=true;renderReadButton(id);return;}
+ if(!readReceiptStops.has(id))readReceiptStops.set(id,onSnapshot(doc(api.db,'interviewArticles',id,'reads',uid),snap=>{if(readAuthUid!==uid)return;st.pressed=snap.exists();st.receiptReady=true;st.error='';renderReadButton(id);},()=>{if(readAuthUid!==uid)return;st.receiptReady=false;st.error='記録を確認できませんでした。Firebaseルールの更新と通信状態を確認してください。';renderReadButton(id);}));renderReadButton(id);});
+}
+function bindReadButtons(){
+ const ids=new Set(articles.map(a=>a.id));for(const [id,stop] of readCountStops)if(!ids.has(id)){stop();readCountStops.delete(id);readStates.delete(id);}
+ ids.forEach(id=>{if(!readCountStops.has(id))readCountStops.set(id,onSnapshot(doc(api.db,'interviewReadCounts',id),snap=>{const st=readState(id);st.count=snap.exists()?Number(snap.data().count):0;st.countError=false;renderReadButton(id);},()=>{const st=readState(id);st.count=null;st.countError=true;renderReadButton(id);}));});
+ syncReadReceipts();
+ root.querySelectorAll('[data-read-article]').forEach(button=>button.onclick=async()=>{
+ const id=button.dataset.readArticle,st=readState(id);if(st.pending||st.pressed)return;
+ if(!linked()){message('「読んだよ」には、うにメン登録とGoogle連携が必要です。');requestInterviewLogin();return;}
+ const uid=api.auth.currentUser.uid;st.pending=true;st.error='';renderReadButton(id);
+ try{await runTransaction(api.db,async tx=>{
+ const receipt=doc(api.db,'interviewArticles',id,'reads',uid),counter=doc(api.db,'interviewReadCounts',id);
+ const [old,totals,article,member]=await Promise.all([tx.get(receipt),tx.get(counter),tx.get(doc(api.db,'interviewArticles',id)),tx.get(doc(api.db,'users',uid))]);
+ if(!article.exists()||!member.exists())throw Error('not-available');if(old.exists())return;
+ const count=totals.exists()?totals.data().count:0;if(!Number.isInteger(count)||count<0)throw Error('invalid-count');
+ tx.set(receipt,{createdAt:serverTimestamp()});tx.set(counter,{count:count+1});
+ });if(readAuthUid===uid)st.pressed=true;
+ }catch{if(readAuthUid===uid)st.error='保存できませんでした。会員登録・Firebaseルール・通信状態を確認して、もう一度お試しください。';}
+ finally{st.pending=false;renderReadButton(id);}
+ });ids.forEach(renderReadButton);
 }
 
 async function init(){
