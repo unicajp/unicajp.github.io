@@ -24,3 +24,5 @@
 .unico-interview .iv-reaction-button b{flex-shrink:0;min-width:14px;padding:2px 3px;font:700 10px/1.2 system-ui,sans-serif}
 .iv-answer-body .iv-reaction-note,.iv-answer-body .iv-reactions [data-read-message]{font:10px/1.5 system-ui,sans-serif;margin:6px 0}
 @media(max-width:360px){.iv-reaction-buttons{gap:4px}.unico-interview .iv-reaction-button{font-size:10px;padding:6px 3px;gap:3px}.unico-interview .iv-reaction-button b{font-size:9px;min-width:12px;padding:2px}}
+
+.iv-answer summary .iv-new-badge{display:inline-block;vertical-align:middle;margin-left:7px;padding:3px 6px;border-radius:6px;background:linear-gradient(135deg,#f66d9b,#b862bd);color:#fff;box-shadow:0 2px 5px #c5689e30;font:800 9px/1.2 system-ui,sans-serif;letter-spacing:.06em;white-space:nowrap}
