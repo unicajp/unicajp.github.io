@@ -35,16 +35,29 @@ function permissions(){
  if($('#ivLogin')&&linked())$('#ivLogin').hidden=true;$('#ivManage').hidden=!owner();$('#ivToggle').textContent=config?.enabled?'質問箱の受付を停止':'質問箱の受付を開始';$('#ivSubmit').disabled=busy||!config?.enabled||!countReady;root.querySelectorAll('[data-comments]').forEach(panel=>{if(panel._commentRows)renderComments(panel,panel._commentRows);});
  if(!owner()){$('#ivAdmin').hidden=true;$('#ivInbox').replaceChildren();pending=[];selected=null;adminOpen=false;editing=null;$('#ivQuestion').value='';$('#ivAnswer').value='';}
 }
+// Display the oldest published answer first, matching the input sequence.
+function orderedArticles(){return [...articles].sort((a,b)=>(a.updatedAt?.toMillis?.()||0)-(b.updatedAt?.toMillis?.()||0)||a.id.localeCompare(b.id));}
+const viewedArticleKey='unicaInterviewViewedArticlesV1';
+const viewedArticles=new Set();
+try{const saved=JSON.parse(localStorage.getItem(viewedArticleKey)||'[]');if(Array.isArray(saved))saved.filter(id=>typeof id==='string').forEach(id=>viewedArticles.add(id));}catch{}
+function bindArticleViews(){
+ root.querySelectorAll('[data-answer]').forEach(panel=>panel.addEventListener('toggle',()=>{
+  if(!panel.open)return;
+  viewedArticles.add(panel.dataset.answer);
+  panel.querySelector('.iv-new-badge')?.remove();
+  try{localStorage.setItem(viewedArticleKey,JSON.stringify([...viewedArticles]));}catch{}
+ }));
+}
 function publicRender(){
  const answerOpen=new Map([...root.querySelectorAll('[data-answer]')].map(el=>[el.dataset.answer,el.open]));
  stopCommentViews();
- const sorted=[...articles].sort((a,b)=>(b.updatedAt?.toMillis?.()||0)-(a.updatedAt?.toMillis?.()||0));
- $('#ivArticles').innerHTML=sorted.length?sorted.map((a,i)=>`<details class="iv-answer" data-answer="${esc(a.id)}" ${(answerOpen.has(a.id)?answerOpen.get(a.id):i===0)?'open':''}><summary><small>Q${String(i+1).padStart(2,'0')}</small><span>${esc(a.question)}</span><b aria-hidden="true">＋</b></summary><div class="iv-answer-body"><span class="iv-speaker">うにこ / UNICA</span><p>${esc(a.answer)}</p><time>${date(a.updatedAt)}</time>${readShell(a.id)}${commentShell(a.id)}</div></details>`).join(''):'<p class="iv-empty">最初のインタビューを準備しています。公開をお楽しみに。</p>';
- bindComments();bindReadButtons();
+ const sorted=orderedArticles();
+ $('#ivArticles').innerHTML=sorted.length?sorted.map((a,i)=>`<details class="iv-answer" data-answer="${esc(a.id)}" ${(answerOpen.get(a.id)===true)?'open':''}><summary><small>Q${String(i+1).padStart(2,'0')}</small><span>${esc(a.question)}${viewedArticles.has(a.id)?'':'<em class="iv-new-badge">NEW</em>'}</span><b aria-hidden="true">＋</b></summary><div class="iv-answer-body"><span class="iv-speaker">うにこ / UNICA</span><p>${esc(a.answer)}</p><time>${date(a.updatedAt)}</time>${readShell(a.id)}${commentShell(a.id)}</div></details>`).join(''):'<p class="iv-empty">最初のインタビューを準備しています。公開をお楽しみに。</p>';
+ bindArticleViews();bindComments();bindReadButtons();
  if(owner()&&adminOpen)renderEditList();
 }
 function renderEditList(){
- $('#ivEditList').innerHTML=articles.map(a=>`<button type="button" data-edit="${esc(a.id)}">${esc(a.question)}</button>`).join('');
+ $('#ivEditList').innerHTML=orderedArticles().map(a=>`<button type="button" data-edit="${esc(a.id)}">${esc(a.question)}</button>`).join('');
  $('#ivEditList').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{editing=b.dataset.edit;selected=null;const a=articles.find(x=>x.id===editing);$('#ivQuestion').value=a.question;$('#ivAnswer').value=a.answer;$('#ivDeleteArticle').hidden=false;$('#ivSource').textContent='公開済みの記事を編集しています。';});
 }
 function renderInbox(){
