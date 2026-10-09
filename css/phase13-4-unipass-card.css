@@ -61,3 +61,25 @@ body.passport-modal-open{overflow:hidden!important}
 body.passport-titles-open #passportModal .passport-card-shell{
   pointer-events:none!important;
 }
+
+#passportModal [hidden]{display:none!important}
+#passportModal .passport-punyuka-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px}
+#passportModal .passport-punyuka-row dt{font-size:13px;color:inherit;font-weight:700}
+#passportModal .passport-punyuka-row dd{font-size:10px;opacity:.8;margin:0}
+#passportModal .passport-compact-actions{grid-template-columns:1fr}
+#passportModal .passport-detail-settings{padding:9px;border:1px solid #d9cbe1;background:#fff;border-radius:12px;color:#644c74;font-size:12px}
+#passportModal .passport-profile-editor{min-width:0;display:grid;gap:10px;background:#fff;border:1px solid #e5d8ec;border-radius:16px;padding:12px;color:#564363;text-align:left}
+#passportModal .passport-profile-editor label{display:grid;gap:4px;font-size:11px}
+#passportModal .passport-profile-editor input,#passportModal .passport-profile-editor select{width:100%;min-width:0;box-sizing:border-box;font-size:16px;padding:8px;border:1px solid #ded2e5;border-radius:8px;background:#fff;color:#45324e}
+#passportModal .pass-edit-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#passportModal .pass-edit-birthday{display:flex;gap:4px}
+#passportModal .passport-profile-editor fieldset{border:0;padding:0;margin:0;min-width:0}
+#passportModal .passport-profile-editor legend{font-size:11px;margin-bottom:5px}
+#passportModal .pass-edit-icons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;max-height:190px;overflow-y:auto}
+#passportModal .pass-icon-choice{display:grid;justify-items:center;gap:3px;min-width:0;padding:5px;border:1px solid #e1d6e8;border-radius:10px;background:#faf7fc;color:#584166;font-size:10px}
+#passportModal .pass-icon-choice img{width:42px;height:42px;object-fit:contain}
+#passportModal .pass-icon-choice[aria-pressed="true"]{border:2px solid #a76abf;background:#f3e4fb}
+#passportModal .pass-edit-actions{display:flex;gap:7px}
+#passportModal .pass-edit-actions button{flex:1;border:0;border-radius:10px;padding:10px;font-size:12px;background:#eee6f3;color:#654376}
+#passportModal #passEditSave{background:#826097;color:#fff}
+#passportModal #passEditMessage{font-size:11px;margin:0;overflow-wrap:anywhere}
