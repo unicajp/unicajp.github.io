@@ -458,13 +458,19 @@
 
 <div><dt>都道府県</dt><dd id="detailPrefecture">—</dd></div>
 <div><dt>誕生日</dt><dd id="detailBirthday">—</dd></div>
-<div class="passport-detail-wide passport-scent-row" hidden="" id="detailScentRow"><dt>ぷにゅか診断</dt><dd><button class="passport-scent-button" id="detailScentButton" type="button"><span id="detailScentFlower">🌸</span><span><strong id="detailScentName">—</strong><small id="detailScentDate">—</small></span><em id="detailScentMatch"></em></button></dd></div>
+<div class="passport-detail-wide passport-punyuka-row" id="detailPunyukaRow"><dt id="detailPunyukaName">まだぷにゅかはいません</dt><dd id="detailPunyukaImage"></dd></div>
 </dl>
 <div class="passport-card-footer"><span>MEMBER OF UNICA WORLD</span><b aria-hidden="true">|||| || ||| ||||</b></div>
 </div>
 <div class="passport-compact-actions">
 <button class="passport-title-list-button" id="openPassportTitles" type="button"><span>🏷️</span><span><small>現在の称号</small><strong id="detailTitle">はじまりのうにメン</strong></span><b>一覧 ›</b></button>
-<button class="passport-detail-settings" id="detailOpenSettings" type="button">設定</button>
+<button class="passport-detail-settings" id="detailOpenSettings" type="button" hidden>プロフィールを編集</button>
+<form class="passport-profile-editor" id="passProfileEditor" hidden>
+<label>名前<input id="passEditName" autocomplete="nickname" maxlength="16" required></label>
+<div class="pass-edit-pair"><label>都道府県<select id="passEditPrefecture"></select></label><label>誕生日<div class="pass-edit-birthday"><select id="passEditMonth" aria-label="誕生日の月"></select><select id="passEditDay" aria-label="誕生日の日"></select></div></label></div>
+<fieldset><legend>アイコン</legend><div class="pass-edit-icons" id="passEditIcons"></div></fieldset>
+<p id="passEditMessage" role="status"></p><div class="pass-edit-actions"><button type="submit" id="passEditSave">保存</button><button type="button" id="passEditCancel">キャンセル</button></div>
+</form>
 </div>
 </section>
 </div>
@@ -640,8 +646,8 @@
 </div>
 <div aria-live="polite" class="mini-toast" id="miniToast" role="status"></div>
 <script src="js/phase14-09-punyako-avatar.js?v=14.09"></script>
-<script src="js/firebase-init.js?v=14.09-punyako-journey" type="module"></script>
-<script src="js/phase10-2.js?v=14.50" type="module"></script>
+<script src="js/firebase-init.js?v=14.79" type="module"></script>
+<script src="js/phase10-2.js?v=14.79" type="module"></script>
 <script src="js/script.js?v=14.50"></script>
 <script src="js/phase10-3.js?v=14.50"></script>
 <link rel="stylesheet" href="css/unimen-directory.css?v=14.78"/>
@@ -671,8 +677,8 @@
 <link rel="stylesheet" href="css/phase13-31-diagnosis-header-nav.css?v=13.31"/>
 <link rel="stylesheet" href="css/phase14-07-kokoro-bloom.css?v=14.67"/>
 <script src="js/punyuka-compatibility.js?v=14.55" defer></script>
-<script src="js/phase14-07-kokoro-bloom.js?v=14.67" defer></script>
-<link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=13.5.2"/>
+<script src="js/phase14-07-kokoro-bloom.js?v=14.79" defer></script>
+<link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=14.79"/>
 <link rel="stylesheet" href="css/phase13-18-scent-compact.css?v=13.18"/>
 <link rel="stylesheet" href="css/phase13-20-world-background.css?v=13.20.3"/>
 <link rel="stylesheet" href="css/phase13-21-home-quick-comment.css?v=14.50"/>
@@ -680,7 +686,7 @@
 <link rel="stylesheet" href="css/phase13-29-home-hero-gap-cleanup.css?v=13.29"/>
 <link rel="stylesheet" href="css/phase14-35-home-ultra-compact.css?v=14.35"/>
 <link rel="stylesheet" href="css/phase14-39-project-title-exact2lines.css?v=14.40"/>
-<script src="js/phase13-4-unipass-card.js?v=13.5.2" type="module"></script>
+<script src="js/phase13-4-unipass-card.js?v=14.79" type="module"></script>
 <script src="js/phase13-5-common-navigation.js?v=13.7"></script>
 <script src="js/phase13-5-4-header-icons.js?v=13.5.4" defer></script>
 <script id="phase13-7-2-birthday-removal">
