@@ -564,7 +564,13 @@ function showHistory(){pkEnterScreen('history');modal.classList.remove('is-punya
 
 if(title)title.textContent='ぷにゅか診断';
 $('#openScent16')?.addEventListener('click',e=>{e.preventDefault();open()});$('#scent16NavBack')?.addEventListener('click',headerBack);$('#scent16Exit')?.addEventListener('click',close);document.querySelectorAll('[data-close-scent16]').forEach(x=>x.addEventListener('click',close));window.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('is-open'))close()});window.addEventListener('unica:firebase-member-restored',updateHome);window.addEventListener('unica:scent-diagnosis-saved',updateHome);window.addEventListener('unica:punyako-avatar-updated',updateHome);updateHome();
-window.UNICA_SCENT16={open,close,typeById:id=>TYPE_MAP[id]||null,scentIconUrl:id=>TYPE_MAP[id]?.image||'',getMyResult:()=>activeResult()||member()?.scentDiagnosis,getProgress:()=>read(PROGRESS_KEY,null),showIntro,startDiagnosis:startNew,showResult};
+function getAvatarChoices(){
+ const ids=new Set(),j=localJourney();if(j?.seedComplete){ids.add('stage1_base');ids.add(j.equippedId);}
+ const history=read(HISTORY_KEY,[]);for(const r of history){if(r.schema!=='punyako-v4'||!TYPE_MAP[r.typeId])continue;ids.add(r.typeId);ids.add('stage1_base');const r2=r.route?.stage2,r3=r.route?.stage3;if(r2)ids.add(r2==='ear'?'stage2_ear':'stage2_wing');const third={fluffy:'stage3_01_fluffy_ear',round:'stage3_02_round_ear',kira:'stage3_03_kira_wing',gira:'stage3_04_gira_wing'}[r3];if(third)ids.add(third);}
+ const active=activeResult();if(active?.schema==='punyako-v4'&&TYPE_MAP[active.typeId])ids.add(active.typeId);
+ return [...ids].map(formById).filter(Boolean).map(f=>({id:f.id,name:f.name,image:f.image,stage:f.stage||'final'}));
+}
+window.UNICA_SCENT16={getAvatarChoices,open,close,typeById:id=>TYPE_MAP[id]||null,scentIconUrl:id=>TYPE_MAP[id]?.image||'',getMyResult:()=>activeResult()||member()?.scentDiagnosis,getProgress:()=>read(PROGRESS_KEY,null),showIntro,startDiagnosis:startNew,showResult};
 
 // Post-diagnosis features: use recorded answers/scores, never infer scores from art.
 // Recover compatibility snapshots for members who answered before snapshots existed.

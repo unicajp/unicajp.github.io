@@ -71,6 +71,24 @@ async function saveMember(member) {
   }, { merge: true });
 }
 
+async function updateMemberProfile(input){
+ await authReady;const ownerUid=auth.currentUser?.uid;if(!ownerUid||ownerUid!==uid)throw Error('ログインを確認してから、もう一度お試しください。');
+ const name=String(input.name||'').trim(),prefecture=String(input.prefecture||''),birthMonth=Number(input.birthMonth),birthDay=Number(input.birthDay);
+ if(!name||name.length>16)throw Error('名前は1〜16文字で入力してください。');
+ const prefValues=[...document.querySelectorAll('#memberPrefecture option')].map(o=>o.value);if(prefecture&&!prefValues.includes(prefecture))throw Error('都道府県を選んでください。');
+ if(!(birthMonth===0&&birthDay===0)&&!(Number.isInteger(birthMonth)&&birthMonth>=1&&birthMonth<=12&&Number.isInteger(birthDay)&&birthDay>=1&&birthDay<=new Date(Date.UTC(2000,birthMonth,0)).getUTCDate()))throw Error('誕生日の日付を確認してください。');
+ const form=input.iconId?window.UNICA_SCENT16?.getAvatarChoices?.().find(f=>f.id===input.iconId):null;if(input.iconId&&!form)throw Error('獲得済みのぷにゅかから選んでください。');
+ const ref=doc(db,'users',ownerUid);let saved;
+ await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(!snap.exists())throw Error('うにメン情報を確認できません。');if(auth.currentUser?.uid!==ownerUid)throw Error('ログインが変わりました。もう一度開いてください。');
+  const current=snap.data(),patch={name,prefecture,birthMonth,birthDay,updatedAt:serverTimestamp()};
+  if(form&&form.id!==current.punyakoJourney?.equippedId){const journey=current.punyakoJourney||localMember()?.punyakoJourney;if(!journey?.seedComplete)throw Error('先にぷにゅかを誕生させてください。');patch.punyakoJourney={...journey,equippedId:form.id,equippedName:form.name,equippedImage:form.image,currentStage:form.stage,updatedAtMs:Date.now()};}
+  tx.update(ref,patch);saved={...current,...patch,uid:ownerUid};delete saved.updatedAt;
+ });
+ if(auth.currentUser?.uid!==ownerUid)return null;
+ const local={...(localMember()||{}),...saved};localStorage.setItem(MEMBER_KEY,JSON.stringify(local));if(local.punyakoJourney)localStorage.setItem('unicaPunyakoJourneyV4',JSON.stringify(local.punyakoJourney));
+ window.dispatchEvent(new CustomEvent('unica:firebase-member-restored'));window.dispatchEvent(new CustomEvent('unica:punyako-avatar-updated',{detail:local.punyakoJourney}));return local;
+}
+
 async function removeMember() {
   if (!uid) return;
   const userRef = doc(db, 'users', uid);
@@ -448,6 +466,7 @@ window.UNICA_FIREBASE = {
   app, appCheck, auth, db,
   get uid() { return uid; },
   saveMember: member => saveMember(member).catch(console.error),
+  updateMemberProfile,
   ensureMemberNumber,
   removeMember: () => removeMember().catch(console.error),
   syncCommunityRows: rows => syncCommunityRows(rows).catch(console.error),

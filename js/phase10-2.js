@@ -249,7 +249,7 @@ async function openMemberPass(targetUid){
   $('#detailPostCount') && ($('#detailPostCount').textContent='💌 —');
   $('#detailPrefecture') && ($('#detailPrefecture').textContent='—');
   $('#detailBirthday') && ($('#detailBirthday').textContent='—');
-  $('#detailOpenSettings')?.toggleAttribute('hidden',true); $('#detailScentRow')?.toggleAttribute('hidden',true);
+  window.UNICA_PASS_CARD?.loading?.();
   modal?.classList.add('is-open'); modal?.setAttribute('aria-hidden','false'); document.body.classList.add('member-gate-open','modal-open');
   try{
     const snap=await getDoc(doc(db,'users',targetUid));
@@ -267,19 +267,7 @@ async function openMemberPass(targetUid){
     $('#detailPrefecture') && ($('#detailPrefecture').textContent=u.prefecturePublic===false?'非公開':(u.prefecture||'—'));
     $('#detailBirthday') && ($('#detailBirthday').textContent=u.birthdayPublic===false?'非公開':(u.birthMonth&&u.birthDay?`${u.birthMonth}月${u.birthDay}日`:'—'));
     $('#detailTitle') && ($('#detailTitle').textContent=u.title||'はじまりのうにメン');
-    const scent=u.scentDiagnosis; const scentRow=$('#detailScentRow');
-    if(scent?.typeId){
-      const scentType=window.UNICA_SCENT16?.typeById?.(scent.typeId);
-      scentRow?.toggleAttribute('hidden',false);
-      if($('#detailScentFlower')){ const el=$('#detailScentFlower'); const src=window.UNICA_SCENT16?.scentIconUrl?.(scent.typeId); if(src) el.innerHTML=`<img class="passport-scent-icon" src="${esc(src)}" alt="${esc(scent.scentName||scentType?.name||'MY SCENT')}">`; else el.textContent=scentType?.flower||scent.flower||'🌸'; }
-      $('#detailScentName') && ($('#detailScentName').textContent=scent.scentName||scentType?.name||'診断済み');
-      $('#detailScentDate') && ($('#detailScentDate').textContent=`診断日：${String(scent.diagnosedDate||'—').replaceAll('-','/')}`);
-      const mine=window.UNICA_SCENT16?.getMyResult?.();
-      const match=(mine&&targetUid!==uid)?window.UNICA_SCENT16?.compatibility?.(mine,scent,uid,targetUid):null;
-      $('#detailScentMatch') && ($('#detailScentMatch').textContent=match?`${match}% ${match>=95?'🌈 運命の香り':match>=90?'💖 ベストマッチ':''}`:'');
-      const btn=$('#detailScentButton'); if(btn) btn.onclick=()=>{ modal?.classList.remove('is-open'); modal?.setAttribute('aria-hidden','true'); document.body.classList.remove('member-gate-open','modal-open'); document.getElementById('openScent16')?.click(); };
-    }else scentRow?.toggleAttribute('hidden',true);
-    $('#detailOpenSettings')?.toggleAttribute('hidden',targetUid!==uid);
+    window.UNICA_PASS_CARD?.showProfile?.({...u,uid:targetUid},targetUid===uid);
   }catch(error){
     console.error('member pass',error);
     if(token===memberPassRequestToken){$('#detailName') && ($('#detailName').textContent='読み込みに失敗しました');$('#detailJoined') && ($('#detailJoined').textContent='もう一度お試しください');}
