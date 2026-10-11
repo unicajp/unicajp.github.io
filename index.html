@@ -61,7 +61,7 @@
 }
 
 </style>
-<link rel="stylesheet" href="css/phase13-9-2-google-required.css?v=13.9.2"/>
+<link rel="stylesheet" href="css/phase13-9-2-google-required.css?v=14.83"/>
 <link rel="stylesheet" href="css/phase14-34-support-bottom.css?v=14.34"/>
 <link rel="stylesheet" href="css/phase14-37-interaction-fix.css?v=14.37"/>
 <link href="css/unico-interview.css?v=14.75" rel="stylesheet"/>
@@ -303,64 +303,54 @@
 <section aria-labelledby="registerTitle" aria-modal="true" class="member-register" role="dialog">
 <div aria-hidden="true" class="register-light"></div>
 <p class="eyebrow">WELCOME TO UNICA WORLD</p>
-<div class="register-step" id="registerStepOne">
-<h2 id="registerTitle">UNICA WORLDへ<br/>ようこそ。</h2>
-<p class="register-lead">この世界を一緒に歩く「うにメン」になると、<br/>あなただけの「うにパス」が発行されます。</p>
-<div aria-label="うにメン無料登録のご案内" class="free-member-card">
-<div class="free-member-card-heading"><span aria-hidden="true">🌱</span><div><small>JOIN UNICA WORLD</small><strong>うにメン登録は完全無料です</strong></div></div>
-<p>登録料・月額料金はかかりません。うにかを応援しながら、UNICA WORLDの機能を楽しめます。</p>
-<ul>
-<li><span aria-hidden="true">💬</span>応援コメントを書く</li>
-
-<li><span aria-hidden="true">🔔</span>お知らせを受け取る</li>
-</ul>
+<h2 id="registerTitle">UNICA WORLDへようこそ</h2>
+<div class="register-step" id="registerStepChoice">
+<p class="register-lead">初めての方も、登録済みの方もこちらから。</p>
+<div class="register-entry-options">
+<button class="register-entry-new" id="registerStart" type="button"><b>新規登録</b><small>初めての方はこちら</small></button>
+<button class="google-auth-button google-auth-restore" id="googleRestoreButton" type="button"><span aria-hidden="true" class="google-g-mark">G</span><span><b>Googleでログイン</b><small>登録済みの方はこちら</small></span></button>
 </div>
-<div class="register-notice">
-<strong>大切なお知らせ</strong>
-<p>ニックネームは登録後に変更できません。<br/>ぷにゅか診断で誕生したぷにゅかが、あなたのアイコンとして一緒に育ちます。</p>
+<p class="register-entry-note">登録・利用は無料です。Googleアカウントが必要です。</p>
+<p aria-live="polite" class="google-auth-message" id="googleRestoreMessage"></p>
+<button class="register-skip" id="registerSkip" type="button">登録せずにサイトを見る</button>
 </div>
+<div class="register-step" id="registerStepOne" hidden>
+<p class="register-progress">1 / 3　プロフィール入力</p>
+<p id="registerProfileMessage" class="register-entry-note" role="status"></p>
+<p class="register-lead">登録にはGoogleアカウントを使います。</p>
 <label class="register-label" for="memberNickname">ニックネーム</label>
 <input autocomplete="nickname" class="register-input" id="memberNickname" maxlength="16" placeholder="例：うにこ" type="text"/>
 <div class="register-profile-grid">
 <label><span class="register-label">都道府県</span><select class="register-input" id="memberPrefecture"><option value="">選択してください</option></select></label>
-<div><span class="register-label">誕生日（月・日）</span><div class="birthday-selects"><select class="register-input" id="memberBirthMonth"><option value="">月</option></select><select class="register-input" id="memberBirthDay"><option value="">日</option></select></div><small class="privacy-note">年は入力しません。うにパスのプロフィール表示に使用します。</small></div>
+<div><span class="register-label">誕生日（月・日）</span><div class="birthday-selects"><select class="register-input" id="memberBirthMonth"><option value="">月</option></select><select class="register-input" id="memberBirthDay"><option value="">日</option></select></div></div>
 </div>
+<p class="register-entry-note">プロフィールは、登録後もうにパスから変更できます。</p>
 <p aria-live="polite" class="register-error" id="registerError"></p>
-<button class="register-primary" id="registerSubmit" type="button">無料登録の内容を確認する</button>
-<p class="register-free-note">登録・利用はすべて無料です。料金が発生することはありません。</p>
-<button class="register-skip" id="registerSkip" type="button">今は登録せず、公式サイトを見る</button>
-<div class="google-auth-separator"><span>または</span></div>
-<button class="google-auth-button google-auth-restore" id="googleRestoreButton" type="button">
-<span aria-hidden="true" class="google-g-mark">G</span>
-<span><b>Googleで引き継ぐ</b><small>別の端末で使っていたうにパスを開きます</small></span>
-</button>
-<p aria-live="polite" class="google-auth-message" id="googleRestoreMessage"></p>
+<button class="register-primary" id="registerSubmit" type="button">入力内容を確認する</button>
+<button class="register-back register-choice-back" id="registerChoiceBack" type="button">ログイン方法の選択に戻る</button>
 </div>
 <div class="register-step register-confirm" hidden="" id="registerStepConfirm">
-<p class="complete-small">CONFIRM YOUR UNICA PASS</p>
-<h2>この内容で<br/>うにメンになりますか？</h2>
+<p class="register-progress">2 / 3　内容確認・Google連携</p>
 <div class="confirm-profile">
 <div class="confirm-avatar" id="confirmAvatar"></div>
 <div><small>ニックネーム</small><strong id="confirmName">—</strong><em id="confirmLocationBirthday">—</em></div>
 </div>
-<div class="confirm-warning">
-<strong>ニックネームは登録後に変更できません。</strong>
-<p>ぷにゅか診断で誕生したぷにゅかが、あなたのアイコンとして一緒に育ちます。</p>
-</div>
+<p class="register-lead">Googleアカウントを確認して、うにパスを発行します。</p>
+<p id="registerConfirmMessage" class="register-error" aria-live="polite"></p>
 <div class="confirm-actions">
 <button class="register-back" id="registerBack" type="button">戻って修正する</button>
-<button class="register-primary" id="registerConfirm" type="button">無料でうにメンになる</button>
+<button class="register-primary" id="registerConfirm" type="button">Googleで連携して登録</button>
 </div>
 </div>
 <div class="register-step register-complete" hidden="" id="registerStepComplete">
 <div class="complete-flower">🌸</div>
-<p class="complete-small">WELCOME, FOUNDING MEMBER</p>
-<h2>うにパスが<br/>発行されました。</h2>
+<p class="register-progress">3 / 3　登録完了</p>
+<h3>うにパスを発行しました</h3>
 <div class="complete-pass">
 <span id="completeAvatar"></span>
-<div><small>創設うにメン</small><strong id="completeName">—</strong><em id="completeNumber">No.0000</em><small id="completeRegion">—</small></div>
+<div><small>うにメン</small><strong id="completeName">—</strong><em id="completeNumber">No.0000</em><small id="completeRegion">—</small></div>
 </div>
-<p class="register-lead">今日から、この世界で生まれる思い出が<br/>あなたのうにパスに残っていきます。</p>
+<p class="register-lead">Google連携が完了しました。<br/>診断や応援コメントを楽しめます。</p>
 <button class="register-primary" id="enterWorld" type="button">UNICA WORLDへ入る</button>
 </div>
 </section>
@@ -646,15 +636,15 @@
 </div>
 <div aria-live="polite" class="mini-toast" id="miniToast" role="status"></div>
 <script src="js/phase14-09-punyako-avatar.js?v=14.09"></script>
-<script src="js/firebase-init.js?v=14.79" type="module"></script>
-<script src="js/phase10-2.js?v=14.79" type="module"></script>
-<script src="js/script.js?v=14.50"></script>
+<script src="js/firebase-init.js?v=14.83" type="module"></script>
+<script src="js/phase10-2.js?v=14.83" type="module"></script>
+<script src="js/script.js?v=14.83"></script>
 <script src="js/phase10-3.js?v=14.50"></script>
 <link rel="stylesheet" href="css/unimen-directory.css?v=14.78"/>
 <script src="js/phase10-7-prefectures.js?v=14.78" type="module"></script>
 <script src="js/phase10-5-guest.js?v=13.10.5"></script>
 <script src="js/phase10-11-scroll-only.js"></script>
-<script src="js/phase10-12-google.js"></script>
+<script src="js/phase10-12-google.js?v=14.83"></script>
 <script src="js/phase10-14-admin.js" type="module"></script>
 <script src="js/phase10-18-release-countdown.js"></script>
 <link rel="stylesheet" href="css/phase13-11-scent-v2.css?v=13.12"/>
@@ -675,9 +665,9 @@
 
 <script src="js/phase13-10-scent-release-event.js?v=14.64" defer></script>
 <link rel="stylesheet" href="css/phase13-31-diagnosis-header-nav.css?v=13.31"/>
-<link rel="stylesheet" href="css/phase14-07-kokoro-bloom.css?v=14.81"/>
+<link rel="stylesheet" href="css/phase14-07-kokoro-bloom.css?v=14.82"/>
 <script src="js/punyuka-compatibility.js?v=14.55" defer></script>
-<script src="js/phase14-07-kokoro-bloom.js?v=14.81" defer></script>
+<script src="js/phase14-07-kokoro-bloom.js?v=14.82" defer></script>
 <link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=14.79"/>
 <link rel="stylesheet" href="css/phase13-18-scent-compact.css?v=13.18"/>
 <link rel="stylesheet" href="css/phase13-20-world-background.css?v=13.20.3"/>
@@ -724,7 +714,7 @@
   [250,800,1800].forEach(ms=>setTimeout(cleanup,ms));
 })();
 </script>
-<script src="js/phase13-9-2-google-required.js?v=14.49"></script>
+<script src="js/phase13-9-2-google-required.js?v=14.83"></script>
 <script src="js/phase14-36-home-links.js?v=14.45"></script>
 <div class="iv-modal" id="ivModal" aria-hidden="true"><div class="iv-modal-backdrop" data-close-interview></div><section class="iv-page iv-modal-panel" role="dialog" aria-modal="true" aria-labelledby="ivTitle" tabindex="-1"><nav class="iv-page-nav iv-modal-nav"><button type="button" data-close-interview>‹ 戻る</button><span>UNICA INTERVIEW</span><button type="button" data-close-interview aria-label="閉じる">×</button></nav><div class="iv-page-main"><section class="unico-interview" id="unicoInterview" aria-labelledby="ivTitle">
 <div class="iv-head"><div><small>UNICA INTERVIEW</small><h2 id="ivTitle">うにこに聞いてみた</h2></div><div class="iv-count"><strong id="ivCount">—</strong><span>未回答の質問</span></div></div>
