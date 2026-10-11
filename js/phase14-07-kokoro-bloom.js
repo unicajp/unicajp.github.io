@@ -43,32 +43,34 @@ async function pkMakeShareCard(summary,form,data={}){
  const canvas=document.createElement('canvas');canvas.width=1080;
  const ctx=canvas.getContext('2d');if(!ctx)throw Error('画像を作成できませんでした。');
  const family='"Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif';
- const defaultRows=form?.core?[['こころの特徴',form.core],['あなたの強み',form.strength],['回復のヒント',form.recharge],['ぷにゅかから一言',form.advice]].filter(x=>x[1]).map(([label,text])=>({label,text})):[{label:'今回の結果',text:summary}];
- const rows=(data.sections?.length?data.sections:defaultRows).filter(row=>row.text).map(row=>({label:String(row.label||'結果のヒント'),text:String(row.text)}));
- // Only the owner's measured answers are included, never a partner's scores or form affinities.
- if(data.stats){const measured=AXES.filter(k=>typeof data.stats[k]==='number'&&Number.isFinite(data.stats[k]));if(data.statsDetail===false){if(measured.length)rows.push({label:'今回の5つの軸（100点満点）',text:measured.map(k=>`${AXIS_LABEL[k]} ${clamp(data.stats[k],0,100)}`).join(' / ')});}else for(const k of measured)rows.push({label:`${AXIS_LABEL[k]} · ${clamp(data.stats[k],0,100)} / 100`,text:`${PK_AXIS_TEXT[k][0]}傾向。試せる工夫：${PK_AXIS_TEXT[k][1]}。`});}
- if(document.fonts?.ready){await document.fonts.ready;await document.fonts.load('34px "Noto Sans JP"',summary+(form?.name||'')+JSON.stringify(rows)+JSON.stringify(data)+'ぷにゅか診断の結果');}
- let font=35,layout,total;
- const measure=()=>{ctx.font=`400 ${font}px ${family}`;layout=rows.map(row=>({...row,lines:pkCardLines(ctx,row.text,956)}));total=layout.reduce((n,row)=>n+40+row.lines.length*(font+11)+24,0);};
- measure();while(total>1050&&font>29){font--;measure();}
- // Keep every paragraph; exceptionally long results grow instead of losing text.
- canvas.height=Math.max(760,Math.ceil((220+total+78)/10)*10);
- const gradient=ctx.createLinearGradient(0,0,1080,canvas.height);gradient.addColorStop(0,'#fbf6fc');gradient.addColorStop(1,'#f0edf7');ctx.fillStyle=gradient;ctx.fillRect(0,0,1080,canvas.height);
- ctx.textAlign='left';ctx.textBaseline='top';ctx.fillStyle='#786184';ctx.font=`500 25px ${family}`;ctx.fillText('UNICA WORLD',62,38);
- ctx.fillStyle='#51405f';ctx.font=`500 28px ${family}`;ctx.fillText(data.title||'ぷにゅか診断の結果',62,78);
- const name=String(form?.name||'私のこころの結果');let nameSize=43;ctx.font=`500 ${nameSize}px ${family}`;while(ctx.measureText(name).width>810&&nameSize>30)ctx.font=`500 ${--nameSize}px ${family}`;ctx.fillText(name,62,119);
- ctx.fillStyle='#75647f';ctx.font=`400 26px ${family}`;ctx.fillText(data.subtitle||'こころの特徴・強み・回復のヒント',62,174);
+ const defaults=[['こころの特徴',form?.core],['あなたの強み',form?.strength],['回復のヒント',form?.recharge],['ぷにゅかから一言',form?.advice]].filter(x=>x[1]).map(([label,text])=>({label,text}));
+ let rows=data.sections?.length?data.sections:defaults.length?defaults:[{label:'今回の結果',text:summary}];
+ const preferred=['こころの芽','強みの芽','感情と疲れやすい場面','自分に合う回復方法'];
+ if(rows.length>4){const selected=preferred.map(label=>rows.find(row=>row.label===label)).filter(Boolean);rows=[...selected,...rows.filter(row=>!selected.includes(row))];}
+ // Share a readable digest; the complete analysis remains in the result screen.
+ rows=rows.filter(row=>row.text).slice(0,4).map(row=>{const text=String(row.text).replace(/\s+/g,' ').trim();const sentences=text.match(/[^。！？]+[。！？]?/g)||[text];let copy='';for(const sentence of sentences){if(copy&&copy.length+sentence.length>105)break;copy+=sentence;if(copy.length>=105)break;}if(copy.length>120)copy=copy.slice(0,117)+'…';return {label:String(row.label||'結果のヒント'),text:copy};});
+ const measured=data.stats?AXES.filter(k=>typeof data.stats[k]==='number'&&Number.isFinite(data.stats[k])):[];
+ if(document.fonts?.ready){await document.fonts.ready;await document.fonts.load('34px "Noto Sans JP"',summary+(form?.name||'')+JSON.stringify(rows)+'あなたはどのぷにゅかこころの個性を見つけよう');}
+ let font=34,layout;
+ const measure=()=>{ctx.font=`400 ${font}px ${family}`;layout=rows.map(row=>({...row,lines:pkCardLines(ctx,row.text,rows.length===1?872:412)}));};measure();while(Math.max(...layout.map(row=>row.lines.length))>7&&font>31){font--;measure();}
+ const heights=[];for(let i=0;i<layout.length;i+=2)heights.push(Math.max(252,92+Math.max(...layout.slice(i,i+2).map(row=>row.lines.length))*(font+10)));
+ const gridHeight=heights.reduce((a,b)=>a+b+20,0);canvas.height=Math.max(1240,490+gridHeight+(measured.length?136:16)+148);
+ const round=(x,y,w,h,r,fill)=>{ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();};
+ const bg=ctx.createLinearGradient(0,0,1080,canvas.height);bg.addColorStop(0,'#271b49');bg.addColorStop(.38,'#69518e');bg.addColorStop(1,'#f3cbe4');ctx.fillStyle=bg;ctx.fillRect(0,0,1080,canvas.height);
+ const glow=ctx.createRadialGradient(340,215,10,340,215,450);glow.addColorStop(0,'rgba(255,212,246,.65)');glow.addColorStop(1,'rgba(255,212,246,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,1080,540);
+ const star=(x,y,r)=>{ctx.fillStyle='#ffe4ab';ctx.beginPath();ctx.moveTo(x,y-r);ctx.quadraticCurveTo(x+3,y-3,x+r,y);ctx.quadraticCurveTo(x+3,y+3,x,y+r);ctx.quadraticCurveTo(x-3,y+3,x-r,y);ctx.quadraticCurveTo(x-3,y-3,x,y-r);ctx.fill();};[[78,142,13],[438,92,10],[458,318,16],[970,126,12],[942,350,8],[132,383,8]].forEach(v=>star(...v));
+ ctx.textAlign='left';ctx.textBaseline='top';ctx.font=`500 24px ${family}`;ctx.fillStyle='#f5dcee';ctx.fillText('UNICA WORLD  /  KOKORO BLOOM',58,38);
+ round(530,108,470,49,24,'rgba(255,235,249,.15)');ctx.fillStyle='#ffe1f1';ctx.font=`500 25px ${family}`;ctx.fillText(data.title||'ぷにゅか診断',552,119);
+ ctx.font=`500 49px ${family}`;ctx.fillStyle='#fff8ff';ctx.fillText('こころの個性を',526,179);ctx.fillText('見つけよう。',526,241);
+ ctx.font=`400 25px ${family}`;ctx.fillStyle='#f0dce9';pkCardLines(ctx,data.subtitle||'わたしらしさが、少し見えてくる。',470).slice(0,2).forEach((line,i)=>ctx.fillText(line,530,320+i*34));
  let image=null;if(form?.image)image=await new Promise(resolve=>{const img=new Image();const timer=setTimeout(()=>resolve(null),8000);img.onload=async()=>{clearTimeout(timer);try{await img.decode();resolve(img);}catch{resolve(null)}};img.onerror=()=>{clearTimeout(timer);resolve(null)};img.crossOrigin='anonymous';img.src=form.image;});
- if(image){const scale=Math.min(116/image.naturalWidth,116/image.naturalHeight);const w=image.naturalWidth*scale,h=image.naturalHeight*scale;ctx.drawImage(image,902+(116-w)/2,58+(116-h)/2,w,h);}
- let y=220;const textRecords=[];
- for(const row of layout){
-  ctx.fillStyle='#e6dced';ctx.fillRect(62,y,956,2);y+=15;
-  ctx.fillStyle='#7a5388';ctx.font=`500 29px ${family}`;ctx.fillText(row.label,62,y);textRecords.push({text:row.label,y,size:29});y+=40;
-  ctx.fillStyle='#493e52';ctx.font=`400 ${font}px ${family}`;
-  for(const line of row.lines){ctx.fillText(line,62,y);textRecords.push({text:line,y,size:font});y+=font+11;}
-  y+=9;
- }
- const footer=canvas.height-54;ctx.fillStyle='#80708a';ctx.font=`400 23px ${family}`;ctx.fillText('#ぷにゅか診断  #UNICAWORLD',62,footer);ctx.textAlign='right';ctx.fillText(location.host,1018,footer);
+ if(image){const scale=Math.min(326/image.naturalWidth,326/image.naturalHeight);const w=image.naturalWidth*scale,h=image.naturalHeight*scale;ctx.save();ctx.shadowColor='rgba(255,195,239,.8)';ctx.shadowBlur=34;ctx.drawImage(image,126+(326-w)/2,83+(326-h)/2,w,h);ctx.restore();}else{ctx.fillStyle='#f7d4ed';ctx.font=`500 52px ${family}`;ctx.fillText('KOKORO',134,186);ctx.fillText('BLOOM',151,252);}
+ round(48,420,984,canvas.height-464,30,'#fbf3fc');
+ const name=String(form?.name||'私のこころの結果');let size=43;ctx.font=`500 ${size}px ${family}`;while(ctx.measureText(name).width>900&&size>30)ctx.font=`500 ${--size}px ${family}`;ctx.textAlign='center';ctx.fillStyle='#593663';ctx.fillText(name,540,445);ctx.textAlign='left';
+ const textRecords=[];let y=508;
+ for(let i=0;i<layout.length;i+=2){const height=heights[i/2];for(let col=0;col<2;col++){const row=layout[i+col];if(!row)continue;const x=76+col*474,w=layout.length===1?928:454;round(x,y,w,height,22,i+col===0?'#f0e5f7':'#f7eafa');round(x+22,y+23,6,34,3,'#c875ad');ctx.fillStyle='#82508a';let labelSize=29;ctx.font=`500 ${labelSize}px ${family}`;while(ctx.measureText(row.label).width>w-78&&labelSize>23)ctx.font=`500 ${--labelSize}px ${family}`;ctx.fillText(row.label,x+41,y+23);ctx.fillStyle='#514059';ctx.font=`400 ${font}px ${family}`;row.lines.forEach((line,j)=>{const ty=y+76+j*(font+10);ctx.fillText(line,x+22,ty);textRecords.push({text:line,y:ty,size:font});});}y+=height+20;}
+ if(measured.length){ctx.fillStyle='#886292';ctx.font=`500 24px ${family}`;ctx.fillText('今回の5つの軸 · 100点満点',80,y+6);measured.forEach((k,i)=>{const x=82+i*184;ctx.fillStyle='#87617f';ctx.font=`400 23px ${family}`;ctx.textAlign='center';ctx.fillText(AXIS_LABEL[k],x+75,y+43);ctx.fillStyle='#774785';ctx.font=`500 32px ${family}`;ctx.fillText(String(clamp(data.stats[k],0,100)),x+75,y+75);ctx.textAlign='left';});}
+ const footer=canvas.height-124;const cta=ctx.createLinearGradient(82,footer,998,footer);cta.addColorStop(0,'#9d5ca7');cta.addColorStop(1,'#c76ba6');round(80,footer,920,60,30,cta);ctx.textAlign='center';ctx.fillStyle='#fff7fc';ctx.font=`500 29px ${family}`;ctx.fillText('あなたはどのぷにゅか？',540,footer+12);ctx.fillStyle='#8f668e';ctx.font=`400 22px ${family}`;ctx.fillText('#ぷにゅか診断  #UNICAWORLD  ·  '+location.host,540,footer+81);
  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw Error('画像を作成できませんでした。');return {blob,canvas,textRecords};
 }
 
