@@ -305,3 +305,21 @@
 .pk-insight-menu.pk-branch-menu{grid-template-columns:1fr;max-width:350px;margin:20px auto;gap:14px}
 .pk-branch-menu button{min-height:56px}.pk-branch-menu button b{font-size:15px}
 @media(max-width:360px){.pk-main-menu button b{font-size:18px}.pk-insight-menu.pk-main-menu{gap:8px}}
+
+/* 14.80: generated results and compact sharing */
+#pkConsultResult,#pkDailyResult,#pkPairResult,.pk-share{scroll-margin-top:85px}
+.pk-consult-options button[aria-pressed="true"]{outline:2px solid #dda9f0;outline-offset:2px}
+.pk-share{margin:12px 0;text-align:left}
+.pk-share .pk-share-open{width:auto!important;min-height:38px!important;padding:8px 16px!important;font-size:12px!important;margin:0!important}
+.pk-share-panel[hidden],.pk-share-actions [hidden]{display:none!important}
+.pk-share-panel{padding:10px;margin-top:8px;border-radius:12px;background:rgba(255,255,255,.09)}
+.pk-share-panel textarea{width:100%;box-sizing:border-box;min-height:115px;padding:9px;resize:vertical;border:1px solid rgba(255,255,255,.25);border-radius:8px;background:#21182f;color:#fff;font-size:14px;line-height:1.6}
+.pk-share-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.pk-share-actions a,.pk-share-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 12px;border:1px solid rgba(255,255,255,.25);border-radius:9px;background:#443153;color:#fff;font-size:12px;text-decoration:none}
+.pk-share-panel p{font-size:12px;margin:7px 0 0}
+
+.pk-share-card-image{display:block;width:min(100%,300px);max-height:42dvh;object-fit:contain;margin:0 auto 8px;border-radius:12px;background:#f8edf9}
+.pk-share-panel details{margin-top:10px;font-size:12px}
+.pk-share-panel details summary{padding:7px 0}
+.pk-share-actions button:disabled{opacity:.5}
+.pk-share-panel img[hidden]{display:none!important}
