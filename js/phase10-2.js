@@ -38,7 +38,7 @@ const todayKey = () => new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Tokyo'
 const nowTime = () => new Intl.DateTimeFormat('ja-JP', { timeZone:'Asia/Tokyo', hour:'2-digit', minute:'2-digit', hour12:false }).format(new Date());
 function member(){ try { return JSON.parse(localStorage.getItem(MEMBER_KEY) || localStorage.getItem(LEGACY_MEMBER_KEY) || 'null'); } catch { return null; } }
 function toast(text){ const el=$('#miniToast'); if(!el)return; el.textContent=text; el.classList.add('is-show'); setTimeout(()=>el.classList.remove('is-show'),2200); }
-function openMemberGate(){ $('#memberGate')?.classList.add('is-open'); document.body.classList.add('member-gate-open'); }
+function openMemberGate(){ if(window.UNICA_MEMBER_GATE?.open)return window.UNICA_MEMBER_GATE.open(true);$('#memberGate')?.classList.add('is-open');document.body.classList.add('member-gate-open'); }
 
 function installUI(){
   const header = $('#worldStatusBar') || $('.site-header');

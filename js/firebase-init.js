@@ -34,6 +34,7 @@ const MEMBER_KEY = 'unicaWorldMemberV4';
 const LEGACY_MEMBER_KEYS = ['unicaWorldMemberV3', 'unicaWorldMemberV2', 'unicaWorldMemberV1'];
 const ONLINE_WINDOW_MS = 5 * 60 * 1000;
 let uid = null;
+let googleLoginInProgress = false;
 let presenceTimer = null;
 let resolveAuthReady;
 const authReady = new Promise(resolve => { resolveAuthReady = resolve; });
@@ -116,27 +117,35 @@ async function removeMember() {
   });
 }
 
-async function restoreMember() {
+async function restoreMember(replaceLocal = false) {
   if (!uid) return;
-  const deletedSnap = await getDoc(doc(db, 'deletedMembers', uid));
+  const restoreUid=uid;
+  const deletedSnap = await getDoc(doc(db, 'deletedMembers', restoreUid));
+  if(auth.currentUser?.uid!==restoreUid)return null;
   if (deletedSnap.exists()) {
     localStorage.removeItem(MEMBER_KEY);
     LEGACY_MEMBER_KEYS.forEach(key => localStorage.removeItem(key));
     window.dispatchEvent(new CustomEvent('unica:firebase-member-deleted'));
     return;
   }
-  const snap = await getDoc(doc(db, 'users', uid));
+  const snap = await getDoc(doc(db, 'users', restoreUid));
+  if(auth.currentUser?.uid!==restoreUid)return null;
   if (snap.exists()) {
     const remote = snap.data();
     const existing = localMember();
-    if (!existing || Number(remote.updatedAt?.seconds || 0) >= Number(existing.firebaseUpdatedAt || 0)) {
+    if (replaceLocal || !existing || Number(remote.updatedAt?.seconds || 0) >= Number(existing.firebaseUpdatedAt || 0)) {
       const clean = { ...remote, firebaseUpdatedAt: Number(remote.updatedAt?.seconds || 0) };
       delete clean.updatedAt;
       delete clean.lastSeenAt;
       delete clean.uid;
       localStorage.setItem(MEMBER_KEY, JSON.stringify(clean));
+      if(replaceLocal){if(clean.punyakoJourney)localStorage.setItem('unicaPunyakoJourneyV4',JSON.stringify(clean.punyakoJourney));else localStorage.removeItem('unicaPunyakoJourneyV4');}
       window.dispatchEvent(new CustomEvent('unica:firebase-member-restored', { detail: clean }));
     }
+    return remote;
+  } else if(replaceLocal) {
+    localStorage.removeItem(MEMBER_KEY);LEGACY_MEMBER_KEYS.forEach(key=>localStorage.removeItem(key));
+    window.dispatchEvent(new CustomEvent('unica:firebase-member-restored'));return null;
   } else {
     const member = localMember();
     if (member) await saveMember(member);
@@ -457,9 +466,28 @@ async function linkGoogleAccount() {
 }
 
 async function signInGoogleAccount() {
-  const result = await signInWithPopup(auth, googleProvider);
-  window.dispatchEvent(new CustomEvent('unica:auth-provider-changed', { detail: authInfo() }));
-  return { ...authInfo(), user: result.user };
+  await authReady;
+  if(googleLoginInProgress)throw new Error('Googleログインを確認中です。');
+  const previousUid=auth.currentUser?.uid;
+  const accountKeys=[MEMBER_KEY,...LEGACY_MEMBER_KEYS,'unicaPunyakoJourneyV4','unicaPunyakoDiagnosisV4Progress','unicaPunyakoDiagnosisV4Result','unicaPunyakoDiagnosisV4History','unicaPunyakoDiagnosisV4ActiveProfiles'];
+  if(previousUid){const cache={};accountKeys.forEach(key=>{const value=localStorage.getItem(key);if(value!==null)cache[key]=value;});localStorage.setItem('unicaWorldAccountCache:'+previousUid,JSON.stringify(cache));}
+  googleLoginInProgress=true;
+  try{
+    const result=await signInWithPopup(auth,googleProvider);uid=result.user.uid;
+    if(previousUid!==uid){
+      accountKeys.forEach(key=>localStorage.removeItem(key));
+      const saved=JSON.parse(localStorage.getItem('unicaWorldAccountCache:'+uid)||'null');
+      if(saved)accountKeys.forEach(key=>{if(typeof saved[key]==='string')localStorage.setItem(key,saved[key]);});
+    }
+    const profile=await restoreMember(true);
+    if(profile?.name&&Number(profile.number)>0)await migrateLegacyMemberNumber();
+    window.dispatchEvent(new CustomEvent('unica:auth-provider-changed',{detail:authInfo()}));
+    window.dispatchEvent(new CustomEvent('unica:firebase-ready',{detail:{uid}}));
+    heartbeat().catch(console.warn);
+    if(!presenceTimer)presenceTimer=window.setInterval(heartbeat,60_000);
+    listenOnlineCount();
+    return {...authInfo(),user:result.user,member:profile};
+  }finally{googleLoginInProgress=false;}
 }
 
 window.UNICA_FIREBASE = {
@@ -502,9 +530,12 @@ onAuthStateChanged(auth, async user => {
 
   uid = user.uid;
   resolveAuthReady?.(uid);
+  // Explicit Google login restores the selected account before UI notifications.
+  if(googleLoginInProgress)return;
   window.dispatchEvent(new CustomEvent('unica:auth-provider-changed', { detail: authInfo() }));
   try {
     await restoreMember();
+    if(auth.currentUser?.uid!==user.uid)return;
     await migrateLegacyMemberNumber();
     await heartbeat();
     listenOnlineCount();

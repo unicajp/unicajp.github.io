@@ -35,21 +35,14 @@
     const code = String(error?.code || '');
     if (code.includes('popup-closed-by-user') || code.includes('cancelled-popup-request')) return 'Google連携がキャンセルされました。もう一度お試しください。';
     if (code.includes('popup-blocked')) return 'Google画面を開けませんでした。ブラウザのポップアップ設定を確認してください。';
-    if (code.includes('credential-already-in-use')) return 'このGoogleアカウントは、すでに別のうにパスと連携されています。「Googleで引き継ぐ」から以前のうにパスを開いてください。';
+    if(code.includes('credential-already-in-use'))return readMember()?'このGoogleアカウントは別のうにパスで使われています。まだ連携していないGoogleアカウントを選んでください。':'登録済みのGoogleアカウントです。「Googleでログイン」を使ってください。';
     if (code.includes('unauthorized-domain')) return 'Firebaseでこのサイトのドメインが承認されていません。';
     if (code.includes('network-request-failed')) return '通信に失敗しました。接続を確認してください。';
     return error?.message || 'Google連携に失敗しました。';
   }
 
   function ensureRegisterNotice() {
-    const step = $('#registerStepOne');
-    if (!step || $('#googleRequiredNotice')) return;
-    const notice = document.createElement('div');
-    notice.id = 'googleRequiredNotice';
-    notice.className = 'google-required-notice';
-    notice.innerHTML = '<span class="google-required-g">G</span><div><strong>Googleアカウント連携が必須です</strong><small>ブラウザや機種が変わっても、同じうにパスを引き継げます。登録確定時にGoogle連携を行います。</small></div>';
-    const freeCard = step.querySelector('.free-member-card');
-    freeCard?.insertAdjacentElement('afterend', notice);
+    // Registration now includes its own short Google-required copy.
   }
 
   function ensureGate() {
@@ -126,14 +119,14 @@
 
   async function requireGoogleBeforeRegistration(event) {
     if (bypassConfirm) return;
-    if (readMember()) return; // アイコン変更など既存会員処理は触らない
+    if (readMember() && window.UNICA_FIREBASE?.authInfo?.().googleLinked) return;
 
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
 
     const button = $('#registerConfirm');
-    const error = $('#registerError');
+    const error = $('#registerConfirmMessage');
     if (!button || button.disabled) return;
     button.disabled = true;
     const oldText = button.textContent;
@@ -149,7 +142,7 @@
       button.click();
       setTimeout(() => { bypassConfirm = false; }, 0);
     } catch (err) {
-      if (error) error.textContent = friendly(err);
+      if(String(err?.code||'').includes('credential-already-in-use')&&!readMember()){window.UNICA_MEMBER_GATE?.showChoice();const loginMessage=$('#googleRestoreMessage');if(loginMessage)loginMessage.textContent=friendly(err);$('#googleRestoreButton')?.focus();}else if(error)error.textContent=friendly(err);
       button.disabled = false;
       button.textContent = oldText;
     }

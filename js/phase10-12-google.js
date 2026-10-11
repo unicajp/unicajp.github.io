@@ -72,9 +72,14 @@
     setMessage(message, 'Googleアカウントを確認しています…');
     try {
       const api = await waitForFirebase();
-      await api.signInGoogleAccount();
-      setMessage(message, 'うにパスを引き継ぎました。', 'success');
-      window.setTimeout(() => window.location.reload(), 700);
+      const result=await api.signInGoogleAccount();
+      if(result.member?.name&&Number(result.member.number)>0){
+        setMessage(message,'ログインしました。','success');
+        window.setTimeout(()=>window.location.reload(),500);
+      }else{
+        setMessage(message,'');button.disabled=false;
+        window.UNICA_MEMBER_GATE?.showRegistration('Googleの確認が完了しました。プロフィールを入力してください。');
+      }
     } catch (error) {
       setMessage(message, friendlyError(error), 'error');
       button.disabled = false;

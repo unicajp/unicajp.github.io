@@ -382,6 +382,9 @@
 
 
   function showRegisterStep(step) {
+    document.getElementById('registerStepChoice').hidden = step !== 'choice';
+    document.getElementById('registerTitle').textContent = ({choice:'UNICA WORLDへようこそ',one:'新規登録',confirm:'登録内容の確認',complete:'ようこそ、うにメンへ'})[step] || 'UNICA WORLD';
+    const panel=memberGate.querySelector('.member-register');panel.scrollTop=0;
     registerStepOne.hidden = step !== 'one';
     registerStepConfirm.hidden = step !== 'confirm';
     registerStepComplete.hidden = step !== 'complete';
@@ -449,18 +452,15 @@
     memberNickname.disabled = false;
     memberNickname.value = '';
     registerSubmit.textContent = '登録内容を確認する';
-    const noticeStrong = document.querySelector('.register-notice strong');
-    const noticeText = document.querySelector('.register-notice p');
-    if (noticeStrong) noticeStrong.textContent = '大切なお知らせ';
-    if (noticeText) noticeText.innerHTML = 'ニックネームは登録後に変更できません。<br>ぷにゅか診断で誕生したぷにゅかが、あなたのアイコンとして一緒に育っていきます。';
-    registerSkip.textContent = '今は登録せず、公式サイトを見る';
     pendingRegistration = null;
     registerError.textContent = '';
-    showRegisterStep('one');
+    showRegisterStep('choice');
+    document.getElementById('googleRestoreMessage').textContent='';
+    document.getElementById('registerConfirmMessage').textContent='';
     memberGate.classList.add('is-open');
     memberGate.setAttribute('aria-hidden', 'false');
     body.classList.add('member-gate-open');
-    window.setTimeout(() => memberNickname?.focus(), 450);
+    window.setTimeout(() => {if(!document.getElementById('registerStepChoice').hidden)document.getElementById('registerStart')?.focus();},450);
   }
 
   function closeMemberGate() {
@@ -498,7 +498,7 @@
       memberPrefecture?.focus();
       return;
     }
-    if (!birthMonth || !birthDay) {
+    if (!Number.isInteger(birthMonth)||birthMonth<1||birthMonth>12||!Number.isInteger(birthDay)||birthDay<1||birthDay>new Date(2000,birthMonth,0).getDate()) {
       registerError.textContent = '誕生日の月と日を選択してください。';
       memberBirthMonth?.focus();
       return;
@@ -510,10 +510,16 @@
     const locationBirthday = document.getElementById('confirmLocationBirthday');
     if (locationBirthday) locationBirthday.textContent = `${prefecture}・${birthMonth}月${birthDay}日`;
     registerError.textContent = '';
+    document.getElementById('registerConfirmMessage').textContent='';
+    registerConfirm.textContent=window.UNICA_FIREBASE?.authInfo?.().googleLinked?'この内容で登録する':'Googleで連携して登録';
     showRegisterStep('confirm');
   });
 
-  registerBack?.addEventListener('click', () => showRegisterStep('one'));
+  function beginRegistration(message='') {showRegisterStep('one');registerError.textContent='';document.getElementById('registerProfileMessage').textContent=message;document.getElementById('registerConfirmMessage').textContent='';memberNickname.focus();}
+  document.getElementById('registerStart').addEventListener('click',()=>beginRegistration());
+  document.getElementById('registerChoiceBack').addEventListener('click',()=>{pendingRegistration=null;showRegisterStep('choice');document.getElementById('registerStart').focus();});
+  registerBack?.addEventListener('click',()=>beginRegistration());
+  window.UNICA_MEMBER_GATE={open:openMemberGate,showRegistration:beginRegistration,showChoice:()=>showRegisterStep('choice')};
 
   async function waitForFirebaseApi(timeoutMs = 10000) {
     const started = Date.now();
@@ -552,6 +558,7 @@
     registerConfirm.textContent = '会員番号を発行中…';
     try {
       const firebaseApi = await waitForFirebaseApi();
+      if(!firebaseApi.authInfo?.().googleLinked)throw new Error('登録にはGoogle連携が必要です。');
       member.number = await firebaseApi.ensureMemberNumber(member);
       writeMember(member);
     } catch (error) {
@@ -577,7 +584,7 @@
   registerSkip?.addEventListener('click', closeMemberGate);
   enterWorld?.addEventListener('click', () => {
     closeMemberGate();
-    document.getElementById('unime')?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('worldHome')?.scrollIntoView({behavior:'smooth',block:'start'});
   });
 
   openPassButton?.addEventListener('click', () => {
