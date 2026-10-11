@@ -5,3 +5,30 @@
 .google-required-gate{position:fixed;inset:0;z-index:50000;display:none;align-items:center;justify-content:center;padding:22px}.google-required-gate.is-open{display:flex}.google-required-backdrop{position:absolute;inset:0;background:rgba(22,24,34,.58);backdrop-filter:blur(8px)}
 .google-required-panel{position:relative;width:min(100%,390px);padding:30px 22px 24px;border-radius:26px;background:#fff;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.22)}
 .google-required-icon{width:52px;height:52px;margin:0 auto 12px;border-radius:50%;font-size:25px}.google-required-kicker{margin:0 0 7px;font-size:10px;font-weight:800;letter-spacing:.16em;opacity:.45}.google-required-panel h2{margin:0 0 13px;font-size:23px;line-height:1.35}.google-required-panel>p:not(.google-required-kicker):not(.google-required-message){margin:0 auto 20px;font-size:13px;line-height:1.75;opacity:.72}.google-required-panel button{width:100%;min-height:52px;border:0;border-radius:16px;background:#202124;color:#fff;font-weight:800;font-size:14px}.google-required-panel button span{margin-right:8px;font-size:17px}.google-required-panel button:disabled{opacity:.55}.google-required-panel>small{display:block;margin-top:11px;font-size:10px;line-height:1.55;opacity:.55}.google-required-message{min-height:1.5em;margin:12px 0 0!important;font-size:11px!important;line-height:1.5!important}.google-required-open{overflow:hidden}
+
+/* 14.83: choose registration or Google login before entering a profile */
+#memberGate [hidden]{display:none!important}
+#memberGate .member-register{width:min(420px,100%)!important;padding:24px 20px!important;max-height:calc(100dvh - 24px)!important}
+#memberGate h2{font-size:21px!important;line-height:1.45!important;letter-spacing:0!important}
+#memberGate h3{font-size:19px;margin:10px 0}
+#memberGate .register-lead{font-size:13px!important;line-height:1.65!important;margin:12px 0!important}
+#memberGate .register-entry-options{display:grid;gap:12px;margin:20px 0 12px}
+#memberGate .register-entry-options button{width:100%;min-height:72px;margin:0;padding:14px 18px;border:1px solid #ddcfe7;border-radius:15px;display:flex;align-items:center;justify-content:center;gap:12px;text-align:left;background:#fff;color:#543d65}
+#memberGate .register-entry-new{background:#79528d!important;color:#fff!important;border-color:#79528d!important}
+#memberGate .register-entry-new{flex-direction:column;gap:5px!important}
+#memberGate .register-entry-options b{font-size:16px;font-weight:700;display:block}
+#memberGate .register-entry-options small{font-size:12px;display:block;margin-top:3px}
+#memberGate .register-entry-note{font-size:12px;line-height:1.6;margin:12px 0;color:#735d80}
+#memberGate .register-progress{font-size:12px;color:#856b94;margin:12px 0}
+#memberGate .register-profile-grid{grid-template-columns:1fr!important;gap:9px}
+#memberGate .register-label{font-size:12px!important;margin-bottom:5px!important}
+#memberGate .register-input{font-size:16px!important;min-height:44px!important}
+#memberGate .register-choice-back{width:100%;margin-top:10px;font-size:12px;min-height:38px}
+#memberGate .register-error,#memberGate .google-auth-message{font-size:12px!important;line-height:1.6!important;margin:8px 0!important;overflow-wrap:anywhere}
+#memberGate .register-error:empty,#memberGate .google-auth-message:empty{display:none}
+#memberGate .confirm-actions{display:grid;grid-template-columns:1fr;gap:9px}
+#memberGate .confirm-actions #registerConfirm{grid-row:1}
+#memberGate .register-primary{font-size:14px!important;min-height:44px!important}
+#memberGate .register-skip{font-size:12px!important;min-height:38px!important}
+
+#registerProfileMessage:empty{display:none}
