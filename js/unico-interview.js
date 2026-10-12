@@ -22,7 +22,7 @@ window.addEventListener('keydown',event=>{
   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
  }
 });
-let api,config=null,countReady=false,busy=false,pending=[],articles=[],selected=null,editing=null,adminOpen=false,featuredId='';
+let api,config=null,countReady=false,busy=false,pending=[],articles=[],selected=null,editing=null,adminOpen=false,featuredId='',articleLoadState='loading',articleLoadCode='';
 const owner=()=>!!api?.auth.currentUser&&api.auth.currentUser.uid==='I1foe78gS2bApFhweosGaLQq4FW2';
 const linked=()=>api?.auth.currentUser?.providerData.some(p=>p.providerId==='google.com');
 const date=v=>v?.toDate?new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(v.toDate()):'';
@@ -49,6 +49,10 @@ function bindArticleViews(){
  }));
 }
 function publicRender(){
+ if(articleLoadState!=='ready'){
+  const text=articleLoadState==='loading'?'インタビューを読み込み中…':articleLoadCode==='permission-denied'?'インタビューの閲覧がFirebaseルールで拒否されています。記事が削除されたとは限りません。':'インタビューを読み込めませんでした。通信状態を確認して再読み込みしてください。';
+  $('#ivArticles').replaceChildren();const note=document.createElement('p');note.className='iv-empty';note.textContent=text;$('#ivArticles').append(note);return;
+ }
  const answerOpen=new Map([...root.querySelectorAll('[data-answer]')].map(el=>[el.dataset.answer,el.open]));
  stopCommentViews();
  const sorted=orderedArticles();
@@ -179,7 +183,7 @@ async function init(){
  for(let i=0;i<80&&!window.UNICA_FIREBASE?.db;i++)await new Promise(r=>setTimeout(r,100));api=window.UNICA_FIREBASE;if(!api?.db){message('読み込みに時間がかかっています。ページを再読み込みしてください。');return;}
  onSnapshot(doc(api.db,'interviewPublic','config'),s=>{config=s.exists()?s.data():null;permissions();message(config?.enabled?'':config?'質問箱の受付は停止中です。':'質問箱の受付はまだ開始されていません。');},()=>{config=null;permissions();message('質問箱の設定を読み込めませんでした。');});
  onSnapshot(doc(api.db,'interviewPublic','counter'),s=>{countReady=s.exists();$('#ivCount').textContent=countReady?String(s.data().pendingCount):'—';permissions();},()=>{$('#ivCount').textContent='—';countReady=false;permissions();message('質問件数を読み込めませんでした。');});
- onSnapshot(collection(api.db,'interviewArticles'),snap=>{articles=snap.docs.map(d=>({id:d.id,...d.data()}));publicRender();},()=>{$('#ivArticles').textContent='インタビューを読み込めませんでした。';});
+ onSnapshot(collection(api.db,'interviewArticles'),snap=>{if(snap.metadata?.fromCache&&snap.empty&&articleLoadState!=='ready')return;articles=snap.docs.map(d=>({id:d.id,...d.data()}));articleLoadState='ready';articleLoadCode='';publicRender();},error=>{articleLoadState='error';articleLoadCode=String(error?.code||'').replace('firestore/','');publicRender();});
  onSnapshot(doc(api.db,'interviewPublic','display'),s=>{featuredId=s.exists()?String(s.data().articleId||''):'';publicRender();},()=>{featuredId='';publicRender();if(owner())$('#ivFeaturedMessage').textContent='トップ表示の設定を読み込めませんでした。追加ルールを確認してください。';});
  onAuthStateChanged(api.auth,permissions);
 }
