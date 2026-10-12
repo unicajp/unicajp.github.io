@@ -102,7 +102,7 @@
       signature = nextSignature;
       const scrollTop = layer.scrollTop;
       const fragment = document.createDocumentFragment();
-      rows.forEach(data => {
+      (document.body.classList.contains('home86-layout')?rows.slice(0,1):rows).forEach(data => {
         const card = document.createElement('article');
         card.className = 'home-comment-row';
         card.dataset.postId = data.id || '';

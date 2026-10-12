@@ -26,17 +26,17 @@ function build(){
  const stack=$('#worldHome .app-home-stack');if(!stack||$('#phase1241Renewal'))return;
  const root=make('div','phase1241-renewal phase1410-clean-home');root.id='phase1241Renewal';
  const fun=make('section','renewal-section renewal-section-simple');
- fun.setAttribute('aria-label','ゲーム・診断・投票・全国のうにメン');
- const grid=make('div','home-feature-links');
- grid.append(
-   card({key:'game',title:'MILK BLOOM',open:openGame}),
-   card({key:'scent',title:'ぷにゅか診断',open:openScent}),
-   card({key:'vote',title:'うにメン投票',open:()=>memberRoute(openVote)}),
-   card({key:'prefecture',title:'全国のうにメン',open:openPrefecture})
- );
- fun.append(grid);root.append(fun);
- const artist=make('section','renewal-section artist-renewal-zone','<div class="renewal-section-head"><div><small>ARTIST & MUSIC</small><h2>うにかの音楽</h2></div><p>聴く・知る</p></div>');
- const release=$('.release-card',stack),people=$('.people-cards',stack);if(release)artist.append(release);if(people)artist.append(people);root.append(artist);
+ root.classList.add('home86');document.body.classList.add('home86-layout');
+ fun.setAttribute('aria-label','こころを育てる');
+ const diagnose=card({key:'scent',title:'ぷにゅか診断',open:openScent});diagnose.classList.add('home86-diagnosis');
+ diagnose.innerHTML='<div><small>KOKORO BLOOM</small><strong>こころに、<br>ぷにゅかを。</strong><p>まず5問。育てながら、自分を知る。</p><span>ぷにゅか診断をひらく <b>›</b></span></div><img src="assets/punyuka/stage1_base.webp" alt="" />';
+ fun.append(diagnose);root.append(fun);
+ const interview=make('button','home86-interview','<small>UNICA INTERVIEW</small><strong>うにこの声を、もう少し。</strong><p id="home86Question">歌のこと、日々のこと。うにこのインタビュー。</p><span id="home86Answer"></span><em>回答を読む <b>›</b></em>');interview.type='button';interview.id='home86Interview';interview.onclick=()=>{document.getElementById('openUnicoInterview')?.click();const id=interview.dataset.articleId;if(id)requestAnimationFrame(()=>{const panel=[...document.querySelectorAll('[data-answer]')].find(el=>el.dataset.answer===id);if(panel){panel.open=true;panel.scrollIntoView({block:'start'});}});};root.append(interview);
+ const news=make('section','home86-news','<header><small>NEWS & MUSIC</small><button type="button" id="home86NewsManage" hidden>お知らせ管理</button></header><button type="button" id="home86NewsOpen"><strong id="home86NewsTitle">音楽・制作のお知らせ</strong><p id="home86NewsCopy">公開したお知らせをここにお届けします。</p><span>お知らせを見る ›</span></button>');root.append(news);
+ const release=$('.release-card',stack);if(release){release.classList.add('home86-release');const artist=make('section','artist-renewal-zone');artist.append(release);root.append(artist);}
+ const community=make('section','home86-support');const comments=$('.home-comments');if(comments){comments.querySelector('header span').textContent='最新のひとこと';community.append(comments);}const supportButton=make('button','home86-support-open','みんなの応援を見る・書く <b>›</b>');supportButton.type='button';supportButton.onclick=()=>document.getElementById('homeQuickCommentHistory')?.click();community.append(supportButton);root.append(community);
+ const members=make('nav','home86-members');members.setAttribute('aria-label','うにメンメニュー');const pass=make('button','home86-pass','うにパス <b>›</b>');pass.type='button';pass.onclick=()=>document.getElementById('openUniPassDirect')?.click();const directory=card({key:'prefecture',title:'うにメンを見る',open:openPrefecture});directory.classList.add('home86-directory');members.append(pass,directory);root.append(members);
+ const people=$('.people-cards',stack);if(people){people.classList.add('home86-people');root.append(people);}
  stack.prepend(root);
 
  // SUPPORT is intentionally outside the home dashboard.

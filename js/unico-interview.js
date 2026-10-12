@@ -52,6 +52,7 @@ function publicRender(){
  const answerOpen=new Map([...root.querySelectorAll('[data-answer]')].map(el=>[el.dataset.answer,el.open]));
  stopCommentViews();
  const sorted=orderedArticles();
+ const featured=sorted[sorted.length-1],entry=document.getElementById('home86Interview');if(entry){entry.dataset.articleId=featured?.id||'';document.getElementById('home86Question').textContent=featured?.question||'歌のこと、日々のこと。うにこのインタビュー。';document.getElementById('home86Answer').textContent=featured?.answer||'';}
  $('#ivArticles').innerHTML=sorted.length?sorted.map((a,i)=>`<details class="iv-answer" data-answer="${esc(a.id)}" ${(answerOpen.get(a.id)===true)?'open':''}><summary><small>Q${String(i+1).padStart(2,'0')}</small><span>${esc(a.question)}${viewedArticles.has(a.id)?'':'<em class="iv-new-badge">NEW</em>'}</span><b aria-hidden="true">＋</b></summary><div class="iv-answer-body"><span class="iv-speaker">うにこ / UNICA</span><p>${esc(a.answer)}</p><time>${date(a.updatedAt)}</time>${readShell(a.id)}${commentShell(a.id)}</div></details>`).join(''):'<p class="iv-empty">最初のインタビューを準備しています。公開をお楽しみに。</p>';
  bindArticleViews();bindComments();bindReadButtons();
  if(owner()&&adminOpen)renderEditList();
