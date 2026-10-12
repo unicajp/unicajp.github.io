@@ -22,7 +22,7 @@ window.addEventListener('keydown',event=>{
   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
  }
 });
-let api,config=null,countReady=false,busy=false,pending=[],articles=[],selected=null,editing=null,adminOpen=false;
+let api,config=null,countReady=false,busy=false,pending=[],articles=[],selected=null,editing=null,adminOpen=false,featuredId='';
 const owner=()=>!!api?.auth.currentUser&&api.auth.currentUser.uid==='I1foe78gS2bApFhweosGaLQq4FW2';
 const linked=()=>api?.auth.currentUser?.providerData.some(p=>p.providerId==='google.com');
 const date=v=>v?.toDate?new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(v.toDate()):'';
@@ -36,7 +36,7 @@ function permissions(){
  if(!owner()){$('#ivAdmin').hidden=true;$('#ivInbox').replaceChildren();pending=[];selected=null;adminOpen=false;editing=null;$('#ivQuestion').value='';$('#ivAnswer').value='';}
 }
 // Display the oldest published answer first, matching the input sequence.
-function orderedArticles(){return [...articles].sort((a,b)=>(a.updatedAt?.toMillis?.()||0)-(b.updatedAt?.toMillis?.()||0)||a.id.localeCompare(b.id));}
+function orderedArticles(){return [...articles].sort((a,b)=>((a.createdAt||a.updatedAt)?.toMillis?.()||0)-((b.createdAt||b.updatedAt)?.toMillis?.()||0)||a.id.localeCompare(b.id));}
 const viewedArticleKey='unicaInterviewViewedArticlesV1';
 const viewedArticles=new Set();
 try{const saved=JSON.parse(localStorage.getItem(viewedArticleKey)||'[]');if(Array.isArray(saved))saved.filter(id=>typeof id==='string').forEach(id=>viewedArticles.add(id));}catch{}
@@ -52,12 +52,13 @@ function publicRender(){
  const answerOpen=new Map([...root.querySelectorAll('[data-answer]')].map(el=>[el.dataset.answer,el.open]));
  stopCommentViews();
  const sorted=orderedArticles();
- const featured=sorted[sorted.length-1],entry=document.getElementById('home86Interview');if(entry){entry.dataset.articleId=featured?.id||'';document.getElementById('home86Question').textContent=featured?.question||'歌のこと、日々のこと。うにこのインタビュー。';document.getElementById('home86Answer').textContent=featured?.answer||'';}
+ const featured=sorted.find(a=>a.id===featuredId)||sorted[sorted.length-1],entry=document.getElementById('home86Interview');if(entry){entry.dataset.articleId=featured?.id||'';document.getElementById('home86Question').textContent=featured?.question||'歌のこと、日々のこと。うにこのインタビュー。';document.getElementById('home86Answer').textContent=featured?.answer||'';}
  $('#ivArticles').innerHTML=sorted.length?sorted.map((a,i)=>`<details class="iv-answer" data-answer="${esc(a.id)}" ${(answerOpen.get(a.id)===true)?'open':''}><summary><small>Q${String(i+1).padStart(2,'0')}</small><span>${esc(a.question)}${viewedArticles.has(a.id)?'':'<em class="iv-new-badge">NEW</em>'}</span><b aria-hidden="true">＋</b></summary><div class="iv-answer-body"><span class="iv-speaker">うにこ / UNICA</span><p>${esc(a.answer)}</p><time>${date(a.updatedAt)}</time>${readShell(a.id)}${commentShell(a.id)}</div></details>`).join(''):'<p class="iv-empty">最初のインタビューを準備しています。公開をお楽しみに。</p>';
  bindArticleViews();bindComments();bindReadButtons();
  if(owner()&&adminOpen)renderEditList();
 }
 function renderEditList(){
+ $('#ivFeaturedSelect').innerHTML='<option value="">自動：最新の公開記事</option>'+orderedArticles().map(a=>`<option value="${esc(a.id)}">${esc(a.question)}</option>`).join('');$('#ivFeaturedSelect').value=articles.some(a=>a.id===featuredId)?featuredId:'';
  $('#ivEditList').innerHTML=orderedArticles().map(a=>`<button type="button" data-edit="${esc(a.id)}">${esc(a.question)}</button>`).join('');
  $('#ivEditList').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{editing=b.dataset.edit;selected=null;const a=articles.find(x=>x.id===editing);$('#ivQuestion').value=a.question;$('#ivAnswer').value=a.answer;$('#ivDeleteArticle').hidden=false;$('#ivSource').textContent='公開済みの記事を編集しています。';});
 }
@@ -83,11 +84,12 @@ $('#ivToggle').onclick=async()=>{if(!owner())return;try{await setDoc(doc(api.db,
 $('#ivReload').onclick=()=>loadInbox().catch(()=>message('読み込めませんでした。'));
 $('#ivCopy').onclick=async()=>{try{await navigator.clipboard.writeText(pending.map((q,i)=>`${i+1}. ${q.body}`).join('\n\n'));message('未回答の質問をコピーしました。ボーカルへの送信用に使えます。');}catch{message('コピーできませんでした。質問本文を選択してコピーしてください。');}};
 $('#ivNew').onclick=()=>{editing=null;selected=null;$('#ivQuestion').value='';$('#ivAnswer').value='';$('#ivDeleteArticle').hidden=true;$('#ivSource').textContent='あなたが用意した質問と、ボーカルから届いた回答を入力してください。';};
+$('#ivFeaturedSave').onclick=async()=>{if(!owner())return;const articleId=$('#ivFeaturedSelect').value,button=$('#ivFeaturedSave');button.disabled=true;try{await setDoc(doc(api.db,'interviewPublic','display'),{articleId,updatedAt:serverTimestamp()});featuredId=articleId;publicRender();$('#ivFeaturedMessage').textContent='トップに表示する記事を保存しました。';}catch{$('#ivFeaturedMessage').textContent='保存できませんでした。表示設定用のFirebaseルールと通信状態を確認してください。';}finally{button.disabled=false;}};
 $('#ivPublish').onclick=async()=>{
  if(!owner()||busy)return;const question=$('#ivQuestion').value.trim(),answer=$('#ivAnswer').value.trim();if(!question||question.length>500||!answer||answer.length>5000){message('質問は1〜500文字、回答は1〜5,000文字で入力してください。');return;}
  if(!confirm('この質問と回答を、みんなに公開しますか？'))return;
  busy=true;$('#ivPublish').disabled=true;
- try{const ref=editing?doc(api.db,'interviewArticles',editing):doc(collection(api.db,'interviewArticles'));const data={question,answer,updatedAt:serverTimestamp()};if(selected)await closeQuestion(selected,{ref,data});else await setDoc(ref,data);$('#ivNew').click();await loadInbox();message('質問と回答を公開しました。');}
+ try{const ref=editing?doc(api.db,'interviewArticles',editing):doc(collection(api.db,'interviewArticles'));const data={question,answer,createdAt:serverTimestamp(),updatedAt:serverTimestamp()};if(selected)await closeQuestion(selected,{ref,data});else if(editing)await runTransaction(api.db,async tx=>{const current=await tx.get(ref);if(!current.exists())throw Error('article-deleted');const old=current.data();tx.set(ref,{...data,createdAt:old.createdAt||old.updatedAt});});else await setDoc(ref,data);$('#ivNew').click();await loadInbox();message('質問と回答を公開しました。');}
  catch{message('公開できませんでした。質問がすでに処理されていないか、通信状態を確認してください。');}finally{busy=false;$('#ivPublish').disabled=false;permissions();}
 };
 $('#ivDeleteArticle').onclick=async()=>{if(!owner()||!editing||!confirm('この記事を公開一覧から削除しますか？'))return;try{await deleteDoc(doc(api.db,'interviewArticles',editing));$('#ivNew').click();message('公開記事を削除しました。');}catch{message('削除できませんでした。');}};
@@ -178,6 +180,8 @@ async function init(){
  onSnapshot(doc(api.db,'interviewPublic','config'),s=>{config=s.exists()?s.data():null;permissions();message(config?.enabled?'':config?'質問箱の受付は停止中です。':'質問箱の受付はまだ開始されていません。');},()=>{config=null;permissions();message('質問箱の設定を読み込めませんでした。');});
  onSnapshot(doc(api.db,'interviewPublic','counter'),s=>{countReady=s.exists();$('#ivCount').textContent=countReady?String(s.data().pendingCount):'—';permissions();},()=>{$('#ivCount').textContent='—';countReady=false;permissions();message('質問件数を読み込めませんでした。');});
  onSnapshot(collection(api.db,'interviewArticles'),snap=>{articles=snap.docs.map(d=>({id:d.id,...d.data()}));publicRender();},()=>{$('#ivArticles').textContent='インタビューを読み込めませんでした。';});
+ onSnapshot(doc(api.db,'interviewPublic','display'),s=>{featuredId=s.exists()?String(s.data().articleId||''):'';publicRender();},()=>{featuredId='';publicRender();if(owner())$('#ivFeaturedMessage').textContent='トップ表示の設定を読み込めませんでした。追加ルールを確認してください。';});
  onAuthStateChanged(api.auth,permissions);
 }
 init();
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{if(api?.db)publicRender();},{once:true});
