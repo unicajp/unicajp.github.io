@@ -4,3 +4,5 @@
 
 .home86 .sre-mission-button{padding:14px 18px!important;min-height:0!important;border-radius:17px!important}.home86 .sre-mission-copy strong{font-size:17px!important}.home86 .sre-mission-copy small{font-size:11px!important}
 .home86-people .person-card{display:flex!important;gap:8px!important}.home86-people .person-card>div{min-width:0!important;flex:1!important;width:auto!important}.home86-people h3{white-space:nowrap}.home86-people .person-card>b{margin-left:auto}.home86-diagnosis strong{font-family:inherit}
+
+.home86-news-reader #news86Back{min-height:40px;padding:9px 14px;border:1px solid #e0cfe4;border-radius:18px;background:#fff7fc;color:#805d87;font-family:inherit;font-size:12px;font-weight:500;line-height:1.4;cursor:pointer}
