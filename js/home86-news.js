@@ -23,5 +23,22 @@ $('news86Photo').onchange=async event=>{const file=event.target.files[0];if(!fil
 $('news86Save').onclick=async()=>{if(!admin()||busy)return;const title=$('news86Title').value.trim(),text=$('news86Text').value.trim(),rawLink=$('news86Link').value.trim();if(!title||!text||rawLink&&!link(rawLink)){$('news86Message').textContent='見出し・本文を入力し、リンクはhttps://で指定してください。';return;}if(!confirm('「'+title+'」を公開しますか？'))return;busy=true;$('news86Save').disabled=true;try{const ref=editing?doc(api.db,'worldNews',editing):doc(collection(api.db,'worldNews'));const value={title,text,photo,link:rawLink?link(rawLink):'',updatedAt:serverTimestamp()};if(!editing)value.createdAt=serverTimestamp();await setDoc(ref,value,{merge:true});editing=ref.id;refresh();show(ref.id);$('news86Delete').hidden=false;$('news86Message').textContent='公開しました。';}catch{$('news86Message').textContent='保存できませんでした。通信状態とお知らせ用ルールの公開を確認してください。';}finally{busy=false;$('news86Save').disabled=false;}};
 $('news86Delete').onclick=async()=>{if(!admin()||!editing||busy||!confirm('このお知らせを削除しますか？'))return;busy=true;try{await deleteDoc(doc(api.db,'worldNews',editing));edit();$('news86Message').textContent='削除しました。';}catch{$('news86Message').textContent='削除できませんでした。';}finally{busy=false;}};
 function refresh(){document.getElementById('home86NewsManage').hidden=!admin();if(!admin())$('news86Editor').hidden=true;const latest=rows[0];document.getElementById('home86NewsTitle').textContent=latest?.title||'音楽・制作のお知らせ';document.getElementById('home86NewsCopy').textContent=latest?.text||'公開したお知らせをここにお届けします。';const select=$('news86Select');select.innerHTML='<option value="">新しいお知らせ</option>'+rows.map(row=>'<option value="'+escape(row.id)+'">'+escape(row.title)+'</option>').join('');select.value=rows.some(row=>row.id===editing)?editing:'';const total=document.getElementById('prefectureTotalMembers')?.textContent;const directory=document.querySelector('.home86-directory');if(directory&&total)directory.textContent='うにメン '+total+' ›';}
-async function init(){for(let i=0;i<80&&!window.UNICA_FIREBASE?.db;i++)await new Promise(resolve=>setTimeout(resolve,100));api=window.UNICA_FIREBASE;if(!api?.db)return;document.getElementById('home86NewsOpen').onclick=()=>openNews();document.getElementById('home86NewsManage').onclick=()=>openNews(true);onAuthStateChanged(api.auth,refresh);onSnapshot(collection(api.db,'worldNews'),snapshot=>{rows=snapshot.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));loaded=true;loadError=false;refresh();if(!reader.hidden)show(shownId);},()=>{loaded=true;loadError=true;refresh();});const total=document.getElementById('prefectureTotalMembers');if(total)new MutationObserver(refresh).observe(total,{childList:true,subtree:true});refresh();}
+let starting=false,initialized=false;
+async function init(){
+ if(initialized||starting)return;starting=true;
+ try{
+  // The home buttons are built by another script at DOMContentLoaded.
+  // Firebase can already be ready before that event, especially on a repeat visit.
+  if(document.readyState==='loading')await new Promise(resolve=>document.addEventListener('DOMContentLoaded',resolve,{once:true}));
+  for(let i=0;i<150&&(!window.UNICA_FIREBASE?.db||!document.getElementById('home86NewsOpen')||!document.getElementById('home86NewsManage'));i++)await new Promise(resolve=>setTimeout(resolve,100));
+  api=window.UNICA_FIREBASE;const openButton=document.getElementById('home86NewsOpen'),manageButton=document.getElementById('home86NewsManage');
+  if(!api?.db||!api.auth||!openButton||!manageButton)return;
+  initialized=true;openButton.onclick=()=>openNews();manageButton.onclick=()=>openNews(true);
+  onAuthStateChanged(api.auth,refresh);
+  onSnapshot(collection(api.db,'worldNews'),snapshot=>{rows=snapshot.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));loaded=true;loadError=false;refresh();if(!reader.hidden)show(shownId);},()=>{loaded=true;loadError=true;refresh();});
+  const total=document.getElementById('prefectureTotalMembers');if(total)new MutationObserver(refresh).observe(total,{childList:true,subtree:true});refresh();
+ }finally{starting=false;}
+}
+window.addEventListener('unica:firebase-ready',()=>{init();if(initialized)refresh();});
+window.addEventListener('unica:auth-provider-changed',()=>{init();if(initialized)refresh();});
 init();
