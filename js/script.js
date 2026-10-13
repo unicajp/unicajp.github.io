@@ -111,6 +111,7 @@
     const target = Number(volume.value);
     bgm.volume = 0;
     bgm.play().then(() => {
+      if (bgm.paused) { setPlayerState(false); return; }
       setPlayerState(true);
       let current = 0;
       fadeTimer = window.setInterval(() => {
@@ -154,7 +155,7 @@
     if (!bgm || !volume) return;
     if (bgm.paused) {
       bgm.volume = Number(volume.value);
-      bgm.play().then(() => setPlayerState(true)).catch(() => setPlayerState(false));
+      bgm.play().then(() => setPlayerState(!bgm.paused)).catch(() => setPlayerState(false));
     } else {
       bgm.pause();
       setPlayerState(false);
@@ -176,7 +177,7 @@
     if (trackTitle) trackTitle.textContent = option.dataset.title;
     if (shouldResume) {
       bgm.volume = Number(volume.value);
-      bgm.play().then(() => setPlayerState(true)).catch(() => setPlayerState(false));
+      bgm.play().then(() => setPlayerState(!bgm.paused)).catch(() => setPlayerState(false));
     } else {
       setPlayerState(false);
     }
@@ -303,6 +304,12 @@
     }
   });
   window.addEventListener('pagehide', pauseBgmWhenLeavingPage);
+  window.addEventListener('unica:karaoke-open', pauseBgmWhenLeavingPage);
+  bgm?.addEventListener('play', () => {
+    const karaoke = document.getElementById('karaoke91');
+    if (karaoke && !karaoke.hidden) pauseBgmWhenLeavingPage();
+  });
+  bgm?.addEventListener('pause', () => setPlayerState(false));
 
 
   // うにメン / うにパス
