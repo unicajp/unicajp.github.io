@@ -1,0 +1,13 @@
+Mozilla Public License Version 2.0
+
+This package is licensed under the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+Full license text: https://www.mozilla.org/en-US/MPL/2.0/
+
+UNICA WORLD uses @soundtouchjs/core 2.1.1 (MPL-2.0), bundled without modifications.
+Source: https://github.com/cutterbl/SoundTouchJS/tree/master/packages/core
+Includes @soundtouchjs/interpolation-strategy-lanczos 2.1.1.
+Pitch processing wrapper: karaoke-pitch-worker.js.
+
+Exact release code: https://cdn.jsdelivr.net/npm/@soundtouchjs/core@2.1.1/.dist/index.js
+Linear resampler source: https://cdn.jsdelivr.net/npm/@soundtouchjs/interpolation-strategy-linear@2.1.1/.dist/index.js
