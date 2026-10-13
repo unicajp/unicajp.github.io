@@ -22,6 +22,7 @@ window.addEventListener('keydown',event=>{
   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
  }
 });
+let articleLoadTimer=null;
 let api,config=null,countReady=false,busy=false,pending=[],articles=[],selected=null,editing=null,adminOpen=false,articleLoadState='loading',articleLoadCode='';
 const owner=()=>!!api?.auth.currentUser&&api.auth.currentUser.uid==='I1foe78gS2bApFhweosGaLQq4FW2';
 const linked=()=>api?.auth.currentUser?.providerData.some(p=>p.providerId==='google.com');
@@ -62,7 +63,7 @@ function publicRender(){
  renderHomeInterview();
  if(articleLoadState!=='ready'){
   const text=articleLoadState==='loading'?'インタビューを読み込み中…':articleLoadCode==='permission-denied'?'インタビューの閲覧がFirebaseルールで拒否されています。記事が削除されたとは限りません。':'インタビューを読み込めませんでした。通信状態を確認して再読み込みしてください。';
-  $('#ivArticles').replaceChildren();const note=document.createElement('p');note.className='iv-empty';note.textContent=text;$('#ivArticles').append(note);return;
+  $('#ivArticles').replaceChildren();const note=document.createElement('p');note.className='iv-empty';note.textContent=text;$('#ivArticles').append(note);if(articleLoadState==='error'){const retry=document.createElement('button');retry.type='button';retry.textContent='再読み込み';retry.onclick=()=>location.reload();$('#ivArticles').append(retry);}return;
  }
  const answerOpen=new Map([...root.querySelectorAll('[data-answer]')].map(el=>[el.dataset.answer,el.open]));
  stopCommentViews();
@@ -188,11 +189,16 @@ function bindReadButtons(){
 }
 
 async function init(){
- for(let i=0;i<80&&!window.UNICA_FIREBASE?.db;i++)await new Promise(r=>setTimeout(r,100));api=window.UNICA_FIREBASE;if(!api?.db){message('読み込みに時間がかかっています。ページを再読み込みしてください。');return;}
+ for(let i=0;i<80&&!window.UNICA_FIREBASE?.db;i++)await new Promise(r=>setTimeout(r,100));api=window.UNICA_FIREBASE;if(!api?.db){articleLoadState='error';publicRender();message('読み込みに時間がかかっています。ページを再読み込みしてください。');return;}
  onSnapshot(doc(api.db,'interviewPublic','config'),s=>{config=s.exists()?s.data():null;permissions();message(config?.enabled?'':config?'質問箱の受付は停止中です。':'質問箱の受付はまだ開始されていません。');},()=>{config=null;permissions();message('質問箱の設定を読み込めませんでした。');});
  onSnapshot(doc(api.db,'interviewPublic','counter'),s=>{countReady=s.exists();$('#ivCount').textContent=countReady?String(s.data().pendingCount):'—';permissions();},()=>{$('#ivCount').textContent='—';countReady=false;permissions();message('質問件数を読み込めませんでした。');});
- onSnapshot(collection(api.db,'interviewArticles'),snap=>{if(snap.metadata?.fromCache&&snap.empty&&articleLoadState!=='ready')return;articles=snap.docs.map(d=>({id:d.id,...d.data()}));articleLoadState='ready';articleLoadCode='';publicRender();},error=>{articleLoadState='error';articleLoadCode=String(error?.code||'').replace('firestore/','');publicRender();});
+ const acceptArticles=snap=>{articles=snap.docs.map(d=>({id:d.id,...d.data()}));articleLoadState='ready';articleLoadCode='';clearTimeout(articleLoadTimer);publicRender();};
+ const failArticles=error=>{clearTimeout(articleLoadTimer);articleLoadState='error';articleLoadCode=String(error?.code||'').replace('firestore/','');publicRender();};
+ articleLoadTimer=setTimeout(()=>{if(articleLoadState!=='ready')failArticles({code:'timeout'});},20000);
+ onSnapshot(collection(api.db,'interviewArticles'),{includeMetadataChanges:true},snap=>{if(snap.metadata?.fromCache&&snap.empty&&articleLoadState!=='ready')return;acceptArticles(snap);},failArticles);
+ // A separate read recovers when the live listener stalls during startup.
+ getDocs(collection(api.db,'interviewArticles')).then(snap=>{if(articleLoadState!=='ready'&&snap.metadata?.fromCache!==true)acceptArticles(snap);}).catch(error=>{if(articleLoadState!=='ready')failArticles(error);});
  onAuthStateChanged(api.auth,permissions);
 }
-init();
+init().catch(error=>{clearTimeout(articleLoadTimer);articleLoadState='error';articleLoadCode=String(error?.code||'');publicRender();});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{if(api?.db)publicRender();},{once:true});
