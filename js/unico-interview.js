@@ -147,7 +147,7 @@ const readStates=new Map(),readCountStops=new Map(),readReceiptStops=new Map();
 let readAuthUid=null;
 const reactionKey=(id,kind)=>id+':'+kind;
 function readState(id,kind){const key=reactionKey(id,kind);if(!readStates.has(key))readStates.set(key,{count:null,countError:false,pressed:false,receiptReady:false,pending:false,error:''});return readStates.get(key);}
-function readShell(id){return `<div class="iv-reactions" data-reaction-group="${esc(id)}"><div class="iv-reaction-buttons">${REACTIONS.map(([kind,label])=>`<button type="button" class="iv-reaction-button" data-read-article="${esc(id)}" data-reaction="${kind}" aria-pressed="false" disabled><span>${label}</span><b>—</b></button>`).join('')}</div><p data-read-message role="status"></p></div>`;}
+function readShell(id){return `<div class="iv-reactions" data-reaction-group="${esc(id)}"><p class="iv-reaction-invite">タップで感想を送る 🌷</p><div class="iv-reaction-buttons">${REACTIONS.map(([kind,label])=>`<button type="button" class="iv-reaction-button" data-read-article="${esc(id)}" data-reaction="${kind}" aria-pressed="false" disabled><span>${label}</span><b>—</b></button>`).join('')}</div><p data-reaction-thanks role="status" aria-live="polite"></p><p data-read-message role="status"></p></div>`;}
 function renderReadButton(id){
  const errors=[];
  root.querySelectorAll('[data-read-article]').forEach(button=>{if(button.dataset.readArticle!==id)return;const kind=button.dataset.reaction,st=readState(id,kind),label=REACTIONS.find(x=>x[0]===kind)[1];
@@ -164,6 +164,10 @@ function syncReadReceipts(){
  for(const [key,stop] of readReceiptStops)if(!keys.has(key)){stop();readReceiptStops.delete(key);}
  articles.forEach(({id})=>REACTIONS.forEach(([kind])=>{const st=readState(id,kind),key=reactionKey(id,kind);if(!uid){st.receiptReady=true;renderReadButton(id);return;}
  if(!readReceiptStops.has(key))readReceiptStops.set(key,onSnapshot(doc(api.db,'interviewArticles',id,'reactions',uid,'choices',kind),snap=>{if(readAuthUid!==uid)return;st.pressed=snap.exists()&&snap.data().selected===true;st.receiptReady=true;st.error='';renderReadButton(id);},()=>{if(readAuthUid!==uid)return;st.receiptReady=false;st.error='選択状態を確認できませんでした。通信状態とFirebaseルールを確認してください。';renderReadButton(id);}));renderReadButton(id);}));
+}
+function reactionThanks(button){
+ const group=button.closest('[data-reaction-group]'),note=group?.querySelector('[data-reaction-thanks]');if(!note)return;
+ clearTimeout(group._thanksTimer);note.textContent='感想をありがとう 🌷';group._thanksTimer=setTimeout(()=>{note.textContent='';},2400);
 }
 function reactionEffect(button){
  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
@@ -182,7 +186,7 @@ function bindReadButtons(){
  if(!article.exists()||!member.exists())throw Error('not-available');const selected=old.exists()&&old.data().selected===true;if(selected===target)return;
  const count=totals.exists()?totals.data().count:0;if(!Number.isInteger(count)||count<0||(!target&&count===0))throw Error('invalid-count');
  tx.set(receipt,{selected:target,updatedAt:serverTimestamp()});tx.set(counter,{count:count+(target?1:-1)});
- });if(readAuthUid===uid){st.pressed=target;if(target&&button.isConnected)reactionEffect(button);}
+ });if(readAuthUid===uid){st.pressed=target;if(target&&button.isConnected){reactionEffect(button);reactionThanks(button);}}
  }catch{if(readAuthUid===uid)st.error='保存できませんでした。会員登録・通信状態・Firebaseルールを確認して、もう一度お試しください。';}
  finally{st.pending=false;renderReadButton(id);}
  });articles.forEach(({id})=>renderReadButton(id));
