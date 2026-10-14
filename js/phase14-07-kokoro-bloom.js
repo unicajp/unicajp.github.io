@@ -755,6 +755,17 @@ function pkSelf(recovery=false){
  pkAddShare(screen.querySelector('.pk-insights'),`私のぷにゅかは「${mine.name}」。${n}問から、自分らしさを少しずつ発見中。\n${recovery?PK_AXIS_TEXT[hi][2]+'ことが回復のヒント。':balanced?'場面に合わせて、いろいろな力を使い分ける傾向。':PK_AXIS_TEXT[hi][0]+'傾向。'}`,null,{title:recovery?'元気のヒント':'自分を知る',subtitle:`${n}問の回答から見える今回の傾向`,sections:pkCardCopySections(screen.querySelector('.pk-insights')),stats:!recovery&&n>=25?st:null,statsDetail:false});
  $('#pkGrowNext')?.addEventListener('click',()=>{if(loadProgress())showQuestion();else showIntro();});
 }
+function pkMemberAppearance(row){
+ const journey=row?.punyakoJourney;
+ if(journey?.seedComplete){const form=formById(journey.equippedId)||FORMS.stage1_base;return {image:form.image,name:journey.equippedName||form.name};}
+ const result=row?.scentDiagnosis;
+ if(pkCurrentResult(result)){const form=TYPE_MAP[result.typeId];return {image:form.image,name:form.name};}
+ return {image:FORMS.stage1_base.image,name:'ぷにゅか'};
+}
+function pkMemberRow(row){
+ const form=pkMemberAppearance(row),profile=pkProfile(row);
+ return `<button class="pk-member" data-pk-member="${esc(row.uid)}" type="button"><span class="pk-member-person"><b>${esc(row.name)}</b><small>No.${esc(row.number)} · ${profile?(profile.n>=25?'25問完了':'簡易データあり'):'性格データ更新待ち'}</small></span><span class="pk-member-punyuka"><img src="${esc(form.image)}" alt="" loading="lazy"><span>${esc(form.name)}</span></span></button>`;
+}
 let pkPairRequest=0;
 async function pkPair(together=false){
  const mine=pkMine();if(!pkEligible({punyakoJourney:localJourney(),scentDiagnosis:activeResult()}))return pkLocked('相性を見る','まず5問でぷにゅかを誕生させると、相性の簡易版が使えます。');
@@ -769,7 +780,7 @@ async function pkPair(together=false){
   $('#pkPairStatus').textContent='現在装備しているぷにゅかの性格データで比較します。どちらかが25問未満なら簡易版です。';
   const render=()=>{
    const q=$('#pkPairSearch').value.trim().toLowerCase();const selected=candidates.filter(row=>`${row.name} ${row.number}`.toLowerCase().includes(q));
-   container.innerHTML=selected.length?selected.map(row=>`<button class="pk-member" data-pk-member="${esc(row.uid)}" type="button"><b>${esc(row.name)}</b><small>No.${row.number} · ${pkProfile(row)?(pkProfile(row).n>=25?'25問完了':'簡易データあり'):'性格データ更新待ち'}</small></button>`).join(''):'<p>対象のうにメンがまだいません。</p>';
+   container.innerHTML=selected.length?selected.map(pkMemberRow).join(''):'<p>対象のうにメンがまだいません。</p>';
    container.querySelectorAll('[data-pk-member]').forEach(b=>b.onclick=()=>{const row=candidates.find(r=>r.uid===b.dataset.pkMember);pkPairResult(mine,row,together);});
   };$('#pkPairSearch').oninput=render;render();pkRefreshScroll();
  }catch(e){if(container.isConnected)$('#pkPairStatus').textContent='うにメンを読み込めませんでした。通信を確認し、診断トップからもう一度開いてください。';}
