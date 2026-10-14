@@ -17,6 +17,7 @@ function pkRestoreScroll(ticket=pkScrollTicket){
  pkScrollNodes.forEach((el,i)=>{el.scrollTop=offsets[i]||0;});
 }
 function pkEnterScreen(key){
+ modal.classList.remove('deep110-area');
  pkSaveScroll();pkScrollPage=key;pkScrollPending=true;
  const ticket=++pkScrollTicket;
  // Clear the preceding screen's offset before replacing its content.
@@ -514,7 +515,7 @@ function addHistory(result){const h=read(HISTORY_KEY,[]);if(!h.some(x=>x.runId==
 function makeResult(){const t=finalType(),st=stats(),hd=hidden();return{schema:'punyako-v4',runId:'pk4_'+Date.now().toString(36),typeId:t.id,typeImage:t.image,flower:t.icon,scentName:t.name,flowerMeaning:t.core,stats:st,hidden:hd,diagnosedDate:today(),message:`${t.name}。${t.core}`,route:{stage2:stage2(),stage3:stage3()},answers:[...answers],createdAt:Date.now()}}
 
 function open(){if(!member()){document.getElementById('openMemberGate')?.click();return}sfx.open();modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('member-gate-open');showIntro()}
-function close(){pkSaveScroll();++pkScrollTicket;pkScrollPending=false;pkScrollPage=null;modal.classList.remove('is-open','is-punyako-game-intro');modal.setAttribute('aria-hidden','true');document.body.classList.remove('member-gate-open');backHandler=null}
+function close(){pkSaveScroll();++pkScrollTicket;pkScrollPending=false;pkScrollPage=null;modal.classList.remove('is-open','is-punyako-game-intro','deep110-area');modal.setAttribute('aria-hidden','true');document.body.classList.remove('member-gate-open');backHandler=null}
 function setBack(fn){backHandler=fn;const b=$('#scent16NavBack');if(b)b.style.visibility=fn?'visible':'hidden'}
 function headerBack(){sfx.back();if(backHandler)return backHandler();close()}
 function charHtml(info,extra=''){if(!info)return'';return`<button class="punyako-character ${extra}" id="punyakoCharacter" type="button" aria-label="${esc(info.name)}をぷにぷにする"><span class="punyako-tap-guide" aria-hidden="true"><i>☝</i><b>ぷにっとタップ！</b></span><span class="punyako-character-glow"></span><img ${window.UNICA_DEEP?.avatarAttrs(member())||''} src="${esc(info.image)}" alt="${esc(info.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="punyako-img-fallback">✦</span><small>${esc(info.name)}</small></button>`}
@@ -697,7 +698,7 @@ const PK_BRANCHES={
 };
 let pkCurrentBranch=null,pkBranchMenu=false;
 function pkMenuHtml(){
- return `<nav class="pk-insight-menu pk-main-menu" aria-label="ぷにゅかのメニュー">${Object.entries(PK_BRANCHES).map(([page,x])=>`<button data-pk-page="${page}" data-tone="${x.tone}" type="button"><b>${x.title}</b></button>`).join('')}</nav><button class="deep-entry" data-pk-page="deep" type="button"><small>25問の、その先へ</small><b>${window.UNICA_DEEP?.eligible(member())?'✦':'🔒'} 禁断の深掘り診断</b><span>仮面の裏側・やさしさの代償・こころの防衛線 ›</span></button>`;
+ return `<nav class="pk-insight-menu pk-main-menu" aria-label="ぷにゅかのメニュー">${Object.entries(PK_BRANCHES).map(([page,x])=>`<button data-pk-page="${page}" data-tone="${x.tone}" type="button"><b>${x.title}</b></button>`).join('')}</nav><button class="deep-entry" data-pk-page="deep" data-deep-unlocked="${!!window.UNICA_DEEP?.eligible(member())}" type="button"><span class="deep-entry-seal" aria-hidden="true">☾</span><small>FORBIDDEN · 25問の、その先へ</small><b>禁断の深掘り診断</b><span class="deep-entry-copy">その仮面の奥を、覗く覚悟は？</span><em>${window.UNICA_DEEP?.eligible(member())?'✦ 解放済み · 秘密の扉を開く ›':'🔒 未開放 · 通常25問の完了で解放'}</em></button>`;
 }
 function pkBind(){screen.querySelectorAll('[data-pk-page]').forEach(b=>b.onclick=()=>pkOpen(b.dataset.pkPage));}
 function pkBranch(key){

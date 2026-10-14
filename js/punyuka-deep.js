@@ -781,7 +781,7 @@ function avatarAttrs(profile){const d=normalizedDecor(profile?.deepDecor);return
 function titleHtml(profile){const d=normalizedDecor(profile?.deepDecor),r=resultById(d.title);return r?`<span class="deep-name-title">〈${esc(r.rewardName)}〉</span>`:'';}
 let bridge=null,state=null,view=0;
 const host=()=>document.getElementById('deep109');
-function frame(title,html){view++;bridge.frame(title,`<div class="deep109" id="deep109">${html}</div>`);document.querySelector('#deep109')?.closest('.pk-insights')?.querySelector('.pk-companion')?.remove();}
+function frame(title,html){view++;bridge.frame(title,`<div class="deep109" id="deep109">${html}</div>`);document.getElementById('scent16Modal')?.classList.add('deep110-area');document.querySelector('#deep109')?.closest('.pk-insights')?.querySelector('.pk-companion')?.remove();}
 function notice(text){const el=host()?.querySelector('[data-deep-status]');if(el)el.textContent=text;}
 function errorText(e){return /permission-denied/.test(e?.code||'')?'保存先の追加ルールがまだ反映されていません。運営にお知らせください。':e?.message||'読み込めませんでした。通信を確認してください。';}
 async function open(apiBridge){bridge=apiBridge;const revision=view+1;frame('禁断の深掘り診断','<p data-deep-status role="status">秘密の扉を確認中…</p>');state=null;
