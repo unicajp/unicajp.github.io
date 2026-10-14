@@ -323,3 +323,9 @@
 .pk-share-panel details summary{padding:7px 0}
 .pk-share-actions button:disabled{opacity:.5}
 .pk-share-panel img[hidden]{display:none!important}
+
+/* 14.82: full-text share cards */
+.pk-share-card-image{width:min(100%,420px);max-height:none;aspect-ratio:1}
+
+/* Pair lists: current equipped character beside member identity. */
+#pkPairList .pk-member{display:grid;grid-template-columns:minmax(0,1fr) minmax(94px,38%);align-items:center;gap:10px;padding:10px 12px;min-height:90px}#pkPairList .pk-member-person{min-width:0}#pkPairList .pk-member-person b{display:block;font-size:14px;line-height:1.5;overflow-wrap:anywhere}#pkPairList .pk-member-person small{font-size:10px;line-height:1.5;overflow-wrap:anywhere}#pkPairList .pk-member-punyuka{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;text-align:center}#pkPairList .pk-member-punyuka img{display:block;width:52px;height:52px;object-fit:contain;margin:0;filter:drop-shadow(0 2px 6px #c091de33)}#pkPairList .pk-member-punyuka>span{font-size:9px;line-height:1.4;color:#ebd7f2;overflow-wrap:anywhere;max-width:100%}@media(max-width:360px){#pkPairList .pk-member{grid-template-columns:minmax(0,1fr) 98px;gap:6px;padding:9px 10px}#pkPairList .pk-member-person b{font-size:13px}}
