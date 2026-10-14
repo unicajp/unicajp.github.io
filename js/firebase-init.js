@@ -72,6 +72,13 @@ async function saveMember(member) {
   }, { merge: true });
 }
 
+function deepOwner(){const owner=auth.currentUser?.uid;if(!owner||owner!==uid||!auth.currentUser.providerData.some(p=>p.providerId==='google.com'))throw Error('Google連携済みのうにメンでログインしてください。');return owner;}
+function publishDeepProfile(profile,owner){if(auth.currentUser?.uid!==owner)throw Error('ログインが変わりました。もう一度開いてください。');const local={...(localMember()||{}),...profile,uid:owner};delete local.updatedAt;localStorage.setItem(MEMBER_KEY,JSON.stringify(local));window.dispatchEvent(new CustomEvent('unica:firebase-member-restored',{detail:local}));window.dispatchEvent(new CustomEvent('unica:punyako-avatar-updated',{detail:local.punyakoJourney}));return local;}
+async function loadDeepDiagnosis(){await authReady;const owner=deepOwner(),[member,privateSnap]=await Promise.all([getDoc(doc(db,'users',owner)),getDoc(doc(db,'users',owner,'privateDiagnosis','forbiddenV1'))]);if(auth.currentUser?.uid!==owner)throw Error('ログインが変わりました。');if(!member.exists())throw Error('うにメン登録を確認してください。');return {profile:{...member.data(),uid:owner},data:privateSnap.exists()?privateSnap.data():{schema:1}};}
+async function loadDeepDecor(targetUid){if(typeof targetUid!=='string'||!targetUid||targetUid.includes('/'))return null;const snap=await getDoc(doc(db,'users',targetUid));return snap.exists()?snap.data().deepDecor||null:null;}
+async function saveDeepDiagnosis(key,answers){await authReady;const owner=deepOwner(),deep=window.UNICA_DEEP;if(!deep?.keys.includes(key)||!deep.validAnswers(answers))throw Error('回答を確認してください。');let saved;
+await runTransaction(db,async tx=>{const memberRef=doc(db,'users',owner),secretRef=doc(db,'users',owner,'privateDiagnosis','forbiddenV1');const [member,secret]=await Promise.all([tx.get(memberRef),tx.get(secretRef)]);if(auth.currentUser?.uid!==owner)throw Error('ログインが変わりました。');if(!member.exists()||!deep.eligible(member.data()))throw Error('通常の25問を完了すると開放されます。');const profile={...member.data(),uid:owner},old=secret.exists()?secret.data():{},base=answers.length&&old[key]?.base?old[key].base:deep.baseStats(profile),branch={answers:[...answers],base,completedAtMs:answers.length===10?Date.now():0};const data={schema:1,...Object.fromEntries(deep.keys.filter(k=>old[k]).map(k=>[k,old[k]])),[key]:branch};const decor=deep.normalizedDecor(profile.deepDecor);if(answers.length===10){const r=deep.evaluate(key,answers,base),list={mask:'frames',bonds:'titles',guard:'backgrounds'}[key];decor[list]=[...new Set([...decor[list],r.id])];}tx.set(secretRef,{...data,updatedAt:serverTimestamp()});if(answers.length===10)tx.update(memberRef,{deepDecor:decor,updatedAt:serverTimestamp()});saved={profile:{...profile,deepDecor:decor},data};});publishDeepProfile(saved.profile,owner);return saved;}
+
 async function updateMemberProfile(input){
  await authReady;const ownerUid=auth.currentUser?.uid;if(!ownerUid||ownerUid!==uid)throw Error('ログインを確認してから、もう一度お試しください。');
  const name=String(input.name||'').trim(),prefecture=String(input.prefecture||''),birthMonth=Number(input.birthMonth),birthDay=Number(input.birthDay);
@@ -82,6 +89,7 @@ async function updateMemberProfile(input){
  const ref=doc(db,'users',ownerUid);let saved;
  await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(!snap.exists())throw Error('うにメン情報を確認できません。');if(auth.currentUser?.uid!==ownerUid)throw Error('ログインが変わりました。もう一度開いてください。');
   const current=snap.data(),patch={name,prefecture,birthMonth,birthDay,updatedAt:serverTimestamp()};
+  if(input.deepDecor){const deep=window.UNICA_DEEP;if(!deep)throw Error('装飾を読み込めませんでした。');const decor=deep.normalizedDecor(current.deepDecor);for(const [slot,list]of[['frame','frames'],['title','titles'],['background','backgrounds']]){const value=String(input.deepDecor[slot]||'');if(value&&!decor[list].includes(value))throw Error('獲得済みの装飾から選んでください。');decor[slot]=value;}patch.deepDecor=decor;}
   if(form&&form.id!==current.punyakoJourney?.equippedId){const journey=current.punyakoJourney||localMember()?.punyakoJourney;if(!journey?.seedComplete)throw Error('先にぷにゅかを誕生させてください。');patch.punyakoJourney={...journey,equippedId:form.id,equippedName:form.name,equippedImage:form.image,currentStage:form.stage,updatedAtMs:Date.now()};}
   tx.update(ref,patch);saved={...current,...patch,uid:ownerUid};delete saved.updatedAt;
  });
@@ -399,6 +407,7 @@ async function loadPunyakoMembers() {
       number: Number(data.number || 0),
       avatar: String(data.avatar || '🌸'),
       punyakoJourney: data.punyakoJourney || null,
+      deepDecor: data.deepDecor || null,
       scentDiagnosis: data.scentDiagnosis || null
     };
   });
@@ -495,6 +504,7 @@ window.UNICA_FIREBASE = {
   get uid() { return uid; },
   saveMember: member => saveMember(member).catch(console.error),
   updateMemberProfile,
+  loadDeepDiagnosis,saveDeepDiagnosis,loadDeepDecor,
   ensureMemberNumber,
   removeMember: () => removeMember().catch(console.error),
   syncCommunityRows: rows => syncCommunityRows(rows).catch(console.error),

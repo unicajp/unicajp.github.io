@@ -116,7 +116,7 @@ function stopCommentViews(){
 }
 function renderComments(panel,rows){
  const list=panel.querySelector('.iv-comment-list');
- list.innerHTML=rows.length?rows.map(r=>`<article class="iv-comment"><div><strong>${esc(r.authorName)}</strong><time>${commentTime(r.createdAt)}</time>${owner()?`<button type="button" data-delete-comment="${esc(r.id)}">削除</button>`:''}</div><p>${esc(r.text)}</p></article>`).join(''):'<p class="iv-empty">まだ感想はありません。最初のひとことをどうぞ。</p>';
+ list.innerHTML=rows.length?rows.map(r=>`<article class="iv-comment"><div><strong data-deep-uid="${esc(r.authorUid)}">${esc(r.authorName)}</strong><time>${commentTime(r.createdAt)}</time>${owner()?`<button type="button" data-delete-comment="${esc(r.id)}">削除</button>`:''}</div><p>${esc(r.text)}</p></article>`).join(''):'<p class="iv-empty">まだ感想はありません。最初のひとことをどうぞ。</p>';
  list.querySelectorAll('[data-delete-comment]').forEach(button=>button.onclick=async()=>{if(!owner()||!confirm('この感想を削除しますか？'))return;try{await deleteDoc(doc(api.db,'interviewComments',button.dataset.deleteComment));}catch{panel.querySelector('.iv-comment-message').textContent='削除できませんでした。';}});
 }
 function watchComments(panel){

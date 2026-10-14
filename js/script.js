@@ -954,7 +954,7 @@
     if(list)list.innerHTML=posts.map(x=>{
       const mine=String(x.number)===String(current.number); const liked=(x.likedBy||[]).map(String).includes(String(current.number));
       return `<article class="community-post-plus support-comment-card${mine?' is-me':''}" data-post-id="${x.id}">
-        <header><span class="community-post-avatar">${bloomBadgeHtml(bloomProfileForRow(x),'normal')}</span><div><strong>${safeText(x.name)}${mine?'（あなた）':''}</strong><small>${safeText(x.prefecture||'')}${x.prefecture?'・':''}${formatSupportDate(x)}</small></div>${mine?`<button class="community-more" data-delete-post="${x.id}" aria-label="自分の応援コメントを削除" type="button">×</button>`:'<span></span>'}</header>
+        <header><span class="community-post-avatar">${bloomBadgeHtml(bloomProfileForRow(x),'normal')}</span><div><strong data-deep-uid="${safeText(x.ownerUid||'')}">${safeText(x.name)}${mine?'（あなた）':''}</strong><small>${safeText(x.prefecture||'')}${x.prefecture?'・':''}${formatSupportDate(x)}</small></div>${mine?`<button class="community-more" data-delete-post="${x.id}" aria-label="自分の応援コメントを削除" type="button">×</button>`:'<span></span>'}</header>
         <p>${safeText(x.text)}</p>
       </article>`;
     }).join('') || `<div class="community-empty">${activeCommunityTab==='mine'?'まだ応援コメントを送っていません。うにかへ最初の言葉を届けてみよう。':'まだ応援コメントはありません。'}</div>`;

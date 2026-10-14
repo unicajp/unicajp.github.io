@@ -517,7 +517,7 @@ function open(){if(!member()){document.getElementById('openMemberGate')?.click()
 function close(){pkSaveScroll();++pkScrollTicket;pkScrollPending=false;pkScrollPage=null;modal.classList.remove('is-open','is-punyako-game-intro');modal.setAttribute('aria-hidden','true');document.body.classList.remove('member-gate-open');backHandler=null}
 function setBack(fn){backHandler=fn;const b=$('#scent16NavBack');if(b)b.style.visibility=fn?'visible':'hidden'}
 function headerBack(){sfx.back();if(backHandler)return backHandler();close()}
-function charHtml(info,extra=''){if(!info)return'';return`<button class="punyako-character ${extra}" id="punyakoCharacter" type="button" aria-label="${esc(info.name)}をぷにぷにする"><span class="punyako-tap-guide" aria-hidden="true"><i>☝</i><b>ぷにっとタップ！</b></span><span class="punyako-character-glow"></span><img src="${esc(info.image)}" alt="${esc(info.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="punyako-img-fallback">✦</span><small>${esc(info.name)}</small></button>`}
+function charHtml(info,extra=''){if(!info)return'';return`<button class="punyako-character ${extra}" id="punyakoCharacter" type="button" aria-label="${esc(info.name)}をぷにぷにする"><span class="punyako-tap-guide" aria-hidden="true"><i>☝</i><b>ぷにっとタップ！</b></span><span class="punyako-character-glow"></span><img ${window.UNICA_DEEP?.avatarAttrs(member())||''} src="${esc(info.image)}" alt="${esc(info.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="punyako-img-fallback">✦</span><small>${esc(info.name)}</small></button>`}
 function bindSquish(){const el=$('#punyakoCharacter');if(!el)return;el.onclick=()=>{sfx.squish();el.classList.remove('is-tapped');void el.offsetWidth;el.classList.add('is-tapped');const guide=el.querySelector('.punyako-tap-guide');if(guide){guide.classList.add('is-popped');const label=guide.querySelector('b');if(label)label.textContent='ぷにっ♪';setTimeout(()=>{guide.classList.remove('is-popped');if(label)label.textContent='ぷにっとタップ！'},720)}setTimeout(()=>el.classList.remove('is-tapped'),520)}}
 function soundButton(){return`<button class="punyako-sound" id="punyakoSound" type="button" aria-label="効果音のオンオフ">${soundEnabled?'🔊':'🔇'}</button>`}
 function bindSound(){const b=$('#punyakoSound');if(!b)return;b.onclick=()=>{soundEnabled=!soundEnabled;localStorage.setItem(SOUND_KEY,soundEnabled?'on':'off');b.textContent=soundEnabled?'🔊':'🔇';if(soundEnabled){ensureAudio();sfx.sparkle()}}}
@@ -697,7 +697,7 @@ const PK_BRANCHES={
 };
 let pkCurrentBranch=null,pkBranchMenu=false;
 function pkMenuHtml(){
- return `<nav class="pk-insight-menu pk-main-menu" aria-label="ぷにゅかのメニュー">${Object.entries(PK_BRANCHES).map(([page,x])=>`<button data-pk-page="${page}" data-tone="${x.tone}" type="button"><b>${x.title}</b></button>`).join('')}</nav>`;
+ return `<nav class="pk-insight-menu pk-main-menu" aria-label="ぷにゅかのメニュー">${Object.entries(PK_BRANCHES).map(([page,x])=>`<button data-pk-page="${page}" data-tone="${x.tone}" type="button"><b>${x.title}</b></button>`).join('')}</nav><button class="deep-entry" data-pk-page="deep" type="button"><small>25問の、その先へ</small><b>${window.UNICA_DEEP?.eligible(member())?'✦':'🔒'} 禁断の深掘り診断</b><span>仮面の裏側・やさしさの代償・こころの防衛線 ›</span></button>`;
 }
 function pkBind(){screen.querySelectorAll('[data-pk-page]').forEach(b=>b.onclick=()=>pkOpen(b.dataset.pkPage));}
 function pkBranch(key){
@@ -764,7 +764,7 @@ function pkMemberAppearance(row){
 }
 function pkMemberRow(row){
  const form=pkMemberAppearance(row),profile=pkProfile(row);
- return `<button class="pk-member" data-pk-member="${esc(row.uid)}" type="button"><span class="pk-member-person"><b>${esc(row.name)}</b><small>No.${esc(row.number)} · ${profile?(profile.n>=25?'25問完了':'簡易データあり'):'性格データ更新待ち'}</small></span><span class="pk-member-punyuka"><img src="${esc(form.image)}" alt="" loading="lazy"><span>${esc(form.name)}</span></span></button>`;
+ return `<button class="pk-member" data-pk-member="${esc(row.uid)}" type="button"><span class="pk-member-person">${window.UNICA_DEEP?.titleHtml(row)||''}<b>${esc(row.name)}</b><small>No.${esc(row.number)} · ${profile?(profile.n>=25?'25問完了':'簡易データあり'):'性格データ更新待ち'}</small></span><span class="pk-member-punyuka"><span class="deep-pair-icon" ${window.UNICA_DEEP?.avatarAttrs(row)||''}><img src="${esc(form.image)}" alt="" loading="lazy"></span><span>${esc(form.name)}</span></span></button>`;
 }
 let pkPairRequest=0;
 async function pkPair(together=false){
@@ -842,6 +842,6 @@ function pkManual(){
  pkFrame('取り扱い説明書',`<p class="pk-note">${n}問から見える私の傾向。共有したい項目だけチェックしてコピーできます。自動で公開されることはありません。</p><div class="pk-manual">${items.map(([name,copy],i)=>`<article class="pk-insight-card"><label><input type="checkbox" data-manual="${i}" checked> ${name}</label><p>${copy}</p></article>`).join('')}</div><button class="punyako-primary" id="pkManualCopy" type="button">選んだ項目をコピー</button><p id="pkManualStatus" role="status"></p><textarea id="pkManualText" aria-label="共有用の取り扱い説明書" hidden readonly></textarea>`);
  $('#pkManualCopy').onclick=async()=>{const chosen=[...screen.querySelectorAll('[data-manual]:checked')].map(b=>items[Number(b.dataset.manual)]);if(!chosen.length){$('#pkManualStatus').textContent='共有する項目を選んでください。';return;}const text='私のぷにゅか取り扱い説明書（'+n+'問）\n\n'+chosen.map(([name,copy])=>name+'\n'+copy).join('\n\n');try{await navigator.clipboard.writeText(text);$('#pkManualStatus').textContent='コピーしました。';}catch{const area=$('#pkManualText');area.hidden=false;area.value=text;area.focus();area.select();$('#pkManualStatus').textContent='下の文章を選択してコピーしてください。';}};
 }
-function pkOpen(page){if(PK_BRANCHES[page])return pkBranch(page);pkCurrentBranch=Object.keys(PK_BRANCHES).find(key=>PK_BRANCHES[key].items.some(x=>x[0]===page))||null;if(page==='self')pkSelf();else if(page==='recovery')pkSelf(true);else if(page==='pair'||page==='together')pkPair(page==='together');else if(page==='daily')pkDaily();else if(page==='consult')pkConsult();else if(page==='manual')pkManual();else pkChange();}
+function pkOpen(page){if(page==='deep'){pkCurrentBranch=null;return window.UNICA_DEEP?.open({frame:pkFrame});}if(PK_BRANCHES[page])return pkBranch(page);pkCurrentBranch=Object.keys(PK_BRANCHES).find(key=>PK_BRANCHES[key].items.some(x=>x[0]===page))||null;if(page==='self')pkSelf();else if(page==='recovery')pkSelf(true);else if(page==='pair'||page==='together')pkPair(page==='together');else if(page==='daily')pkDaily();else if(page==='consult')pkConsult();else if(page==='manual')pkManual();else pkChange();}
 
 })();
