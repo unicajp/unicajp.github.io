@@ -83,3 +83,6 @@ body.passport-titles-open #passportModal .passport-card-shell{
 #passportModal .pass-edit-actions button{flex:1;border:0;border-radius:10px;padding:10px;font-size:12px;background:#eee6f3;color:#654376}
 #passportModal #passEditSave{background:#826097;color:#fff}
 #passportModal #passEditMessage{font-size:11px;margin:0;overflow-wrap:anywhere}
+
+/* Keep the profile-edit label readable against its filled button. */
+#passportModal #detailOpenSettings{background:#654874!important;color:#fff!important;-webkit-text-fill-color:#fff!important;opacity:1!important;font:700 14px/1.5 system-ui,-apple-system,"Noto Sans JP",sans-serif!important;letter-spacing:.02em;min-height:44px;padding:11px 16px!important;border:1px solid #8e719d!important;text-shadow:none!important}#passportModal #detailOpenSettings:hover{background:#765686!important}#passportModal #detailOpenSettings:focus-visible{outline:3px solid #c991bd;outline-offset:3px}
