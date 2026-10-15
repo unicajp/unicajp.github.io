@@ -101,3 +101,16 @@ body.home86-layout #phase1241Renewal .home86-release{height:96px!important;min-h
 #phase1241Renewal .home86-diagnosis::after{content:'›';grid-column:3;grid-row:1/3;display:grid;place-items:center;align-self:center;width:var(--entry-arrow);height:var(--entry-arrow);border-radius:50%;background:#eee4f2;color:#9978a6;font:400 23px/1 system-ui}
 #phase1241Renewal .home86-release .release-art{min-height:var(--entry-icon)!important;max-height:var(--entry-icon)!important;min-width:var(--entry-icon)!important;max-width:var(--entry-icon)!important;overflow:hidden}
 #phase1241Renewal .home86-release #songLikeButton strong{display:block!important;position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+/* Small visible heart, with a comfortable invisible tap area. */
+#phase1241Renewal .home86-release #songLikeButton{position:relative;display:grid!important;place-items:center!important;flex:0 0 26px!important;width:26px!important;height:26px!important;min-width:26px!important;max-width:26px!important;min-height:26px!important;max-height:26px!important;padding:0!important;margin:0!important;gap:0!important;border:0!important;border-radius:50%!important;background:#f9edf3!important;color:#bc7896;box-shadow:none!important;line-height:1!important;overflow:visible}
+#phase1241Renewal .home86-release #songLikeButton::before{content:'';position:absolute;width:40px;height:40px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%}
+#phase1241Renewal .home86-release #songLikeButton.is-liked{background:#fde5ef!important;color:#d54e80!important}
+#phase1241Renewal .home86-release #songLikeButton #songLikeIcon{font:400 17px/1 system-ui!important;padding:0!important;margin:0!important;display:block;pointer-events:none}
+#phase1241Renewal .home86-release #songLikeButton:disabled{opacity:.7;cursor:wait}
+#phase1241Renewal .home86-release #songLikeButton.like126-pop{animation:like126-pop .5s cubic-bezier(.2,.8,.3,1)}
+@keyframes like126-pop{0%{transform:scale(1)}28%{transform:scale(1.3)}52%{transform:scale(.9)}75%{transform:scale(1.1)}100%{transform:scale(1)}}
+.like126-burst{position:fixed;width:0;height:0;z-index:13000;pointer-events:none}
+.like126-burst i{position:absolute;left:-5px;top:-7px;font:500 12px/1 system-ui;color:#df83a8;font-style:normal;animation:like126-fly .7s ease-out both;pointer-events:none}
+.like126-burst i:nth-child(2n){color:#c998d5;font-size:10px}
+@keyframes like126-fly{0%{opacity:0;transform:translate(0,0) scale(.3)}18%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--turn)) scale(.75)}}
+@media(prefers-reduced-motion:reduce){#phase1241Renewal .like126-pop,.like126-burst i{animation:none!important}.like126-burst{display:none}}
