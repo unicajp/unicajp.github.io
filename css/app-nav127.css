@@ -29,7 +29,7 @@ body.app-nav127 #unico,body.app-nav127 section[id]{scroll-margin-top:var(--app12
 .app127-choices strong{font-size:12px;line-height:1.5}.app127-choices small{font-size:10px;color:#9a80a3;line-height:1.5}
 /* Reserve the persistent navigation strip in full-screen surfaces. */
 body.app-nav127 .scent16-modal,body.app-nav127 .iv-modal,body.app-nav127 .world-modal,body.app-nav127 .sre-mission-modal{padding-bottom:calc(78px + env(safe-area-inset-bottom))!important}
-body.app-nav127 [role=dialog]{max-height:calc(100dvh - 108px - env(safe-area-inset-bottom))!important}
+
 body.app-nav127 #karaoke91{padding-bottom:calc(72px + env(safe-area-inset-bottom));box-sizing:border-box}
 body.app-nav127 #karaoke91 .kr-panel{height:calc(100dvh - 92px - env(safe-area-inset-bottom));max-height:880px}
 @media(min-width:650px){#appNav127{left:50%;right:auto;transform:translateX(-50%);width:min(560px,100%);border-radius:20px 20px 0 0}.app127-sheet{left:50%;right:auto;transform:translateX(-50%);width:500px}}
@@ -37,3 +37,20 @@ body.app-nav127 #karaoke91 .kr-panel{height:calc(100dvh - 92px - env(safe-area-i
 body.app-nav127 #siteHeader{height:auto!important;max-height:none!important;box-sizing:border-box!important}
 body.app-nav127.home86-layout .hero{display:none!important}
 body:not(.opened) #appNav127{display:none}
+/* 14.128: size the actual scroll viewport, never just clip a taller child. */
+body.app-nav127{--app128-space:calc(var(--app128-nav,65px) + 20px);--app128-height:calc(100dvh - var(--app128-space) - 16px)}
+body.app-nav127 .scent16-modal,body.app-nav127 .iv-modal,body.app-nav127 .world-modal,body.app-nav127 .sre-mission-modal{box-sizing:border-box!important;padding-top:8px!important;padding-bottom:var(--app128-space)!important}
+body.app-nav127 #scent16Modal .scent16-panel{box-sizing:border-box!important;display:flex!important;flex-direction:column!important;height:min(900px,var(--app128-height))!important;max-height:var(--app128-height)!important;min-height:0!important;overflow:hidden!important}
+body.app-nav127 #scent16Modal .scent16-header{flex:0 0 auto!important}
+body.app-nav127 #scent16Modal #scent16Screen{box-sizing:border-box!important;flex:1 1 0%!important;height:auto!important;min-height:0!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:28px!important;scroll-padding-bottom:28px}
+body.app-nav127 .iv-modal .iv-modal-panel,body.app-nav127 .world-modal .world-modal-panel,body.app-nav127 .sre-mission-modal .sre-mission-panel{box-sizing:border-box!important;max-height:var(--app128-height)!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain;scroll-padding-bottom:24px}
+body.app-nav127 #passportModal.is-profile-editing .passport-card-shell{max-height:var(--app128-height)!important;overflow:hidden!important}
+body.app-nav127 #passportModal.is-profile-editing #passProfileEditor{height:min(640px,calc(var(--app128-height) - 26px))!important;max-height:calc(var(--app128-height) - 26px)!important;min-height:0!important}
+body.app-nav127 #karaoke91{box-sizing:border-box!important;padding-top:8px!important;padding-bottom:var(--app128-space)!important}
+body.app-nav127 #karaoke91 .kr-panel{box-sizing:border-box!important;height:min(880px,var(--app128-height))!important;max-height:var(--app128-height)!important;min-height:0!important}
+body.app-nav127 #karaoke91 .kr-panel>main{min-height:0!important;overflow-y:auto!important;padding-bottom:24px!important;scroll-padding-bottom:24px}
+body.app-nav127 .member-gate,body.app-nav127 .guest-lock-modal,body.app-nav127 .admin-modal,body.app-nav127 .milk-lyrics-modal,body.app-nav127 .sre-celebration{box-sizing:border-box;padding-bottom:var(--app128-space)!important}
+body.app-nav127 .member-gate [role=dialog],body.app-nav127 .guest-lock-modal [role=dialog],body.app-nav127 .admin-modal [role=dialog],body.app-nav127 .milk-lyrics-modal [role=dialog],body.app-nav127 .sre-celebration [role=dialog]{box-sizing:border-box;max-height:var(--app128-height)!important;overflow-y:auto!important}
+body.app-nav127 :is(#passportModal,#prefectureDirectoryModal,#prefectureMembersModal,#communityModal,#passportTitlesModal,#onlineModal) [role=dialog]{box-sizing:border-box!important;max-height:var(--app128-height)!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain;scroll-padding-bottom:24px}
+body.app-nav127 .milk-match-modal,body.app-nav127 .birthday-experience-modal,body.app-nav127 .birthday-calendar-modal,body.app-nav127 .birthday-comment-modal,body.app-nav127 .birthday-album-modal,body.app-nav127 .birthday-history-modal{box-sizing:border-box;padding-top:8px!important;padding-bottom:var(--app128-space)!important}
+body.app-nav127 :is(.milk-match-modal,.birthday-experience-modal,.birthday-calendar-modal,.birthday-comment-modal,.birthday-album-modal,.birthday-history-modal) [role=dialog]{box-sizing:border-box;max-height:var(--app128-height)!important;overflow-y:auto!important}
