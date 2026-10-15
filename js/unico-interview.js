@@ -43,12 +43,9 @@ const viewedArticles=new Set();
 try{const saved=JSON.parse(localStorage.getItem(viewedArticleKey)||'[]');if(Array.isArray(saved))saved.filter(id=>typeof id==='string').forEach(id=>viewedArticles.add(id));}catch{}
 function renderHomeInterview(){
  const entry=document.getElementById('home86Interview');if(!entry)return;
- const next=articleLoadState==='ready'?orderedArticles().find(a=>!viewedArticles.has(a.id)):null;
- entry.dataset.articleId=next?.id||'';
- const question=document.getElementById('home86Question'),answer=document.getElementById('home86Answer');
- if(question)question.textContent=next?.question||(articleLoadState==='loading'?'インタビューを読み込み中…':articleLoadState==='error'?'インタビューを読み込めませんでした。':articles.length?'新しいインタビューはありません':'最初のインタビューを準備しています。');
- if(answer)answer.textContent=next?.answer||(articleLoadState==='ready'&&articles.length?'次のインタビューをお楽しみに。':'');
- const action=entry.querySelector('em');if(action)action.innerHTML=(next?'回答を読む':'インタビュー一覧へ')+' <b>›</b>';
+ const unread=articleLoadState==='ready'?articles.filter(a=>!viewedArticles.has(a.id)).length:0;
+ const badge=document.getElementById('home86InterviewNew');if(badge)badge.hidden=unread===0;
+ entry.setAttribute('aria-label','うにこに聞いてみた・質問箱を開く'+(unread?'（未読'+unread+'件）':''));
 }
 function bindArticleViews(){
  root.querySelectorAll('[data-answer]').forEach(panel=>panel.addEventListener('toggle',()=>{
