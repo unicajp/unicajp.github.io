@@ -24,6 +24,7 @@
   let rafPending = false;
 
   function playTap() {
+    if(window.UNICA_UI_SOUND){window.UNICA_UI_SOUND.play();return;}
     if (!tapSound) return;
     tapSound.currentTime = 0;
     tapSound.volume = 0.38;

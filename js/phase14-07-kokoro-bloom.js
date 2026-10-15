@@ -728,7 +728,7 @@ function pkMine(){
 function pkDifferences(a,b){return AXES.map(k=>({key:k,a:Number(a[k]??50),b:Number(b[k]??50),gap:Math.abs(Number(a[k]??50)-Number(b[k]??50))}));}
 const PK_BRANCHES={
  personality:{title:'性格',tone:1,items:[['self','性格診断の結果'],['manual','わたしの説明書'],['change','前の自分と比較']]},
- compatibility:{title:'相性',tone:0,items:[['pair','相性診断'],['together','ふたりの接し方']]},
+ compatibility:{title:'相性',tone:0,items:[['pair','ふたりの相性']]},
  support:{title:'相談',tone:2,items:[['daily','今日の気分'],['consult','悩み相談'],['recovery','疲れと回復']]}
 };
 let pkCurrentBranch=null,pkBranchMenu=false;
@@ -810,10 +810,10 @@ function pkMemberRow(row){
 }
 let pkPairRequest=0;
 async function pkPair(together=false){
- const mine=pkMine();if(!pkEligible({punyakoJourney:localJourney(),scentDiagnosis:activeResult()}))return pkLocked('相性を見る','まず5問でぷにゅかを誕生させると、相性の簡易版が使えます。');
- if(!mine)return pkLocked('相性を見る','過去の誕生データに性格数値が残っていません。続きを回答して進化すると、簡易相性用データを保存できます。');
+ const mine=pkMine();if(!pkEligible({punyakoJourney:localJourney(),scentDiagnosis:activeResult()}))return pkLocked('ふたりの相性','まず5問でぷにゅかを誕生させると、相性の簡易版が使えます。');
+ if(!mine)return pkLocked('ふたりの相性','過去の誕生データに性格数値が残っていません。続きを回答して進化すると、簡易相性用データを保存できます。');
  if(!localJourney()?.analysisStats && read(PROGRESS_KEY,null)?.answers?.length>=5){const form=formById(localJourney()?.equippedId);if(form)await saveJourney({...form,stats:undefined},mine.n);}
- const ticket=++pkPairRequest;pkFrame(together?'ふたりの過ごし方':'相性を見る','<p id="pkPairStatus">うにメンを読み込み中…</p><input id="pkPairSearch" type="search" placeholder="名前・会員番号で検索" aria-label="相性の相手を検索"><div id="pkPairList"></div><div id="pkPairResult"></div>');
+ const ticket=++pkPairRequest;pkFrame('ふたりの相性','<p id="pkPairStatus">うにメンを読み込み中…</p><input id="pkPairSearch" type="search" placeholder="名前・会員番号で検索" aria-label="相性の相手を検索"><div id="pkPairList"></div><div id="pkPairResult"></div>');
  const container=$('#pkPairList');
  try{
   const api=window.UNICA_FIREBASE;if(!api?.loadPunyakoMembers)throw Error('not-ready');
@@ -883,11 +883,11 @@ function pkPairResult(mine,row,together=false){
   const copy=pkPairTopicCopy(key,mine.hidden[key],other.hidden[key]);
   return `<article class="pk-insight-card"><h4>${name}</h4><p>${esc(copy.text)}</p><p><b>${copy.label}：</b>${esc(copy.hint)}</p></article>`;
  }).join(''):'';
- box.innerHTML=`<div class="pk-insight-card"><h4>${esc(row.name)}さんとの${simple?'簡易相性':score.full?'詳細相性':'25問相性（5軸版）'}</h4><div class="pk-compat-percent"><strong>${score.percent}<small>％</small></strong><span>総合相性</span></div><p class="pk-note">${simple?'どちらかが25問未満のため簡易版です。二人とも25問を終えると、会話・距離感なども読み解けます。':score.full?'5軸と内面的な傾向を使った詳細版です。':'以前の結果に内面データがないため、今回は5軸で比較しています。再診断で詳細版を利用できます。'}％は心地よさ・補い合い・調整のしやすさを組み合わせた、この診断独自の目安です。関係がうまくいく確率ではありません。</p><div class="pk-pair-tags"><span>心地よさ：${label(score.comfort)}</span><span>補い合い：${label(score.support)}</span><span>調整のしやすさ：${label(score.adjustment)}</span></div><h4>二人の強み</h4><p>${AXIS_LABEL[near.key]}は、ほかの軸に比べると近い傾向です。${PK_AXIS_TEXT[near.key][0]}場面で、考えや希望を共有する入口にできます。</p><h4>違いを活かすヒント</h4><p>${far.gap<=10?'5軸全体が近いため、役割は性格より得意なことや希望で分けてみましょう。':`${AXIS_LABEL[far.key]}には違いが見られます。${PK_AXIS_TEXT[far.key][0]}場面で、お互いにどこを担当したいか話してみましょう。違うからこそ、選べる進め方が増えることもあります。`}</p><h4>すれ違いを減らすヒント</h4><p>${PK_AXIS_TEXT[far.key][1]}。似ている相手にも、違う相手にも、希望を言葉にすることが役立ちます。</p></div>${detail}`;
+ box.innerHTML=`<div class="pk-insight-card"><h4>${esc(row.name)}さんとの${simple?'簡易相性':score.full?'詳細相性':'25問相性（5軸版）'}</h4><div class="pk-compat-percent"><strong>${score.percent}<small>％</small></strong><span>総合相性</span></div><p class="pk-note">${simple?'どちらかが25問未満のため簡易版です。二人とも25問を終えると、会話・距離感なども読み解けます。':score.full?'5軸と内面的な傾向を使った詳細版です。':'以前の結果に内面データがないため、今回は5軸で比較しています。再診断で詳細版を利用できます。'}％は心地よさ・補い合い・調整のしやすさを組み合わせた、この診断独自の目安です。関係がうまくいく確率ではありません。</p><div class="pk-pair-tags"><span>心地よさ：${label(score.comfort)}</span><span>補い合い：${label(score.support)}</span><span>調整のしやすさ：${label(score.adjustment)}</span></div><h4>二人の強み</h4><p>${AXIS_LABEL[near.key]}は、ほかの軸に比べると近い傾向です。${PK_AXIS_TEXT[near.key][0]}場面で、考えや希望を共有する入口にできます。</p><h4>違いを活かすヒント</h4><p>${far.gap<=10?'5軸全体が近いため、役割は性格より得意なことや希望で分けてみましょう。':`${AXIS_LABEL[far.key]}には違いが見られます。${PK_AXIS_TEXT[far.key][0]}場面で、お互いにどこを担当したいか話してみましょう。違うからこそ、選べる進め方が増えることもあります。`}</p><h4>すれ違いを減らすヒント</h4><p>${PK_AXIS_TEXT[far.key][1]}。似ている相手にも、違う相手にも、希望を言葉にすることが役立ちます。</p></div>`;
  const ideas={kindness:'お互いの好きな曲を一曲ずつ紹介し、その曲の好きなところを話す',action:'短い散歩や小さなお出かけを、無理のない予定で楽しむ',curiosity:'気になるお店や作品を一つずつ持ち寄り、一緒に新しいものを試す',sensitivity:'落ち着いた場所で音楽を聴き、それぞれの感じ方を話す',flexibility:'候補を二つ用意して、その日の気分でどちらにするか選ぶ'};
  const tips=`<article class="pk-insight-card"><h4>一緒に楽しむなら</h4><p>${ideas[near.key]}のはどうでしょう。</p><h4>役割を決めるなら</h4><p>${far.gap>10?'提案する役と確かめる役を、得意なことや希望を聞いて分けてみましょう。':'交代で提案して、いつも同じ人任せにならない形を試してみましょう。'}</p><h4>すれ違ったときの一言</h4><p>「私はこうしたいと思っているよ。あなたはどう過ごしたい？」と、希望を一つずつ伝えてみましょう。</p></article>`;
  if(together)box.innerHTML=`<h4>${esc(row.name)}さんとの過ごし方</h4><p class="pk-note">${score.full?'25問の傾向を使った提案です。':'5問から使える簡易提案です。二人とも25問で内容が深まります。'}</p>`+tips+detail;
- else box.insertAdjacentHTML('beforeend',tips);
+ else box.insertAdjacentHTML('beforeend','<h3 class="pk-pair-section">仲良くするヒント</h3>'+tips+detail);
  pkAddShare(box,`ぷにゅかの${simple?'簡易':'詳細'}相性は ${score.percent}％でした。`,null,{title:together?'ふたりの過ごし方':'相性を見る',subtitle:`総合相性 ${score.percent}％ · ${simple?'簡易版':'25問版'}（診断独自の目安）`,theme:'pair',percent:score.percent,simple,people:[{...pkMemberAppearance({punyakoJourney:localJourney(),scentDiagnosis:activeResult()}),name:mine.name},pkMemberAppearance(row)],sections:together?[{label:'一緒に楽しむなら',text:ideas[near.key]+'。'},{label:'ふたりの小さな約束',text:'希望を一つずつ伝えて、今日はどう過ごすか一緒に決めよう。'}]:[{label:'二人の強み',text:AXIS_LABEL[near.key]+'の傾向が近いふたり。'+PK_AXIS_TEXT[near.key][0]+'場面で、考えを共有できそう。'},{label:'仲良くするコツ',text:PK_AXIS_TEXT[far.key][1]+'。'}]});pkRevealResult(box);
 }
 function pkChange(){
@@ -927,6 +927,6 @@ function pkTypes(){
  pkFrame('16種類のぷにゅか',`<section class="pk-type-catalog"><p class="pk-type-lead">あなたは、どのぷにゅか？</p><p class="pk-type-note">最終進化の16種類を見比べられます。気になる子をタップすると、強みや回復のヒントが開きます。</p><div class="pk-type-grid">${TYPES.map(t=>`<details class="pk-type-item"><summary><img src="${esc(t.image)}" alt="" loading="lazy"><b class="pk-type-name"><span>${esc(t.name.replace(/ぷにゅか$/,''))}</span><span>ぷにゅか</span></b><span>${esc(t.core)}</span><small>性格を詳しく見る ＋</small></summary><div class="pk-type-detail"><h4>あなたの強み</h4><p>${esc(t.strength)}</p><h4>回復のヒント</h4><p>${esc(t.recharge)}</p><h4>ぷにゅかから一言</h4><p>${esc(t.advice)}</p></div></details>`).join('')}</div><p class="pk-type-note">同じタイプでも、回答によって5つの軸は異なります。今の自分を知るヒントとして楽しんでください。</p></section>`);
  screen.querySelector('.pk-companion')?.remove();
 }
-function pkOpen(page){sfx.next();if(page==='types')return pkTypes();if(page==='deep'){pkCurrentBranch=null;return window.UNICA_DEEP?.open({frame:pkFrame,sfx,share:(container,summary,cardData)=>{const form=formById(localJourney()?.equippedId)||FORMS.stage1_base;pkAddShare(container,summary,{...form,name:cardData.resultName},cardData);}});}if(PK_BRANCHES[page])return pkBranch(page);pkCurrentBranch=Object.keys(PK_BRANCHES).find(key=>PK_BRANCHES[key].items.some(x=>x[0]===page))||null;if(page==='self')pkSelf();else if(page==='recovery')pkSelf(true);else if(page==='pair'||page==='together')pkPair(page==='together');else if(page==='daily')pkDaily();else if(page==='consult')pkConsult();else if(page==='manual')pkManual();else pkChange();}
+function pkOpen(page){sfx.next();if(['compatibility','pair','together'].includes(page)){pkCurrentBranch=null;return pkPair();}if(page==='types')return pkTypes();if(page==='deep'){pkCurrentBranch=null;return window.UNICA_DEEP?.open({frame:pkFrame,sfx,share:(container,summary,cardData)=>{const form=formById(localJourney()?.equippedId)||FORMS.stage1_base;pkAddShare(container,summary,{...form,name:cardData.resultName},cardData);}});}if(PK_BRANCHES[page])return pkBranch(page);pkCurrentBranch=Object.keys(PK_BRANCHES).find(key=>PK_BRANCHES[key].items.some(x=>x[0]===page))||null;if(page==='self')pkSelf();else if(page==='recovery')pkSelf(true);else if(page==='pair'||page==='together')pkPair(page==='together');else if(page==='daily')pkDaily();else if(page==='consult')pkConsult();else if(page==='manual')pkManual();else pkChange();}
 
 })();
