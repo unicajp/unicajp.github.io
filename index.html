@@ -456,11 +456,11 @@
 <button class="passport-title-list-button" id="openPassportTitles" type="button"><span>🏷️</span><span><small>現在の称号</small><strong id="detailTitle">はじまりのうにメン</strong></span><b>一覧 ›</b></button>
 <button class="passport-detail-settings" id="detailOpenSettings" type="button" hidden>プロフィールを編集</button>
 <form class="passport-profile-editor" id="passProfileEditor" hidden>
-<label>名前<input id="passEditName" autocomplete="nickname" maxlength="16" required></label>
-<div class="pass-edit-pair"><label>都道府県<select id="passEditPrefecture"></select></label><label>誕生日<div class="pass-edit-birthday"><select id="passEditMonth" aria-label="誕生日の月"></select><select id="passEditDay" aria-label="誕生日の日"></select></div></label></div>
-<fieldset><legend>アイコン</legend><div class="pass-edit-icons" id="passEditIcons"></div></fieldset>
-<fieldset id="passDeepWardrobe"></fieldset>
-<p id="passEditMessage" role="status"></p><div class="pass-edit-actions"><button type="submit" id="passEditSave">保存</button><button type="button" id="passEditCancel">キャンセル</button></div>
+<header class="pass-settings-heading"><div><small>PROFILE SETTINGS</small><h3 tabindex="-1" id="passSettingsHeading">プロフィール設定</h3></div><button type="button" id="passEditBack" aria-label="うにパスに戻る">×</button></header>
+<nav class="pass-settings-tabs" aria-label="設定項目"><button type="button" data-pass-tab="basic" aria-pressed="true">基本情報</button><button type="button" data-pass-tab="look" aria-pressed="false">アイコン・装飾</button></nav>
+<section data-pass-panel="basic"><p class="pass-settings-note">変更したい項目をタップしてください。</p><label>名前<input id="passEditName" autocomplete="nickname" maxlength="16" required></label><label>都道府県<select id="passEditPrefecture"></select></label><label>誕生日<div class="pass-edit-birthday"><select id="passEditMonth" aria-label="誕生日の月"></select><select id="passEditDay" aria-label="誕生日の日"></select></div></label></section>
+<section data-pass-panel="look" hidden><fieldset><legend>ぷにゅかアイコン</legend><div class="pass-edit-icons" id="passEditIcons"></div></fieldset><fieldset id="passDeepWardrobe"></fieldset></section>
+<p id="passEditMessage" role="status"></p><div class="pass-edit-actions"><button type="button" id="passEditCancel">戻る</button><button type="submit" id="passEditSave">変更を保存</button></div>
 </form>
 </div>
 </section>
@@ -637,7 +637,7 @@
 </div>
 <div aria-live="polite" class="mini-toast" id="miniToast" role="status"></div>
 <script src="js/phase14-09-punyako-avatar.js?v=14.109"></script>
-<script src="js/firebase-init.js?v=14.109" type="module"></script>
+<script src="js/firebase-init.js?v=14.114" type="module"></script>
 <script src="js/phase10-2.js?v=14.109" type="module"></script>
 <script src="js/script.js?v=14.109"></script>
 <script src="js/phase10-3.js?v=14.86"></script>
@@ -666,12 +666,12 @@
 
 <script src="js/phase13-10-scent-release-event.js?v=14.64" defer></script>
 <link rel="stylesheet" href="css/phase13-31-diagnosis-header-nav.css?v=13.31"/>
-<link rel="stylesheet" href="css/punyuka-deep.css?v=14.112"/>
-<script src="js/punyuka-deep.js?v=14.111" defer></script>
+<link rel="stylesheet" href="css/punyuka-deep.css?v=14.114"/>
+<script src="js/punyuka-deep.js?v=14.114" defer></script>
 <link rel="stylesheet" href="css/phase14-07-kokoro-bloom.css?v=14.106"/>
 <script src="js/punyuka-compatibility.js?v=14.55" defer></script>
 <script src="js/phase14-07-kokoro-bloom.js?v=14.112" defer></script>
-<link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=14.107"/>
+<link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=14.114"/>
 <link rel="stylesheet" href="css/phase13-18-scent-compact.css?v=13.18"/>
 <link rel="stylesheet" href="css/phase13-20-world-background.css?v=13.20.3"/>
 <link rel="stylesheet" href="css/phase13-21-home-quick-comment.css?v=14.50"/>
@@ -679,7 +679,7 @@
 <link rel="stylesheet" href="css/phase13-29-home-hero-gap-cleanup.css?v=13.29"/>
 <link rel="stylesheet" href="css/phase14-35-home-ultra-compact.css?v=14.35"/>
 <link rel="stylesheet" href="css/phase14-39-project-title-exact2lines.css?v=14.40"/>
-<script src="js/phase13-4-unipass-card.js?v=14.109" type="module"></script>
+<script src="js/phase13-4-unipass-card.js?v=14.114" type="module"></script>
 <script src="js/phase13-5-common-navigation.js?v=13.7"></script>
 <script src="js/phase13-5-4-header-icons.js?v=13.5.4" defer></script>
 <script id="phase13-7-2-birthday-removal">
