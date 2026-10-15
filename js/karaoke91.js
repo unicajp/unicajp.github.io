@@ -9,7 +9,7 @@ let tuning=false,tuneIndex=0,recordChunks=[],rejectWorker;
 const overlay=document.createElement('div');overlay.id='karaoke91';overlay.hidden=true;
 overlay.innerHTML='<section class="kr-panel" role="dialog" aria-modal="true" aria-labelledby="krTitle"><header><b id="krTitle"><span class="kr-brand-dot" aria-hidden="true"></span>うにか STUDIO</b><button id="krClose" aria-label="閉じる">×</button></header><main><div id="krBody"></div><div id="krStatus" class="kr-status" role="status" aria-live="polite"></div></main></section>';
 document.body.append(overlay);
-const entry=document.createElement('button');entry.id='karaoke91Entry';entry.type='button';entry.hidden=true;entry.innerHTML='<strong>🎙 うにか STUDIO</strong><span id="krHomeCount">投稿数を確認中…</span><small>歌う・聴く ›</small>';
+const entry=document.createElement('button');entry.id='karaoke91Entry';entry.type='button';entry.hidden=true;entry.innerHTML='<i class="home124-mic" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><rect x="17" y="5" width="14" height="25" rx="7" stroke="currentColor" stroke-width="2.5"/><path d="M11 23a13 13 0 0 0 26 0M24 36v7M17 43h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></i><strong>うにか STUDIO</strong><span id="krHomeCount">投稿数を確認中…</span><small>歌う・聴く ›</small>';
 const $=id=>overlay.querySelector('#'+id),body=$('krBody');
 const uid=()=>fb?.auth.currentUser?.uid;
 const isAdmin=()=>uid()===ADMIN;
