@@ -79,6 +79,14 @@ async function loadDeepDecor(targetUid){if(typeof targetUid!=='string'||!targetU
 async function saveDeepDiagnosis(key,answers){await authReady;const owner=deepOwner(),deep=window.UNICA_DEEP;if(!deep?.keys.includes(key)||!deep.validAnswers(answers))throw Error('回答を確認してください。');let saved;
 await runTransaction(db,async tx=>{const memberRef=doc(db,'users',owner),secretRef=doc(db,'users',owner,'privateDiagnosis','forbiddenV1');const [member,secret]=await Promise.all([tx.get(memberRef),tx.get(secretRef)]);if(auth.currentUser?.uid!==owner)throw Error('ログインが変わりました。');if(!member.exists()||!deep.eligible(member.data()))throw Error('通常の25問を完了すると開放されます。');const profile={...member.data(),uid:owner},old=secret.exists()?secret.data():{},base=answers.length&&old[key]?.base?old[key].base:deep.baseStats(profile),branch={answers:[...answers],base,completedAtMs:answers.length===10?Date.now():0};const data={schema:1,...Object.fromEntries(deep.keys.filter(k=>old[k]).map(k=>[k,old[k]])),[key]:branch};const decor=deep.normalizedDecor(profile.deepDecor);if(answers.length===10){const r=deep.evaluate(key,answers,base),list={mask:'frames',bonds:'titles',guard:'backgrounds'}[key];decor[list]=[...new Set([...decor[list],r.id])];}tx.set(secretRef,{...data,updatedAt:serverTimestamp()});if(answers.length===10)tx.update(memberRef,{deepDecor:decor,updatedAt:serverTimestamp()});saved={profile:{...profile,deepDecor:decor},data};});publishDeepProfile(saved.profile,owner);return saved;}
 
+async function equipDeepReward(key,resultId){
+ await authReady;const owner=deepOwner(),deep=window.UNICA_DEEP,b=deep?.catalog[key];
+ if(!b||!b.results.some(r=>r.id===resultId))throw Error('報酬を確認してください。');
+ let profile;
+ await runTransaction(db,async tx=>{const ref=doc(db,'users',owner),snap=await tx.get(ref);if(auth.currentUser?.uid!==owner)throw Error('ログインが変わりました。');if(!snap.exists())throw Error('うにメン登録を確認してください。');const current=snap.data(),decor=deep.normalizedDecor(current.deepDecor),list={frame:'frames',title:'titles',background:'backgrounds'}[b.slot];if(!decor[list].includes(resultId))throw Error('獲得済みの報酬だけ装備できます。');decor[b.slot]=resultId;tx.update(ref,{deepDecor:decor,updatedAt:serverTimestamp()});profile={...current,uid:owner,deepDecor:decor};});
+ return publishDeepProfile(profile,owner);
+}
+
 async function updateMemberProfile(input){
  await authReady;const ownerUid=auth.currentUser?.uid;if(!ownerUid||ownerUid!==uid)throw Error('ログインを確認してから、もう一度お試しください。');
  const name=String(input.name||'').trim(),prefecture=String(input.prefecture||''),birthMonth=Number(input.birthMonth),birthDay=Number(input.birthDay);
@@ -504,7 +512,7 @@ window.UNICA_FIREBASE = {
   get uid() { return uid; },
   saveMember: member => saveMember(member).catch(console.error),
   updateMemberProfile,
-  loadDeepDiagnosis,saveDeepDiagnosis,loadDeepDecor,
+  loadDeepDiagnosis,saveDeepDiagnosis,loadDeepDecor,equipDeepReward,
   ensureMemberNumber,
   removeMember: () => removeMember().catch(console.error),
   syncCommunityRows: rows => syncCommunityRows(rows).catch(console.error),
