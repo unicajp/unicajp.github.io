@@ -1,0 +1,39 @@
+body.app-nav127{padding-bottom:calc(82px + env(safe-area-inset-bottom))!important}
+body.app-nav127 #siteHeader{display:grid!important;grid-template-columns:76px minmax(0,1fr)!important;gap:6px 10px!important;padding:10px 12px!important;border-radius:24px!important;align-items:center!important;min-height:0!important}
+body.app-nav127 #siteHeader .site-logo{grid-column:1;grid-row:1;align-self:center}
+body.app-nav127 #worldStatusBar{grid-column:2;grid-row:1;width:100%!important;min-width:0;box-sizing:border-box;margin:0!important}
+body.app-nav127 #openUniPassDirect{display:none!important}
+body.app-nav127 #siteHeader .site-nav{display:none!important}
+body.app-nav127 #siteHeader #musicPlayer{position:static!important;inset:auto!important;transform:none!important;grid-column:1/-1;grid-row:2;display:grid!important;grid-template-columns:32px minmax(0,1fr) 58px!important;gap:8px!important;align-items:center!important;width:100%!important;height:36px!important;min-height:0!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;border-top:1px solid #e9dfea!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;color:#735b7e!important}
+body.app-nav127 #musicPlayer .player-meta{display:none!important}
+body.app-nav127 #musicPlayer #playerToggle{width:30px!important;height:30px!important;min-height:30px!important;padding:0!important;border:1px solid #d9c7e1!important;border-radius:50%!important;background:#f0e6f4!important;color:#775285!important;font-size:14px!important}
+body.app-nav127 #musicPlayer #trackSelect{width:100%!important;min-width:0!important;max-width:none!important;height:32px!important;padding:4px 20px 4px 4px!important;background-color:transparent!important;border:0!important;border-radius:6px!important;font:500 11px/1.4 system-ui!important;color:#71557c!important;text-overflow:ellipsis}
+body.app-nav127 #musicPlayer #volume{display:block!important;width:58px!important;min-width:0!important;height:24px!important;margin:0!important;accent-color:#a47fb2}
+body.app-nav127 #top{padding-top:var(--app127-header,120px)!important}
+body.app-nav127 #unico,body.app-nav127 section[id]{scroll-margin-top:var(--app127-header,120px)}
+#appNav127{position:fixed;z-index:30000;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;gap:2px;box-sizing:border-box;height:calc(65px + env(safe-area-inset-bottom));padding:5px max(8px,env(safe-area-inset-left)) calc(5px + env(safe-area-inset-bottom));background:#fffafff5;border-top:1px solid #e2d6e7;box-shadow:0 -4px 20px #49304e0a;backdrop-filter:blur(18px)}
+#appNav127 button{appearance:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;min-height:50px;padding:4px 0;border:0;border-radius:14px;background:none;color:#927c9d;font:500 9px/1.3 system-ui;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#appNav127 svg{width:23px;height:23px;flex:none}
+#appNav127 button.is-current{color:#684477;background:#eadff14d}
+#appNav127 button:active{background:#efe5f3;transform:scale(.95)}
+#appNav127 button:focus-visible,#appVariety127 button:focus-visible{outline:2px solid #9b76b1;outline-offset:-2px}
+#appVariety127[hidden]{display:none!important}
+#appVariety127{position:fixed;inset:0;z-index:29999;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif}
+.app127-shade{position:absolute;inset:0;width:100%;height:100%;border:0;background:#25172b60;backdrop-filter:blur(3px)}
+.app127-sheet{position:absolute;left:8px;right:8px;bottom:calc(73px + env(safe-area-inset-bottom));max-width:540px;margin:auto;padding:18px;border:1px solid #e6d9ed;border-radius:25px;background:#fffbff;box-shadow:0 -8px 40px #33203920;color:#60456e}
+.app127-sheet header{display:flex;align-items:center;justify-content:space-between;margin:0 0 13px;font-size:15px}
+.app127-sheet header button{width:32px;height:32px;border:0;border-radius:50%;background:#f0e7f4;color:#866491;font-size:23px;cursor:pointer}
+.app127-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.app127-choices button{display:grid;grid-template-columns:28px minmax(0,1fr);gap:4px 8px;align-items:center;padding:15px 12px;border:1px solid #e9ddec;border-radius:16px;background:#f8f1fa;color:#6f507e;text-align:left;cursor:pointer;font-family:inherit}
+.app127-choices svg{width:24px;height:24px;grid-row:1/3}
+.app127-choices strong{font-size:12px;line-height:1.5}.app127-choices small{font-size:10px;color:#9a80a3;line-height:1.5}
+/* Reserve the persistent navigation strip in full-screen surfaces. */
+body.app-nav127 .scent16-modal,body.app-nav127 .iv-modal,body.app-nav127 .world-modal,body.app-nav127 .sre-mission-modal{padding-bottom:calc(78px + env(safe-area-inset-bottom))!important}
+body.app-nav127 [role=dialog]{max-height:calc(100dvh - 108px - env(safe-area-inset-bottom))!important}
+body.app-nav127 #karaoke91{padding-bottom:calc(72px + env(safe-area-inset-bottom));box-sizing:border-box}
+body.app-nav127 #karaoke91 .kr-panel{height:calc(100dvh - 92px - env(safe-area-inset-bottom));max-height:880px}
+@media(min-width:650px){#appNav127{left:50%;right:auto;transform:translateX(-50%);width:min(560px,100%);border-radius:20px 20px 0 0}.app127-sheet{left:50%;right:auto;transform:translateX(-50%);width:500px}}
+@media(max-width:360px){body.app-nav127 #siteHeader{grid-template-columns:65px minmax(0,1fr)!important;padding:8px 10px!important;gap:4px 6px!important}#appNav127 button{font-size:8px}}
+body.app-nav127 #siteHeader{height:auto!important;max-height:none!important;box-sizing:border-box!important}
+body.app-nav127.home86-layout .hero{display:none!important}
+body:not(.opened) #appNav127{display:none}
