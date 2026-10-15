@@ -35,10 +35,7 @@
   }
   function openRegistration() {
     closeLock();
-    window.__unicaGuestBypass = true;
-    const trigger = $('#openPassButton') || $('#statusOpenPass');
-    trigger?.click();
-    setTimeout(() => { window.__unicaGuestBypass = false; }, 0);
+    window.UNICA_MEMBER_GATE?.open(true);
   }
 
   function applyAccessState() {

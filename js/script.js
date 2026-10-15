@@ -527,6 +527,7 @@
   document.getElementById('registerChoiceBack').addEventListener('click',()=>{pendingRegistration=null;showRegisterStep('choice');document.getElementById('registerStart').focus();});
   registerBack?.addEventListener('click',()=>beginRegistration());
   window.UNICA_MEMBER_GATE={open:openMemberGate,showRegistration:beginRegistration,showChoice:()=>showRegisterStep('choice')};
+  document.getElementById('openMemberGate')?.addEventListener('click',()=>openMemberGate(true));
 
   async function waitForFirebaseApi(timeoutMs = 10000) {
     const started = Date.now();
