@@ -41,6 +41,7 @@ function pkCardCopySections(container){
  return [...container.querySelectorAll('.pk-insight-card')].filter(card=>card.querySelector('h4')?.textContent!=='5つの軸').map(card=>({label:card.querySelector('h4')?.textContent||'結果のヒント',text:[...card.querySelectorAll('p,li,.pk-card-copy')].filter(el=>!el.closest('details')&&!el.parentElement.closest('.pk-card-copy')).map(el=>el.textContent.trim()).join(' ')})).filter(row=>row.text);
 }
 async function pkMakeShareCard(summary,form,data={}){
+ const deep=data.theme==='deep';
  const canvas=document.createElement('canvas');canvas.width=1080;
  const ctx=canvas.getContext('2d');if(!ctx)throw Error('画像を作成できませんでした。');
  const family='"Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif';
@@ -57,21 +58,21 @@ async function pkMakeShareCard(summary,form,data={}){
  const heights=[];for(let i=0;i<layout.length;i+=2)heights.push(Math.max(252,92+Math.max(...layout.slice(i,i+2).map(row=>row.lines.length))*(font+10)));
  const gridHeight=heights.reduce((a,b)=>a+b+20,0);canvas.height=Math.max(1240,490+gridHeight+(measured.length?136:16)+148);
  const round=(x,y,w,h,r,fill)=>{ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();};
- const bg=ctx.createLinearGradient(0,0,1080,canvas.height);bg.addColorStop(0,'#271b49');bg.addColorStop(.38,'#69518e');bg.addColorStop(1,'#f3cbe4');ctx.fillStyle=bg;ctx.fillRect(0,0,1080,canvas.height);
- const glow=ctx.createRadialGradient(340,215,10,340,215,450);glow.addColorStop(0,'rgba(255,212,246,.65)');glow.addColorStop(1,'rgba(255,212,246,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,1080,540);
+ const bg=ctx.createLinearGradient(0,0,1080,canvas.height);bg.addColorStop(0,deep?'#120b18':'#271b49');bg.addColorStop(.38,deep?'#472039':'#69518e');bg.addColorStop(1,deep?'#160d1c':'#f3cbe4');ctx.fillStyle=bg;ctx.fillRect(0,0,1080,canvas.height);
+ const glow=ctx.createRadialGradient(340,215,10,340,215,450);glow.addColorStop(0,deep?'rgba(194,69,103,.24)':'rgba(255,212,246,.65)');glow.addColorStop(1,'rgba(255,212,246,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,1080,540);
  const star=(x,y,r)=>{ctx.fillStyle='#ffe4ab';ctx.beginPath();ctx.moveTo(x,y-r);ctx.quadraticCurveTo(x+3,y-3,x+r,y);ctx.quadraticCurveTo(x+3,y+3,x,y+r);ctx.quadraticCurveTo(x-3,y+3,x-r,y);ctx.quadraticCurveTo(x-3,y-3,x,y-r);ctx.fill();};[[78,142,13],[438,92,10],[458,318,16],[970,126,12],[942,350,8],[132,383,8]].forEach(v=>star(...v));
  ctx.textAlign='left';ctx.textBaseline='top';ctx.font=`500 24px ${family}`;ctx.fillStyle='#f5dcee';ctx.fillText('UNICA WORLD  /  KOKORO BLOOM',58,38);
  round(530,108,470,49,24,'rgba(255,235,249,.15)');ctx.fillStyle='#ffe1f1';ctx.font=`500 25px ${family}`;ctx.fillText(data.title||'ぷにゅか診断',552,119);
- ctx.font=`500 49px ${family}`;ctx.fillStyle='#fff8ff';ctx.fillText('こころの個性を',526,179);ctx.fillText('見つけよう。',526,241);
+ ctx.font=`500 49px ${family}`;ctx.fillStyle='#fff8ff';ctx.fillText(deep?'仮面の奥の、':'こころの個性を',526,179);ctx.fillText(deep?'わたしに出会う。':'見つけよう。',526,241);
  ctx.font=`400 25px ${family}`;ctx.fillStyle='#f0dce9';pkCardLines(ctx,data.subtitle||'わたしらしさが、少し見えてくる。',470).slice(0,2).forEach((line,i)=>ctx.fillText(line,530,320+i*34));
  let image=null;if(form?.image)image=await new Promise(resolve=>{const img=new Image();const timer=setTimeout(()=>resolve(null),8000);img.onload=async()=>{clearTimeout(timer);try{await img.decode();resolve(img);}catch{resolve(null)}};img.onerror=()=>{clearTimeout(timer);resolve(null)};img.crossOrigin='anonymous';img.src=form.image;});
  if(image){const scale=Math.min(326/image.naturalWidth,326/image.naturalHeight);const w=image.naturalWidth*scale,h=image.naturalHeight*scale;ctx.save();ctx.shadowColor='rgba(255,195,239,.8)';ctx.shadowBlur=34;ctx.drawImage(image,126+(326-w)/2,83+(326-h)/2,w,h);ctx.restore();}else{ctx.fillStyle='#f7d4ed';ctx.font=`500 52px ${family}`;ctx.fillText('KOKORO',134,186);ctx.fillText('BLOOM',151,252);}
- round(48,420,984,canvas.height-464,30,'#fbf3fc');
+ round(48,420,984,canvas.height-464,30,deep?'#fff4ed':'#fbf3fc');
  const name=String(form?.name||'私のこころの結果');let size=43;ctx.font=`500 ${size}px ${family}`;while(ctx.measureText(name).width>900&&size>30)ctx.font=`500 ${--size}px ${family}`;ctx.textAlign='center';ctx.fillStyle='#593663';ctx.fillText(name,540,445);ctx.textAlign='left';
  const textRecords=[];let y=508;
  for(let i=0;i<layout.length;i+=2){const height=heights[i/2];for(let col=0;col<2;col++){const row=layout[i+col];if(!row)continue;const x=76+col*474,w=layout.length===1?928:454;round(x,y,w,height,22,i+col===0?'#f0e5f7':'#f7eafa');round(x+22,y+23,6,34,3,'#c875ad');ctx.fillStyle='#82508a';let labelSize=29;ctx.font=`500 ${labelSize}px ${family}`;while(ctx.measureText(row.label).width>w-78&&labelSize>23)ctx.font=`500 ${--labelSize}px ${family}`;ctx.fillText(row.label,x+41,y+23);ctx.fillStyle='#514059';ctx.font=`400 ${font}px ${family}`;row.lines.forEach((line,j)=>{const ty=y+76+j*(font+10);ctx.fillText(line,x+22,ty);textRecords.push({text:line,y:ty,size:font});});}y+=height+20;}
  if(measured.length){ctx.fillStyle='#886292';ctx.font=`500 24px ${family}`;ctx.fillText('今回の5つの軸 · 100点満点',80,y+6);measured.forEach((k,i)=>{const x=82+i*184;ctx.fillStyle='#87617f';ctx.font=`400 23px ${family}`;ctx.textAlign='center';ctx.fillText(AXIS_LABEL[k],x+75,y+43);ctx.fillStyle='#774785';ctx.font=`500 32px ${family}`;ctx.fillText(String(clamp(data.stats[k],0,100)),x+75,y+75);ctx.textAlign='left';});}
- const footer=canvas.height-124;const cta=ctx.createLinearGradient(82,footer,998,footer);cta.addColorStop(0,'#9d5ca7');cta.addColorStop(1,'#c76ba6');round(80,footer,920,60,30,cta);ctx.textAlign='center';ctx.fillStyle='#fff7fc';ctx.font=`500 29px ${family}`;ctx.fillText('あなたはどのぷにゅか？',540,footer+12);ctx.fillStyle='#8f668e';ctx.font=`400 22px ${family}`;ctx.fillText('#ぷにゅか診断  #UNICAWORLD  ·  '+location.host,540,footer+81);
+ const footer=canvas.height-124;const cta=ctx.createLinearGradient(82,footer,998,footer);cta.addColorStop(0,'#9d5ca7');cta.addColorStop(1,'#c76ba6');round(80,footer,920,60,30,cta);ctx.textAlign='center';ctx.fillStyle='#fff7fc';ctx.font=`500 29px ${family}`;ctx.fillText(deep?'25問の、その先へ。禁断の深掘り診断':'あなたはどのぷにゅか？',540,footer+12);ctx.fillStyle=deep?'#d8b7c6':'#8f668e';ctx.font=`400 22px ${family}`;ctx.fillText('#ぷにゅか診断  #UNICAWORLD  ·  '+location.host,540,footer+81);
  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw Error('画像を作成できませんでした。');return {blob,canvas,textRecords};
 }
 
@@ -85,6 +86,8 @@ function pkAddShare(container,summary,cardForm,cardData={}){
  const saveImage=document.createElement('button');saveImage.type='button';saveImage.textContent='画像を保存';saveImage.disabled=true;
  const shareImage=document.createElement('button');shareImage.type='button';shareImage.textContent='画像をシェア';shareImage.disabled=true;
  let file=null,imageUrl='',buildPromise=null;
+ const filename=cardData.theme==='deep'?'unica-deep-diagnosis-card.png':'unica-punyuka-card.png';
+ const shareTitle=cardData.theme==='deep'?'UNICA WORLD · 禁断の深掘り診断':'UNICA WORLD · ぷにゅか診断';
  const form=cardForm||formById(localJourney()?.equippedId);
  const copy=document.createElement('textarea');copy.readOnly=true;copy.setAttribute('aria-label','シェアする文章');
  const url=location.origin+location.pathname;
@@ -92,14 +95,14 @@ function pkAddShare(container,summary,cardForm,cardData={}){
  const actions=document.createElement('div');actions.className='pk-share-actions';
  const status=document.createElement('p');status.setAttribute('role','status');
  const native=document.createElement('button');native.type='button';native.textContent='ほかのSNS';native.hidden=!navigator.share;
- native.onclick=async()=>{try{await navigator.share({title:'UNICA WORLD · ぷにゅか診断',text:summary+'\n#ぷにゅか診断 #UNICAWORLD',url});status.textContent='';}catch(e){if(e.name!=='AbortError')status.textContent='共有できませんでした。コピーも使えます。';}};
+ native.onclick=async()=>{try{await navigator.share({title:shareTitle,text:summary+'\n#ぷにゅか診断 #UNICAWORLD',url});status.textContent='';}catch(e){if(e.name!=='AbortError')status.textContent='共有できませんでした。コピーも使えます。';}};
  for(const [label,href] of [['X','https://twitter.com/intent/tweet?text='+encodeURIComponent(summary+'\n#ぷにゅか診断 #UNICAWORLD')+'&url='+encodeURIComponent(url)],['LINE','https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(summary)]]){const a=document.createElement('a');a.textContent=label;a.href=href;a.target='_blank';a.rel='noopener noreferrer';actions.append(a);}
  const clipboard=document.createElement('button');clipboard.type='button';clipboard.textContent='コピー';clipboard.onclick=async()=>{try{if(!navigator.clipboard?.writeText)throw Error();await navigator.clipboard.writeText(copy.value);status.textContent='コピーしました';}catch{copy.focus();copy.select();status.textContent='文章を長押ししてコピーしてください。';}};
  actions.append(native,clipboard);const textDetails=document.createElement('details');const textLabel=document.createElement('summary');textLabel.textContent='文章・リンクで共有';textDetails.append(textLabel,copy,actions);imageActions.append(saveImage,shareImage);panel.append(preview,imageActions,textDetails,status);area.append(button,panel);container.append(area);
- const build=()=>buildPromise||(buildPromise=pkMakeShareCard(summary,form,cardData).then(({blob})=>{if(!area.isConnected)return;file=new File([blob],'unica-punyuka-card.png',{type:'image/png'});imageUrl=URL.createObjectURL(blob);preview.src=imageUrl;preview.hidden=false;saveImage.disabled=false;shareImage.disabled=false;status.textContent='';}).catch(()=>{buildPromise=null;status.textContent='画像を作れませんでした。もう一度開くか、文章で共有してください。';}));
+ const build=()=>buildPromise||(buildPromise=pkMakeShareCard(summary,form,cardData).then(({blob})=>{if(!area.isConnected)return;file=new File([blob],filename,{type:'image/png'});imageUrl=URL.createObjectURL(blob);preview.src=imageUrl;preview.hidden=false;saveImage.disabled=false;shareImage.disabled=false;status.textContent='';}).catch(()=>{buildPromise=null;status.textContent='画像を作れませんでした。もう一度開くか、文章で共有してください。';}));
  const cleanup=new MutationObserver(()=>{if(!area.isConnected){if(imageUrl)URL.revokeObjectURL(imageUrl);cleanup.disconnect();}});cleanup.observe(screen,{childList:true,subtree:true});
- saveImage.onclick=()=>{if(!imageUrl)return;const link=document.createElement('a');link.href=imageUrl;link.download='unica-punyuka-card.png';link.click();status.textContent='画像を保存できます。保存できない場合は画像を長押ししてください。';};
- shareImage.onclick=async()=>{if(!file)return;try{if(!navigator.share||!navigator.canShare?.({files:[file]})){status.textContent='この端末では画像を保存して、SNSに添付してください。';return;}await navigator.share({title:'ぷにゅか診断',text:summary+'\n'+url,files:[file]});status.textContent='';}catch(e){if(e.name!=='AbortError')status.textContent='共有できませんでした。画像を保存してSNSに添付できます。';}};
+ saveImage.onclick=()=>{if(!imageUrl)return;const link=document.createElement('a');link.href=imageUrl;link.download=filename;link.click();status.textContent='画像を保存できます。保存できない場合は画像を長押ししてください。';};
+ shareImage.onclick=async()=>{if(!file)return;try{if(!navigator.share||!navigator.canShare?.({files:[file]})){status.textContent='この端末では画像を保存して、SNSに添付してください。';return;}await navigator.share({title:shareTitle,text:summary+'\n'+url,files:[file]});status.textContent='';}catch(e){if(e.name!=='AbortError')status.textContent='共有できませんでした。画像を保存してSNSに添付できます。';}};
  button.onclick=()=>{panel.hidden=!panel.hidden;button.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden){if(!file){status.textContent='カードを作成中…';build();}pkRevealResult(area);}};
 }
 
@@ -698,7 +701,7 @@ const PK_BRANCHES={
 };
 let pkCurrentBranch=null,pkBranchMenu=false;
 function pkMenuHtml(){
- return `<nav class="pk-insight-menu pk-main-menu" aria-label="ぷにゅかのメニュー">${Object.entries(PK_BRANCHES).map(([page,x])=>`<button data-pk-page="${page}" data-tone="${x.tone}" type="button"><b>${x.title}</b></button>`).join('')}</nav><button class="deep-entry" data-pk-page="deep" data-deep-unlocked="${!!window.UNICA_DEEP?.eligible(member())}" type="button"><span class="deep-entry-seal" aria-hidden="true">☾</span><small>FORBIDDEN · 25問の、その先へ</small><b>禁断の深掘り診断</b><span class="deep-entry-copy">その仮面の奥を、覗く覚悟は？</span><em>${window.UNICA_DEEP?.eligible(member())?'✦ 解放済み · 秘密の扉を開く ›':'🔒 未開放 · 通常25問の完了で解放'}</em></button>`;
+ return `<nav class="pk-insight-menu pk-main-menu" aria-label="ぷにゅかのメニュー">${Object.entries(PK_BRANCHES).map(([page,x])=>`<button data-pk-page="${page}" data-tone="${x.tone}" type="button"><b>${x.title}</b></button>`).join('')}</nav><button class="pk-types-entry" data-pk-page="types" type="button"><span aria-hidden="true">✦</span><b>16種類のぷにゅか・性格一覧</b><span aria-hidden="true">›</span></button><button class="deep-entry" data-pk-page="deep" data-deep-unlocked="${!!window.UNICA_DEEP?.eligible(member())}" type="button"><span class="deep-entry-seal" aria-hidden="true">☾</span><small>FORBIDDEN · 25問の、その先へ</small><b>禁断の深掘り診断</b><span class="deep-entry-copy">その仮面の奥を、覗く覚悟は？</span><em>${window.UNICA_DEEP?.eligible(member())?'✦ 解放済み · 秘密の扉を開く ›':'🔒 未開放 · 通常25問の完了で解放'}</em></button>`;
 }
 function pkBind(){screen.querySelectorAll('[data-pk-page]').forEach(b=>b.onclick=()=>pkOpen(b.dataset.pkPage));}
 function pkBranch(key){
@@ -843,6 +846,11 @@ function pkManual(){
  pkFrame('取り扱い説明書',`<p class="pk-note">${n}問から見える私の傾向。共有したい項目だけチェックしてコピーできます。自動で公開されることはありません。</p><div class="pk-manual">${items.map(([name,copy],i)=>`<article class="pk-insight-card"><label><input type="checkbox" data-manual="${i}" checked> ${name}</label><p>${copy}</p></article>`).join('')}</div><button class="punyako-primary" id="pkManualCopy" type="button">選んだ項目をコピー</button><p id="pkManualStatus" role="status"></p><textarea id="pkManualText" aria-label="共有用の取り扱い説明書" hidden readonly></textarea>`);
  $('#pkManualCopy').onclick=async()=>{const chosen=[...screen.querySelectorAll('[data-manual]:checked')].map(b=>items[Number(b.dataset.manual)]);if(!chosen.length){$('#pkManualStatus').textContent='共有する項目を選んでください。';return;}const text='私のぷにゅか取り扱い説明書（'+n+'問）\n\n'+chosen.map(([name,copy])=>name+'\n'+copy).join('\n\n');try{await navigator.clipboard.writeText(text);$('#pkManualStatus').textContent='コピーしました。';}catch{const area=$('#pkManualText');area.hidden=false;area.value=text;area.focus();area.select();$('#pkManualStatus').textContent='下の文章を選択してコピーしてください。';}};
 }
-function pkOpen(page){if(page==='deep'){pkCurrentBranch=null;return window.UNICA_DEEP?.open({frame:pkFrame});}if(PK_BRANCHES[page])return pkBranch(page);pkCurrentBranch=Object.keys(PK_BRANCHES).find(key=>PK_BRANCHES[key].items.some(x=>x[0]===page))||null;if(page==='self')pkSelf();else if(page==='recovery')pkSelf(true);else if(page==='pair'||page==='together')pkPair(page==='together');else if(page==='daily')pkDaily();else if(page==='consult')pkConsult();else if(page==='manual')pkManual();else pkChange();}
+function pkTypes(){
+ pkCurrentBranch=null;
+ pkFrame('16種類のぷにゅか',`<section class="pk-type-catalog"><p class="pk-type-lead">あなたは、どのぷにゅか？</p><p class="pk-type-note">最終進化の16種類を見比べられます。気になる子をタップすると、強みや回復のヒントが開きます。</p><div class="pk-type-grid">${TYPES.map(t=>`<details class="pk-type-item"><summary><img src="${esc(t.image)}" alt="" loading="lazy"><b>${esc(t.name)}</b><span>${esc(t.core)}</span><small>性格を詳しく見る ＋</small></summary><div class="pk-type-detail"><h4>あなたの強み</h4><p>${esc(t.strength)}</p><h4>回復のヒント</h4><p>${esc(t.recharge)}</p><h4>ぷにゅかから一言</h4><p>${esc(t.advice)}</p></div></details>`).join('')}</div><p class="pk-type-note">同じタイプでも、回答によって5つの軸は異なります。今の自分を知るヒントとして楽しんでください。</p></section>`);
+ screen.querySelector('.pk-companion')?.remove();
+}
+function pkOpen(page){if(page==='types')return pkTypes();if(page==='deep'){pkCurrentBranch=null;return window.UNICA_DEEP?.open({frame:pkFrame,share:(container,summary,cardData)=>{const form=formById(localJourney()?.equippedId)||FORMS.stage1_base;pkAddShare(container,summary,{...form,name:cardData.resultName},cardData);}});}if(PK_BRANCHES[page])return pkBranch(page);pkCurrentBranch=Object.keys(PK_BRANCHES).find(key=>PK_BRANCHES[key].items.some(x=>x[0]===page))||null;if(page==='self')pkSelf();else if(page==='recovery')pkSelf(true);else if(page==='pair'||page==='together')pkPair(page==='together');else if(page==='daily')pkDaily();else if(page==='consult')pkConsult();else if(page==='manual')pkManual();else pkChange();}
 
 })();
