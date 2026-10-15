@@ -65,13 +65,15 @@ function updatePassport(){
   $('#detailSupportLevel') && ($('#detailSupportLevel').textContent=supportLevel(cheers + comments.filter(c=>c.ownerUid===uid).length*5));
 }
 
+let songLikeBusy=false;
 async function toggleSongLike(){
-  if(!uid)return;
+  if(!uid||songLikeBusy)return;
   if(!member()){ openMemberGate(); return; }
+  songLikeBusy=true;const button=$('#songLikeButton');if(button)button.disabled=true;
   const likeRef=doc(db,'songs',SONG_ID,'likes',uid);
   const songRef=doc(db,'songs',SONG_ID);
   try{
-    await runTransaction(db, async tx=>{
+    const added=await runTransaction(db, async tx=>{
       const [likeSnap,songSnap]=await Promise.all([tx.get(likeRef),tx.get(songRef)]);
       const current=Math.max(0,Number(songSnap.data()?.likeCount||0));
       if(likeSnap.exists()){
@@ -79,11 +81,23 @@ async function toggleSongLike(){
       }else{
         tx.set(likeRef,{uid,createdAt:serverTimestamp()}); tx.set(songRef,{title:'ミルクの匂い',likeCount:current+1,updatedAt:serverTimestamp()},{merge:true});
       }
+      return !likeSnap.exists();
     });
-  }catch(error){ console.error(error); toast('好きの更新に失敗しました。'); }
+    songLiked=added;button?.classList.toggle('is-liked',added);button?.setAttribute('aria-pressed',String(added));button?.setAttribute('aria-label',added?'この曲の好きを取り消す':'この曲が好き');if($('#songLikeIcon'))$('#songLikeIcon').textContent=added?'♥':'♡';
+    if(added)celebrateSongLike(button);
+  }catch(error){ console.error(error); toast('好きの更新に失敗しました。'); }finally{songLikeBusy=false;if(button)button.disabled=false;}
+}
+function celebrateSongLike(button){
+ if(!button)return;const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ if(reduced)return;
+ button.classList.remove('like126-pop');void button.offsetWidth;button.classList.add('like126-pop');setTimeout(()=>button.classList.remove('like126-pop'),600);
+ const rect=button.getBoundingClientRect(),field=document.createElement('span');field.className='like126-burst';field.setAttribute('aria-hidden','true');field.style.left=(rect.left+rect.width/2)+'px';field.style.top=(rect.top+rect.height/2)+'px';
+ for(let i=0;i<8;i++){const bit=document.createElement('i'),angle=i*Math.PI/4;bit.textContent=i%2?'♥':'·';bit.style.setProperty('--dx',Math.cos(angle)*(27+i%3*5)+'px');bit.style.setProperty('--dy',Math.sin(angle)*29-10+'px');bit.style.setProperty('--turn',(i%2?14:-14)+'deg');field.append(bit);}document.body.append(field);setTimeout(()=>field.remove(),800);
 }
 function renderSongLike(count){
   $('#songLikeButton')?.classList.toggle('is-liked',songLiked);
+  $('#songLikeButton')?.setAttribute('aria-pressed',String(songLiked));
+  $('#songLikeButton')?.setAttribute('aria-label',songLiked?'この曲の好きを取り消す':'この曲が好き');
   $('#songLikeIcon') && ($('#songLikeIcon').textContent=songLiked?'♥':'♡');
   $('#songLikeCount') && ($('#songLikeCount').textContent=String(count));
   const compact=$('#compactSongLikes'); if(compact)compact.innerHTML=`${songLiked?'♥':'♡'} <b>${count}</b>人`;
