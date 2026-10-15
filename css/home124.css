@@ -63,3 +63,41 @@ body.home86-layout #phase1241Renewal .home86-release{display:flex!important;alig
 #phase1241Renewal .home86-release #songLikeIcon{font-size:13px}
 #phase1241Renewal .home86-release .song-like-box p{font-size:9px!important;white-space:nowrap;margin:0!important}
 #phase1241Renewal .home86-release .song-like-box p b{font-size:11px}
+/* 14.125: identical icon / two-line copy / arrow geometry for all four entries. */
+body.home86-layout #phase1241Renewal.home86{--entry-icon:50px;--entry-gap:13px;--entry-title:16px;--entry-copy:11px;--entry-arrow:28px;--entry-pad:15px}
+body.home86-layout #phase1241Renewal .home86-diagnosis,body.home86-layout #phase1241Renewal .home86-interview,body.home86-layout #phase1241Renewal #karaoke91Entry,body.home86-layout #phase1241Renewal #scentReleaseEvent .sre-mission-button{display:grid!important;grid-template-columns:var(--entry-icon) minmax(0,1fr) var(--entry-arrow)!important;grid-template-rows:1fr 1fr!important;column-gap:var(--entry-gap)!important;row-gap:3px!important;padding:var(--entry-pad)!important;align-items:center!important}
+/* The title baselines and description baselines are shared across every card. */
+#phase1241Renewal .home86-diagnosis>div,#phase1241Renewal .home86-interview>.home86-interview-label,#phase1241Renewal #scentReleaseEvent .sre-mission-copy{grid-column:2;grid-row:1/3;align-self:center;display:grid!important;grid-template-rows:23px auto;gap:3px!important;position:static;width:100%;max-width:none;min-width:0;margin:0!important}
+#phase1241Renewal .home86-diagnosis strong,#phase1241Renewal .home86-interview .home86-interview-label strong,#phase1241Renewal #karaoke91Entry>strong,#phase1241Renewal #scentReleaseEvent .sre-mission-copy>strong{font:750 var(--entry-title)/23px system-ui,-apple-system,"Noto Sans JP",sans-serif!important;letter-spacing:0!important;margin:0!important;padding:0!important;white-space:nowrap}
+#phase1241Renewal .home86-diagnosis p,#phase1241Renewal .home86-interview .home86-interview-label small,#phase1241Renewal #karaoke91Entry>#krHomeCount,#phase1241Renewal #scentReleaseEvent .sre-mission-copy>small{font:400 var(--entry-copy)/17px system-ui,-apple-system,"Noto Sans JP",sans-serif!important;letter-spacing:0!important;margin:0!important;padding:0!important;white-space:nowrap}
+#phase1241Renewal .home86-diagnosis small,#phase1241Renewal .home86-interview .home124-kicker,#phase1241Renewal #scentReleaseEvent .sre-mission-song{display:none!important}
+#phase1241Renewal #scentReleaseEvent .sre-mission-copy>strong{grid-row:1;order:initial}
+#phase1241Renewal #scentReleaseEvent .sre-mission-copy>small{grid-row:2;order:initial;color:#897590}
+#phase1241Renewal #karaoke91Entry>strong{grid-column:2;grid-row:1;align-self:end}
+#phase1241Renewal #karaoke91Entry>#krHomeCount{grid-column:2;grid-row:2;align-self:start}
+/* All icon tiles occupy the same slot on the left. */
+#phase1241Renewal #karaoke91Entry .home124-mic,#phase1241Renewal .home86-interview>.home86-interview-symbol{grid-column:1;grid-row:1/3;width:var(--entry-icon)!important;height:var(--entry-icon)!important;flex:none!important;align-self:center;border-radius:15px;box-sizing:border-box;margin:0}
+#phase1241Renewal .home86-interview-symbol svg,#phase1241Renewal .home124-mic svg{width:29px;height:29px}
+#phase1241Renewal .home86-diagnosis img{grid-column:1;grid-row:1/3;position:static!important;width:var(--entry-icon)!important;height:var(--entry-icon)!important;max-width:none;object-fit:contain;align-self:center;filter:drop-shadow(0 2px 3px #b77bb329);padding:3px;box-sizing:border-box;background:#f0e5f4;border-radius:15px}
+#phase1241Renewal #scentReleaseEvent .sre-mission-button::before{content:'✦';grid-column:1;grid-row:1/3;display:grid;place-items:center;width:var(--entry-icon);height:var(--entry-icon);border-radius:15px;background:#ece2f2;color:#a27bb5;font:400 31px/1 system-ui}
+/* One identical circular chevron, without a second call-to-action column. */
+#phase1241Renewal .home86-diagnosis .home124-action,#phase1241Renewal .home86-interview>.home86-interview-arrow,#phase1241Renewal #karaoke91Entry>small,#phase1241Renewal #scentReleaseEvent .sre-mission-arrow{position:static!important;grid-column:3;grid-row:1/3;display:grid!important;place-items:center;align-self:center;width:var(--entry-arrow)!important;height:var(--entry-arrow)!important;min-width:0;max-width:none!important;border-radius:50%;padding:0!important;margin:0!important;background:#eee4f2;color:#9978a6;font:400 23px/1 system-ui!important;box-sizing:border-box}
+#phase1241Renewal #karaoke91Entry>small{font-size:0!important;background:#ffffff18;color:#f0ddeb}
+#phase1241Renewal #karaoke91Entry>small::after{content:'›';font:400 23px/1 system-ui}
+#phase1241Renewal .home86-interview>.news116-new{top:7px;right:12px;font-size:7px}
+@media(max-width:360px){body.home86-layout #phase1241Renewal.home86{--entry-icon:44px;--entry-gap:10px;--entry-title:14px;--entry-copy:10px;--entry-arrow:26px;--entry-pad:13px}}
+body.home86-layout #phase1241Renewal .home86-diagnosis,body.home86-layout #phase1241Renewal .home86-interview,body.home86-layout #phase1241Renewal #karaoke91Entry,body.home86-layout #phase1241Renewal #scentReleaseEvent .sre-mission-button{grid-template-rows:23px 17px!important;align-content:center!important}
+/* Music uses the same icon and title origin; playback actions stay on the right. */
+body.home86-layout #phase1241Renewal .home86-release{height:96px!important;min-height:96px!important;padding:var(--entry-pad)!important;gap:var(--entry-gap)!important}
+#phase1241Renewal .home86-release .release-art{width:var(--entry-icon)!important;height:var(--entry-icon)!important;flex-basis:var(--entry-icon)!important;border-radius:15px!important}
+#phase1241Renewal .home86-release .release-copy{grid-template-rows:23px 17px;gap:3px 8px}
+#phase1241Renewal .home86-release .release-copy>small{display:none}
+#phase1241Renewal .home86-release .release-copy>h2{grid-row:1;font:750 var(--entry-title)/23px system-ui!important}
+#phase1241Renewal .home86-release .app-card-actions{grid-row:1/3}
+#phase1241Renewal .home86-release .song-like-box{grid-row:2;align-self:center}
+#phase1241Renewal .home86-release #songLikeButton{min-width:26px;min-height:26px;padding:3px 6px}
+#phase1241Renewal .home86-release #songLikeButton strong{display:none}
+#phase1241Renewal .home86-diagnosis .home124-action{display:none!important}
+#phase1241Renewal .home86-diagnosis::after{content:'›';grid-column:3;grid-row:1/3;display:grid;place-items:center;align-self:center;width:var(--entry-arrow);height:var(--entry-arrow);border-radius:50%;background:#eee4f2;color:#9978a6;font:400 23px/1 system-ui}
+#phase1241Renewal .home86-release .release-art{min-height:var(--entry-icon)!important;max-height:var(--entry-icon)!important;min-width:var(--entry-icon)!important;max-width:var(--entry-icon)!important;overflow:hidden}
+#phase1241Renewal .home86-release #songLikeButton strong{display:block!important;position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
