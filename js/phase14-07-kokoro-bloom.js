@@ -35,12 +35,43 @@ function pkRevealResult(box){
 }
 
 function pkCardLines(ctx,text,width){
- const lines=[];for(const paragraph of String(text).split('\n')){let line='';for(const ch of paragraph){if(line&&ctx.measureText(line+ch).width>width){lines.push(line);line=ch;}else line+=ch;}if(line)lines.push(line);}return lines;
+ const lines=[],closing=/^[、。，．！？：；）」』】〕〉》ー々ぁぃぅぇぉっゃゅょァィゥェォッャュョ]/,opening=/[（「『【〔〈《]$/;
+ for(const paragraph of String(text).split('\n')){let line='';for(const ch of paragraph){if(line&&ctx.measureText(line+ch).width>width){let carry='';while(line&&(closing.test(carry+ch)||opening.test(line))){carry=line.slice(-1)+carry;line=line.slice(0,-1);}if(line)lines.push(line);line=carry+ch;}else line+=ch;}if(line)lines.push(line);}return lines;
 }
 function pkCardCopySections(container){
  return [...container.querySelectorAll('.pk-insight-card')].filter(card=>card.querySelector('h4')?.textContent!=='5つの軸').map(card=>({label:card.querySelector('h4')?.textContent||'結果のヒント',text:[...card.querySelectorAll('p,li,.pk-card-copy')].filter(el=>!el.closest('details')&&!el.parentElement.closest('.pk-card-copy')).map(el=>el.textContent.trim()).join(' ')})).filter(row=>row.text);
 }
+async function pkMakePairCard(data){
+ const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1350;const ctx=canvas.getContext('2d');if(!ctx)throw Error('画像を作成できませんでした。');
+ const family='"Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif',textRecords=[];
+ if(document.fonts?.ready){await document.fonts.ready;await document.fonts.load('34px "Noto Sans JP"',JSON.stringify(data)+'ふたりの相性');}
+ const round=(x,y,w,h,r,fill)=>{ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();};
+ const text=(copy,x,y,size,color='#fff5fc',align='center')=>{ctx.textAlign=align;ctx.textBaseline='top';ctx.fillStyle=color;ctx.font=`500 ${size}px ${family}`;ctx.fillText(copy,x,y);textRecords.push({text:copy,y,size});};
+ const bg=ctx.createLinearGradient(0,0,1080,1350);bg.addColorStop(0,'#241b36');bg.addColorStop(.5,'#654c7c');bg.addColorStop(1,'#b78fac');ctx.fillStyle=bg;ctx.fillRect(0,0,1080,1350);
+ text('UNICA WORLD  /  KOKORO BLOOM',58,42,23,'#e3d1e8','left');
+ round(390,105,300,42,21,'#ffffff15');text(data.title==='ふたりの過ごし方'?'ふたりの過ごし方':'ぷにゅか相性診断',540,111,24);
+ text(data.title==='ふたりの過ごし方'?'一緒の時間を、もっと心地よく。':'ふたりのこころ、どれくらい近い？',540,176,39);
+ const people=(data.people||[]).slice(0,2);
+ await Promise.all(people.map(async(person,i)=>{
+  const cx=i?825:255;const glow=ctx.createRadialGradient(cx,373,0,cx,373,190);glow.addColorStop(0,'#fce4ff45');glow.addColorStop(1,'#fce4ff00');ctx.fillStyle=glow;ctx.fillRect(cx-190,240,380,330);
+  const image=person.image?await new Promise(resolve=>{const img=new Image();const timer=setTimeout(()=>resolve(null),8000);img.onload=()=>{clearTimeout(timer);resolve(img)};img.onerror=()=>{clearTimeout(timer);resolve(null)};img.crossOrigin='anonymous';img.src=person.image;}):null;
+  if(image){const scale=Math.min(290/image.naturalWidth,290/image.naturalHeight),w=image.naturalWidth*scale,h=image.naturalHeight*scale;ctx.drawImage(image,cx-w/2,258+(290-h)/2,w,h);}else{text('✦',cx,340,80);}
+  text(i?'相手のぷにゅか':'あなたのぷにゅか',cx,555,23,'#e8d5e7');
+  const name=person.name||'ぷにゅか',stem=name.replace(/ぷにゅか$/,'');let size=29;ctx.font=`500 ${size}px ${family}`;while(ctx.measureText(stem).width>375&&size>20)ctx.font=`500 ${--size}px ${family}`;
+  text(stem,cx,592,size);if(name.endsWith('ぷにゅか'))text('ぷにゅか',cx,630,25,'#efdfed');
+ }));
+ // Draw score after both images to keep a stable foreground layer.
+ text('総合相性',540,307,25,'#ecd8eb');text(String(Math.round(data.percent||0)),530,355,91);text('％',624,408,28);
+ text(data.simple?'簡易版':'25問版',540,481,21,'#e7d3e5');
+ const rows=(data.sections||[]).slice(0,2);rows.forEach((row,i)=>{const y=704+i*216;round(58,y,964,198,24,'#fbf5fc');text(row.label,88,y+25,28,'#895187','left');ctx.font=`400 32px ${family}`;const lines=pkCardLines(ctx,row.text,900);lines.forEach((line,j)=>text(line,88,y+72+j*43,32,'#493751','left'));});
+ text('相性％は診断独自の目安です。関係の成功率ではありません。',540,1154,23,'#fff0f7');
+ round(80,1210,920,60,30,'#39293f');text('あなたも、気になる人との相性を見てみよう。',540,1224,28);
+ text('#ぷにゅか診断  #UNICAWORLD  ·  '+location.host,540,1284,22,'#35253f');
+ const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw Error('画像を作成できませんでした。');return {blob,canvas,textRecords};
+}
+
 async function pkMakeShareCard(summary,form,data={}){
+ if(data.theme==='pair')return pkMakePairCard(data);
  const deep=data.theme==='deep';
  const canvas=document.createElement('canvas');canvas.width=1080;
  const ctx=canvas.getContext('2d');if(!ctx)throw Error('画像を作成できませんでした。');
@@ -53,26 +84,27 @@ async function pkMakeShareCard(summary,form,data={}){
  rows=rows.filter(row=>row.text).slice(0,4).map(row=>{const text=String(row.text).replace(/\s+/g,' ').trim();const sentences=text.match(/[^。！？]+[。！？]?/g)||[text];let copy='';for(const sentence of sentences){if(copy&&copy.length+sentence.length>105)break;copy+=sentence;if(copy.length>=105)break;}if(copy.length>120)copy=copy.slice(0,117)+'…';return {label:String(row.label||'結果のヒント'),text:copy};});
  const measured=data.stats?AXES.filter(k=>typeof data.stats[k]==='number'&&Number.isFinite(data.stats[k])):[];
  if(document.fonts?.ready){await document.fonts.ready;await document.fonts.load('34px "Noto Sans JP"',summary+(form?.name||'')+JSON.stringify(rows)+'あなたはどのぷにゅかこころの個性を見つけよう');}
+ const columns=rows.length<=2?1:2;
  let font=34,layout;
- const measure=()=>{ctx.font=`400 ${font}px ${family}`;layout=rows.map(row=>({...row,lines:pkCardLines(ctx,row.text,rows.length===1?872:412)}));};measure();while(Math.max(...layout.map(row=>row.lines.length))>7&&font>31){font--;measure();}
- const heights=[];for(let i=0;i<layout.length;i+=2)heights.push(Math.max(252,92+Math.max(...layout.slice(i,i+2).map(row=>row.lines.length))*(font+10)));
- const gridHeight=heights.reduce((a,b)=>a+b+20,0);canvas.height=Math.max(1240,490+gridHeight+(measured.length?136:16)+148);
+ const measure=()=>{ctx.font=`400 ${font}px ${family}`;layout=rows.map(row=>({...row,lines:pkCardLines(ctx,row.text,columns===1?872:412)}));};measure();while(Math.max(...layout.map(row=>row.lines.length))>7&&font>31){font--;measure();}
+ const heights=[];for(let i=0;i<layout.length;i+=columns)heights.push(Math.max(252,92+Math.max(...layout.slice(i,i+columns).map(row=>row.lines.length))*(font+10)));
+ const gridHeight=heights.reduce((a,b)=>a+b+20,0);canvas.height=Math.max(rows.length===1?1000:1240,490+gridHeight+(measured.length?136:16)+148);
  const round=(x,y,w,h,r,fill)=>{ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();};
  const bg=ctx.createLinearGradient(0,0,1080,canvas.height);bg.addColorStop(0,deep?'#120b18':'#271b49');bg.addColorStop(.38,deep?'#472039':'#69518e');bg.addColorStop(1,deep?'#160d1c':'#f3cbe4');ctx.fillStyle=bg;ctx.fillRect(0,0,1080,canvas.height);
  const glow=ctx.createRadialGradient(340,215,10,340,215,450);glow.addColorStop(0,deep?'rgba(194,69,103,.24)':'rgba(255,212,246,.65)');glow.addColorStop(1,'rgba(255,212,246,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,1080,540);
  const star=(x,y,r)=>{ctx.fillStyle='#ffe4ab';ctx.beginPath();ctx.moveTo(x,y-r);ctx.quadraticCurveTo(x+3,y-3,x+r,y);ctx.quadraticCurveTo(x+3,y+3,x,y+r);ctx.quadraticCurveTo(x-3,y+3,x-r,y);ctx.quadraticCurveTo(x-3,y-3,x,y-r);ctx.fill();};[[78,142,13],[438,92,10],[458,318,16],[970,126,12],[942,350,8],[132,383,8]].forEach(v=>star(...v));
  ctx.textAlign='left';ctx.textBaseline='top';ctx.font=`500 24px ${family}`;ctx.fillStyle='#f5dcee';ctx.fillText('UNICA WORLD  /  KOKORO BLOOM',58,38);
  round(530,108,470,49,24,'rgba(255,235,249,.15)');ctx.fillStyle='#ffe1f1';ctx.font=`500 25px ${family}`;ctx.fillText(data.title||'ぷにゅか診断',552,119);
- ctx.font=`500 49px ${family}`;ctx.fillStyle='#fff8ff';ctx.fillText(deep?'仮面の奥の、':'こころの個性を',526,179);ctx.fillText(deep?'わたしに出会う。':'見つけよう。',526,241);
+ ctx.font=`500 49px ${family}`;ctx.fillStyle='#fff8ff';const headings=deep?['いつもの、その奥に','もう一人のわたし。']:data.title==='元気のヒント'?['わたしに合う','ひと休みのしかた。']:data.title==='今日のぷにゅか'?['今日は、どんな','こころの日？']:data.title==='自分を知る'?['答えの中に、','わたしらしさ。']:['わたしのこころは、','このぷにゅか。'];ctx.fillText(headings[0],526,179);ctx.fillText(headings[1],526,241);
  ctx.font=`400 25px ${family}`;ctx.fillStyle='#f0dce9';pkCardLines(ctx,data.subtitle||'わたしらしさが、少し見えてくる。',470).slice(0,2).forEach((line,i)=>ctx.fillText(line,530,320+i*34));
  let image=null;if(form?.image)image=await new Promise(resolve=>{const img=new Image();const timer=setTimeout(()=>resolve(null),8000);img.onload=async()=>{clearTimeout(timer);try{await img.decode();resolve(img);}catch{resolve(null)}};img.onerror=()=>{clearTimeout(timer);resolve(null)};img.crossOrigin='anonymous';img.src=form.image;});
  if(image){const scale=Math.min(326/image.naturalWidth,326/image.naturalHeight);const w=image.naturalWidth*scale,h=image.naturalHeight*scale;ctx.save();ctx.shadowColor='rgba(255,195,239,.8)';ctx.shadowBlur=34;ctx.drawImage(image,126+(326-w)/2,83+(326-h)/2,w,h);ctx.restore();}else{ctx.fillStyle='#f7d4ed';ctx.font=`500 52px ${family}`;ctx.fillText('KOKORO',134,186);ctx.fillText('BLOOM',151,252);}
  round(48,420,984,canvas.height-464,30,deep?'#fff4ed':'#fbf3fc');
- const name=String(form?.name||'私のこころの結果');let size=43;ctx.font=`500 ${size}px ${family}`;while(ctx.measureText(name).width>900&&size>30)ctx.font=`500 ${--size}px ${family}`;ctx.textAlign='center';ctx.fillStyle='#593663';ctx.fillText(name,540,445);ctx.textAlign='left';
+ const name=String(data.title==='今日のぷにゅか'?data.subtitle:form?.name||'私のこころの結果');let size=43;ctx.font=`500 ${size}px ${family}`;while(ctx.measureText(name).width>900&&size>30)ctx.font=`500 ${--size}px ${family}`;ctx.textAlign='center';ctx.fillStyle='#593663';ctx.fillText(name,540,445);ctx.textAlign='left';
  const textRecords=[];let y=508;
- for(let i=0;i<layout.length;i+=2){const height=heights[i/2];for(let col=0;col<2;col++){const row=layout[i+col];if(!row)continue;const x=76+col*474,w=layout.length===1?928:454;round(x,y,w,height,22,i+col===0?'#f0e5f7':'#f7eafa');round(x+22,y+23,6,34,3,'#c875ad');ctx.fillStyle='#82508a';let labelSize=29;ctx.font=`500 ${labelSize}px ${family}`;while(ctx.measureText(row.label).width>w-78&&labelSize>23)ctx.font=`500 ${--labelSize}px ${family}`;ctx.fillText(row.label,x+41,y+23);ctx.fillStyle='#514059';ctx.font=`400 ${font}px ${family}`;row.lines.forEach((line,j)=>{const ty=y+76+j*(font+10);ctx.fillText(line,x+22,ty);textRecords.push({text:line,y:ty,size:font});});}y+=height+20;}
+ for(let i=0;i<layout.length;i+=columns){const height=heights[i/columns];for(let col=0;col<columns;col++){const row=layout[i+col];if(!row)continue;const x=76+col*474,w=columns===1?928:454;round(x,y,w,height,22,i+col===0?'#f0e5f7':'#f7eafa');round(x+22,y+23,6,34,3,'#c875ad');ctx.fillStyle='#82508a';let labelSize=29;ctx.font=`500 ${labelSize}px ${family}`;while(ctx.measureText(row.label).width>w-78&&labelSize>23)ctx.font=`500 ${--labelSize}px ${family}`;ctx.fillText(row.label,x+41,y+23);ctx.fillStyle='#514059';ctx.font=`400 ${font}px ${family}`;row.lines.forEach((line,j)=>{const ty=y+76+j*(font+10);ctx.fillText(line,x+22,ty);textRecords.push({text:line,y:ty,size:font});});}y+=height+20;}
  if(measured.length){ctx.fillStyle='#886292';ctx.font=`500 24px ${family}`;ctx.fillText('今回の5つの軸 · 100点満点',80,y+6);measured.forEach((k,i)=>{const x=82+i*184;ctx.fillStyle='#87617f';ctx.font=`400 23px ${family}`;ctx.textAlign='center';ctx.fillText(AXIS_LABEL[k],x+75,y+43);ctx.fillStyle='#774785';ctx.font=`500 32px ${family}`;ctx.fillText(String(clamp(data.stats[k],0,100)),x+75,y+75);ctx.textAlign='left';});}
- const footer=canvas.height-124;const cta=ctx.createLinearGradient(82,footer,998,footer);cta.addColorStop(0,'#9d5ca7');cta.addColorStop(1,'#c76ba6');round(80,footer,920,60,30,cta);ctx.textAlign='center';ctx.fillStyle='#fff7fc';ctx.font=`500 29px ${family}`;ctx.fillText(deep?'25問の、その先へ。禁断の深掘り診断':'あなたはどのぷにゅか？',540,footer+12);ctx.fillStyle=deep?'#d8b7c6':'#8f668e';ctx.font=`400 22px ${family}`;ctx.fillText('#ぷにゅか診断  #UNICAWORLD  ·  '+location.host,540,footer+81);
+ const footer=canvas.height-124;const cta=ctx.createLinearGradient(82,footer,998,footer);cta.addColorStop(0,'#9d5ca7');cta.addColorStop(1,'#c76ba6');round(80,footer,920,60,30,cta);ctx.textAlign='center';ctx.fillStyle='#fff7fc';ctx.font=`500 29px ${family}`;ctx.fillText(deep?'25問の、その先へ。禁断の深掘り診断':'あなたはどのぷにゅか？',540,footer+12);ctx.fillStyle=deep?'#e8ceda':'#53375f';ctx.font=`400 22px ${family}`;ctx.fillText('#ぷにゅか診断  #UNICAWORLD  ·  '+location.host,540,footer+81);
  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw Error('画像を作成できませんでした。');return {blob,canvas,textRecords};
 }
 
@@ -700,6 +732,12 @@ const PK_BRANCHES={
  support:{title:'相談',tone:2,items:[['daily','今日の気分'],['consult','悩み相談'],['recovery','疲れと回復']]}
 };
 let pkCurrentBranch=null,pkBranchMenu=false;
+// Added insight controls share the original diagnosis sound preferences.
+screen.addEventListener('click',event=>{
+ const target=event.target.closest('button,summary');if(!target||target.disabled||!target.closest('.pk-insights')||target.closest('#deep109')||target.matches('[data-pk-page],#pkReturn,#punyakoCharacter')||target.closest('#punyakoCharacter'))return;
+ sfx.next();
+},true);
+
 function pkMenuHtml(){
  return `<nav class="pk-insight-menu pk-main-menu" aria-label="ぷにゅかのメニュー">${Object.entries(PK_BRANCHES).map(([page,x])=>`<button data-pk-page="${page}" data-tone="${x.tone}" type="button"><b>${x.title}</b></button>`).join('')}</nav><button class="pk-types-entry" data-pk-page="types" type="button"><span aria-hidden="true">✦</span><b>16種類のぷにゅか・性格一覧</b><span aria-hidden="true">›</span></button><button class="deep-entry" data-pk-page="deep" data-deep-unlocked="${!!window.UNICA_DEEP?.eligible(member())}" type="button"><span class="deep-entry-seal" aria-hidden="true">☾</span><small>FORBIDDEN · 25問の、その先へ</small><b>禁断の深掘り診断</b><span class="deep-entry-copy">その仮面の奥を、覗く覚悟は？</span><em>${window.UNICA_DEEP?.eligible(member())?'✦ 解放済み · 秘密の扉を開く ›':'🔒 未開放 · 通常25問の完了で解放'}</em></button>`;
 }
@@ -715,7 +753,7 @@ function pkFrame(title,html){pkEnterScreen('insight:'+title);
  modal.classList.remove('is-punyako-game-intro');setBack(back);screen.className='scent16-screen punyako-screen punyako-result-bg punyako-game-result-bg';
  const mine=pkMine(),j=localJourney(),form=j?.seedComplete?formById(j.equippedId):null;
  screen.innerHTML=`<section class="pk-insights"><div class="punyako-result-status"><small>こころの冒険</small><strong>${esc(title)}</strong><span>${mine?`${mine.n}/25 問`:'5問で解放'}</span></div>${form?`<div class="pk-companion">${charHtml(form)}<p>${esc(form.name)}</p></div>`:''}${html}<button class="punyako-secondary" id="pkReturn" type="button">${!pkBranchMenu&&branch?PK_BRANCHES[branch].title+'のメニューへ':'診断トップへ'}</button></section>`;
- $('#pkReturn').onclick=back;bindSquish();
+ $('#pkReturn').onclick=()=>{sfx.back();back();};bindSquish();
 }
 function pkLocked(title,message){pkFrame(title,`<p>${esc(message)}</p><button class="punyako-primary" id="pkContinue" type="button">${localJourney()?.seedComplete?'続きを育てる':'まず5問でぷにゅかを誕生させる'}</button>`);$('#pkContinue').onclick=()=>{if(loadProgress())showQuestion();else if(!localJourney()?.seedComplete)startNew();else showIntro();};}
 const PK_AXIS_TEXT={
@@ -850,7 +888,7 @@ function pkPairResult(mine,row,together=false){
  const tips=`<article class="pk-insight-card"><h4>一緒に楽しむなら</h4><p>${ideas[near.key]}のはどうでしょう。</p><h4>役割を決めるなら</h4><p>${far.gap>10?'提案する役と確かめる役を、得意なことや希望を聞いて分けてみましょう。':'交代で提案して、いつも同じ人任せにならない形を試してみましょう。'}</p><h4>すれ違ったときの一言</h4><p>「私はこうしたいと思っているよ。あなたはどう過ごしたい？」と、希望を一つずつ伝えてみましょう。</p></article>`;
  if(together)box.innerHTML=`<h4>${esc(row.name)}さんとの過ごし方</h4><p class="pk-note">${score.full?'25問の傾向を使った提案です。':'5問から使える簡易提案です。二人とも25問で内容が深まります。'}</p>`+tips+detail;
  else box.insertAdjacentHTML('beforeend',tips);
- const shareHints=[...box.querySelectorAll('h4')].filter(h=>['二人の強み','違いを活かすヒント','すれ違いを減らすヒント','一緒に楽しむなら','役割を決めるなら','すれ違ったときの一言'].includes(h.textContent)).map(h=>({label:h.textContent,text:h.nextElementSibling?.textContent||''}));pkAddShare(box,`ぷにゅかの${simple?'簡易':'詳細'}相性は ${score.percent}％でした。`,null,{title:together?'ふたりの過ごし方':'相性を見る',subtitle:`総合相性 ${score.percent}％ · ${simple?'簡易版':'25問版'}（診断独自の目安）`,sections:shareHints});pkRevealResult(box);
+ pkAddShare(box,`ぷにゅかの${simple?'簡易':'詳細'}相性は ${score.percent}％でした。`,null,{title:together?'ふたりの過ごし方':'相性を見る',subtitle:`総合相性 ${score.percent}％ · ${simple?'簡易版':'25問版'}（診断独自の目安）`,theme:'pair',percent:score.percent,simple,people:[{...pkMemberAppearance({punyakoJourney:localJourney(),scentDiagnosis:activeResult()}),name:mine.name},pkMemberAppearance(row)],sections:together?[{label:'一緒に楽しむなら',text:ideas[near.key]+'。'},{label:'ふたりの小さな約束',text:'希望を一つずつ伝えて、今日はどう過ごすか一緒に決めよう。'}]:[{label:'二人の強み',text:AXIS_LABEL[near.key]+'の傾向が近いふたり。'+PK_AXIS_TEXT[near.key][0]+'場面で、考えを共有できそう。'},{label:'仲良くするコツ',text:PK_AXIS_TEXT[far.key][1]+'。'}]});pkRevealResult(box);
 }
 function pkChange(){
  const history=read(HISTORY_KEY,[]).filter(r=>r.stats);if(history.length<2){pkFrame('変化を見る','<p>25問の診断を2回以上完了すると、5軸の変化を比較できます。同じぷにゅかになった結果も比較できます。</p>');return;}
@@ -889,6 +927,6 @@ function pkTypes(){
  pkFrame('16種類のぷにゅか',`<section class="pk-type-catalog"><p class="pk-type-lead">あなたは、どのぷにゅか？</p><p class="pk-type-note">最終進化の16種類を見比べられます。気になる子をタップすると、強みや回復のヒントが開きます。</p><div class="pk-type-grid">${TYPES.map(t=>`<details class="pk-type-item"><summary><img src="${esc(t.image)}" alt="" loading="lazy"><b class="pk-type-name"><span>${esc(t.name.replace(/ぷにゅか$/,''))}</span><span>ぷにゅか</span></b><span>${esc(t.core)}</span><small>性格を詳しく見る ＋</small></summary><div class="pk-type-detail"><h4>あなたの強み</h4><p>${esc(t.strength)}</p><h4>回復のヒント</h4><p>${esc(t.recharge)}</p><h4>ぷにゅかから一言</h4><p>${esc(t.advice)}</p></div></details>`).join('')}</div><p class="pk-type-note">同じタイプでも、回答によって5つの軸は異なります。今の自分を知るヒントとして楽しんでください。</p></section>`);
  screen.querySelector('.pk-companion')?.remove();
 }
-function pkOpen(page){if(page==='types')return pkTypes();if(page==='deep'){pkCurrentBranch=null;return window.UNICA_DEEP?.open({frame:pkFrame,share:(container,summary,cardData)=>{const form=formById(localJourney()?.equippedId)||FORMS.stage1_base;pkAddShare(container,summary,{...form,name:cardData.resultName},cardData);}});}if(PK_BRANCHES[page])return pkBranch(page);pkCurrentBranch=Object.keys(PK_BRANCHES).find(key=>PK_BRANCHES[key].items.some(x=>x[0]===page))||null;if(page==='self')pkSelf();else if(page==='recovery')pkSelf(true);else if(page==='pair'||page==='together')pkPair(page==='together');else if(page==='daily')pkDaily();else if(page==='consult')pkConsult();else if(page==='manual')pkManual();else pkChange();}
+function pkOpen(page){sfx.next();if(page==='types')return pkTypes();if(page==='deep'){pkCurrentBranch=null;return window.UNICA_DEEP?.open({frame:pkFrame,sfx,share:(container,summary,cardData)=>{const form=formById(localJourney()?.equippedId)||FORMS.stage1_base;pkAddShare(container,summary,{...form,name:cardData.resultName},cardData);}});}if(PK_BRANCHES[page])return pkBranch(page);pkCurrentBranch=Object.keys(PK_BRANCHES).find(key=>PK_BRANCHES[key].items.some(x=>x[0]===page))||null;if(page==='self')pkSelf();else if(page==='recovery')pkSelf(true);else if(page==='pair'||page==='together')pkPair(page==='together');else if(page==='daily')pkDaily();else if(page==='consult')pkConsult();else if(page==='manual')pkManual();else pkChange();}
 
 })();
