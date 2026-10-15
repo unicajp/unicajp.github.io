@@ -31,3 +31,5 @@
 
 /* 14.112: keep the suffix together instead of leaving a lone final character. */
 #scent16Modal .pk-type-item .pk-type-name{display:block;width:100%;line-height:1.65;overflow-wrap:normal;word-break:normal}#scent16Modal .pk-type-item .pk-type-name>span{display:block;white-space:nowrap}
+
+#deep109 .deep-equip-choice{padding:22px 14px;text-align:center;background:radial-gradient(ellipse at top,#5e243b66,transparent 65%),#160e19;border:1px solid #a8795966;border-radius:18px}#deep109 .deep-equip-choice>small{color:#e7c28d;letter-spacing:.14em;font-size:10px}#deep109 .deep-equip-choice h3{font-size:22px;line-height:1.6}#deep109 .deep-equip-choice>button{display:block;box-sizing:border-box;min-height:46px;width:100%;margin:10px 0;border:1px solid #a27c69;border-radius:12px;background:#392031;color:#ffe9ee;padding:12px;font:600 13px/1.6 system-ui,sans-serif}#deep109 .deep-equip-choice>[data-deep-equip-now]{background:linear-gradient(110deg,#83445c,#a37156);border-color:#dfb37e;color:#fff6e9}#deep109 .deep-equip-choice>button:disabled{opacity:.55}
