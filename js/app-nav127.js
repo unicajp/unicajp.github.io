@@ -33,6 +33,6 @@ nav.addEventListener('click',e=>{const b=e.target.closest('[data-app-route]');if
 sheet.querySelectorAll('.app127-shade,[data-sheet-close]').forEach(b=>b.onclick=()=>sheetOpen(false));
 sheet.querySelectorAll('[data-app-feature]').forEach(b=>b.onclick=()=>{const key=b.dataset.appFeature;if(!leave())return;if(key==='diagnosis')window.UNICA_SCENT16?.open();if(key==='studio')$('#karaoke91Entry')?.click();if(key==='interview')$('#openUnicoInterview')?.click();if(key==='members')window.UNICA_PREFECTURE_DIRECTORY?.open();});
 window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sheet.hidden){sheetOpen(false);e.preventDefault();}});
-const resize=()=>document.documentElement.style.setProperty('--app127-header',(header.getBoundingClientRect().height+22)+'px');new ResizeObserver(resize).observe(header);resize();nav.querySelector('[data-app-route=home]').classList.add('is-current');nav.querySelector('[data-app-route=home]').setAttribute('aria-current','page');
+const resize=()=>document.documentElement.style.setProperty('--app127-header',(header.getBoundingClientRect().height+22)+'px');new ResizeObserver(resize).observe(header);new ResizeObserver(()=>document.documentElement.style.setProperty('--app128-nav',nav.getBoundingClientRect().height+'px')).observe(nav);resize();nav.querySelector('[data-app-route=home]').classList.add('is-current');nav.querySelector('[data-app-route=home]').setAttribute('aria-current','page');
 window.UNICA_APP_NAV={route};
 })();
