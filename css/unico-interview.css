@@ -64,3 +64,55 @@
 .iv142-response>time{display:block;margin:8px 3px 0;text-align:right;font:10px/1.5 system-ui;color:#a995a7}
 .iv-answer-body .iv135-poll{margin-top:0;padding-top:15px}.iv-answer-body .iv135-question{font-size:13px;font-weight:600;color:#776371}
 @media(max-width:360px){.iv142-bubble{padding:16px 13px}.iv-answer-body .iv142-bubble>p{font-size:16px}}
+/* 14.147 — one reading surface, with the vocalist's answer at its center. */
+#ivModal .iv-modal-panel{background:#f6f2f8}
+#ivModal .iv-modal-nav{padding:9px 12px;background:#faf7fcf5;backdrop-filter:blur(12px)}
+#ivModal .iv-modal-nav>span{font-size:9px;letter-spacing:.16em;color:#8b7599}
+#ivModal .iv-modal-nav button{min-height:36px;border-color:#e7dfec;box-shadow:none}
+#ivModal .iv-page-main{padding:0 12px 24px}
+#ivModal #unicoInterview{padding:0;margin:0;border:0;background:transparent;border-radius:0;color:#43354e;box-shadow:none}
+#unicoInterview .iv-head{display:block;padding:23px 5px 18px;position:relative}
+#unicoInterview .iv-head>div:first-child>small{font:700 9px/1.5 system-ui;letter-spacing:.19em;color:#9677a8}
+#unicoInterview .iv-head h2{font:750 23px/1.5 system-ui;margin:5px 0 8px;letter-spacing:.015em;color:#44304f}
+#unicoInterview .iv-count{display:flex;align-items:center;gap:5px;width:fit-content;padding:0;background:none;border-radius:0;color:#927d9c}
+#unicoInterview .iv-count strong{font:650 11px/1.5 system-ui;color:#836291;order:2}
+#unicoInterview .iv-count span{font:400 10px/1.5 system-ui}
+#unicoInterview .iv-answer{margin:0 0 13px;border:1px solid #e9e0ed;border-radius:19px;background:#fff;box-shadow:0 5px 19px #48335506}
+#unicoInterview .iv-answer>summary{gap:10px;padding:16px 14px;align-items:flex-start;min-height:64px;box-sizing:border-box}
+#unicoInterview .iv-answer>summary>small{flex:none;display:grid;place-items:center;min-width:32px;height:28px;margin-top:1px;border-radius:9px;background:#eee6f5;color:#9271a7;font:750 10px/1 system-ui;letter-spacing:.03em}
+#unicoInterview .iv-answer>summary>span{font:650 13px/1.75 system-ui;color:#66556e}
+#unicoInterview .iv-answer>summary>b{font:400 20px/1.5 system-ui;color:#ad99b8;transition:transform .18s}
+#unicoInterview .iv-answer[open]>summary{background:#fcfafd}
+#unicoInterview .iv-answer-body{padding:0 14px 14px;border-top:1px solid #f1ecf5}
+#unicoInterview .iv142-response{margin:17px 0 18px}
+#unicoInterview .iv142-byline{gap:8px;margin-bottom:10px}
+#unicoInterview .iv142-avatar{width:30px;height:30px;border-radius:10px;background:linear-gradient(145deg,#b090c4,#7e5799);box-shadow:0 3px 9px #8a60a027}
+#unicoInterview .iv142-avatar svg{width:20px;height:20px}
+#unicoInterview .iv-speaker strong{font-size:13px;color:#745282}
+#unicoInterview .iv-speaker small{font-size:8px;letter-spacing:.13em}
+#unicoInterview .iv142-bubble{padding:8px 0 8px 13px;border:0;border-left:3px solid #c9a4d7;border-radius:0;background:none;box-shadow:none}
+#unicoInterview .iv142-bubble>p{font:600 17px/1.95 system-ui,-apple-system,sans-serif;letter-spacing:.015em;color:#46304e}
+#unicoInterview .iv142-response>time{margin:9px 0 0;font-size:9px;color:#a99aaf}
+#unicoInterview .iv135-poll{padding:13px 12px 10px;margin:0;border:1px solid #eee4f1;border-radius:14px;background:linear-gradient(135deg,#faf5fc,#f5f1fa)}
+#unicoInterview .iv135-poll>.iv-reaction-invite{font:700 10px/1.6 system-ui;color:#9870a1;margin:0 0 6px}
+#unicoInterview .iv135-poll .iv135-question{margin:0 0 11px;font:600 12px/1.8 system-ui;color:#76647f}
+#unicoInterview .iv135-options{gap:8px;margin-bottom:8px}
+#unicoInterview .iv135-options .iv-reaction-button{min-height:44px;border-radius:12px;border:1px solid #d4bedd;background:linear-gradient(#fff,#fbf6fd);box-shadow:0 2px 0 #dfcfe6;color:#785886;font:650 11px/1.6 system-ui;padding:10px 7px}
+#unicoInterview .iv135-options .iv-reaction-button.is-selected{background:linear-gradient(130deg,#a175b4,#81598f);border-color:#8a609c;box-shadow:0 2px 0 #6f467d;color:#fff}
+#unicoInterview .iv135-options .iv-reaction-button:not(:disabled):active{transform:translateY(2px);box-shadow:none}
+#unicoInterview .iv135-note{margin-top:5px}
+#unicoInterview .iv135-note>summary,#unicoInterview .iv136-replies>summary{padding:9px 0;font:500 11px/1.6 system-ui;color:#957b9d;min-height:34px;box-sizing:border-box}
+#unicoInterview .iv136-replies{margin-top:0}
+#unicoInterview .iv135-share{margin-top:10px;padding-top:4px;border-top:1px solid #f1ebf5}
+#unicoInterview .iv135-share>summary{padding:9px 0;font:600 11px/1.5 system-ui;color:#8a7196;min-height:34px;box-sizing:border-box}
+#unicoInterview .iv135-share>div{gap:6px}
+#unicoInterview .iv135-share button,#unicoInterview .iv135-share a{background:#faf7fc;border-color:#e4d8e9;border-radius:9px;color:#84648f;font-size:11px;min-height:36px;box-sizing:border-box}
+#unicoInterview .iv-question-box{margin:24px 0 0;padding:17px 14px;border-radius:16px;background:#eee6f4;border:1px solid #e5d9ec}
+#unicoInterview .iv-question-box h3{font-size:15px;color:#765486}
+#unicoInterview .iv-question-box>p{font-size:11px;color:#96839e;margin-bottom:12px}
+#unicoInterview .iv-question-box .iv-box{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:8px}
+#unicoInterview .iv-question-box textarea{font:16px/1.7 system-ui;min-height:74px;border-radius:11px;border-color:#dfd0e7}
+#unicoInterview .iv-question-box .iv-primary{background:linear-gradient(130deg,#a377b4,#81598f);border-radius:11px}
+#unicoInterview button:focus-visible,#unicoInterview summary:focus-visible,#unicoInterview a:focus-visible{outline:3px solid #c0a1d0;outline-offset:3px}
+@media(max-width:360px){#ivModal .iv-page-main{padding:0 9px 20px}#unicoInterview .iv-head h2{font-size:21px}#unicoInterview .iv-answer>summary{padding:14px 11px;gap:8px}#unicoInterview .iv-answer-body{padding:0 11px 12px}#unicoInterview .iv142-bubble>p{font-size:16px}#unicoInterview .iv135-poll{padding:12px 9px 8px}#unicoInterview .iv135-options .iv-reaction-button{font-size:10px}}
+@media(prefers-reduced-motion:reduce){#unicoInterview .iv-answer>summary>b{transition:none}}
