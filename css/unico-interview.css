@@ -50,3 +50,5 @@
 .iv135-options [data-p135-result]{flex-basis:100%;margin:0;font-size:10px}.iv135-options [data-p135-result]:empty{display:none}
 .iv136-replies{margin-top:14px}.iv136-replies>summary{padding:8px 0;font-size:12px;color:#866380;cursor:pointer}.iv136-replies article{padding:10px 0;border-bottom:1px solid #ecdfeb}.iv136-replies article strong{font-size:11px;color:#866380}.iv136-replies article p{white-space:pre-wrap;font:12px/1.8 system-ui!important;margin:6px 0!important;overflow-wrap:anywhere}.iv136-replies button{border:0;background:transparent;color:#97798e;font-size:10px;padding:6px;cursor:pointer}
 .iv135-note [data-p136-cancel]{margin-left:6px;background:white;color:#947d94}
+/* 14.139: text-only poll choices, including the selected state. */
+.unico-interview .iv135-options .iv-reaction-button::before{content:none!important;display:none!important}
