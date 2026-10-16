@@ -458,6 +458,7 @@
 <div class="passport-compact-actions">
 <button hidden style="display:none!important" class="passport-title-list-button" id="openPassportTitles" type="button"><span>🏷️</span><span><small>現在の称号</small><strong id="detailTitle">はじまりのうにメン</strong></span><b>一覧 ›</b></button>
 <button class="passport-detail-settings" id="detailOpenSettings" type="button" hidden>プロフィールを編集</button>
+<button id="openMemberAdmin143" type="button" hidden style="margin-top:10px;width:100%;min-height:44px;border:1px solid #d6c7df;border-radius:14px;background:#f4edf7;color:#62456f;font-weight:700">管理画面 · うにメン管理</button>
 <form class="passport-profile-editor" id="passProfileEditor" hidden>
 <header class="pass-settings-heading"><div><small>PROFILE SETTINGS</small><h3 tabindex="-1" id="passSettingsHeading">プロフィール設定</h3></div><button type="button" id="passEditBack" aria-label="うにパスに戻る">×</button></header>
 <nav class="pass-settings-tabs" aria-label="設定項目"><button type="button" data-pass-tab="basic" aria-pressed="true">基本情報</button><button type="button" data-pass-tab="look" aria-pressed="false">アイコン・装飾</button></nav>
@@ -512,7 +513,7 @@
 <button class="guest-lock-cancel" data-close-guest-lock="" type="button">公式サイトを見る</button>
 </section>
 </div>
-<div aria-hidden="true" class="admin-modal" id="adminPasswordModal">
+<div aria-hidden="true" class="admin-modal" style="z-index:29000" id="adminPasswordModal">
 <div class="admin-modal-backdrop" data-close-admin=""></div>
 <section aria-labelledby="adminPasswordTitle" aria-modal="true" class="admin-panel admin-password-panel" role="dialog">
 <button aria-label="閉じる" class="admin-close" data-close-admin="" type="button">×</button>
@@ -525,7 +526,7 @@
 <button class="admin-primary" id="adminPasswordSubmit" type="button">管理画面を開く</button>
 </section>
 </div>
-<div aria-hidden="true" class="admin-modal" id="adminMembersModal">
+<div aria-hidden="true" class="admin-modal" style="z-index:29001" id="adminMembersModal">
 <div class="admin-modal-backdrop" data-close-admin-members=""></div>
 <section aria-labelledby="adminMembersTitle" aria-modal="true" class="admin-panel admin-members-panel" role="dialog">
 <button aria-label="閉じる" class="admin-close" data-close-admin-members="" type="button">×</button>
@@ -537,13 +538,14 @@
 <div class="admin-member-list" id="adminMemberList"></div>
 </section>
 </div>
-<div aria-hidden="true" class="admin-modal" id="adminDeleteModal">
+<div aria-hidden="true" class="admin-modal" style="z-index:29002" id="adminDeleteModal">
 <div class="admin-modal-backdrop"></div>
 <section aria-labelledby="adminDeleteTitle" aria-modal="true" class="admin-panel admin-delete-panel" role="dialog">
 <div aria-hidden="true" class="admin-delete-icon">⚠️</div>
 <h2 id="adminDeleteTitle">このうにメンを削除しますか？</h2>
 <div class="admin-delete-target" id="adminDeleteTarget"></div>
-<p>削除後、この端末から同じアカウントで再アクセスしても、うにメン情報は復元されません。</p>
+<p>うにメンの会員情報と応援コメントを削除します。この操作は取り消せません。Googleアカウント自体は削除されません。</p>
+<button type="button" data-admin-delete-back143 aria-label="閉じる" class="admin-close">×</button>
 <div class="admin-delete-actions"><button id="adminDeleteCancel" type="button">いいえ</button><button id="adminDeleteConfirm" type="button">はい、削除する</button></div>
 <p aria-live="polite" class="admin-message" id="adminDeleteMessage"></p>
 </section>
@@ -650,7 +652,7 @@
 <script src="js/phase10-5-guest.js?v=14.129"></script>
 <script src="js/phase10-11-scroll-only.js"></script>
 <script src="js/phase10-12-google.js?v=14.83"></script>
-<script src="js/phase10-14-admin.js" type="module"></script>
+<script src="js/phase10-14-admin.js?v=14.143" type="module"></script>
 
 <link rel="stylesheet" href="css/phase13-11-scent-v2.css?v=13.12"/>
 
