@@ -114,3 +114,19 @@ body.home86-layout #phase1241Renewal .home86-release{height:96px!important;min-h
 .like126-burst i:nth-child(2n){color:#c998d5;font-size:10px}
 @keyframes like126-fly{0%{opacity:0;transform:translate(0,0) scale(.3)}18%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--turn)) scale(.75)}}
 @media(prefers-reduced-motion:reduce){#phase1241Renewal .like126-pop,.like126-burst i{animation:none!important}.like126-burst{display:none}}
+/* 14.134: app-style corner icons; shared size and content alignment stay intact. */
+#phase1241Renewal #karaoke91Entry .home124-mic,
+#phase1241Renewal .home86-interview>.home86-interview-symbol,
+#phase1241Renewal .home86-diagnosis img,
+#phase1241Renewal #scentReleaseEvent .sre-mission-button::before,
+#phase1241Renewal .home86-release .release-art{
+ border:1px solid #ffffff85!important;border-radius:14px!important;
+ box-shadow:inset 0 1px 1px #ffffffa6,inset 0 -3px 7px #23123818,0 5px 10px #48335e24!important;
+}
+#phase1241Renewal #karaoke91Entry .home124-mic{display:grid;place-items:center;background:radial-gradient(ellipse at 20% 0%,#b9adff80,transparent 65%),linear-gradient(145deg,#9777eb,#5841b1)!important;color:#fff!important}
+#phase1241Renewal .home124-mic svg{filter:drop-shadow(0 2px 2px #39217466)}
+#phase1241Renewal .home86-diagnosis img{padding:2px;background:radial-gradient(ellipse at 28% 8%,#fff4c9,transparent 65%),linear-gradient(145deg,#ffc2dc,#d78bc7)!important;filter:none!important}
+#phase1241Renewal .home86-interview>.home86-interview-symbol{display:grid;place-items:center;background:radial-gradient(ellipse at 20% 0%,#c4ffed80,transparent 65%),linear-gradient(145deg,#58baa9,#268a91)!important;color:#fff!important}
+#phase1241Renewal .home86-interview-symbol svg{filter:drop-shadow(0 2px 2px #125a6566)}
+#phase1241Renewal #scentReleaseEvent .sre-mission-button::before{background:radial-gradient(ellipse at 25% 0%,#fff6b9b3,transparent 65%),linear-gradient(145deg,#f6cc72,#d3913c)!important;color:#fffbe9!important;font-size:34px;text-shadow:0 2px 3px #a6673180}
+#phase1241Renewal .home86-release .release-art{background:radial-gradient(ellipse at 20% 0%,#ffe1e799,transparent 65%),linear-gradient(145deg,#ef9cba,#bf638e)!important;color:#fff!important;text-shadow:0 2px 3px #86375d66}
