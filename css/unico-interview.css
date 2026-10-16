@@ -54,3 +54,13 @@
 .unico-interview .iv135-options .iv-reaction-button::before{content:none!important;display:none!important}
 .iv135-poll .iv140-withdraw{display:block;margin:9px 0 7px auto;padding:5px 0;border:0;background:transparent;box-shadow:none;color:#92718c;text-decoration:underline;text-underline-offset:3px;font:11px/1.5 system-ui;cursor:pointer}.iv135-poll .iv140-withdraw[hidden]{display:none!important}.iv135-poll .iv140-withdraw:disabled{opacity:.5;cursor:wait}
 .iv141-actions{display:flex;gap:7px;flex-wrap:wrap;padding:10px 0}.iv141-actions[hidden]{display:none!important}.iv141-actions button{border:1px solid #decddd;border-radius:10px;background:#fff8fc;color:#82576f;font:12px/1.5 system-ui;padding:9px 11px;cursor:pointer}
+/* 14.142: Unico's answer is the visual focus of each interview. */
+.iv-answer>summary{padding:14px 16px}.iv-answer>summary>span{font-size:13px;font-weight:650;color:#705c6c}
+.iv142-response{margin:17px 0 23px}.iv142-byline{display:flex;gap:9px;align-items:center;margin-bottom:12px}
+.iv142-avatar{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:12px;background:linear-gradient(145deg,#a987b8,#7c5c94);color:white;box-shadow:0 3px 7px #76528320}.iv142-avatar svg{width:23px;height:23px}
+.iv142-byline .iv-speaker{display:flex;align-items:baseline;gap:8px;margin:0;padding:0;background:none;border-radius:0;color:#71506f}.iv142-byline .iv-speaker strong{font:750 14px/1.5 system-ui}.iv142-byline .iv-speaker small{font:500 9px/1.5 system-ui;letter-spacing:.12em;color:#a48b9f}
+.iv142-bubble{position:relative;padding:19px 17px;background:linear-gradient(140deg,#fff5fa,#f3eaf8);border:1px solid #e5cfe4;border-radius:5px 20px 20px 20px;box-shadow:0 5px 16px #77517c0d}
+.iv-answer-body .iv142-bubble>p{margin:0;font:550 17px/1.95 system-ui,-apple-system,"Noto Sans JP",sans-serif;color:#4e354f;white-space:pre-wrap;overflow-wrap:anywhere}
+.iv142-response>time{display:block;margin:8px 3px 0;text-align:right;font:10px/1.5 system-ui;color:#a995a7}
+.iv-answer-body .iv135-poll{margin-top:0;padding-top:15px}.iv-answer-body .iv135-question{font-size:13px;font-weight:600;color:#776371}
+@media(max-width:360px){.iv142-bubble{padding:16px 13px}.iv-answer-body .iv142-bubble>p{font-size:16px}}
