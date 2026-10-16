@@ -13,6 +13,31 @@ const passwordMessage = $('#adminPasswordMessage');
 const membersMessage = $('#adminMembersMessage');
 const list = $('#adminMemberList');
 const search = $('#adminMemberSearch');
+const ADMIN_UID = 'I1foe78gS2bApFhweosGaLQq4FW2';
+const entry = $('#openMemberAdmin143');
+function isAdmin() {
+  const user = window.UNICA_FIREBASE?.auth?.currentUser;
+  return user?.uid === ADMIN_UID && user.providerData?.some(p => p.providerId === 'google.com');
+}
+function requireAdmin() {
+  if (!isAdmin()) throw new Error('管理者のGoogleアカウントでログインしてください。');
+}
+function syncAdminEntry() {
+  if (entry) entry.hidden = !isAdmin();
+  if (!isAdmin()) {
+    adminUnlocked = false; pendingDelete = null; members = [];
+    if (list) list.innerHTML = '';
+    [passwordModal, membersModal, deleteModal].forEach(m => setOpen(m, false));
+  }
+}
+async function openMembers() {
+  requireAdmin(); adminUnlocked = true;
+  setOpen(passwordModal, false); setOpen(membersModal, true);
+  try { await loadMembers(); }
+  catch (error) { membersMessage.textContent = error?.message || '一覧を読み込めませんでした。'; }
+}
+entry?.addEventListener('click', () => { if (isAdmin()) openMembers(); });
+['unica:firebase-ready', 'unica:auth-provider-changed', 'unica:firebase-member-restored'].forEach(name => window.addEventListener(name, syncAdminEntry));
 let taps = [];
 let members = [];
 let adminUnlocked = false;
@@ -25,6 +50,7 @@ function setOpen(modal, open) {
 }
 
 function openPassword() {
+  if (!isAdmin()) return;
   setOpen(passwordModal, true);
   passwordMessage.textContent = '';
   passwordInput.value = '';
@@ -65,7 +91,7 @@ function renderMembers() {
         <strong>${escapeHtml(member.name || '名前未設定')}</strong>
         <small>${escapeHtml(formatNumber(member.number))}${member.prefecture ? ` ・ ${escapeHtml(member.prefecture)}` : ''}</small>
       </span>
-      <button class="admin-delete-button" type="button" data-admin-delete="${escapeHtml(member.uid)}">削除</button>
+      <button class="admin-delete-button" type="button" data-admin-delete="${escapeHtml(member.uid)}" ${member.uid === ADMIN_UID ? 'disabled aria-label="管理者本人は削除できません"' : ''}>削除</button>
     </article>`).join('') : '<div class="admin-empty">該当するうにメンはいません。</div>';
 
   list.querySelectorAll('[data-admin-delete]').forEach(button => {
@@ -80,42 +106,23 @@ function renderMembers() {
 }
 
 
-async function reconcileMemberNumberPool() {
-  const api = window.UNICA_FIREBASE;
-  if (!api?.db) return;
-  const occupied = new Set(members.map(row => Number(row.number || 0)).filter(n => Number.isInteger(n) && n > 0));
-  const counterRef = doc(api.db, 'system', 'memberCounterV3');
-  await runTransaction(api.db, async transaction => {
-    const counterSnap = await transaction.get(counterRef);
-    const counter = counterSnap.exists() ? counterSnap.data() : {};
-    const highestOccupied = occupied.size ? Math.max(...occupied) : 0;
-    const lastNumber = Math.max(Number(counter.lastNumber || 0), highestOccupied);
-    const availableNumbers = [];
-    for (let number = 1; number <= lastNumber; number++) {
-      if (!occupied.has(number)) availableNumbers.push(number);
-    }
-    transaction.set(counterRef, {
-      lastNumber,
-      availableNumbers,
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-  });
-}
-
 async function loadMembers() {
   membersMessage.classList.remove('is-success');
   membersMessage.textContent = 'うにメン一覧を読み込み中…';
   list.innerHTML = '';
   const api = window.UNICA_FIREBASE;
   if (!api?.db) throw new Error('Firebaseへの接続が完了していません。');
+  requireAdmin();
   const snap = await getDocs(query(collection(api.db, 'users'), orderBy('number', 'asc')));
-  members = snap.docs.map(docSnap => ({ uid: docSnap.id, ...docSnap.data() }));
-  await reconcileMemberNumberPool();
+  requireAdmin();
+  if (!adminUnlocked) return;
+  members = snap.docs.map(docSnap => ({ ...docSnap.data(), uid: docSnap.id }));
   membersMessage.textContent = '';
   renderMembers();
 }
 
 async function enterAdmin() {
+  if (!isAdmin()) { syncAdminEntry(); return; }
   if (passwordInput.value !== 'uniuni') {
     passwordMessage.textContent = 'パスワードが違います。';
     passwordInput.select();
@@ -130,12 +137,15 @@ async function enterAdmin() {
 }
 
 async function deleteMemberDirectly(member) {
+  requireAdmin();
+  if (member.uid === ADMIN_UID) throw new Error('管理者本人はこの画面から削除できません。');
   if (!adminUnlocked) throw new Error('管理画面を開き直してください。');
   const api = window.UNICA_FIREBASE;
   if (!api?.db) throw new Error('Firebaseへの接続が完了していません。');
 
   const db = api.db;
   const commentsSnap = await getDocs(query(collection(db, 'supportComments'), where('ownerUid', '==', member.uid)));
+  requireAdmin();
   const userRef = doc(db, 'users', member.uid);
   const counterRef = doc(db, 'system', 'memberCounterV3');
 
@@ -145,7 +155,9 @@ async function deleteMemberDirectly(member) {
       transaction.get(userRef),
       transaction.get(counterRef)
     ]);
-    const userData = userSnap.exists() ? userSnap.data() : member;
+    requireAdmin();
+    if (!userSnap.exists()) throw new Error('このうにメンはすでに削除されています。一覧を開き直してください。');
+    const userData = userSnap.data();
     const releasedNumber = Number(userData.number || member.number || 0);
     const counter = counterSnap.exists() ? counterSnap.data() : {};
     const availableNumbers = Array.isArray(counter.availableNumbers)
@@ -165,15 +177,22 @@ async function deleteMemberDirectly(member) {
       name: member.name || '',
       number: releasedNumber,
       deletedAt: serverTimestamp(),
-      deletedBy: api.uid || 'browser-admin'
+      deletedBy: ADMIN_UID
     });
     transaction.delete(userRef);
   });
 
-  const batch = writeBatch(db);
-  batch.delete(doc(db, 'presence', member.uid));
-  commentsSnap.docs.forEach(commentDoc => batch.delete(commentDoc.ref));
-  await batch.commit();
+  const refs = [doc(db, 'presence', member.uid), ...commentsSnap.docs.map(row => row.ref)];
+  try {
+    for (let i = 0; i < refs.length; i += 450) {
+      requireAdmin();
+      const batch = writeBatch(db);
+      refs.slice(i, i + 450).forEach(ref => batch.delete(ref));
+      await batch.commit();
+    }
+  } catch (error) {
+    throw new Error('会員情報は削除済みですが、応援コメント等の整理に失敗しました。管理者でログインし直して確認してください。');
+  }
 }
 
 $('#adminPasswordSubmit')?.addEventListener('click', enterAdmin);
@@ -217,3 +236,7 @@ document.addEventListener('keydown', event => {
   else if (membersModal?.classList.contains('is-open')) { setOpen(membersModal, false); adminUnlocked = false; }
   else if (passwordModal?.classList.contains('is-open')) setOpen(passwordModal, false);
 });
+
+syncAdminEntry();
+
+$('[data-admin-delete-back143]')?.addEventListener('click', () => $('#adminDeleteCancel')?.click());
