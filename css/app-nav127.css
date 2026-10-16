@@ -54,3 +54,5 @@ body.app-nav127 .member-gate [role=dialog],body.app-nav127 .guest-lock-modal [ro
 body.app-nav127 :is(#passportModal,#prefectureDirectoryModal,#prefectureMembersModal,#communityModal,#passportTitlesModal,#onlineModal) [role=dialog]{box-sizing:border-box!important;max-height:var(--app128-height)!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain;scroll-padding-bottom:24px}
 body.app-nav127 .milk-match-modal,body.app-nav127 .birthday-experience-modal,body.app-nav127 .birthday-calendar-modal,body.app-nav127 .birthday-comment-modal,body.app-nav127 .birthday-album-modal,body.app-nav127 .birthday-history-modal{box-sizing:border-box;padding-top:8px!important;padding-bottom:var(--app128-space)!important}
 body.app-nav127 :is(.milk-match-modal,.birthday-experience-modal,.birthday-calendar-modal,.birthday-comment-modal,.birthday-album-modal,.birthday-history-modal) [role=dialog]{box-sizing:border-box;max-height:var(--app128-height)!important;overflow-y:auto!important}
+/* On-demand legacy game keeps the shared navigation reachable. */
+body.app-nav127 .milk-match-modal{z-index:18000!important}
