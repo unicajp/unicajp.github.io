@@ -318,6 +318,6 @@ installUI(); bindUI();
 onAuthStateChanged(auth,user=>{
   if(!user)return; uid=user.uid;
   listenSongLike(); listenComments(); listenNotifications();
-  onSnapshot(collection(db,'users'),snap=>{memberDirectory=new Map(snap.docs.map(d=>[d.id,{uid:d.id,...d.data()}]));if(comments.length)renderComments();});
+  onSnapshot(collection(db,'users'),snap=>{memberDirectory=new Map(snap.docs.map(d=>[d.id,{uid:d.id,...d.data()}]));window.UNICA_MEMBER_DIRECTORY_ROWS=[...memberDirectory.values()];window.dispatchEvent(new CustomEvent('unica:member-directory',{detail:window.UNICA_MEMBER_DIRECTORY_ROWS}));if(comments.length)renderComments();});
   // 10秒ごとの全件再取得は行わず、コメント更新時と一覧を開いた時だけ必要分を取得する。
 });
