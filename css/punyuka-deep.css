@@ -4,15 +4,19 @@
 .deep-name-title{display:block;font:600 9px/1.5 system-ui,sans-serif;color:#9c638e;letter-spacing:.02em;white-space:normal;overflow-wrap:anywhere;margin:0 0 2px}.deep-pass-title .deep-name-title{color:#ffe2ad;font-size:11px}.pk-member .deep-name-title,#karaoke91 .deep-name-title{color:#dcb5ec}#passportModal .deep-pass-title{margin:0 0 3px}#passportModal #passDeepWardrobe{padding:12px;border:1px solid #e0d2e8;border-radius:13px}#passportModal #passDeepWardrobe small{font-size:10px;color:#82708d}#passportModal #passDeepWardrobe .deep-name-title{color:#8e5c8d}.deep-reward-preview{display:flex;align-items:center;justify-content:center;gap:14px;margin:12px 0;text-align:left}.deep-reward-preview .unica-punyako-avatar{width:80px!important;height:80px!important;flex-basis:80px!important}.deep-reward-preview b{font-size:14px}.deep-reward-preview .deep-name-title{color:#dbb6e8;font-size:10px}#passportModal .deep-reward-preview b{color:#614469}#passportModal #passDeepWardrobe select{font-size:14px}
 /* An independent frame and background; the original character image stays intact. */
 [data-deep-frame],[data-deep-bg]{box-sizing:border-box!important;border-radius:50%!important;isolation:isolate}
-[data-deep-frame=mask_0]{border:3px solid #dfd7ff!important;outline:1px solid #a992d3;box-shadow:0 0 0 2px #604e83,0 0 12px #c7acdc66!important}
-[data-deep-frame=mask_1]{border:3px solid #e799b5!important;outline:1px solid #813b60;box-shadow:0 0 0 2px #b98b58,0 0 12px #de8aa755!important}
-[data-deep-frame=mask_2]{border:3px double #fff0b2!important;outline:2px solid #bc8b40;box-shadow:0 0 0 3px #734b67,0 0 12px #ecc87966!important}
-[data-deep-frame=mask_3]{border:3px solid #d0e6ed!important;outline:1px solid #99b7cb;box-shadow:0 0 0 2px #5c698d,0 0 12px #d0e3eb55!important}
-[data-deep-bg=guard_0]{background:radial-gradient(circle at 73% 24%,#ffedb5 0 6%,transparent 7%),radial-gradient(ellipse at bottom,#8568a7,#252044 75%)!important}
-[data-deep-bg=guard_1]{background:radial-gradient(ellipse at 50% 85%,#ffca8a 0,#af4d76 40%,#291c40 85%)!important}
-[data-deep-bg=guard_2]{background:radial-gradient(circle at 20% 25%,#fff4cc 0 2%,transparent 3%),radial-gradient(circle at 80% 30%,#fff5be 0 2%,transparent 3%),radial-gradient(ellipse at bottom,#77aaab,#36375f 80%)!important}
-[data-deep-bg=guard_3]{background:repeating-linear-gradient(170deg,transparent 0 13px,#e9fcff30 14px 15px,transparent 16px 24px),linear-gradient(#788cb5,#d4e7e9)!important}
-.punyako-character img[data-deep-frame],.punyako-character img[data-deep-bg]{padding:5px}#pkPairList .deep-pair-icon{display:grid;place-items:center;width:56px;height:56px;flex:none}#pkPairList .deep-pair-icon img{width:48px;height:48px}#pkPairList .pk-member-person .deep-name-title{font-size:9px;margin:0 0 2px}#scent16Modal .deep-entry:active,#deep109 button:active{transform:translateY(1px)}@media(prefers-reduced-motion:reduce){#deep109 .is-earned .deep-reward{animation:none}}
+/* Thin perimeter frames: the light stays outside the character/background. */
+[data-deep-frame=mask_0]{border:1px solid #f0eaff!important;outline:1px solid #a38ac7;outline-offset:1px;box-shadow:0 0 0 2px #74608f,0 0 7px 2px #c7acdc55!important}
+[data-deep-frame=mask_1]{border:1px solid #ffd1df!important;outline:1px solid #b76583;outline-offset:1px;box-shadow:0 0 0 2px #b98b58,0 0 7px 2px #de8aa744!important}
+[data-deep-frame=mask_2]{border:1px solid #fff0b2!important;outline:1px dashed #dbb463;outline-offset:2px;box-shadow:0 0 0 2px #734b67,0 0 7px 2px #ecc87955!important}
+[data-deep-frame=mask_3]{border:1px solid #edfcff!important;outline:1px solid #99b7cb;outline-offset:1px;box-shadow:0 0 0 2px #5c698d,0 0 7px 2px #d0e3eb44!important}
+/* Each background has a distinct palette and a visible motif near the rim. */
+[data-deep-bg=guard_0]{background:radial-gradient(circle at 77% 19%,#fff2c6 0 7%,transparent 8%),radial-gradient(circle at 20% 26%,#d6c7ff 0 1.5%,transparent 2.5%),radial-gradient(circle at 84% 65%,#fff 0 1%,transparent 2%),linear-gradient(150deg,#171344 10%,#4a328b 60%,#9471c6)!important}
+[data-deep-bg=guard_1]{background:radial-gradient(circle at 22% 22%,#ffe6a0 0 12%,transparent 13%),linear-gradient(165deg,#6b193c 0%,#cc425c 40%,#f58a46 75%,#ffcf79 100%)!important}
+[data-deep-bg=guard_2]{background:radial-gradient(circle at 18% 28%,#fff5ae 0 3%,transparent 4%),radial-gradient(circle at 80% 20%,#fff5ae 0 2%,transparent 3%),radial-gradient(circle at 85% 70%,#b9ffd7 0 2%,transparent 3%),linear-gradient(155deg,#063c40,#148772 60%,#7dcfa4)!important}
+[data-deep-bg=guard_3]{background:repeating-linear-gradient(165deg,transparent 0 14%,#e9fcff88 15% 17%,transparent 18% 29%),linear-gradient(145deg,#174b91,#398dc8 50%,#a6e9ef)!important}
+.unica-punyako-avatar[data-deep-bg]>img{width:82%;height:82%}
+#pkPairList .deep-pair-icon[data-deep-bg] img{width:82%;height:82%;object-fit:contain}
+.punyako-character img[data-deep-frame],.punyako-character img[data-deep-bg]{padding:clamp(7px,2vw,18px)}#pkPairList .deep-pair-icon{display:grid;place-items:center;width:56px;height:56px;flex:none}#pkPairList .deep-pair-icon img{width:48px;height:48px}#pkPairList .pk-member-person .deep-name-title{font-size:9px;margin:0 0 2px}#scent16Modal .deep-entry:active,#deep109 button:active{transform:translateY(1px)}@media(prefers-reduced-motion:reduce){#deep109 .is-earned .deep-reward{animation:none}}
 
 #deep109 .deep-hero{padding:16px 12px}#deep109 .deep-doors{gap:9px;margin-top:12px}#deep109 .deep-doors button{padding:12px;gap:4px}#deep109 .deep-doors b{font-size:16px}
 
@@ -33,3 +37,20 @@
 #scent16Modal .pk-type-item .pk-type-name{display:block;width:100%;line-height:1.65;overflow-wrap:normal;word-break:normal}#scent16Modal .pk-type-item .pk-type-name>span{display:block;white-space:nowrap}
 
 #deep109 .deep-equip-choice{padding:22px 14px;text-align:center;background:radial-gradient(ellipse at top,#5e243b66,transparent 65%),#160e19;border:1px solid #a8795966;border-radius:18px}#deep109 .deep-equip-choice>small{color:#e7c28d;letter-spacing:.14em;font-size:10px}#deep109 .deep-equip-choice h3{font-size:22px;line-height:1.6}#deep109 .deep-equip-choice>button{display:block;box-sizing:border-box;min-height:46px;width:100%;margin:10px 0;border:1px solid #a27c69;border-radius:12px;background:#392031;color:#ffe9ee;padding:12px;font:600 13px/1.6 system-ui,sans-serif}#deep109 .deep-equip-choice>[data-deep-equip-now]{background:linear-gradient(110deg,#83445c,#a37156);border-color:#dfb37e;color:#fff6e9}#deep109 .deep-equip-choice>button:disabled{opacity:.55}
+/* 14.146 — ten distinct rewards; all frames keep a slim outer edge. */
+[data-deep-frame=mask_0]{border-style:solid!important;outline-style:dashed}
+[data-deep-frame=mask_1]{border-color:#ffbacd!important;outline-color:#ba3d65;outline-style:dotted}
+[data-deep-frame=mask_2]{outline-style:double;outline-width:3px;outline-offset:1px}
+[data-deep-frame=mask_3]{outline-style:solid;outline-color:#a9d9e8}
+[data-deep-frame=mask_4]{border:1px solid #e4ceff!important;outline:1px dashed #7f54be;outline-offset:2px;box-shadow:0 0 0 2px #482864,0 0 7px #ba8cdd88!important}
+[data-deep-frame=mask_5]{border:1px solid #ffd7ee!important;outline:2px dotted #d989b8;outline-offset:1px;box-shadow:0 0 0 2px #8663a0,0 0 7px #ed9bd955!important}
+[data-deep-frame=mask_6]{border:1px solid #b3c4ff!important;outline:1px double #667edd;outline-offset:2px;box-shadow:0 0 0 3px #242a69,0 0 6px #7285e466!important}
+[data-deep-frame=mask_7]{border:1px solid #dbedb4!important;outline:1px dashed #579777;outline-offset:1px;box-shadow:0 0 0 2px #38594b,0 0 7px #8abf9155!important}
+[data-deep-frame=mask_8]{border:1px solid #fff3a8!important;outline:1px dotted #e8a632;outline-offset:2px;box-shadow:0 0 0 2px #866528,0 0 7px #ffde5d66!important}
+[data-deep-frame=mask_9]{border:1px solid #cffaf1!important;outline:1px dashed #85bdc9;outline-offset:2px;box-shadow:0 0 0 2px #566978,0 0 7px #b2e0e755!important}
+[data-deep-bg=guard_4]{background:linear-gradient(175deg,transparent 0 69%,#272445 70% 74%,#493856 75%),radial-gradient(circle at 77% 22%,#ffe5a5 0 12%,transparent 13%),linear-gradient(#38204f,#b06476 60%,#ffd29b)!important}
+[data-deep-bg=guard_5]{background:repeating-linear-gradient(100deg,transparent 0 17%,#14394888 18% 21%,transparent 22% 35%),radial-gradient(ellipse at 50% 90%,#81b8a8,transparent 70%),linear-gradient(150deg,#153442,#21695d)!important}
+[data-deep-bg=guard_6]{background:radial-gradient(ellipse at 15% 80%,#fff9ff 0 23%,transparent 24%),radial-gradient(ellipse at 90% 91%,#c5c3f5 0 30%,transparent 31%),linear-gradient(160deg,#5557ab,#ae9be2 55%,#e3c9f2)!important}
+[data-deep-bg=guard_7]{background:radial-gradient(ellipse at 50% 100%,#ffdb65 0 14%,#e66e35 25%,transparent 50%),radial-gradient(circle at 19% 20%,#ffe4a1 0 2%,transparent 3%),linear-gradient(150deg,#221b32,#633044)!important}
+[data-deep-bg=guard_8]{background:repeating-linear-gradient(170deg,transparent 0 19%,#ffedbc77 20% 22%,transparent 23% 35%),linear-gradient(150deg,#864324,#c58a42 45%,#f1cc82)!important}
+[data-deep-bg=guard_9]{background:radial-gradient(circle at 18% 20%,#ffe0ed 0 9%,transparent 10%),radial-gradient(circle at 82% 38%,#ffc6e3 0 11%,transparent 12%),radial-gradient(circle at 25% 80%,#fff2bc 0 10%,transparent 11%),linear-gradient(140deg,#5d307e,#b8589c 60%,#e49ebd)!important}
