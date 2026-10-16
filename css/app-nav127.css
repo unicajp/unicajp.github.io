@@ -24,8 +24,8 @@ body.app-nav127 #unico,body.app-nav127 section[id]{scroll-margin-top:var(--app12
 .app127-sheet header{display:flex;align-items:center;justify-content:space-between;margin:0 0 13px;font-size:15px}
 .app127-sheet header button{width:32px;height:32px;border:0;border-radius:50%;background:#f0e7f4;color:#866491;font-size:23px;cursor:pointer}
 .app127-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.app127-choices button{display:grid;grid-template-columns:28px minmax(0,1fr);gap:4px 8px;align-items:center;padding:15px 12px;border:1px solid #e9ddec;border-radius:16px;background:#f8f1fa;color:#6f507e;text-align:left;cursor:pointer;font-family:inherit}
-.app127-choices svg{width:24px;height:24px;grid-row:1/3}
+.app127-choices button{display:grid;grid-template-columns:34px minmax(0,1fr);gap:4px 9px;align-items:center;padding:15px 8px;border:0;border-radius:12px;background:transparent;color:#6f507e;text-align:left;cursor:pointer;font-family:inherit}
+.app127-choices svg,.app127-choices img{width:32px;height:32px;grid-row:1/3;object-fit:contain;justify-self:center}.app127-choices img.app133-punyuka{width:38px;height:38px}.app127-choices button:active{background:#f0e7f4}
 .app127-choices strong{font-size:12px;line-height:1.5}.app127-choices small{font-size:10px;color:#9a80a3;line-height:1.5}
 /* Reserve the persistent navigation strip in full-screen surfaces. */
 body.app-nav127 .scent16-modal,body.app-nav127 .iv-modal,body.app-nav127 .world-modal,body.app-nav127 .sre-mission-modal{padding-bottom:calc(78px + env(safe-area-inset-bottom))!important}
