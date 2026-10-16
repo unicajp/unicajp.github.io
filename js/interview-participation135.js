@@ -1,7 +1,7 @@
 import {doc,collection,getDoc,getDocs,onSnapshot,runTransaction,setDoc,deleteDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js';
 export function createParticipation({root,esc,owner,linked,getApi,login,rerender}){
 const configs=new Map(),drafts=new Map(),pendingSeconds=new Set();let stops=[],api,authUid=null,resume=null,ready=false;
-function memberLinked(){try{return !!linked()&&JSON.parse(localStorage.getItem('unicaWorldMemberV4')||'null')?.uid===getApi()?.auth.currentUser?.uid;}catch{return false;}}
+function memberLinked(){try{const member=JSON.parse(localStorage.getItem('unicaWorldMemberV4')||'null'),uid=getApi()?.auth.currentUser?.uid;return !!linked()&&!!member&&typeof member==='object'&&!Array.isArray(member)&&(!member.uid||member.uid===uid);}catch{return false;}}
 const $=s=>root.querySelector(s),status=(el,t)=>{const p=el.querySelector('[data-p135-status]');if(p)p.textContent=t;};
 try{resume=JSON.parse(sessionStorage.getItem('unicaInterviewResume135')||'null');}catch{}
 const editor=document.createElement('fieldset');editor.className='iv135-admin';editor.innerHTML='<legend>みんなはどう？（任意）</legend><label><input id="iv135Enabled" type="checkbox">この記事に付ける</label><label>回答につながる問いかけ<input id="iv135Question" maxlength="120" placeholder="子どもの頃、「さんぽ」を歌ってた？"></label><div class="iv135-two"><label>選択肢①<input id="iv135Option0" maxlength="35"></label><label>選択肢②<input id="iv135Option1" maxlength="35"></label></div><label><input id="iv135Note" type="checkbox" checked>任意のひとこと欄も表示する（名前と一緒に公開）</label><label>選択肢②の入力案内<input id="iv136Prompt" maxlength="100" placeholder="どんな曲を歌ってた？"></label><small>選択肢②は記入して送信すると投票確定。問いかけ・選択肢を変更すると新しい集計になります。過去の投票とひとことは保存されます。</small>';
