@@ -9,6 +9,12 @@
 .admin-member-avatar .unica-punyako-avatar,.community-post-avatar .unica-punyako-avatar,.rank-avatar .unica-punyako-avatar,.prefecture-member-button .avatar .unica-punyako-avatar{width:100%;height:100%;max-width:42px;max-height:42px}
 /* 14.148: the circular badge owns the decoration; its holder must not crop it. */
 :is(.ud-avatar,.community-post-avatar,.home-comment-avatar,.admin-member-avatar,.rank-avatar,.history-avatar,.birthday-calendar-avatar,.support-float-avatar,.prefecture-member-button .avatar,.status-avatar,.unipass-avatar,.confirm-avatar,#detailAvatar,#communityComposeAvatar):has(>.unica-punyako-avatar){overflow:visible!important;background:transparent!important;background-image:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;line-height:1}
-:is(.ud-avatar,.community-post-avatar,.home-comment-avatar,.admin-member-avatar,.birthday-calendar-avatar,.support-float-avatar,.prefecture-member-button .avatar,.status-avatar,.unipass-avatar,.confirm-avatar,#communityComposeAvatar)>.unica-punyako-avatar{width:100%;height:100%;max-width:none;max-height:none;min-width:0;min-height:0;flex-basis:auto}
+:is(.ud-avatar,.community-post-avatar,.home-comment-avatar,.admin-member-avatar,.birthday-calendar-avatar,.support-float-avatar,.prefecture-member-button .avatar,#communityComposeAvatar)>.unica-punyako-avatar{width:100%;height:100%;max-width:none;max-height:none;min-width:0;min-height:0;flex-basis:auto}
 /* Keep character artwork clipped to its own circle, while outlines stay outside. */
 .unica-punyako-avatar{border-radius:50%!important}
+
+/* 14.150: header holders have auto dimensions at desktop/landscape widths.
+   Percentage-sized badges must never resolve against the whole status bar. */
+#siteHeader #statusAvatar:has(>.unica-punyako-avatar){width:25px!important;height:25px!important;min-width:25px!important;max-width:25px!important;min-height:25px!important;max-height:25px!important;flex:0 0 25px!important;align-self:center!important}
+#siteHeader #statusAvatar>.unica-punyako-avatar{width:25px!important;height:25px!important;min-width:25px!important;max-width:25px!important;min-height:25px!important;max-height:25px!important;flex:0 0 25px!important}
+:is(.unipass-avatar,.confirm-avatar)>.unica-punyako-avatar{width:34px;height:34px;max-width:100%;max-height:100%;flex:0 0 34px}
