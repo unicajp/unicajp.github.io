@@ -116,3 +116,60 @@
 #unicoInterview button:focus-visible,#unicoInterview summary:focus-visible,#unicoInterview a:focus-visible{outline:3px solid #c0a1d0;outline-offset:3px}
 @media(max-width:360px){#ivModal .iv-page-main{padding:0 9px 20px}#unicoInterview .iv-head h2{font-size:21px}#unicoInterview .iv-answer>summary{padding:14px 11px;gap:8px}#unicoInterview .iv-answer-body{padding:0 11px 12px}#unicoInterview .iv142-bubble>p{font-size:16px}#unicoInterview .iv135-poll{padding:12px 9px 8px}#unicoInterview .iv135-options .iv-reaction-button{font-size:10px}}
 @media(prefers-reduced-motion:reduce){#unicoInterview .iv-answer>summary>b{transition:none}}
+/* 14.149 — an intimate editorial space, framed like a keepsake. */
+#ivModal:has(#unicoInterview:not([hidden])) .iv-modal-panel{background:#f4efe8;color:#443849;border:1px solid #d5c4ad;box-shadow:0 24px 80px #160c2455}
+#ivModal:has(#unicoInterview:not([hidden])) .iv-modal-nav{background:#2f2238f5;border-bottom:1px solid #b299733f;padding:8px 13px}
+#ivModal:has(#unicoInterview:not([hidden])) .iv-modal-nav>span{color:#d6c0a1;font-size:8px;letter-spacing:.2em}
+#ivModal:has(#unicoInterview:not([hidden])) .iv-modal-nav button{background:transparent;border-color:#a58eaa44;color:#f3e7f5;min-height:34px;font-size:11px}
+#ivModal:has(#unicoInterview:not([hidden])) .iv-page-main{padding:0 13px 28px}
+#unicoInterview .iv149-cover{position:relative;isolation:isolate;margin:0 -13px 22px;padding:0 25px 19px;overflow:hidden;background:radial-gradient(ellipse at 110% 10%,#8c646a55,transparent 70%),linear-gradient(135deg,#302339,#47304d);color:#fff5e9}
+#unicoInterview .iv149-cover:after{content:'';position:absolute;left:25px;right:25px;bottom:17px;height:1px;background:linear-gradient(90deg,#c6a87599,#c6a87511);pointer-events:none}
+#unicoInterview .iv149-cover-mark{position:absolute;right:12px;top:32px;font:200px/1 Georgia,serif;color:#d7b98214;pointer-events:none;z-index:-1}
+#unicoInterview .iv-head{padding:28px 0 12px}
+#unicoInterview .iv-head>div:first-child>small{color:#cfb38e;font:600 8px/1.5 system-ui;letter-spacing:.17em}
+#unicoInterview .iv-head h2{font:600 32px/1.5 "Noto Serif JP",serif;letter-spacing:.08em;color:#fff6ed;margin:14px 0 14px}
+#unicoInterview .iv149-lead{font:400 11px/1.9 system-ui;color:#d3c3d5;margin:0 0 17px;letter-spacing:.025em}
+#unicoInterview .iv149-sign{font:500 17px/1.4 Georgia,serif;letter-spacing:.17em;color:#e3caaa}
+#unicoInterview .iv149-sign i{display:block;margin:6px 0 0;font:500 7px/1.5 system-ui;letter-spacing:.18em;font-style:normal;color:#ac96b2}
+#unicoInterview .iv-count{margin:15px 0 0;gap:5px;color:#ab95b3}
+#unicoInterview .iv-count span,#unicoInterview .iv-count strong{font-size:9px;color:#b7a4bd}
+#unicoInterview #ivArticles{position:relative}
+#unicoInterview .iv-answer{border:1px solid #ded3c5;border-radius:4px 17px 17px 17px;background:#fffcf8;margin:0 0 17px;box-shadow:0 7px 20px #39264008}
+#unicoInterview .iv-answer>summary{padding:17px 15px;gap:12px}
+#unicoInterview .iv-answer>summary>small{background:none;color:#a07a4a;border-radius:0;border-right:1px solid #d4b98f55;padding-right:9px;min-width:29px;font:500 12px/1.3 Georgia,serif}
+#unicoInterview .iv-answer>summary>span{font:600 13px/1.85 system-ui;color:#786a79}
+#unicoInterview .iv-answer>summary>b{color:#a48b6d;font-size:17px}
+#unicoInterview .iv-answer[open]>summary{background:#f7f1e8}
+#unicoInterview .iv-answer-body{border-color:#e8ded0;padding:0 17px 16px}
+#unicoInterview .iv142-response{margin:24px 0 24px}
+#unicoInterview .iv142-byline{gap:8px;margin-bottom:14px}
+#unicoInterview .iv142-avatar{width:29px;height:29px;border-radius:50%;background:#5d3f69;color:#f3dec0;border:1px solid #ceb48b;box-shadow:none}
+#unicoInterview .iv142-avatar svg{width:18px;height:18px}
+#unicoInterview .iv142-byline .iv-speaker strong{color:#846342;font-size:12px}
+#unicoInterview .iv142-byline .iv-speaker small{color:#b19b83;font-size:8px}
+#unicoInterview .iv142-bubble{padding:0 0 0 15px;border:0;position:relative}
+#unicoInterview .iv142-bubble:before{content:'“';position:absolute;left:-2px;top:-8px;color:#c8a477;font:30px/1 Georgia,serif;pointer-events:none}
+#unicoInterview .iv142-bubble>p{font:600 18px/2.05 "Noto Serif JP",serif;letter-spacing:.035em;color:#443048}
+#unicoInterview .iv142-response>time{margin-top:13px;color:#ac9b8c;font-size:9px}
+#unicoInterview .iv135-poll{background:#f1eaf3;border:0;border-radius:13px;padding:17px 13px 12px;position:relative}
+#unicoInterview .iv135-poll:before{content:'';position:absolute;left:13px;top:0;width:28px;height:2px;background:#b08bb4}
+#unicoInterview .iv135-poll>.iv-reaction-invite{font-size:10px;color:#9876a0;letter-spacing:.02em}
+#unicoInterview .iv135-poll .iv135-question{color:#6c5275;font-size:13px;line-height:1.85;margin-bottom:14px}
+#unicoInterview .iv135-options .iv-reaction-button{border-color:#ceb7d3;background:#fffbff;box-shadow:0 2px 0 #d9c7df;border-radius:11px;font-size:11px;min-height:46px}
+#unicoInterview .iv135-options .iv-reaction-button.is-selected{background:#71507d;color:#fff;border-color:#674373;box-shadow:0 2px 0 #4f305b}
+#unicoInterview .iv135-share{border:1px solid #decfb9;border-radius:11px;background:#faf4e9;margin-top:15px;padding:0 11px}
+#unicoInterview .iv135-share>summary{display:grid;grid-template-columns:1fr auto;gap:3px 8px;list-style:none;padding:12px 0;color:#8a6749;min-height:52px}
+#unicoInterview .iv135-share>summary::-webkit-details-marker{display:none}
+#unicoInterview .iv135-share>summary span{font:650 12px/1.5 system-ui}
+#unicoInterview .iv135-share>summary small{grid-column:1;font:400 9px/1.5 system-ui;color:#ad957e}
+#unicoInterview .iv135-share>summary b{grid-column:2;grid-row:1/3;align-self:center;font:400 22px/1 system-ui;color:#aa865d}
+#unicoInterview .iv135-share>div{padding-bottom:12px}
+#unicoInterview .iv135-share button,#unicoInterview .iv135-share a{border-color:#d9c6ad;background:#fffdf9;color:#87664a}
+#unicoInterview .iv-question-box{margin-top:27px;padding:19px 15px;background:#eae2ed;border:1px solid #d8cadd;border-radius:15px}
+#unicoInterview .iv-question-box h3{font:600 19px/1.6 "Noto Serif JP",serif;letter-spacing:.06em;color:#65466f}
+#unicoInterview .iv-question-box .iv-primary{background:#70507d}
+#unicoInterview #ivManage{margin-top:17px;font-size:10px;background:transparent;border-color:#d8c9db;color:#a58bae}
+.iv135-card{background:#f7f2eb;border-color:#cdb797;color:#4f3a59}
+.iv135-card h3{font:600 19px/1.6 "Noto Serif JP",serif;color:#594064}
+.iv135-card button,.iv135-card a{background:#eee5ed;border-color:#dacbdf;color:#765281;min-height:40px}
+@media(max-width:360px){#unicoInterview .iv149-cover{padding-left:20px;padding-right:20px}#unicoInterview .iv-head h2{font-size:29px}#unicoInterview .iv149-lead{font-size:10px}#unicoInterview .iv-answer-body{padding-left:13px;padding-right:13px}#unicoInterview .iv142-bubble>p{font-size:17px}#unicoInterview .iv135-poll{padding:15px 10px 10px}#unicoInterview .iv135-options .iv-reaction-button{font-size:10px}}
