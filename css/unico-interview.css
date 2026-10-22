@@ -173,3 +173,36 @@
 .iv135-card h3{font:600 19px/1.6 "Noto Serif JP",serif;color:#594064}
 .iv135-card button,.iv135-card a{background:#eee5ed;border-color:#dacbdf;color:#765281;min-height:40px}
 @media(max-width:360px){#unicoInterview .iv149-cover{padding-left:20px;padding-right:20px}#unicoInterview .iv-head h2{font-size:29px}#unicoInterview .iv149-lead{font-size:10px}#unicoInterview .iv-answer-body{padding-left:13px;padding-right:13px}#unicoInterview .iv142-bubble>p{font-size:17px}#unicoInterview .iv135-poll{padding:15px 10px 10px}#unicoInterview .iv135-options .iv-reaction-button{font-size:10px}}
+/* 14.152 — a visible invitation with direct sharing */
+#unicoInterview .iv152-invite{margin:18px 0 10px;padding:20px 18px;border:1px solid #cbbb9a;border-radius:17px;background:linear-gradient(125deg,#4e385c,#71527e);color:#fff8ef;display:flex;align-items:center;gap:15px;justify-content:space-between}
+#unicoInterview .iv152-invite small{font:600 9px/1.5 system-ui;letter-spacing:.18em;color:#e0c89d}
+#unicoInterview .iv152-invite h3{margin:7px 0;font:600 21px/1.5 "Noto Serif JP",serif;color:inherit}
+#unicoInterview .iv152-invite p{font:12px/1.8 system-ui;margin:0;color:#eee4ef}
+#unicoInterview .iv152-invite button{background:#fff4df;color:#5a4063;flex-shrink:0;border-radius:24px;margin:0;min-height:44px}
+#unicoInterview .iv152-box{margin:0 0 24px;padding:0;background:#fbf7fc;border:1px solid #d8cadd;border-radius:15px;overflow:hidden;scroll-margin-top:70px}
+#unicoInterview .iv152-box>summary{padding:16px;cursor:pointer;font:700 16px/1.6 system-ui;color:#674673;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px}
+#unicoInterview .iv152-box>summary::-webkit-details-marker{display:none}
+#unicoInterview .iv152-box>summary span{font:500 10px/1.5 system-ui;color:#8a7293}
+#unicoInterview .iv152-box[open]>summary{border-bottom:1px solid #e5d9e8}
+#unicoInterview .iv152-content{padding:16px}
+#unicoInterview .iv152-content>p,#unicoInterview .iv152-share>p{font:12px/1.9 system-ui;color:#806e86;margin:0 0 13px}
+#unicoInterview .iv152-content>label{display:block;font:700 13px/1.6 system-ui;margin:15px 0 7px}
+#unicoInterview .iv152-box .iv-box{grid-template-columns:1fr;margin:0}
+#unicoInterview .iv152-box textarea{min-height:115px;max-height:250px}
+#unicoInterview .iv152-box .iv-primary{justify-self:end;min-height:44px}
+#unicoInterview .iv152-note{display:block;margin:12px 0;font:11px/1.9 system-ui;color:#8b788f}
+#unicoInterview .iv152-examples{display:flex;flex-wrap:wrap;gap:6px}
+#unicoInterview .iv152-examples small{width:100%;font:11px/1.6 system-ui;color:#8b788f}
+#unicoInterview .iv152-examples button{padding:8px 11px;min-height:40px;font-size:11px;border-radius:20px;background:#eee5f1}
+#unicoInterview .iv152-share{border-top:1px solid #ded0e4;margin-top:18px;padding-top:16px}
+#unicoInterview .iv152-share strong{font:700 14px/1.7 system-ui}
+#unicoInterview .iv152-share>div{display:flex;flex-wrap:wrap;gap:7px}
+#unicoInterview .iv152-share a{display:inline-flex;align-items:center;min-height:44px;border:1px solid #e4d1df;border-radius:11px;padding:8px 12px;color:#795669;text-decoration:none;font:700 12px/1.5 system-ui;background:#fff}
+#unicoInterview #iv152Link{width:100%;min-width:0;margin-top:12px;padding:10px;border:1px solid #d7c9df;border-radius:8px;font-size:16px}
+#unicoInterview #iv152ShareStatus{font:12px/1.8 system-ui;margin:9px 0 0}
+#phase1241Renewal .home152-question{width:100%;min-height:60px;margin:-6px 0 0;padding:12px 17px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #bda6cb;border-radius:17px;background:linear-gradient(120deg,#f4eaf7,#fff6e9);color:#684772;text-align:left;cursor:pointer;box-sizing:border-box}
+#phase1241Renewal .home152-question span{display:grid;gap:3px}
+#phase1241Renewal .home152-question strong{font:700 14px/1.5 system-ui}
+#phase1241Renewal .home152-question small{font:11px/1.5 system-ui;color:#89708f}
+#phase1241Renewal .home152-question b{font:500 23px/1 system-ui}
+@media(max-width:480px){#unicoInterview .iv152-invite{display:block;padding:18px 16px}#unicoInterview .iv152-invite button{margin-top:14px;width:100%}#unicoInterview .iv152-invite h3{font-size:20px}#unicoInterview .iv152-content{padding:13px}}
