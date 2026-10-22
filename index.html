@@ -64,7 +64,7 @@
 <link rel="stylesheet" href="css/phase13-9-2-google-required.css?v=14.83"/>
 <link rel="stylesheet" href="css/phase14-34-support-bottom.css?v=14.34"/>
 <link rel="stylesheet" href="css/phase14-37-interaction-fix.css?v=14.37"/>
-<link href="css/unico-interview.css?v=14.149" rel="stylesheet"/>
+<link href="css/unico-interview.css?v=14.152" rel="stylesheet"/>
 <link rel="stylesheet" href="css/home124.css?v=14.134"/>
 <link rel="stylesheet" href="css/app-nav127.css?v=14.137"/>
 <link rel="stylesheet" href="css/birthday151.css?v=14.151"/>
@@ -659,7 +659,7 @@
 
 
 
-<script src="js/phase12-4-1-renewal.js?v=14.124"></script>
+<script src="js/phase12-4-1-renewal.js?v=14.152"></script>
 <script src="js/phase12-4-2-feature-worlds.js?v=13.7.2"></script>
 <script src="js/phase12-4-4-final-polish.js?v=13.7.2"></script>
 
@@ -729,12 +729,13 @@
 <div class="iv-modal" id="ivModal" aria-hidden="true"><div class="iv-modal-backdrop" data-close-interview></div><section class="iv-page iv-modal-panel" role="dialog" aria-modal="true" aria-labelledby="ivTitle" tabindex="-1"><nav class="iv-page-nav iv-modal-nav"><button type="button" data-close-interview>‹ 戻る</button><span>UNICA INTERVIEW</span><button type="button" data-close-interview aria-label="閉じる">×</button></nav><div class="iv-page-main"><section class="unico-interview" id="unicoInterview" aria-labelledby="ivTitle">
 <div class="iv149-cover"><div class="iv149-cover-mark" aria-hidden="true">“</div><div class="iv-head"><div><small>THE VOICE BEHIND THE SONG</small><h2 id="ivTitle">うにこに<br>聞いてみた。</h2><p class="iv149-lead">歌のこと。日々のこと。<br>うにこの言葉と、あなたの気持ちが出会う場所。</p><span class="iv149-sign">UNICA <i>INTERVIEW & STORIES</i></span></div><div class="iv-count"><strong id="ivCount">—</strong><span>質問箱・お返事待ち</span></div></div></div>
 
+<section class="iv152-invite" aria-labelledby="iv152Title"><div><small>QUESTION BOX</small><h3 id="iv152Title">次は、あなたが聞く番。</h3><p>歌のこと、日々のこと。<br>うにこに聞いてみたいこと、ありませんか？</p></div><button type="button" class="iv-primary" data-question152-open>うにこに質問する <span aria-hidden="true">↗</span></button></section>
+<details class="iv-question-box iv152-box" id="iv152Box"><summary>うにこの質問箱 <span>質問を書く・シェアする</span></summary><div class="iv152-content"><p>届いた質問は運営が確認し、選ばれた質問にうにこがインタビューでお答えします。すべての質問への回答はお約束できません。</p><div class="iv152-examples"><small>たとえば、こんなこと</small><button type="button" data-question152-example="歌う前、緊張したときはどうしていますか？">歌う前の緊張、どうしてる？</button><button type="button" data-question152-example="最近、思わず笑ってしまったことはありますか？">最近、笑ったことは？</button></div><label for="ivBody">うにこへの質問</label><div class="iv-box"><textarea id="ivBody" maxlength="500" placeholder="聞いてみたいことを、ひとつ。"></textarea><button class="iv-primary" id="ivSubmit" type="button" disabled>質問を送る</button></div><small class="iv152-note">送信にはうにメン登録・Googleログインが必要です。送信内容はまず運営に届き、採用された質問文は記事に掲載されます。個人情報は書かないでください。</small><p class="iv-message" id="ivMessage" role="status"></p><div class="iv152-share"><strong>友だちにも、聞いてもらおう。</strong><p>この質問箱へ直接つながるリンクをシェアできます。</p><div><button type="button" id="iv152Share">質問箱をシェア</button><button type="button" id="iv152Copy">リンクをコピー</button><a id="iv152X" target="_blank" rel="noopener">X</a><a id="iv152Line" target="_blank" rel="noopener">LINE</a></div><input id="iv152Link" aria-label="質問箱のリンク" readonly hidden><p id="iv152ShareStatus" role="status"></p></div></div></details>
 <div id="ivArticles"><p class="iv-empty">インタビューを読み込み中…</p></div>
-<div class="iv-question-box"><h3>質問箱</h3><p>うにこに聞いてみたいことを送ってください。</p><div class="iv-box"><textarea id="ivBody" aria-label="うにこへの質問" maxlength="500" placeholder="うにこへの質問を書く"></textarea><button class="iv-primary" id="ivSubmit" type="button" disabled>送る</button></div></div>
-<p class="iv-message" id="ivMessage" role="status"></p><a id="ivLogin" href="#top" hidden>トップでうにメン登録・Google連携をする</a><button id="ivManage" type="button" hidden>インタビュー管理</button>
+<a id="ivLogin" href="#top" hidden>トップでうにメン登録・Google連携をする</a><button id="ivManage" type="button" hidden>インタビュー管理</button>
 <div class="iv-admin" id="ivAdmin" hidden><h3>管理者だけの質問箱</h3><button id="ivToggle" type="button">質問箱の受付を開始</button> <button id="ivReload" type="button">質問を再読み込み</button> <button id="ivCopy" type="button">未回答の質問をコピー</button><div id="ivInbox"></div><h3>インタビューを公開・編集</h3><button id="ivNew" type="button">新しい質問と回答を登録</button><p id="ivSource">あなたが用意した質問と、ボーカルから届いた回答を入力してください。</p><label for="ivQuestion">公開する質問</label><textarea id="ivQuestion" maxlength="500"></textarea><label for="ivAnswer">ボーカルから届いた回答</label><textarea id="ivAnswer" maxlength="5000"></textarea><button class="iv-primary" id="ivPublish" type="button">質問と回答を公開</button> <button id="ivDeleteArticle" type="button" hidden>公開記事を削除</button><p>トップには、この端末でまだ開いていない記事を古い順に表示します。</p><h3>公開済みの記事</h3><div id="ivEditList"></div></div>
 </section></div></section></div>
-<script type="module" src="js/unico-interview.js?v=14.149"></script>
+<script type="module" src="js/unico-interview.js?v=14.152"></script>
 <link rel="stylesheet" href="css/home86.css?v=14.120"/>
 <script type="module" src="js/home86-news.js?v=14.116"></script>
 <link rel="stylesheet" href="css/karaoke91.css?v=14.104"/>
