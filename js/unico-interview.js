@@ -7,6 +7,7 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const interviewModal=document.getElementById('ivModal'),interviewEntry=document.getElementById('openUnicoInterview');
 let interviewReturnFocus=null;
 function openInterview(){
+ if(!interviewModal.classList.contains('is-open')){const box=$('#iv152Box');if(box)box.open=false;interviewModal.querySelector('.iv-modal-panel').scrollTop=0;}
  interviewReturnFocus=document.activeElement;interviewModal.classList.add('is-open');interviewModal.setAttribute('aria-hidden','false');document.body.classList.add('iv-modal-open');interviewModal.querySelector('button[data-close-interview]').focus();
 }
 function closeInterview(){
