@@ -206,3 +206,11 @@
 #phase1241Renewal .home152-question small{font:11px/1.5 system-ui;color:#89708f}
 #phase1241Renewal .home152-question b{font:500 23px/1 system-ui}
 @media(max-width:480px){#unicoInterview .iv152-invite{display:block;padding:18px 16px}#unicoInterview .iv152-invite button{margin-top:14px;width:100%}#unicoInterview .iv152-invite h3{font-size:20px}#unicoInterview .iv152-content{padding:13px}}
+
+/* 14.153: interview articles remain the main content. */
+#unicoInterview .iv152-box{margin:14px 0 18px;border-radius:13px;background:#f7f2f8}
+#unicoInterview .iv152-box>summary{min-height:56px;padding:13px 15px;font-size:14px}
+#unicoInterview .iv152-box>summary span{display:flex;align-items:center;gap:10px;font-size:10px}
+#unicoInterview .iv152-box>summary b{display:inline-block;font:400 19px/1 system-ui;transition:transform .15s}
+#unicoInterview .iv152-box[open]>summary b{transform:rotate(45deg)}
+@media(prefers-reduced-motion:reduce){#unicoInterview .iv152-box>summary b{transition:none}}
