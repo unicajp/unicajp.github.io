@@ -30,7 +30,8 @@ const linked=()=>api?.auth.currentUser?.providerData.some(p=>p.providerId==='goo
 const date=v=>v?.toDate?new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(v.toDate()):'';
 function message(t){$('#ivMessage').textContent=t;}
 function requestInterviewLogin(id=null){
- participation.remember(id??([...root.querySelectorAll('[data-answer]')].find(e=>e.open)?.dataset.answer||''));
+ if(id===null&&$('#iv152Box').open){try{sessionStorage.setItem('unicaQuestionBoxResume152',String(Date.now()));}catch{}}else{try{sessionStorage.removeItem('unicaQuestionBoxResume152');}catch{}}
+ participation.remember(id??($('#iv152Box').open?'':([...root.querySelectorAll('[data-answer]')].find(e=>e.open)?.dataset.answer||'')));
  const gate=document.getElementById('openMemberGate');if(gate){closeInterview();gate.click();}else if($('#ivLogin'))$('#ivLogin').hidden=false;
 }
 function permissions(){
@@ -118,7 +119,31 @@ async function init(){
  onSnapshot(collection(api.db,'interviewArticles'),{includeMetadataChanges:true},snap=>{if(snap.metadata?.fromCache&&snap.empty&&articleLoadState!=='ready')return;acceptArticles(snap);},failArticles);
  // A separate read recovers when the live listener stalls during startup.
  getDocs(collection(api.db,'interviewArticles')).then(snap=>{if(articleLoadState!=='ready'&&snap.metadata?.fromCache!==true)acceptArticles(snap);}).catch(error=>{if(articleLoadState!=='ready')failArticles(error);});
- onAuthStateChanged(api.auth,permissions);
+ onAuthStateChanged(api.auth,()=>{permissions();resumeQuestionBox();});
 }
 init().catch(error=>{clearTimeout(articleLoadTimer);articleLoadState='error';articleLoadCode=String(error?.code||'');publicRender();});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{if(api?.db)publicRender();},{once:true});
+
+// Question box links do not depend on articles having loaded.
+function openQuestionBox(){
+ openInterview();
+ const box=$('#iv152Box');box.open=true;
+ requestAnimationFrame(()=>{const panel=interviewModal.querySelector('.iv-modal-panel');panel.scrollTop=Math.max(0,panel.scrollTop+box.getBoundingClientRect().top-panel.getBoundingClientRect().top-panel.querySelector('.iv-modal-nav').offsetHeight-12);box.querySelector('summary').focus({preventScroll:true});});
+}
+window.UNICA_QUESTION_BOX={open:openQuestionBox};
+root.querySelectorAll('[data-question152-open]').forEach(b=>b.onclick=openQuestionBox);
+root.querySelectorAll('[data-question152-example]').forEach(b=>b.onclick=()=>{const input=$('#ivBody');if(input.value.trim()){message('入力中の質問をそのまま残しています。');return;}input.value=b.dataset.question152Example;input.focus();});
+const questionUrl=new URL(location.href);questionUrl.search='';questionUrl.hash='';questionUrl.searchParams.set('questionbox','1');
+const questionShareText='うにこに、何を聞いてみたい？\n歌のこと、日々のこと。あなたの質問が次のインタビューになるかも。';
+$('#iv152X').href='https://twitter.com/intent/tweet?text='+encodeURIComponent(questionShareText)+'&url='+encodeURIComponent(questionUrl.href);
+$('#iv152Line').href='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(questionUrl.href);
+$('#iv152Link').value=questionUrl.href;
+async function copyQuestionLink(){try{await navigator.clipboard.writeText(questionUrl.href);$('#iv152ShareStatus').textContent='質問箱のリンクをコピーしました。';}catch{$('#iv152Link').hidden=false;$('#iv152Link').focus();$('#iv152Link').select();$('#iv152ShareStatus').textContent='表示されたリンクを長押ししてコピーしてください。';}}
+$('#iv152Copy').onclick=copyQuestionLink;
+$('#iv152Share').onclick=async()=>{try{if(navigator.share)await navigator.share({title:'うにこの質問箱',text:questionShareText,url:questionUrl.href});else await copyQuestionLink();}catch(e){if(e.name!=='AbortError')$('#iv152ShareStatus').textContent='シェアできませんでした。リンクのコピーやX・LINEをご利用ください。';}};
+function resumeQuestionBox(){let at=0;try{at=Number(sessionStorage.getItem('unicaQuestionBoxResume152'));}catch{}if(!at)return;if(Date.now()-at>1800000){try{sessionStorage.removeItem('unicaQuestionBoxResume152');}catch{}return;}if(linked()&&localStorage.getItem('unicaWorldMemberV4')){try{sessionStorage.removeItem('unicaQuestionBoxResume152');}catch{}openQuestionBox();}}
+window.addEventListener('unica:firebase-member-restored',resumeQuestionBox);
+if(new URL(location.href).searchParams.get('questionbox')==='1'){
+ const enter=()=>{document.getElementById('introTrigger')?.click();openQuestionBox();};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enter,{once:true});else enter();
+}
