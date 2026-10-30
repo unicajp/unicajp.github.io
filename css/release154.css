@@ -1,0 +1,38 @@
+/* 14.154 — 2nd Single home teaser; all styles scoped. */
+body.app-nav127 #top{padding-top:max(var(--app127-header,120px),var(--release154-clear,120px))!important}
+#release154{box-sizing:border-box;position:relative;display:grid;grid-template-columns:minmax(0,1fr) 112px;align-items:center;gap:18px;width:min(calc(100% - 24px),960px);margin:0 auto 14px;padding:20px 18px;border:1px solid #e7cddf;border-radius:24px;background:radial-gradient(ellipse at 20% 0,#fffefb 0,transparent 65%),linear-gradient(120deg,#fff6f5,#f1e4f6);box-shadow:0 8px 28px #825a8310;color:#503a5d;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;text-align:left;isolation:isolate}
+#release154 *{box-sizing:border-box}#release154 .release154-copy{min-width:0}
+#release154 .release154-kicker{display:block;font-size:11px;font-weight:650;letter-spacing:.12em;color:#9b6d91}
+#release154 h2{margin:12px 0 13px;color:#503a5d;font-family:"Noto Serif JP",serif;font-size:clamp(23px,3.2vw,36px);font-weight:600;line-height:1.55;letter-spacing:.035em;overflow-wrap:anywhere}
+#release154 h2 span{display:inline-block}
+#release154 .release154-date{margin:0;font-size:17px;line-height:1.5;font-weight:650;letter-spacing:.04em;color:#825f88}
+#release154 .release154-date small{display:block;margin-top:2px;font-size:9px;letter-spacing:.17em;font-weight:500}
+#release154 .release154-listen{margin-top:16px;min-height:40px;padding:8px 12px;border:1px solid #ccb8d5;border-radius:20px;background:#fff9fe;color:#77527f;font:600 11px/1.5 system-ui;cursor:pointer}
+#release154 .release154-preview{position:relative;display:block;width:112px;aspect-ratio:9/16;border:1px solid #ddc4df;border-radius:15px;overflow:hidden;padding:0;cursor:pointer;background:#3b2947;box-shadow:0 6px 16px #5e3b6d24}
+#release154 .release154-preview img{display:block;position:absolute;width:100%;height:100%;inset:0;object-fit:cover}
+#release154 .release154-preview::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#22162eaa,transparent 45%)}
+#release154 .release154-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:40px;height:40px;border:1px solid #ffffffa0;border-radius:50%;background:#fffaf5e6;color:#654470;z-index:1;font-size:17px;padding-left:2px}
+#release154 .release154-short{position:absolute;bottom:9px;left:0;right:0;text-align:center;font:600 9px/1.5 system-ui;letter-spacing:.07em;color:#fff;z-index:1}
+#release154 button:focus-visible,#release154Modal button:focus-visible,#release154Modal a:focus-visible{outline:3px solid #ad7cbb;outline-offset:3px}
+#release154Modal[hidden]{display:none!important}
+#release154Modal{position:fixed;inset:0;z-index:29998;display:flex;align-items:center;justify-content:center;padding:12px 12px calc(var(--app128-nav,65px) + 12px + env(safe-area-inset-bottom));font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif}
+#release154Modal *{box-sizing:border-box}
+#release154Modal .release154-shade{position:absolute;inset:0;border:0;background:#23182db8;backdrop-filter:blur(8px)}
+#release154Modal .release154-dialog{position:relative;width:min(100%,440px);max-height:calc(100dvh - var(--app128-nav,65px) - 28px - env(safe-area-inset-bottom));overflow:auto;overscroll-behavior:contain;padding:14px;border:1px solid #bba2c0;border-radius:22px;background:#fff8fc;color:#573e62;box-shadow:0 24px 80px #180c2940}
+#release154Modal header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+#release154Modal header strong{font:600 16px/1.5 "Noto Serif JP",serif}
+#release154Modal button{min-height:42px;border:1px solid #d8c5df;border-radius:12px;padding:9px 12px;background:#f0e6f5;color:#704a80;font:600 12px/1.4 system-ui;cursor:pointer}
+#release154Modal button:disabled{opacity:.5;cursor:wait}
+#release154Modal header button{flex:none;min-width:42px;padding:5px;font-size:22px;border-radius:50%}
+#release154Modal .release154-screen{position:relative;width:min(100%,max(200px,calc((100dvh - var(--app128-nav,65px) - 188px) * .5625)));min-width:200px;aspect-ratio:9/16;margin:auto;background:#21172b;border-radius:12px;overflow:hidden}
+#release154Modal .release154-screen>div,#release154Modal iframe{display:block;position:absolute;inset:0;width:100%;height:100%;border:0}
+#release154Modal .release154-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:11px}
+#release154Modal .release154-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:10px 0 0;font-size:11px;line-height:1.6}
+#release154Modal a{color:#795584}#release154Status{margin:6px 0 0;font-size:11px;line-height:1.7;white-space:pre-wrap}#release154Status:empty{display:none}
+body.release154-open{overflow:hidden}
+@media(max-width:360px){#release154{grid-template-columns:minmax(0,1fr) 94px;gap:12px;padding:16px 13px;border-radius:20px}#release154 h2{font-size:23px;margin:9px 0}#release154 .release154-preview{width:94px}#release154 .release154-date{font-size:15px}#release154 .release154-kicker{font-size:10px}#release154 .release154-listen{margin-top:10px;padding:7px 10px}}
+@media(min-width:700px){#release154{grid-template-columns:minmax(0,1fr) 126px;padding:24px 36px;gap:30px}#release154 .release154-preview{width:126px}#release154 .release154-date{font-size:21px}#release154 .release154-date small{display:inline;margin-left:9px}}
+
+#release154 .release154-preview{background:radial-gradient(circle at 80% 20%,#e7b7cf80,transparent 50%),linear-gradient(145deg,#6b4a80,#b37ba4)}
+#release154 .release154-poster{position:absolute;left:8px;right:8px;top:20px;color:#fff3fb;font:500 13px/1.9 "Noto Serif JP",serif;letter-spacing:.12em;text-align:center}
+#release154 .release154-preview img[hidden]{display:none}
