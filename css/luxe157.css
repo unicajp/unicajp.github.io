@@ -1,0 +1,53 @@
+/* 14.157 — luminous plum / original crystal artwork / tactile app surfaces. */
+html:has(body.premium156){background:#eee8f5!important}
+body.premium156{--p156-ink:#49374e;--p156-gold:#b28b5c;--p156-muted:#806f86;background:#eee8f5 url('../assets/unica-world-bg.webp') center top/100% auto repeat-y!important;color:#49374e}
+body.premium156.app-nav127 #siteHeader{border:1px solid #fff!important;border-radius:22px!important;background:linear-gradient(135deg,#fffffff5,#f3eaf6ed)!important;box-shadow:inset 0 1px 0 #fff,0 5px 0 #d6c9dc80,0 12px 30px #58315e18!important}
+body.premium156 #siteHeader .site-logo{color:#523c5d!important}
+body.premium156 #siteHeader .status-profile{background:#ffffffd9!important;border-color:#e8dce9!important;box-shadow:inset 0 2px 5px #573d6310!important}
+body.premium156 #siteHeader .online-pill,body.premium156 #siteHeader .notification-button{color:#775580!important}
+body.premium156.app-nav127 #siteHeader #musicPlayer{grid-template-columns:28px minmax(0,1fr) 46px!important}
+body.premium156.app-nav127 #siteHeader #trackSelect{color:#70547a!important}
+body.premium156.app-nav127 #siteHeader #playerToggle{background:linear-gradient(#fff,#e7d8ed)!important;color:#775080!important;border-color:#dfcde7!important;box-shadow:0 2px 0 #c6afd0!important}
+body.premium156.app-nav127 #siteHeader #volume{accent-color:#9a75aa!important;width:46px!important}
+#uiSoundToggle130{display:none!important}
+body.premium156 #release154{position:relative;padding:27px 22px 24px!important;min-height:312px!important;border-radius:27px!important;border:1px solid #ad8aac!important;background:radial-gradient(ellipse at 90% 0,#e9bdd84d,transparent 55%),radial-gradient(ellipse at 0 100%,#a47ac359,transparent 65%),linear-gradient(135deg,#38233f,#68466f 67%,#916681)!important;box-shadow:inset 0 1px 0 #ffe9f3a0,inset 0 -1px 0 #180e2e60,0 6px 0 #38223f,0 15px 34px #4d2d6636!important;gap:17px!important;margin-top:9px!important}
+body.premium156 #release154::before{left:22px!important;top:0!important;width:68px!important;height:3px!important;background:linear-gradient(90deg,#ebc98b,#fff1c4)!important;box-shadow:0 0 19px #f4d09a90}
+body.premium156 #release154 h2{color:#fff8f3!important;font-size:clamp(25px,6.4vw,34px)!important;line-height:1.5!important;letter-spacing:.045em!important;margin:15px 0 10px!important;text-shadow:0 2px 14px #1a08253d}
+body.premium156 #release154 .release154-kicker{color:#efd6ac!important;font-size:10px!important;letter-spacing:.1em!important}
+body.premium156 #release154 .premium156-lyric{color:#f2dfed!important;font-size:10px!important;margin-bottom:16px!important}
+body.premium156 #release154 .release154-date{color:#fff1ce!important;font-size:19px!important;letter-spacing:.06em!important}
+body.premium156 #release154 .release154-date small{color:#e2cbdc!important}
+body.premium156 #release154 .release154-listen{color:#493349!important;background:linear-gradient(#fff8e9,#ead9bc)!important;border:1px solid #fff0d8!important;border-radius:12px!important;box-shadow:0 3px 0 #af8c91,0 5px 12px #1c10242b!important;padding:9px 12px!important;gap:10px!important;margin-top:16px!important;font-weight:700!important;min-height:39px!important}
+body.premium156 #release154 .release154-preview{border:1px solid #e9cbddbd!important;border-radius:17px!important;box-shadow:0 6px 0 #25182f66,0 12px 24px #160e324d,inset 0 1px 0 #fff!important;transform:rotate(2deg)}
+body.premium156 #release154 .release154-preview .release154-play{box-shadow:0 3px 12px #38204455!important}
+.release157-love{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:19px;position:relative;z-index:2}
+#yawarakanaLikeButton{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:7px 10px;border:1px solid #f2cada80;border-radius:12px;background:linear-gradient(145deg,#fff0f5,#efcfde);color:#9a426e;box-shadow:inset 0 1px 0 #fff,0 3px 0 #9e6b89;font:600 11px/1.4 system-ui;cursor:pointer}
+#yawarakanaLikeButton span{font-size:20px;line-height:1}
+#yawarakanaLikeButton strong{font-size:10px;white-space:nowrap}
+#yawarakanaLikeButton.is-liked{background:linear-gradient(#d16699,#ac4076);color:#fff;border-color:#f3a7cd;box-shadow:inset 0 1px 0 #ffcce7,0 3px 0 #702c57}
+#yawarakanaLikeButton:disabled{opacity:.65;cursor:wait}
+#yawarakanaLikeStatus{color:#f0dce8;font:400 9px/1.5 system-ui}
+body.premium156 .premium156-heading{color:#715478!important;margin-top:25px!important}
+body.premium156 #top #phase1241Renewal .home86-diagnosis,body.premium156 #top #phase1241Renewal #home86Interview,body.premium156 #top #phase1241Renewal #karaoke91Entry,body.premium156 #top #phase1241Renewal #sreMissionOpen{border:1px solid #fff!important;border-radius:21px!important;background:linear-gradient(125deg,#fffffff5,#f5edf8f2)!important;box-shadow:inset 0 1px 0 #fff,0 4px 0 #d5c6ddbd,0 9px 20px #63427117!important;color:#503658!important;margin-bottom:4px!important}
+body.premium156 #top #phase1241Renewal #karaoke91Entry{background:radial-gradient(ellipse at 100% 0,#a881ae77,transparent 75%),linear-gradient(125deg,#49314f,#73537f)!important;border-color:#9d7ba3!important;color:#fff!important;box-shadow:inset 0 1px 0 #d3b6dd80,0 4px 0 #39213f,0 9px 20px #63427125!important}
+body.premium156 #top #phase1241Renewal #karaoke91Entry strong{color:#fff!important}
+body.premium156 #top #phase1241Renewal #karaoke91Entry #krHomeCount{color:#ead9ef!important}
+body.premium156 #top #phase1241Renewal :is(.home86-diagnosis,#home86Interview,#sreMissionOpen) strong{color:#503658!important}
+body.premium156 #top #phase1241Renewal :is(.home86-diagnosis,#home86Interview,#sreMissionOpen) small{color:#8b7491!important}
+body.premium156 #top #phase1241Renewal .home124-mic,body.premium156 #top #phase1241Renewal .home86-interview-symbol{color:#a56b9a!important;filter:drop-shadow(0 2px 0 #fff)}
+body.premium156 #top #phase1241Renewal #karaoke91Entry .home124-mic{color:#f2d4e9!important;filter:drop-shadow(0 2px 2px #26133040)}
+body.premium156 #top #phase1241Renewal .home86-diagnosis img{filter:drop-shadow(0 4px 5px #c28dbd55)!important}
+body.premium156 #top #phase1241Renewal #home86NewsOpen,body.premium156 #top #phase1241Renewal #home86NewsManage{background:linear-gradient(#fff,#f3eaf6)!important;color:#775280!important;border-color:#e3d5e8!important;box-shadow:inset 0 1px 0 #fff,0 3px 0 #d9ccdf!important;border-radius:15px!important}
+body.premium156 #top #phase1241Renewal .home86-news-symbol{color:#9870a2!important}
+body.premium156 #top #phase1241Renewal :is(.home86-release,.home86-support,.home86-members,.home86-people),body.premium156 #top :is(.profile-page,.compact-song,.connect-panel){background:linear-gradient(135deg,#ffffffed,#faf5fced)!important;border:1px solid #fff!important;box-shadow:inset 0 1px 0 #fff,0 4px 0 #d9cddd8c,0 10px 25px #73537e12!important;border-radius:22px!important}
+body.premium156 #top #phase1241Renewal .home86-release .release-art{background:linear-gradient(135deg,#fae4ea,#c59bb8)!important;color:#6d365b!important;border-color:#fff!important;border-radius:13px!important;box-shadow:0 3px 0 #b58aa5!important}
+body.premium156 #top #phase1241Renewal .home86-release h2{font:700 16px/1.5 var(--p156-sans)!important;color:#553c60!important}
+body.premium156 #top .compact-song h2,body.premium156 #top #story-title{font:600 clamp(19px,4.8vw,25px)/1.5 var(--p156-serif)!important;color:#62416b!important;letter-spacing:.03em!important}
+body.premium156 #top #phase1241Renewal .home86-release .app-card-actions .app-primary{background:linear-gradient(#92719d,#694877)!important;border-color:#a185ab!important;box-shadow:0 2px 0 #4c3158!important}
+body.premium156 #appNav127{background:linear-gradient(#fffafef5,#f0e7f5f5)!important;border-top-color:#fff!important;box-shadow:0 -5px 24px #6a497b18,inset 0 1px 0 #fff!important}
+body.premium156 #appNav127 button{color:#9a7fa6!important}
+body.premium156 #appNav127 button.is-current{background:linear-gradient(#fff,#e7d7ee)!important;color:#70477f!important;box-shadow:inset 0 1px 0 #fff,0 2px 0 #cfb9da!important}
+body.premium156 #top button:active,body.premium156 #top a:active{transform:translateY(2px)}
+@media(min-width:850px){body.premium156{background-size:960px auto!important}body.premium156 #release154{padding:35px 40px!important;min-height:350px!important}body.premium156 #release154 h2{font-size:42px!important}.release157-love{gap:12px}#yawarakanaLikeButton strong{font-size:12px}}
+@media(max-width:360px){body.premium156 #release154{padding:24px 16px!important;gap:12px!important}body.premium156 #release154 h2{font-size:24px!important}.release157-love{gap:7px}#yawarakanaLikeButton{padding:7px 8px}#yawarakanaLikeStatus{font-size:8px}}
+@media(prefers-reduced-motion:reduce){body.premium156 #top button:active,body.premium156 #top a:active{transform:none}}
