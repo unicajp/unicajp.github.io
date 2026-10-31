@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const $=s=>document.querySelector(s),banner=$('#release154'),modal=$('#release154Modal'),bgm=$('#bgm');if(!banner||!modal)return;
-const thumb=banner.querySelector('img');if(thumb){const hide=()=>{thumb.hidden=true;};thumb.addEventListener('error',hide);if(thumb.complete&&!thumb.naturalWidth)hide();}
+const thumb=banner.querySelector('.release154-preview img');if(thumb){const hide=()=>{thumb.hidden=true;};thumb.addEventListener('error',hide);if(thumb.complete&&!thumb.naturalWidth)hide();}
 const panel=modal.querySelector('[role=dialog]'),status=$('#release154Status'),toggle=$('#release154Toggle'),mute=$('#release154Mute');
 let player=null,ready=false,apiPromise=null,opening=0,returnFocus=null,resumeWanted=false,held=false,watch=null,playing=false,quiet=false;
 function syncHeader(){const h=$('#siteHeader');if(!h)return;const top=parseFloat(getComputedStyle(h).top)||0;document.documentElement.style.setProperty('--release154-clear',(Math.max(0,top)+h.getBoundingClientRect().height+14)+'px');}

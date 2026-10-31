@@ -346,7 +346,7 @@ async function toggleYaw(){
   const [receipt,song]=await Promise.all([tx.get(l),tx.get(r)]);const n=Math.max(0,Number(song.data()?.likeCount)||0),added=!receipt.exists();
   if(added)tx.set(l,{uid:userId,createdAt:serverTimestamp()});else tx.delete(l);
   const count=Math.max(0,n+(added?1:-1));tx.set(r,{title:'やわらかな想い',likeCount:count,updatedAt:serverTimestamp()},{merge:true});return {added,count};
- });yawLiked=result.added;yawCount=result.count;renderYaw();if(result.added)celebrateSongLike(b);
+ });yawLiked=result.added;yawCount=result.count;renderYaw();if(result.added){celebrateSongLike(b);window.dispatchEvent(new CustomEvent('unica:release158-liked'));}
  }catch(error){console.error(error);toast('好きの更新に失敗しました。もう一度お試しください。');}
  finally{yawBusy=false;b.disabled=false;}
 }
