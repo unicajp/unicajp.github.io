@@ -321,3 +321,34 @@ onAuthStateChanged(auth,user=>{
   onSnapshot(collection(db,'users'),snap=>{memberDirectory=new Map(snap.docs.map(d=>[d.id,{uid:d.id,...d.data()}]));window.UNICA_MEMBER_DIRECTORY_ROWS=[...memberDirectory.values()];window.dispatchEvent(new CustomEvent('unica:member-directory',{detail:window.UNICA_MEMBER_DIRECTORY_ROWS}));if(comments.length)renderComments();});
   // 10秒ごとの全件再取得は行わず、コメント更新時と一覧を開いた時だけ必要分を取得する。
 });
+
+
+// 14.157: same shared song/receipt contract as the first single.
+let yawLiked=false,yawCount=0,yawBusy=false,yawOff=[];
+function renderYaw(){
+ const b=$('#yawarakanaLikeButton'),status=$('#yawarakanaLikeStatus');
+ if(!b)return;b.classList.toggle('is-liked',yawLiked);b.setAttribute('aria-pressed',String(yawLiked));b.setAttribute('aria-label',yawLiked?'やわらかな想いの好きを取り消す':'やわらかな想いが好き');b.querySelector('span').textContent=yawLiked?'♥':'♡';
+ if(status)status.textContent=yawCount>0?`${yawCount}人が好き`:'好きで応援する';
+}
+function listenYaw(user){
+ yawOff.forEach(off=>off());yawOff=[];yawLiked=false;renderYaw();
+ if(!user){uid=null;return;}
+ yawOff.push(onSnapshot(doc(db,'songs','yawarakana-omoi'),s=>{yawCount=Math.max(0,Number(s.data()?.likeCount)||0);renderYaw();},()=>{$('#yawarakanaLikeStatus').textContent='集計を読み込めません';}));
+ yawOff.push(onSnapshot(doc(db,'songs','yawarakana-omoi','likes',user.uid),s=>{yawLiked=s.exists();renderYaw();},()=>{}));
+}
+async function toggleYaw(){
+ if(yawBusy)return;
+ if(!auth.currentUser||!member()){openMemberGate();return;}
+ const userId=auth.currentUser.uid,b=$('#yawarakanaLikeButton');yawBusy=true;b.disabled=true;
+ try{
+ const r=doc(db,'songs','yawarakana-omoi'),l=doc(db,'songs','yawarakana-omoi','likes',userId);
+ const result=await runTransaction(db,async tx=>{
+  const [receipt,song]=await Promise.all([tx.get(l),tx.get(r)]);const n=Math.max(0,Number(song.data()?.likeCount)||0),added=!receipt.exists();
+  if(added)tx.set(l,{uid:userId,createdAt:serverTimestamp()});else tx.delete(l);
+  const count=Math.max(0,n+(added?1:-1));tx.set(r,{title:'やわらかな想い',likeCount:count,updatedAt:serverTimestamp()},{merge:true});return {added,count};
+ });yawLiked=result.added;yawCount=result.count;renderYaw();if(result.added)celebrateSongLike(b);
+ }catch(error){console.error(error);toast('好きの更新に失敗しました。もう一度お試しください。');}
+ finally{yawBusy=false;b.disabled=false;}
+}
+$('#yawarakanaLikeButton')?.addEventListener('click',toggleYaw);
+onAuthStateChanged(auth,listenYaw);
