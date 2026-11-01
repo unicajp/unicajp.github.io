@@ -6,6 +6,18 @@
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#f7f6f2" name="theme-color"/>
 <meta content="何気ない今日を、忘れられない思い出に。うにか Official Site。" name="description"/>
+<style id="startup161-critical">
+/* The door must be stable before any external stylesheet or script arrives. */
+html{background:#eee8f5}
+body:not(.opened):not(.site-entered){overflow:hidden!important}
+body:not(.opened):not(.site-entered)>:not(#intro):not(script):not(style):not(link):not(audio):not(noscript){visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+body:not(.opened):not(.site-entered) #top *,body:not(.opened):not(.site-entered) #ending *{animation-play-state:paused!important}
+body #intro{position:fixed!important;inset:0!important;z-index:2147483646!important;overflow:hidden!important;background-color:#eee8f5}
+#introTrigger:disabled{cursor:wait!important;opacity:1!important}
+#introTrigger:disabled .intro-enter-hint{font-size:0!important}
+#introTrigger:disabled .intro-enter-hint::after{content:"準備しています…";font-size:11px;letter-spacing:.08em}
+body.opened #worldHome>.app-home-stack:not(:has(#phase1241Renewal)){visibility:hidden!important;opacity:0!important}
+</style>
 <link href="favicon.png" rel="icon" type="image/png"/>
 <link rel="preload" as="image" href="assets/intro/unica-door-closed.webp?v=14.31"/>
 <link rel="preload" as="image" href="assets/intro/unica-door-open.webp?v=14.31"/>
@@ -69,33 +81,44 @@
 <link rel="stylesheet" href="css/app-nav127.css?v=14.137"/>
 <link rel="stylesheet" href="css/birthday151.css?v=14.151"/>
 <link rel="stylesheet" href="css/release154.css?v=14.154"/>
-<link rel="stylesheet" href="css/premium156.css?v=14.156"/>
-<link rel="stylesheet" href="css/luxe157.css?v=14.157"/>
-<link rel="stylesheet" href="css/experience158.css?v=14.158"/>
-<link rel="stylesheet" href="css/world159.css?v=14.159"/>
+<link rel="stylesheet" href="css/unimen-directory.css?v=14.148"/>
+
+<link rel="stylesheet" href="css/phase13-11-scent-v2.css?v=13.12"/>
+
+
+
+<link rel="stylesheet" href="css/phase13-8-version-poll.css?v=13.10.6"/>
+<link rel="stylesheet" href="css/release-mission.css?v=14.117"/>
+<link rel="stylesheet" href="css/phase13-10-4-home-compact.css?v=13.17"/>
+<link rel="stylesheet" href="css/phase14-10-home-clean-cards.css?v=14.34"/>
+
+<link rel="stylesheet" href="css/phase13-31-diagnosis-header-nav.css?v=13.31"/>
+<link rel="stylesheet" href="css/punyuka-deep.css?v=14.146"/>
+<link rel="stylesheet" href="css/phase14-07-kokoro-bloom.css?v=14.131"/>
+<link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=14.144"/>
+<link rel="stylesheet" href="css/phase13-18-scent-compact.css?v=13.18"/>
+<link rel="stylesheet" href="css/phase13-20-world-background.css?v=13.20.3"/>
+<link rel="stylesheet" href="css/phase13-21-home-quick-comment.css?v=14.50"/>
+<link rel="stylesheet" href="css/phase13-27-home-hero-spacing.css?v=13.27"/>
+<link rel="stylesheet" href="css/phase13-29-home-hero-gap-cleanup.css?v=13.29"/>
+<link rel="stylesheet" href="css/phase14-35-home-ultra-compact.css?v=14.35"/>
+<link rel="stylesheet" href="css/phase14-39-project-title-exact2lines.css?v=14.40"/>
+<link rel="stylesheet" href="css/home86.css?v=14.120"/>
+<link rel="stylesheet" href="css/karaoke91.css?v=14.104"/>
+<link rel="stylesheet" href="css/world160.css?v=14.160"/>
 </head>
-<body data-social-stable="13.6" class="premium156 experience-home158 world159">
-<div aria-hidden="true" class="scroll-progress" id="scrollProgress"></div>
+<body data-social-stable="13.6" class="premium156 experience-home158 world159 world160">
+
 <audio id="tapSound" preload="auto" src="tap.mp3"></audio>
 <audio id="bgm" loop="" preload="none" src="assets/audio/yawarakana-omoi-bgm.mp3"></audio>
 <section aria-label="サイトを開く" class="intro" id="intro">
-<button aria-label="うにかの世界を開く" class="intro-trigger" id="introTrigger" type="button">
+<button aria-label="うにかの世界を開く" class="intro-trigger" id="introTrigger" type="button" disabled>
 <span aria-hidden="true" class="intro-door intro-door-closed"></span>
 <span aria-hidden="true" class="intro-door intro-door-open"></span>
 <span aria-hidden="true" class="intro-enter-light"></span>
 <span class="intro-enter-hint">TOUCH TO ENTER</span>
 </button>
 </section>
-<div aria-hidden="true" class="ambient">
-<span class="ambient-light ambient-light-one" data-depth="0.035"></span>
-<span class="ambient-light ambient-light-two" data-depth="-0.025"></span>
-<span class="ambient-light ambient-light-three" data-depth="0.018"></span>
-<div class="light-particles" id="lightParticles"></div>
-<span class="petal petal-one"></span>
-<span class="petal petal-two"></span>
-<span class="petal petal-three"></span>
-<span class="petal petal-four"></span>
-</div>
 <header class="site-header" id="siteHeader">
 <a aria-label="ページ上部へ" class="site-logo" href="#top"><span>UNICA</span><span>OFFICIAL</span></a>
 <div class="world-status-bar reveal" id="worldStatusBar">
@@ -137,7 +160,7 @@
 <section aria-label="うにか ホーム" class="hero section-shell">
 <figure aria-label="うにか アーティストビジュアル" class="hero-portrait reveal" data-depth="0.028">
 <span aria-hidden="true" class="portrait-halo"></span>
-<img alt="うにか アイコン" id="unikaAdminTrigger" src="icon.png"/>
+<img alt="うにか アイコン" id="unikaAdminTrigger" loading="lazy" decoding="async" src="icon.png"/>
 
 <div aria-hidden="true" class="heart-burst" id="heartBurst"></div>
 <div aria-live="polite" class="hero-cheer-counter" id="heroCheerCounter"><small>TODAY</small><strong id="heroCheerTotal">0</strong></div>
@@ -673,18 +696,12 @@
 <script src="js/phase14-09-punyako-avatar.js?v=14.109"></script>
 <script src="js/firebase-init.js?v=14.146" type="module"></script>
 <script src="js/phase10-2.js?v=14.158" type="module"></script>
-<script src="js/script.js?v=14.130"></script>
+<script src="js/script.js?v=14.161"></script>
 <script src="js/phase10-3.js?v=14.86"></script>
-<link rel="stylesheet" href="css/unimen-directory.css?v=14.148"/>
-
 <script src="js/phase10-5-guest.js?v=14.129"></script>
 <script src="js/phase10-11-scroll-only.js"></script>
 <script src="js/phase10-12-google.js?v=14.83"></script>
 <script src="js/phase10-14-admin.js?v=14.143" type="module"></script>
-
-<link rel="stylesheet" href="css/phase13-11-scent-v2.css?v=13.12"/>
-
-
 
 <script src="js/phase12-4-1-renewal.js?v=14.152"></script>
 <script src="js/phase12-4-2-feature-worlds.js?v=13.7.2"></script>
@@ -693,26 +710,10 @@
 <script src="js/phase13-8-version-poll.js?v=14.36" type="module"></script>
 <script src="js/youtube-latest-config.js?v=1.1"></script>
 <script src="js/youtube-latest.js?v=3.0"></script>
-<link rel="stylesheet" href="css/phase13-8-version-poll.css?v=13.10.6"/>
-<link rel="stylesheet" href="css/release-mission.css?v=14.117"/>
-<link rel="stylesheet" href="css/phase13-10-4-home-compact.css?v=13.17"/>
-<link rel="stylesheet" href="css/phase14-10-home-clean-cards.css?v=14.34"/>
-
 <script src="js/phase13-10-scent-release-event.js?v=14.117" defer></script>
-<link rel="stylesheet" href="css/phase13-31-diagnosis-header-nav.css?v=13.31"/>
-<link rel="stylesheet" href="css/punyuka-deep.css?v=14.146"/>
 <script src="js/punyuka-deep.js?v=14.146" defer></script>
-<link rel="stylesheet" href="css/phase14-07-kokoro-bloom.css?v=14.131"/>
 <script src="js/punyuka-compatibility.js?v=14.55" defer></script>
 <script src="js/phase14-07-kokoro-bloom.js?v=14.130" defer></script>
-<link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=14.144"/>
-<link rel="stylesheet" href="css/phase13-18-scent-compact.css?v=13.18"/>
-<link rel="stylesheet" href="css/phase13-20-world-background.css?v=13.20.3"/>
-<link rel="stylesheet" href="css/phase13-21-home-quick-comment.css?v=14.50"/>
-<link rel="stylesheet" href="css/phase13-27-home-hero-spacing.css?v=13.27"/>
-<link rel="stylesheet" href="css/phase13-29-home-hero-gap-cleanup.css?v=13.29"/>
-<link rel="stylesheet" href="css/phase14-35-home-ultra-compact.css?v=14.35"/>
-<link rel="stylesheet" href="css/phase14-39-project-title-exact2lines.css?v=14.40"/>
 <script src="js/phase13-4-unipass-card.js?v=14.129" type="module"></script>
 <script src="js/phase13-5-common-navigation.js?v=13.7"></script>
 <script src="js/phase13-5-4-header-icons.js?v=13.5.4" defer></script>
@@ -762,9 +763,7 @@
 <div class="iv-admin" id="ivAdmin" hidden><h3>管理者だけの質問箱</h3><button id="ivToggle" type="button">質問箱の受付を開始</button> <button id="ivReload" type="button">質問を再読み込み</button> <button id="ivCopy" type="button">未回答の質問をコピー</button><div id="ivInbox"></div><h3>インタビューを公開・編集</h3><button id="ivNew" type="button">新しい質問と回答を登録</button><p id="ivSource">あなたが用意した質問と、ボーカルから届いた回答を入力してください。</p><label for="ivQuestion">公開する質問</label><textarea id="ivQuestion" maxlength="500"></textarea><label for="ivAnswer">ボーカルから届いた回答</label><textarea id="ivAnswer" maxlength="5000"></textarea><button class="iv-primary" id="ivPublish" type="button">質問と回答を公開</button> <button id="ivDeleteArticle" type="button" hidden>公開記事を削除</button><p>トップには、この端末でまだ開いていない記事を古い順に表示します。</p><h3>公開済みの記事</h3><div id="ivEditList"></div></div>
 </section></div></section></div>
 <script type="module" src="js/unico-interview.js?v=14.153"></script>
-<link rel="stylesheet" href="css/home86.css?v=14.120"/>
 <script type="module" src="js/home86-news.js?v=14.116"></script>
-<link rel="stylesheet" href="css/karaoke91.css?v=14.104"/>
 <script src="js/karaoke-tracks.js?v=14.92"></script>
 <script type="module" src="js/karaoke91.js?v=14.124"></script>
 <script src="js/app-nav127.js?v=14.133"></script>
