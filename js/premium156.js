@@ -7,5 +7,5 @@ function enhance(){
  const copy=document.querySelector('#release154 .release154-copy'),date=copy?.querySelector('.release154-date');if(copy&&date&&!copy.querySelector('.premium156-lyric')){const p=document.createElement('p');p.className='premium156-lyric';p.textContent='特別なことじゃなくていい。';date.before(p);}
  const stack=document.querySelector('#worldHome .app-home-stack');if(stack&&!document.getElementById('premium156WorldHeading')){const head=document.createElement('div');head.id='premium156WorldHeading';head.className='premium156-heading';head.innerHTML='<span>UNICA WORLD</span><i aria-hidden="true"></i>';stack.before(head);}
 }
-let queued=false;const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;enhance();});});observer.observe(document.body,{childList:true,subtree:true});enhance();
+let queued=false;const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;enhance();if(document.querySelector('#notificationButton[data-premium156-icon]')&&document.querySelector('.home86-news-symbol[data-premium156-icon]')&&document.getElementById('premium156WorldHeading'))observer.disconnect();});});observer.observe(document.body,{childList:true,subtree:true});enhance();
 })();

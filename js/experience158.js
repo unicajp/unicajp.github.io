@@ -4,8 +4,9 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)'),fine=matchMedia('(h
 const petals=scene.querySelector('.r158-petals'),art=scene.querySelector('.r158-art'),bgm=document.getElementById('bgm');
 // Fixed small DOM pool: no render loop, canvas, scroll handler or device sensors.
 for(let n=0;n<9;n++){const p=document.createElement('i');p.style.cssText=`--left:${5+n*11}%;--size:${5+n%3*3}px;--duration:${15+n%4*3}s;--delay:-${n*3.1}s`;petals?.append(p);}
-let visible=true;function activity(){scene.classList.toggle('is-paused',!visible||document.hidden);}
+let visible=true;function activity(){scene.classList.toggle('is-paused',!visible||document.hidden||!document.body.classList.contains('opened'));}
 if('IntersectionObserver'in window){const o=new IntersectionObserver(rows=>{visible=rows[0].isIntersecting;activity();},{rootMargin:'40px'});o.observe(scene);}
+const entryWatch=new MutationObserver(()=>{activity();if(document.body.classList.contains('opened'))entryWatch.disconnect();});if(!document.body.classList.contains('opened'))entryWatch.observe(document.body,{attributes:true,attributeFilter:['class']});activity();
 document.addEventListener('visibilitychange',()=>{activity();updateDate();});
 function audioState(){scene.classList.toggle('is-music-playing',!!bgm&&!bgm.paused&&!bgm.muted&&bgm.volume>0);}
 for(const type of ['play','pause','ended','volumechange'])bgm?.addEventListener(type,audioState);audioState();
