@@ -6,18 +6,7 @@
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#f7f6f2" name="theme-color"/>
 <meta content="何気ない今日を、忘れられない思い出に。うにか Official Site。" name="description"/>
-<style id="startup161-critical">
-/* The door must be stable before any external stylesheet or script arrives. */
-html{background:#eee8f5}
-body:not(.opened):not(.site-entered){overflow:hidden!important}
-body:not(.opened):not(.site-entered)>:not(#intro):not(script):not(style):not(link):not(audio):not(noscript){visibility:hidden!important;opacity:0!important;pointer-events:none!important}
-body:not(.opened):not(.site-entered) #top *,body:not(.opened):not(.site-entered) #ending *{animation-play-state:paused!important}
-body #intro{position:fixed!important;inset:0!important;z-index:2147483646!important;overflow:hidden!important;background-color:#eee8f5}
-#introTrigger:disabled{cursor:wait!important;opacity:1!important}
-#introTrigger:disabled .intro-enter-hint{font-size:0!important}
-#introTrigger:disabled .intro-enter-hint::after{content:"準備しています…";font-size:11px;letter-spacing:.08em}
-body.opened #worldHome>.app-home-stack:not(:has(#phase1241Renewal)){visibility:hidden!important;opacity:0!important}
-</style>
+<style id="entry163-critical">html{background:#eee8f5}body #intro{position:fixed!important;inset:0!important;z-index:2147483646!important;background-color:#eee8f5}body:not(.opened) #release154 .r158-art-float,body:not(.opened) #release154 .r158-aurora,body:not(.opened) #release154 .r158-art-gloss,body:not(.opened) #release154 .r158-petals i{animation-play-state:paused!important}</style>
 <link href="favicon.png" rel="icon" type="image/png"/>
 <link rel="preload" as="image" href="assets/intro/unica-door-closed.webp?v=14.31"/>
 <link rel="preload" as="image" href="assets/intro/unica-door-open.webp?v=14.31"/>
@@ -81,44 +70,33 @@ body.opened #worldHome>.app-home-stack:not(:has(#phase1241Renewal)){visibility:h
 <link rel="stylesheet" href="css/app-nav127.css?v=14.137"/>
 <link rel="stylesheet" href="css/birthday151.css?v=14.151"/>
 <link rel="stylesheet" href="css/release154.css?v=14.154"/>
-<link rel="stylesheet" href="css/unimen-directory.css?v=14.148"/>
-
-<link rel="stylesheet" href="css/phase13-11-scent-v2.css?v=13.12"/>
-
-
-
-<link rel="stylesheet" href="css/phase13-8-version-poll.css?v=13.10.6"/>
-<link rel="stylesheet" href="css/release-mission.css?v=14.117"/>
-<link rel="stylesheet" href="css/phase13-10-4-home-compact.css?v=13.17"/>
-<link rel="stylesheet" href="css/phase14-10-home-clean-cards.css?v=14.34"/>
-
-<link rel="stylesheet" href="css/phase13-31-diagnosis-header-nav.css?v=13.31"/>
-<link rel="stylesheet" href="css/punyuka-deep.css?v=14.146"/>
-<link rel="stylesheet" href="css/phase14-07-kokoro-bloom.css?v=14.131"/>
-<link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=14.144"/>
-<link rel="stylesheet" href="css/phase13-18-scent-compact.css?v=13.18"/>
-<link rel="stylesheet" href="css/phase13-20-world-background.css?v=13.20.3"/>
-<link rel="stylesheet" href="css/phase13-21-home-quick-comment.css?v=14.50"/>
-<link rel="stylesheet" href="css/phase13-27-home-hero-spacing.css?v=13.27"/>
-<link rel="stylesheet" href="css/phase13-29-home-hero-gap-cleanup.css?v=13.29"/>
-<link rel="stylesheet" href="css/phase14-35-home-ultra-compact.css?v=14.35"/>
-<link rel="stylesheet" href="css/phase14-39-project-title-exact2lines.css?v=14.40"/>
-<link rel="stylesheet" href="css/home86.css?v=14.120"/>
-<link rel="stylesheet" href="css/karaoke91.css?v=14.104"/>
-<link rel="stylesheet" href="css/world160.css?v=14.160"/>
+<link rel="stylesheet" href="css/premium156.css?v=14.163"/>
+<link rel="stylesheet" href="css/luxe157.css?v=14.163"/>
+<link rel="stylesheet" href="css/experience158.css?v=14.163"/>
+<link rel="stylesheet" href="css/world159.css?v=14.163"/>
 </head>
-<body data-social-stable="13.6" class="premium156 experience-home158 world159 world160">
-
+<body data-social-stable="13.6" class="premium156 experience-home158 world159 ui163">
+<div aria-hidden="true" class="scroll-progress" id="scrollProgress"></div>
 <audio id="tapSound" preload="auto" src="tap.mp3"></audio>
 <audio id="bgm" loop="" preload="none" src="assets/audio/yawarakana-omoi-bgm.mp3"></audio>
 <section aria-label="サイトを開く" class="intro" id="intro">
-<button aria-label="うにかの世界を開く" class="intro-trigger" id="introTrigger" type="button" disabled>
+<button aria-label="うにかの世界を開く" class="intro-trigger" id="introTrigger" type="button">
 <span aria-hidden="true" class="intro-door intro-door-closed"></span>
 <span aria-hidden="true" class="intro-door intro-door-open"></span>
 <span aria-hidden="true" class="intro-enter-light"></span>
 <span class="intro-enter-hint">TOUCH TO ENTER</span>
 </button>
 </section>
+<div aria-hidden="true" class="ambient">
+<span class="ambient-light ambient-light-one" data-depth="0.035"></span>
+<span class="ambient-light ambient-light-two" data-depth="-0.025"></span>
+<span class="ambient-light ambient-light-three" data-depth="0.018"></span>
+<div class="light-particles" id="lightParticles"></div>
+<span class="petal petal-one"></span>
+<span class="petal petal-two"></span>
+<span class="petal petal-three"></span>
+<span class="petal petal-four"></span>
+</div>
 <header class="site-header" id="siteHeader">
 <a aria-label="ページ上部へ" class="site-logo" href="#top"><span>UNICA</span><span>OFFICIAL</span></a>
 <div class="world-status-bar reveal" id="worldStatusBar">
@@ -160,7 +138,7 @@ body.opened #worldHome>.app-home-stack:not(:has(#phase1241Renewal)){visibility:h
 <section aria-label="うにか ホーム" class="hero section-shell">
 <figure aria-label="うにか アーティストビジュアル" class="hero-portrait reveal" data-depth="0.028">
 <span aria-hidden="true" class="portrait-halo"></span>
-<img alt="うにか アイコン" id="unikaAdminTrigger" loading="lazy" decoding="async" src="icon.png"/>
+<img alt="うにか アイコン" id="unikaAdminTrigger" src="icon.png"/>
 
 <div aria-hidden="true" class="heart-burst" id="heartBurst"></div>
 <div aria-live="polite" class="hero-cheer-counter" id="heroCheerCounter"><small>TODAY</small><strong id="heroCheerTotal">0</strong></div>
@@ -695,13 +673,19 @@ body.opened #worldHome>.app-home-stack:not(:has(#phase1241Renewal)){visibility:h
 <script src="js/startup137.js?v=14.137"></script>
 <script src="js/phase14-09-punyako-avatar.js?v=14.109"></script>
 <script src="js/firebase-init.js?v=14.146" type="module"></script>
-<script src="js/phase10-2.js?v=14.158" type="module"></script>
-<script src="js/script.js?v=14.161"></script>
+<script src="js/phase10-2.js?v=14.163" type="module"></script>
+<script src="js/script.js?v=14.163"></script>
 <script src="js/phase10-3.js?v=14.86"></script>
+<link rel="stylesheet" href="css/unimen-directory.css?v=14.148"/>
+
 <script src="js/phase10-5-guest.js?v=14.129"></script>
 <script src="js/phase10-11-scroll-only.js"></script>
 <script src="js/phase10-12-google.js?v=14.83"></script>
 <script src="js/phase10-14-admin.js?v=14.143" type="module"></script>
+
+<link rel="stylesheet" href="css/phase13-11-scent-v2.css?v=13.12"/>
+
+
 
 <script src="js/phase12-4-1-renewal.js?v=14.152"></script>
 <script src="js/phase12-4-2-feature-worlds.js?v=13.7.2"></script>
@@ -710,10 +694,26 @@ body.opened #worldHome>.app-home-stack:not(:has(#phase1241Renewal)){visibility:h
 <script src="js/phase13-8-version-poll.js?v=14.36" type="module"></script>
 <script src="js/youtube-latest-config.js?v=1.1"></script>
 <script src="js/youtube-latest.js?v=3.0"></script>
+<link rel="stylesheet" href="css/phase13-8-version-poll.css?v=13.10.6"/>
+<link rel="stylesheet" href="css/release-mission.css?v=14.117"/>
+<link rel="stylesheet" href="css/phase13-10-4-home-compact.css?v=13.17"/>
+<link rel="stylesheet" href="css/phase14-10-home-clean-cards.css?v=14.34"/>
+
 <script src="js/phase13-10-scent-release-event.js?v=14.117" defer></script>
+<link rel="stylesheet" href="css/phase13-31-diagnosis-header-nav.css?v=13.31"/>
+<link rel="stylesheet" href="css/punyuka-deep.css?v=14.146"/>
 <script src="js/punyuka-deep.js?v=14.146" defer></script>
+<link rel="stylesheet" href="css/phase14-07-kokoro-bloom.css?v=14.131"/>
 <script src="js/punyuka-compatibility.js?v=14.55" defer></script>
 <script src="js/phase14-07-kokoro-bloom.js?v=14.130" defer></script>
+<link rel="stylesheet" href="css/phase13-4-unipass-card.css?v=14.144"/>
+<link rel="stylesheet" href="css/phase13-18-scent-compact.css?v=13.18"/>
+<link rel="stylesheet" href="css/phase13-20-world-background.css?v=13.20.3"/>
+<link rel="stylesheet" href="css/phase13-21-home-quick-comment.css?v=14.50"/>
+<link rel="stylesheet" href="css/phase13-27-home-hero-spacing.css?v=13.27"/>
+<link rel="stylesheet" href="css/phase13-29-home-hero-gap-cleanup.css?v=13.29"/>
+<link rel="stylesheet" href="css/phase14-35-home-ultra-compact.css?v=14.35"/>
+<link rel="stylesheet" href="css/phase14-39-project-title-exact2lines.css?v=14.40"/>
 <script src="js/phase13-4-unipass-card.js?v=14.129" type="module"></script>
 <script src="js/phase13-5-common-navigation.js?v=13.7"></script>
 <script src="js/phase13-5-4-header-icons.js?v=13.5.4" defer></script>
@@ -763,16 +763,236 @@ body.opened #worldHome>.app-home-stack:not(:has(#phase1241Renewal)){visibility:h
 <div class="iv-admin" id="ivAdmin" hidden><h3>管理者だけの質問箱</h3><button id="ivToggle" type="button">質問箱の受付を開始</button> <button id="ivReload" type="button">質問を再読み込み</button> <button id="ivCopy" type="button">未回答の質問をコピー</button><div id="ivInbox"></div><h3>インタビューを公開・編集</h3><button id="ivNew" type="button">新しい質問と回答を登録</button><p id="ivSource">あなたが用意した質問と、ボーカルから届いた回答を入力してください。</p><label for="ivQuestion">公開する質問</label><textarea id="ivQuestion" maxlength="500"></textarea><label for="ivAnswer">ボーカルから届いた回答</label><textarea id="ivAnswer" maxlength="5000"></textarea><button class="iv-primary" id="ivPublish" type="button">質問と回答を公開</button> <button id="ivDeleteArticle" type="button" hidden>公開記事を削除</button><p>トップには、この端末でまだ開いていない記事を古い順に表示します。</p><h3>公開済みの記事</h3><div id="ivEditList"></div></div>
 </section></div></section></div>
 <script type="module" src="js/unico-interview.js?v=14.153"></script>
+<link rel="stylesheet" href="css/home86.css?v=14.120"/>
 <script type="module" src="js/home86-news.js?v=14.116"></script>
+<link rel="stylesheet" href="css/karaoke91.css?v=14.104"/>
 <script src="js/karaoke-tracks.js?v=14.92"></script>
 <script type="module" src="js/karaoke91.js?v=14.124"></script>
 <script src="js/app-nav127.js?v=14.133"></script>
 <script src="js/ui-sound130.js?v=14.130"></script>
 <script type="module" src="js/birthday151.js?v=14.151"></script>
 <section id="release154Modal" hidden><button class="release154-shade" type="button" data-close-release154 aria-label="動画を閉じる"></button><div class="release154-dialog" role="dialog" aria-modal="true" aria-labelledby="release154ModalTitle"><header><strong id="release154ModalTitle">やわらかな想い</strong><button type="button" data-close-release154 aria-label="閉じる">×</button></header><div class="release154-screen"><div id="release154Player"></div></div><div class="release154-controls"><button id="release154Toggle" type="button" disabled>動画を再生</button><button id="release154Mute" type="button" disabled aria-pressed="false">動画をミュート</button></div><p class="release154-footer"><span>2nd Single · 2026.11.22 RELEASE</span><a href="https://www.youtube.com/shorts/TMOuTRRll9M" target="_blank" rel="noopener noreferrer">YouTubeで見る ↗</a></p><p id="release154Status" role="status"></p></div></section>
-<script src="js/release154.js?v=14.158"></script>
-<script src="js/premium156.js?v=14.156"></script>
-<script src="js/experience158.js?v=14.158"></script>
-<script src="js/world159.js?v=14.159"></script>
+<script src="js/release154.js?v=14.163"></script>
+<script src="js/premium156.js?v=14.163"></script>
+<script src="js/experience158.js?v=14.163"></script>
+<script src="js/world159.js?v=14.163"></script>
+<style id="design163">/* UNICA 14.163. Semantic roles: ink, supporting copy, action, room accent. */
+body.ui163{--u-ink:#392b43;--u-copy:#705b7c;--u-soft:#8b7496;--u-action:#684078;--u-line:#e5d8ec;--u-paper:#fffdfb;--u-lavender:#f4edf9;--u-rose:#a74678;--u-gold:#94703f;--u-radius:22px;--u-shadow:0 7px 22px #60407115;color:var(--u-ink);font-family:var(--p156-sans);text-rendering:optimizeLegibility}
+body.ui163 :is(button,a,summary,input,select,textarea){-webkit-tap-highlight-color:transparent}
+body.ui163 :is(button,a[href],summary,input,select,textarea):focus-visible{outline:2px solid #9260aa!important;outline-offset:3px!important}
+body.ui163 input:not([type=range]):not([type=checkbox]):not([type=radio]),body.ui163 select,body.ui163 textarea{font-family:var(--p156-sans)!important;font-size:16px!important;line-height:1.6!important}
+body.ui163 textarea{scroll-margin-block:80px;resize:vertical}
+body.ui163 :is(input,textarea)::placeholder{color:#8b7496;opacity:1}
+body.ui163 button:disabled{cursor:default}
+body.ui163 .mini-toast{max-width:min(90vw,420px);line-height:1.65}
+/* Entry remains the original door, now reliably above every app surface. */
+body.ui163 #intro.is-hidden{pointer-events:none!important}
+/* Header and navigation are instruments, not competing hero panels. */
+body.ui163.experience-home158.app-nav127 #siteHeader{padding:10px 14px 8px!important;border-radius:21px!important;border:1px solid #fff!important;box-shadow:0 7px 24px #60417719!important;background:linear-gradient(125deg,#fffefdf7,#f5edf9f2)!important}
+body.ui163 #siteHeader .site-logo{font-size:18px!important;color:#49334f!important}
+body.ui163 #siteHeader .status-profile{border:1px solid #e9deef!important;background:#ffffffc9!important;box-shadow:inset 0 1px 3px #6445760a!important}
+body.ui163 #siteHeader .status-identity strong{font:550 12px/1.5 var(--p156-sans)!important;color:#574260!important}
+body.ui163 #siteHeader .online-pill b{font-size:13px!important;color:#705d7c!important}
+body.ui163 #siteHeader .notification-button{width:35px!important;min-width:35px!important;color:#735180!important;box-shadow:0 2px 5px #64457612!important}
+body.ui163 #siteHeader .notification-button svg{width:20px!important;height:20px!important}
+body.ui163.experience-home158.app-nav127 #siteHeader #trackSelect{font:500 11px/1.4 var(--p156-sans)!important;color:#725780!important}
+body.ui163.experience-home158.app-nav127 #siteHeader #playerToggle{width:29px!important;height:29px!important;min-height:29px!important;font-size:11px!important}
+body.ui163 #appNav127{background:#fffbfff5!important;border-top:1px solid #fff!important;box-shadow:0 -5px 22px #60407115!important}
+body.ui163 #appNav127 button{font-size:10px!important;color:#80678e!important;min-height:53px!important}
+body.ui163 #appNav127 button.is-current{color:#684078!important;background:linear-gradient(#fff,#eadcf2)!important;box-shadow:inset 0 1px 0 #fff,0 2px 0 #ccb1d9!important}
+/* Preserve the acclaimed sleeve, light, platform and motion. Improve its hierarchy. */
+body.ui163 #release154.experience158{border-color:#fff!important;box-shadow:0 5px 0 #ceb6d6,0 16px 35px #6040711c!important}
+body.ui163 #release154 .r158-prologue{color:#795b7d!important;font-size:14px!important}
+body.ui163 #release154 .release154-kicker{color:#99657f!important;font-size:10px!important}
+body.ui163 #release154 h2{color:#684078!important}
+body.ui163 #release154 .premium156-lyric{font-size:11px!important;color:#7c617f!important;letter-spacing:.06em!important}
+body.ui163 #release154 .release154-date{font-size:18px!important;color:#8b663d!important}
+body.ui163 #release154 .release154-date small{font-size:9px!important;color:#876c87!important}
+body.ui163 #release154 .r158-art-caption{color:#755d80!important;font-size:9px!important}
+body.ui163 #release154 .r158-console{align-items:center!important;gap:10px!important;padding:15px 0!important;border-top-color:#c8afce66!important}
+body.ui163 #release154 .release154-listen{min-height:40px!important;padding:9px 11px!important;background:linear-gradient(130deg,#9465a4,#674075)!important;color:#fff!important;border:1px solid #b18fc0!important;border-radius:12px!important;box-shadow:inset 0 1px 0 #d9bde780,0 3px 0 #56315f!important;font-size:11px!important}
+body.ui163 #release154 .release154-listen span{color:#f6e6ff!important}
+body.ui163 #release154 .r158-preview-copy>span{display:none!important}
+body.ui163 #release154 .r158-preview-copy>small{font-size:8px!important;color:#795987!important;letter-spacing:.12em!important}
+body.ui163 #release154 #yawarakanaLikeButton{min-height:40px!important;border-color:#dcaec7!important;background:linear-gradient(#fff7fa,#f3dce9)!important;box-shadow:inset 0 1px 0 #fff,0 2px 0 #c79bb7!important;color:#a33b72!important;padding:8px 10px!important}
+body.ui163 #release154 #yawarakanaLikeButton strong{font-size:10px!important;font-weight:650!important}
+body.ui163 #release154 #yawarakanaLikeButton.is-liked{background:linear-gradient(#c46d9e,#9f467f)!important;color:#fff!important;border-color:#e6abc9!important;box-shadow:0 2px 0 #72345c!important}
+body.ui163 #release154 #yawarakanaLikeStatus{font-size:10px!important;color:#775e81!important}
+body.ui163 .r158-bottomline{font-size:8px!important;color:#795e85!important}
+body.ui163 .r158-world-caption strong{color:#664574!important;font-size:23px!important}
+body.ui163 .r158-world-caption span{font-size:10px!important;color:#745b7e!important}
+body.ui163 #premium156WorldHeading{margin-top:32px!important}
+/* Room headings explain the choices. No frame around another frame. */
+body.ui163 #top #phase1241Renewal.w159-organized #world159-groups{gap:27px!important;margin-top:25px!important}
+body.ui163 .w159-group{padding:21px 14px 18px!important;border:1px solid #fff!important;border-radius:25px!important;box-shadow:0 7px 22px #60407112!important}
+body.ui163 .w159-group::before{opacity:.55!important}
+body.ui163 .w159-group::after{opacity:.25!important}
+body.ui163 .w159-heading{gap:12px!important;padding-bottom:17px!important}
+body.ui163 #top .w159-heading h2{font:650 18px/1.45 var(--p156-sans)!important;color:#61416d!important;letter-spacing:.02em!important}
+body.ui163 .w159-heading small{display:none!important}
+body.ui163 .w159-heading p{font:400 11px/1.75 var(--p156-sans)!important;color:#795e84!important;margin-top:6px!important;max-width:30em}
+body.ui163 .w159-heading>i{display:none!important}
+body.ui163 .w159-emblem{width:42px!important;height:46px!important;box-shadow:inset 0 1px 0 #fff,0 2px 0 var(--room-shadow),0 5px 12px #60407110!important}
+body.ui163 #world159Nav{background:#eee4f4ed!important;border:1px solid #e4d7eb!important;box-shadow:inset 0 1px 4px #6040710b!important;border-radius:17px!important;padding:5px!important}
+body.ui163 #world159Nav button{min-height:56px!important;color:#775684!important;font-size:10px!important}
+body.ui163 #world159Nav button[aria-pressed=true]{color:#633675!important;background:linear-gradient(#fff,#fcf6ff)!important;box-shadow:0 2px 0 #c4a5d5,0 4px 12px #60407112!important}
+body.ui163 #world159-read .w159-heading h2{color:#8c4e6c!important}
+body.ui163 #world159-people .w159-heading h2{color:#506e83!important}
+body.ui163 #world159-read .w159-heading p{color:#875c72!important}
+body.ui163 #world159-people .w159-heading p{color:#587285!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-groups :is(#karaoke91Entry,#home86Interview,.home86-diagnosis,#sreMissionOpen,.home86-release,.home86-support){box-shadow:0 3px 0 #d7c3e099,0 7px 15px #60407110!important;border-radius:19px!important;border-width:1px!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-groups :is(#karaoke91Entry,#home86Interview){min-height:101px!important;height:101px!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-groups #karaoke91Entry{box-shadow:inset 0 1px 0 #d0b4e366,0 3px 0 #422a55,0 9px 18px #39214f20!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-groups #karaoke91Entry strong{font-size:16px!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-groups #karaoke91Entry #krHomeCount{color:#f0e4f7!important;font-size:12px!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-groups #home86Interview strong{font-size:15px!important;color:#754263!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-groups #home86Interview .home86-interview-label>small{font-size:12px!important;color:#8b5c76!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-groups #home86NewsOpen strong{font-size:13px!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-groups #home152Question{border-color:#ebd7e3!important;background:#fff6fa!important;box-shadow:none!important;min-height:53px!important;padding:10px 14px!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-groups #home152Question strong{font-size:12px!important;color:#925172!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-groups #home152Question small{font-size:10px!important;color:#865e79!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-play .home86-diagnosis,body.ui163 #top #phase1241Renewal.w159-organized #world159-play #sreMissionOpen{height:183px!important;min-height:183px!important;padding:16px 8px 12px!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-play .home86-diagnosis strong{font-size:14px!important;color:#705087!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-play .home86-diagnosis p{font-size:11px!important;line-height:1.6!important;color:#795f8c!important;margin:6px 0 0!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-play .home86-diagnosis>div{max-width:100%!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-play #sreMissionOpen strong{font-size:13px!important;color:#8d6638!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-play #sreMiniStatus{font-size:10px!important;color:#876942!important;line-height:1.6!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-music .home86-release{min-height:106px!important;height:auto!important;gap:10px!important;padding:16px 14px!important;position:relative}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-music .home86-release h2{font:700 15px/1.5 var(--p156-sans)!important;letter-spacing:0!important;color:#624370!important;margin:0 0 6px!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-music .home86-release .song-like-box p{font-size:11px!important;color:#796181!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-music .home86-release .song-like-box p b{font-size:15px!important;color:#8f4c73!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-music .home86-release .app-card-actions a{font-size:11px!important;min-height:33px!important;border-radius:10px!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-people .home-comments-heading strong{font-size:14px!important;color:#4f6b80!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-people .home-comments-heading>span{color:#667e8d!important;font-size:10px!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-people .home-comment-copy header strong{font-size:11px!important;color:#4f6b80!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-people .home-comment-copy time{font-size:9px!important;color:#687e8d!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-people .home-comment-copy p{font-size:13px!important;line-height:1.9!important;color:#506c7c!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-people .home86-support-open{color:#506b7d!important;background:linear-gradient(#f6fbff,#e5eef4)!important;border-color:#d0dee7!important;box-shadow:0 2px 0 #bfd1dd!important;min-height:44px!important;font-size:12px!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-people .home86-members button{color:#506e83!important;min-height:48px!important;font-size:12px!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-people .person-card :is(h3,b){color:#546d83!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-people .person-card small{color:#667b8f!important;font-size:9px!important}
+body.ui163 #top #phase1241Renewal.w159-organized #world159-groups :is(.renewal-section,.artist-renewal-zone){border:0!important;background:none!important;box-shadow:none!important}
+/* Profiles are deliberate destinations. Details no longer make the front page endless. */
+body.ui163 #top .profile-page{border:1px solid #fff!important;border-radius:24px!important;box-shadow:var(--u-shadow)!important;padding:24px 18px 20px!important;margin-top:26px!important;background:#fffafef0!important}
+body.ui163 #top .profile-title h2{font-size:23px!important;color:#624370!important}
+body.ui163 #top .profile-catch{font-size:12px!important;color:#705b7c!important}
+body.ui163 #top .profile-avatar{background:linear-gradient(#fff,#e9d9f1)!important;color:#9166a4!important;box-shadow:0 2px 0 #cbb1d8!important}
+body.ui163 .profile163-details{margin-top:18px;border-top:1px solid #e5d8ec}
+body.ui163 .profile163-details>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:47px;padding:12px 0 0;color:#735080;cursor:pointer;font:600 12px/1.6 var(--p156-sans);list-style:none}
+body.ui163 .profile163-details>summary::-webkit-details-marker{display:none}
+body.ui163 .profile163-details>summary::after{content:'＋';font-size:20px;font-weight:400;line-height:1;color:#a078b1}
+body.ui163 .profile163-details[open]>summary::after{content:'−'}
+body.ui163 #top :is(.profile-story,.creator-message,.youtube-latest-card,.follow-card,.creator-work,.team-credit){box-shadow:none!important;border:1px solid #e7daee!important;border-radius:16px!important;color:#705b7c!important;background:#fffdfc!important}
+body.ui163 #top :is(.profile-story,.creator-message){font-size:13px!important;line-height:2!important;padding:17px!important}
+body.ui163 #top :is(.profile-note,.official-name){color:#765f80!important}
+body.ui163 #top .profile-note{font-size:11px!important}
+body.ui163 #top .youtube-latest-head :is(strong,span,small){color:#705080!important}
+body.ui163 #top .youtube-latest-loading{background:linear-gradient(#f7f0fb,#e9def2)!important;color:#8c6aa0!important}
+body.ui163 #top .youtube-latest-loading :is(span,b){color:#80608f!important}
+body.ui163 #top :is(.youtube-support-links a,.social-pair-actions a,.iv-name-button){color:#735080!important;border:1px solid #e3d1ec!important;background:#f4ecf9!important;box-shadow:0 2px 0 #d1b9de!important;font-size:12px!important;min-height:38px!important}
+body.ui163 #top .creator-tags span{color:#705080!important;background:#eee2f4!important}
+body.ui163 #top .team-credit strong{color:#705080!important}
+body.ui163 #top #music{margin-top:24px!important}
+body.ui163 #top .compact-song{padding:18px!important;box-shadow:none!important;border:1px solid #e5d8ec!important;border-radius:18px!important;min-height:0!important}
+body.ui163 #top #music #story-title{font:650 18px/1.5 var(--p156-sans)!important;color:#624370!important;letter-spacing:0!important}
+body.ui163 #top .compact-song .eyebrow{font-size:9px!important;color:#775d82!important}
+body.ui163 #top .compact-song a{background:#765287!important;color:#fff!important;font-size:12px!important;min-height:40px!important;box-shadow:0 2px 0 #543960!important}
+body.ui163 #top #movie .movie-caption p{font-size:15px!important}
+body.ui163 #top .social-grid a{color:#735080!important;font-size:12px!important;min-height:52px!important;box-shadow:0 2px 0 #d1b9de!important}
+body.ui163 #top .site-bottom-support{box-shadow:none!important;color:#735080!important;border:1px solid #e5d8ec!important}
+body.ui163 #top .site-bottom-support a{color:#735080!important;min-height:40px!important}
+body.ui163 #ending{color:#775d82!important}
+/* Light-system forms and panels: readable text, distinct primary actions. */
+body.ui163 [data-ui159-surface][data-ui159-tone=light]{color:#493451!important;box-shadow:0 8px 40px #30163e30!important;border-color:#d8c1e3!important}
+body.ui163 [data-ui159-surface][data-ui159-tone=light] :is(input:not([type=range]):not([type=checkbox]):not([type=radio]),select,textarea){border:1px solid #d5bfe0!important;background:#fffdfd!important;color:#493451!important;border-radius:12px!important;padding:11px 12px!important;min-height:44px!important;max-width:100%!important;box-sizing:border-box!important}
+body.ui163 [data-ui159-surface] :is(button[aria-label="閉じる"],.world-modal-close,#krClose){min-width:42px!important;min-height:42px!important;line-height:1!important}
+body.ui163 [data-ui159-surface] button{font-family:var(--p156-sans)!important}
+body.ui163 [data-ui159-surface] button:disabled{opacity:.55!important;filter:saturate(.6)}
+body.ui163 :is(#memberGate,#guestLockModal) [role=dialog]{border-radius:26px!important;border-color:#e2d2e8!important;background:linear-gradient(#fffcf9,#f5edf8)!important}
+body.ui163 :is(#memberGate,#guestLockModal) :is(h2,h3){font-size:23px!important;line-height:1.65!important;color:#583663!important}
+body.ui163 :is(#memberGate,#guestLockModal) p{line-height:1.85!important;color:#715b7d!important}
+body.ui163 #memberGate :is(.register-next,.register-start,#registerStart,#registerConfirm){min-height:46px!important}
+body.ui163 #passportModal .passport-card{box-shadow:inset 0 1px 0 #ffefcc80,0 6px 18px #50345b24!important}
+body.ui163 #passportModal .passport-detail-note{font-size:13px!important;line-height:1.9!important;color:#735e7c!important}
+body.ui163 :is(#prefectureDirectoryModal,#prefectureMembersModal,#onlineModal,#communityModal) h2{font-size:23px!important;line-height:1.5!important}
+body.ui163 :is(#prefectureDirectoryModal,#prefectureMembersModal) :is(.ud-member-row,.prefecture-member-button){border:1px solid #e5d8ec!important;box-shadow:0 2px 8px #6040710b!important}
+body.ui163 :is(#prefectureDirectoryModal,#prefectureMembersModal) :is(.ud-avatar,.avatar){background:transparent!important;border:0!important;box-shadow:none!important}
+body.ui163 #communityModal :is(.community-post,.support-comment-card){box-shadow:0 2px 8px #6040710b!important;border-color:#e5d8ec!important}
+body.ui163 #sreMissionModal #sreMissionTitle{font-size:22px!important;line-height:1.55!important;color:#775439!important}
+body.ui163 #sreMissionModal #sreMissionTitle small{font-size:13px!important}
+body.ui163 #sreMissionModal #sreMissionTitle>span{font-size:20px!important}
+body.ui163 #sreMissionModal :is(.sre-detail-lead,.sre-detail-note,#sreNext){font-size:13px!important;line-height:1.9!important;color:#775d4b!important}
+body.ui163 #sreMissionModal .sre-detail-diagnose{background:linear-gradient(120deg,#ae8658,#805484)!important;box-shadow:inset 0 1px 0 #f5dfb980,0 3px 0 #664664!important}
+/* Editorial area keeps the answer above participation. */
+body.ui163 #ivModal .iv-page-main{padding-left:13px!important;padding-right:13px!important}
+body.ui163 #ivModal .unico-interview{border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important}
+body.ui163 #ivModal .iv-head{gap:12px!important;padding:8px 4px 20px!important}
+body.ui163 #ivModal .iv-head h2{font-size:24px!important;line-height:1.5!important;color:#583663!important}
+body.ui163 #ivModal .iv-item{border:1px solid #e7d4df!important;border-radius:21px!important;box-shadow:0 4px 12px #7040620a!important;background:#fffdfc!important}
+body.ui163 #ivModal .iv-item>summary{min-height:64px!important;padding:17px!important}
+body.ui163 #ivModal .iv-item>summary span{font-size:15px!important;line-height:1.8!important;color:#50344a!important}
+body.ui163 #ivModal :is(.iv-answer-text,.iv-answer-main,.iv-editorial-answer){color:#50344a!important;line-height:2!important}
+body.ui163 #ivModal .iv152-box{border:1px solid #e2cad9!important;border-radius:18px!important;box-shadow:none!important;background:#fbf3f8!important}
+body.ui163 #ivModal .iv152-box>summary{min-height:51px!important;padding:15px!important;color:#78516b!important}
+body.ui163 #ivModal :is(.iv-primary,.iv152-share button){min-height:42px!important;border-radius:12px!important;font-size:13px!important;box-shadow:0 2px 0 #5d355c40!important}
+body.ui163 #ivModal .iv152-note{font-size:12px!important;line-height:1.9!important;color:#785f75!important}
+/* Dark experiences remain dark. No global white background on diagnosis or recording. */
+body.ui163 [data-ui159-tone=dark]{box-shadow:0 10px 45px #0d061b75!important;border-color:#9f80b9!important}
+body.ui163 :is(#scent16Modal,#karaoke91) input:not([type=range]):not([type=checkbox]):not([type=radio]),body.ui163 :is(#scent16Modal,#karaoke91) textarea,body.ui163 :is(#scent16Modal,#karaoke91) select{background:#231b31!important;border:1px solid #68547e!important;color:#fff4ff!important}
+body.ui163 :is(#scent16Modal,#karaoke91) :is(input,textarea)::placeholder{color:#b6a8c4!important}
+body.ui163 #scent16Modal .scent16-header{border-bottom-color:#9b78b433!important;box-shadow:0 5px 18px #08020f30!important}
+body.ui163 #scent16Modal :is(.pk-option,.scent16-option){min-height:51px!important;line-height:1.8!important}
+body.ui163 #karaoke91 .kr-panel>header{background:linear-gradient(120deg,#22192e,#35253f)!important}
+body.ui163 #karaoke91 .kr-panel main{line-height:1.8}
+body.ui163 #karaoke91 .kr-panel .kr-status{font-size:12px!important;line-height:1.8!important}
+body.ui163 #karaoke91 button.primary{min-height:44px!important;box-shadow:inset 0 1px 0 #fff9,0 3px 0 #654379!important}
+body.ui163 #appVariety127 [data-app-feature]{color:#654174!important;border-radius:17px!important}
+@media(min-width:700px){body.ui163 #release154 .r158-prologue{font-size:19px!important}body.ui163 #release154 .release154-listen{font-size:13px!important;padding:10px 18px!important}body.ui163 #release154 #yawarakanaLikeButton strong{font-size:12px!important}body.ui163 #release154 #yawarakanaLikeButton{padding:10px 18px!important}body.ui163 #release154 .r158-art-caption{font-size:10px!important}}
+@media(min-width:900px){body.ui163 #top #phase1241Renewal.w159-organized #world159-groups{gap:26px!important}body.ui163 .w159-group{padding:23px 19px!important}body.ui163 #top .profile-page{padding:28px 25px 23px!important}body.ui163 #world159Nav{max-width:600px!important}}
+@media(max-width:360px){body.ui163 .w159-group{padding:18px 11px 16px!important}body.ui163 #top .w159-heading h2{font-size:16px!important}body.ui163 .w159-heading p{font-size:10px!important}body.ui163 #release154 .r158-console{gap:7px!important}body.ui163 #release154 .r158-preview-wrap{gap:7px!important}body.ui163 #release154 .release154-listen{font-size:10px!important;padding:8px!important}body.ui163 #release154 .release154-preview{width:36px!important;height:58px!important}body.ui163 #release154 #yawarakanaLikeButton strong{font-size:9px!important}body.ui163 #release154 #yawarakanaLikeButton{padding:7px 8px!important}body.ui163 #release154 #yawarakanaLikeStatus{font-size:9px!important}body.ui163 .r158-world-caption strong{font-size:20px!important}body.ui163 .r158-world-caption>span{font-size:9px!important}body.ui163 #top #phase1241Renewal.w159-organized #world159-groups #home86Interview strong{font-size:14px!important}body.ui163 #top #phase1241Renewal.w159-organized #world159-music .home86-release h2{font-size:14px!important}}
+@media(prefers-reduced-motion:reduce){body.ui163 *{scroll-behavior:auto!important}body.ui163 .profile163-details{transition:none!important}}
+body.ui163 #world159Nav .u163-has-new::after{content:'';position:absolute;right:calc(50% - 18px);top:7px;width:5px;height:5px;border-radius:50%;background:#b85b8c;box-shadow:0 0 0 2px #fff}
+/* Actual interview article classes, including the live participation renderer. */
+body.ui163 #ivModal #unicoInterview .iv-answer{border:1px solid #e1cedd!important;border-radius:21px!important;background:#fffdfc!important;box-shadow:0 4px 14px #75436b0b!important;margin:0 0 17px!important}
+body.ui163 #ivModal #unicoInterview .iv-answer>summary{min-height:65px!important;padding:18px 16px!important;gap:12px!important}
+body.ui163 #ivModal #unicoInterview .iv-answer>summary>span{font:650 15px/1.85 var(--p156-sans)!important;color:#53374f!important}
+body.ui163 #ivModal #unicoInterview .iv-answer>summary>small{color:#92704b!important;font-size:12px!important}
+body.ui163 #ivModal #unicoInterview .iv-answer[open]>summary{background:#fbf5f3!important}
+body.ui163 #ivModal #unicoInterview .iv-answer-body{padding:0 18px 19px!important;border-top-color:#eee1e9!important}
+body.ui163 #ivModal #unicoInterview .iv142-response{margin:23px 0!important}
+body.ui163 #ivModal #unicoInterview .iv142-bubble>p{font:550 17px/2 var(--p156-serif)!important;color:#50334a!important;letter-spacing:.02em!important}
+body.ui163 #ivModal #unicoInterview .iv142-speaker strong,body.ui163 #ivModal #unicoInterview .iv-speaker strong{color:#865b77!important;font-size:13px!important}
+body.ui163 #ivModal #unicoInterview .iv142-response>time{color:#846d80!important;font-size:11px!important}
+body.ui163 #ivModal #unicoInterview .iv135-poll{padding:17px 14px!important;border:1px solid #eaddec!important;background:#f7f0f9!important;border-radius:15px!important}
+body.ui163 #ivModal #unicoInterview .iv135-poll>.iv-reaction-invite{font-size:11px!important;color:#775580!important}
+body.ui163 #ivModal #unicoInterview .iv135-question{font-size:14px!important;line-height:1.9!important;color:#6b4774!important}
+body.ui163 #ivModal #unicoInterview .iv-reaction-button{min-height:46px!important;font-size:12px!important;line-height:1.7!important;border-radius:12px!important}
+body.ui163 #ivModal #unicoInterview .iv135-share{border-color:#dfcbb8!important;border-radius:13px!important}
+body.ui163 #ivModal #unicoInterview .iv135-share>summary span{font-size:13px!important;color:#876244!important}
+body.ui163 #ivModal #unicoInterview .iv135-share>summary small{font-size:11px!important;color:#846e59!important}
+body.ui163 #ivModal .iv-count{padding:8px 10px!important;border-radius:12px!important;background:#f0e5ee!important}
+body.ui163 #ivModal .iv-count strong{font-size:18px!important;color:#9b587c!important}
+body.ui163 #ivModal .iv-count span{font-size:10px!important;color:#775d72!important}
+body.ui163 #memberGate .register-light{display:none!important}
+/* Contain the old card's decorative pseudo-elements; they were creating a horizontal scrollbar. */
+body.ui163 #passportModal .passport-detail-card{overflow:hidden!important}
+body.ui163 #passportModal #passportModalTitle{font-family:var(--p156-sans)!important;font-size:22px!important;line-height:1.4!important}
+body.ui163 #passportModal .passport-detail-head strong{font-size:22px!important;line-height:1.4!important}
+body.ui163 #passportModal .passport-compact-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+body.ui163 #passportModal .passport-compact-grid>div{background:#27152d3b!important;border-color:#ffffff30!important;padding:8px!important}
+body.ui163 #passportModal .passport-compact-grid dt{font:400 10px/1.5 var(--p156-sans)!important;opacity:.9!important;white-space:normal!important}
+body.ui163 #passportModal .passport-compact-grid dd{font:600 13px/1.6 var(--p156-sans)!important;color:#fff!important}
+body.ui163 #passportModal .passport-card-heading{padding-bottom:13px!important}
+body.ui163 #passportModal #passProfileEditor :is(input,textarea,select){background:#2d2239!important;color:#fff4ff!important;border-color:#6b547e!important}
+body.ui163 #passportModal #passProfileEditor :is(input,textarea)::placeholder{color:#b6a8c4!important}
+body.ui163 #passportModal #passProfileEditor label{font-size:13px!important;line-height:1.7!important}
+body.ui163 #passportModal #passProfileEditor .pass-edit-actions button{min-height:44px!important}
+/* Keep historical decorative halos inside the diagnosis panel. */
+body.ui163 #scent16Modal .scent16-panel::before,body.ui163 #scent16Modal .scent16-panel::after{display:none!important}
+body.ui163 #ivModal .iv149-cover .iv-head h2{color:#fff6ed!important;font-size:26px!important;line-height:1.5!important}
+/* Registration had a later legacy max-height that ignored the bottom navigation. */
+body.ui163.app-nav127 :is(#memberGate,#guestLockModal) [role=dialog]{max-height:var(--app128-height)!important;min-height:0!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain}
+</style>
+<script src="js/refine163.js?v=14.163"></script>
 </body>
 </html>
