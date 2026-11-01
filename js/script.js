@@ -132,6 +132,7 @@
     // 入口演出はこの1本だけで管理する。
     // 旧2.45秒タイマーと追加のclickリスナーを廃止し、短く軽い流れに統一。
     body.classList.add('opened');
+    updateScrollEffects();
 
     window.setTimeout(fadeInBgm, 320);
     window.setTimeout(() => intro?.classList.add('door-soft-fade'), 620);
@@ -150,6 +151,7 @@
   }
 
   introTrigger?.addEventListener('click', openSite);
+  introTrigger?.removeAttribute('disabled');
 
   playerToggle?.addEventListener('click', () => {
     playTap();
@@ -262,6 +264,7 @@
   createParticles('endingParticles', 15);
 
   function updateScrollEffects() {
+    if (!opened) { rafPending = false; return; }
     const scrollY = window.scrollY;
     const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     const progress = Math.min(1, Math.max(0, scrollY / maxScroll));
