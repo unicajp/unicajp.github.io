@@ -129,9 +129,10 @@
 <div class="r158-pedestal" aria-hidden="true"></div><span class="r158-art-caption">この手のひらの中に咲いた、やわらかな想い。</span>
 </div>
 <div class="r158-console">
-<div class="r158-preview-wrap"><button class="release154-preview" type="button" data-release154-open aria-label="やわらかな想いの告知ショートを再生"><span class="release154-poster" aria-hidden="true">やわらかな<br>想い</span><img src="https://i.ytimg.com/vi/TMOuTRRll9M/hqdefault.jpg" alt="" loading="lazy" decoding="async" referrerpolicy="strict-origin-when-cross-origin"><span class="release154-play" aria-hidden="true">▶</span></button><div class="r158-preview-copy"><small>FIRST LISTEN</small><button class="release154-listen" type="button" data-release154-open>ひと足先に聴く <span aria-hidden="true">↗</span></button><span>YouTube Shorts</span></div></div>
+<div class="r158-preview-wrap"><button class="release154-preview" type="button" data-release154-open aria-label="やわらかな想いの告知ショートを再生"><span class="release154-poster" aria-hidden="true">やわらかな<br>想い</span><img src="https://i.ytimg.com/vi/TMOuTRRll9M/hqdefault.jpg" alt="" loading="lazy" decoding="async" referrerpolicy="strict-origin-when-cross-origin"><span class="release154-play" aria-hidden="true">▶</span></button><div class="r158-preview-copy"><small>TEASER MOVIE</small><button class="release154-listen" type="button" data-release154-open>告知ショートを見る <span aria-hidden="true">↗</span></button><span>YouTube Shorts</span></div></div>
 <div class="release157-love"><button id="yawarakanaLikeButton" type="button" aria-pressed="false" aria-label="やわらかな想いが好き"><span aria-hidden="true">♡</span><strong>この曲が好き</strong></button><small id="yawarakanaLikeStatus" aria-live="polite">好きで応援する</small></div>
 </div>
+<div class="apple164-entry"><button id="apple164Open" type="button" aria-haspopup="dialog" aria-controls="apple164Modal"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 17V5l11-2v12M9 8l11-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><ellipse cx="5.5" cy="18" rx="3.5" ry="2.5" fill="currentColor"/><ellipse cx="16.5" cy="16" rx="3.5" ry="2.5" fill="currentColor"/></svg>Apple Musicで試聴</button><a class="apple164-services" href="https://linkco.re/84vvB6Mv" target="_blank" rel="noopener noreferrer">各配信サービスで聴く ↗<span>LinkCore</span></a></div>
 <div class="r158-bottomline"><span class="r158-sound-state"><i aria-hidden="true"><b></b><b></b><b></b><b></b></i><span>UNICA WORLD</span></span><span id="release158Countdown">2026.11.22 RELEASE</span></div>
 <div class="r158-love-field" aria-hidden="true"></div><p id="release158LoveMessage" role="status"></p>
 </section>
@@ -994,5 +995,36 @@ body.ui163 #ivModal .iv149-cover .iv-head h2{color:#fff6ed!important;font-size:2
 body.ui163.app-nav127 :is(#memberGate,#guestLockModal) [role=dialog]{max-height:var(--app128-height)!important;min-height:0!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain}
 </style>
 <script src="js/refine163.js?v=14.163"></script>
+<style id="apple164Style">/* 14.164: compact listening entry; the existing jacket and teaser remain intact. */
+body.ui163 #release154 .apple164-entry{grid-column:1/-1;position:relative;z-index:3;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;margin:12px 0 5px;padding:12px 0 0;border-top:1px solid #ffffffa8}
+body.ui163 #apple164Open{display:flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:11px 14px;border:1px solid #fff9;border-radius:15px;background:linear-gradient(135deg,#684078,#8b5489);box-shadow:inset 0 1px 0 #ffffff60,0 3px 0 #553063,0 6px 15px #68407820;color:#fff;font:600 12px/1.5 var(--p156-sans);cursor:pointer}
+body.ui163 #apple164Open svg{width:17px;height:19px;flex:none}
+body.ui163 #apple164Open:active{transform:translateY(2px);box-shadow:inset 0 1px 0 #ffffff60,0 1px 0 #553063}
+body.ui163 #release154 .apple164-services{font:600 11px/1.7 var(--p156-sans);color:#674776;text-align:center;text-decoration:none;padding:6px 2px;max-width:125px}
+body.ui163 #release154 .apple164-services span{display:block;font-size:9px;font-weight:400;color:#796383}
+#apple164Modal[hidden]{display:none!important}
+#apple164Modal{position:fixed;inset:0;z-index:28500;display:grid;place-items:center;box-sizing:border-box;padding:12px 12px calc(var(--app128-nav,65px) + 24px)}
+#apple164Modal .apple164-shade{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;border-radius:0;background:#281b38b8;backdrop-filter:blur(12px);cursor:default}
+body.ui163 #apple164Modal .apple164-panel{position:relative;box-sizing:border-box;width:min(100%,660px);max-height:var(--app128-height,calc(100dvh - 110px));min-height:0;overflow:auto;overscroll-behavior:contain;scroll-padding-bottom:16px;border:1px solid #fff9;border-radius:23px;background:#fffcfe;color:#392b43;box-shadow:0 20px 75px #1d0c394d}
+body.ui163 #apple164Modal .apple164-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 17px;background:#fffcfef5;border-bottom:1px solid #eadfea;backdrop-filter:blur(12px)}
+body.ui163 #apple164Modal .apple164-head small{display:block;font:600 9px/1.6 var(--p156-sans);letter-spacing:.17em;color:#937299}
+body.ui163 #apple164Modal .apple164-head h2{font:600 18px/1.5 var(--p156-sans);margin:2px 0 0;color:#50325e}
+body.ui163 #apple164Modal .apple164-head button{flex:none;width:42px;height:42px;min-height:42px;padding:0;border:1px solid #e8dcea;border-radius:50%;color:#6c487c;background:#f3eaf7;font:400 25px/1 var(--p156-sans);cursor:pointer}
+#apple164Frame{width:100%;max-width:660px;min-height:450px;background:#fff}
+#apple164Frame iframe{display:block;box-sizing:border-box;width:100%;max-width:660px;height:450px;border:0;overflow:hidden;border-radius:10px}
+body.ui163 #apple164Modal .apple164-footer{padding:0 17px 18px;font:400 11px/1.9 var(--p156-sans);color:#705b7c}
+body.ui163 #apple164Modal #apple164Status{margin:0 0 5px}
+body.ui163 #apple164Modal .apple164-note{margin:0 0 12px;font-size:10px}
+body.ui163 #apple164Modal .apple164-links{display:flex;flex-wrap:wrap;gap:10px}
+body.ui163 #apple164Modal .apple164-links a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;box-sizing:border-box;padding:9px 12px;border:1px solid #ddcce5;border-radius:12px;background:#f4edf8;color:#694578;text-decoration:none;font-size:11px;font-weight:600}
+@media(max-width:360px){body.ui163 #release154 .apple164-entry{grid-template-columns:minmax(0,1fr);gap:7px}body.ui163 #release154 .apple164-services{max-width:none}body.ui163 #release154 .apple164-services span{display:inline;margin-left:6px}}
+@media(prefers-reduced-motion:reduce){body.ui163 #apple164Modal .apple164-panel{animation:none!important}}
+body.ui163.experience-home158 #release154.experience158{grid-template-areas:"copy" "stage" "console" "listen" "footer"!important}
+body.ui163 #release154 .apple164-entry{grid-area:listen;margin-top:0;padding:0 0 15px;border-top:0}
+@media(min-width:700px){body.ui163.experience-home158 #release154.experience158{grid-template-areas:"copy stage" "console console" "listen listen" "footer footer"!important}}
+@media(max-height:500px) and (orientation:landscape){body.ui163.experience-home158 #release154.experience158{grid-template-areas:"copy stage" "console console" "listen listen" "footer footer"!important}}
+</style>
+<section id="apple164Modal" hidden><button class="apple164-shade" type="button" data-close-apple164 aria-label="試聴を閉じる" tabindex="-1"></button><div class="apple164-panel" role="dialog" aria-modal="true" aria-labelledby="apple164Title" aria-describedby="apple164Note"><header class="apple164-head"><div><small>UNICA · 2nd Single</small><h2 id="apple164Title">やわらかな想い</h2></div><button type="button" data-close-apple164 aria-label="閉じる">×</button></header><div id="apple164Frame"></div><footer class="apple164-footer"><p id="apple164Status" role="status"></p><p class="apple164-note" id="apple164Note">この画面を開いている間はサイトBGMを一時停止します。閉じると、もともと再生していたBGMに戻ります。</p><div class="apple164-links"><a href="https://music.apple.com/jp/album/yawarakana-omoi-single/6829413405" target="_blank" rel="noopener noreferrer">Apple Musicで開く ↗</a><a href="https://linkco.re/84vvB6Mv" target="_blank" rel="noopener noreferrer">各配信サービスで聴く ↗</a></div></footer></div></section>
+<script src="js/apple164.js?v=14.164"></script>
 </body>
 </html>
