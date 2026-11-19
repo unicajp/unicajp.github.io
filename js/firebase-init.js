@@ -34,6 +34,7 @@ const MEMBER_KEY = 'unicaWorldMemberV4';
 const LEGACY_MEMBER_KEYS = ['unicaWorldMemberV3', 'unicaWorldMemberV2', 'unicaWorldMemberV1'];
 const ONLINE_WINDOW_MS = 5 * 60 * 1000;
 let uid = null;
+let memberOwnerUid = null;
 let googleLoginInProgress = false;
 let presenceTimer = null;
 let resolveAuthReady;
@@ -61,15 +62,27 @@ function localMember() {
 }
 
 async function saveMember(member) {
-  if (!uid || !member) return;
-  await setDoc(doc(db, 'users', uid), {
-    ...member,
-    uid,
-    updatedAt: serverTimestamp(),
-    lastSeenAt: serverTimestamp(),
-    prefecturePublic: member.prefecturePublic !== false,
-    birthdayPublic: member.birthdayPublic !== false
-  }, { merge: true });
+  const owner = auth.currentUser?.uid;
+  // Ordinary UI saves may only update a profile restored/registered for this login.
+  if (!member || !owner || owner !== uid || memberOwnerUid !== owner || !authInfo().googleLinked) return;
+  if (member.uid && member.uid !== owner) return;
+  const ref = doc(db, 'users', owner);
+  await runTransaction(db, async tx => {
+    const snap = await tx.get(ref);
+    if (auth.currentUser?.uid !== owner || memberOwnerUid !== owner || !snap.exists()) return;
+    const current = snap.data();
+    if (Number(member.number) !== Number(current.number)) return;
+    tx.update(ref, {
+      ...member,
+      uid: owner,
+      number: current.number,
+      memberNumberVersion: current.memberNumberVersion || 3,
+      updatedAt: serverTimestamp(),
+      lastSeenAt: serverTimestamp(),
+      prefecturePublic: member.prefecturePublic !== false,
+      birthdayPublic: member.birthdayPublic !== false
+    });
+  });
 }
 
 function deepOwner(){const owner=auth.currentUser?.uid;if(!owner||owner!==uid||!auth.currentUser.providerData.some(p=>p.providerId==='google.com'))throw Error('Google連携済みのうにメンでログインしてください。');return owner;}
@@ -136,6 +149,7 @@ async function removeMember() {
 async function restoreMember(replaceLocal = false) {
   if (!uid) return;
   const restoreUid=uid;
+  memberOwnerUid = null;
   const deletedSnap = await getDoc(doc(db, 'deletedMembers', restoreUid));
   if(auth.currentUser?.uid!==restoreUid)return null;
   if (deletedSnap.exists()) {
@@ -148,12 +162,13 @@ async function restoreMember(replaceLocal = false) {
   if(auth.currentUser?.uid!==restoreUid)return null;
   if (snap.exists()) {
     const remote = snap.data();
+    memberOwnerUid = restoreUid;
     const existing = localMember();
-    if (replaceLocal || !existing || Number(remote.updatedAt?.seconds || 0) >= Number(existing.firebaseUpdatedAt || 0)) {
+    if (replaceLocal || !existing || existing.uid !== restoreUid || Number(remote.updatedAt?.seconds || 0) >= Number(existing.firebaseUpdatedAt || 0)) {
       const clean = { ...remote, firebaseUpdatedAt: Number(remote.updatedAt?.seconds || 0) };
       delete clean.updatedAt;
       delete clean.lastSeenAt;
-      delete clean.uid;
+      clean.uid = restoreUid;
       localStorage.setItem(MEMBER_KEY, JSON.stringify(clean));
       if(replaceLocal){if(clean.punyakoJourney)localStorage.setItem('unicaPunyakoJourneyV4',JSON.stringify(clean.punyakoJourney));else localStorage.removeItem('unicaPunyakoJourneyV4');}
       window.dispatchEvent(new CustomEvent('unica:firebase-member-restored', { detail: clean }));
@@ -162,17 +177,17 @@ async function restoreMember(replaceLocal = false) {
   } else if(replaceLocal) {
     localStorage.removeItem(MEMBER_KEY);LEGACY_MEMBER_KEYS.forEach(key=>localStorage.removeItem(key));
     window.dispatchEvent(new CustomEvent('unica:firebase-member-restored'));return null;
-  } else {
-    const member = localMember();
-    if (member) await saveMember(member);
   }
+  // Missing remote profile is not registration: never copy the device cache here.
 }
 
 async function ensureMemberNumber(profile = null) {
   await authReady;
-  if (!uid) throw new Error('Firebase認証が完了していません。');
+  const owner = auth.currentUser?.uid;
+  if (!owner || owner !== uid || !authInfo().googleLinked) throw new Error('Googleでログインしてください。');
+  if (profile?.uid && profile.uid !== owner) throw new Error('ログインが変わりました。もう一度登録画面を開いてください。');
 
-  const userRef = doc(db, 'users', uid);
+  const userRef = doc(db, 'users', owner);
   const counterRef = doc(db, 'system', 'memberCounterV3');
 
   const assigned = await runTransaction(db, async transaction => {
@@ -180,6 +195,7 @@ async function ensureMemberNumber(profile = null) {
       transaction.get(userRef),
       transaction.get(counterRef)
     ]);
+    if (auth.currentUser?.uid !== owner) throw new Error('ログインが変わりました。');
     const userData = userSnap.exists() ? userSnap.data() : {};
 
     // 連番方式V3で発行済みなら同じ番号を永久に保持する。旧ランダム番号は再採番する。
@@ -200,7 +216,7 @@ async function ensureMemberNumber(profile = null) {
     }, { merge: true });
     transaction.set(userRef, {
       ...(profile || {}),
-      uid,
+      uid: owner,
       number: nextNumber,
       memberNumberVersion: 3,
       updatedAt: serverTimestamp(),
@@ -209,7 +225,9 @@ async function ensureMemberNumber(profile = null) {
     return nextNumber;
   });
 
-  const member = { ...(localMember() || profile || {}), number: assigned, memberNumberVersion: 3 };
+  if (auth.currentUser?.uid !== owner) throw new Error('ログインが変わりました。');
+  memberOwnerUid = owner;
+  const member = { ...(localMember() || profile || {}), uid: owner, number: assigned, memberNumberVersion: 3 };
   localStorage.setItem(MEMBER_KEY, JSON.stringify(member));
   window.dispatchEvent(new CustomEvent('unica:firebase-member-restored', { detail: member }));
   return assigned;
@@ -217,7 +235,7 @@ async function ensureMemberNumber(profile = null) {
 
 async function migrateLegacyMemberNumber() {
   const member = localMember();
-  if (!member) return;
+  if (!member || memberOwnerUid !== uid || !authInfo().googleLinked) return;
   if (member.memberNumberVersion === 3 && Number(member.number) > 0) return;
   await ensureMemberNumber(member);
 }
@@ -491,6 +509,7 @@ async function signInGoogleAccount() {
   const accountKeys=[MEMBER_KEY,...LEGACY_MEMBER_KEYS,'unicaPunyakoJourneyV4','unicaPunyakoDiagnosisV4Progress','unicaPunyakoDiagnosisV4Result','unicaPunyakoDiagnosisV4History','unicaPunyakoDiagnosisV4ActiveProfiles'];
   if(previousUid){const cache={};accountKeys.forEach(key=>{const value=localStorage.getItem(key);if(value!==null)cache[key]=value;});localStorage.setItem('unicaWorldAccountCache:'+previousUid,JSON.stringify(cache));}
   googleLoginInProgress=true;
+  memberOwnerUid = null;
   try{
     const result=await signInWithPopup(auth,googleProvider);uid=result.user.uid;
     if(previousUid!==uid){
@@ -549,6 +568,7 @@ onAuthStateChanged(auth, async user => {
   }
 
   uid = user.uid;
+  memberOwnerUid = null;
   resolveAuthReady?.(uid);
   // Explicit Google login restores the selected account before UI notifications.
   if(googleLoginInProgress)return;
